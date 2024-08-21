@@ -33,7 +33,7 @@
 			"@/*": ["lib/*"]
 		}
 	},
-	"include": ["src", "lib"],
+	"include": ["lib"],
 	"exclude": [
 		"node_modules",
 		"dist",
