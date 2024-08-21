@@ -86,7 +86,7 @@ export const Emoji = ({
 				ref={imageRef}
 				alt={emoji.description}
 				draggable="false"
-				src={`https://cdn.animated-fluent-emojis.com/${categoryFolder}/${id}.png`}
+				src={`https://cdn.animated-fluent-emojis.com/sprites/${categoryFolder}/${id}.png`}
 				style={animationStyle}
 				className="emoji-image"
 			/>
