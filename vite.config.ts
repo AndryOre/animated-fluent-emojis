@@ -12,22 +12,19 @@ export default defineConfig({
 			fileName: (format) => `animated-fluent-emojis.${format}.js`,
 		},
 		rollupOptions: {
-			external: ['react', 'react-dom'],
+			external: ['react', 'react-dom', 'react/jsx-runtime'],
 			output: {
 				globals: {
 					react: 'React',
 					'react-dom': 'ReactDOM',
-				},
-				assetFileNames: (assetInfo) => {
-					if (assetInfo.name === 'style.css') return 'index.css';
-					return 'assets/[name][extname]';
+					'react/jsx-runtime': 'jsxRuntime',
 				},
 			},
 		},
 		sourcemap: true,
 		emptyOutDir: true,
 	},
-	plugins: [react(), dts({ include: ['lib'] })],
+	plugins: [react(), dts({ include: ['lib'], insertTypesEntry: true })],
 	resolve: {
 		alias: {
 			'@': resolve(__dirname, 'lib'),
