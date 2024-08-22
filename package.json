@@ -1,8 +1,32 @@
 {
 	"name": "animated-fluent-emojis",
-	"private": false,
 	"version": "0.1.0",
+	"description": "Animated Fluent Emojis is a React component library that brings Microsoft's Fluent emojis to life in your web applications. This library offers an easy way to integrate expressive and engaging animated emojis, enhancing user experience and visual appeal in your React projects.",
+	"author": "Andry Orellana",
+	"license": "ISC",
+	"private": false,
+	"sideEffects": false,
 	"type": "module",
+	"keywords": [
+		"react",
+		"emojis",
+		"animated",
+		"fluent",
+		"icons",
+		"microsoft",
+		"animated-emojis",
+		"fluent-emojis",
+		"emoji-library",
+		"ui",
+		"emoticons",
+		"animation"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/andryore/animated-fluent-emojis.git"
+	},
+	"homepage": "https://github.com/andryore/animated-fluent-emojis#readme",
+	"bugs": "https://github.com/andryore/animated-fluent-emojis/issues",
 	"main": "dist/animated-fluent-emojis.umd.js",
 	"module": "dist/animated-fluent-emojis.es.js",
 	"types": "dist/index.d.ts",
@@ -22,7 +46,7 @@
 		"dev": "vite",
 		"build": "tsc && vite build",
 		"lint": "eslint .",
-		"preview": "vite preview"
+		"prepublishOnly": "pnpm build"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1",
@@ -44,5 +68,6 @@
 		"typescript-eslint": "^8.0.1",
 		"vite": "^5.4.1",
 		"vite-plugin-dts": "^4.0.3"
-	}
+	},
+	"packageManager": "pnpm@9.8.0"
 }
