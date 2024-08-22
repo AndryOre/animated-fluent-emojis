@@ -24,7 +24,14 @@ export default defineConfig({
 		sourcemap: true,
 		emptyOutDir: true,
 	},
-	plugins: [react(), dts({ include: ['lib'], insertTypesEntry: true })],
+	plugins: [
+		react(),
+		dts({
+			include: ['lib'],
+			insertTypesEntry: true,
+			tsconfigPath: './tsconfig.build.json',
+		}),
+	],
 	resolve: {
 		alias: {
 			'@': resolve(__dirname, 'lib'),
