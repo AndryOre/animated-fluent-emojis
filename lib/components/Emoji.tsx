@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { EmojiProps, generateEmojiStyle } from '@/utils';
 import { useEmojiAnimation, useEmojiStyle } from '@/hooks';
-import '@/styles.css';
+import styles from './Emoji.module.css';
 
 /**
  * Emoji component for displaying animated emojis.
@@ -71,14 +71,15 @@ export const Emoji = ({
 	const containerStyle = {
 		width: `${size}px`,
 		height: `${size}px`,
+		display: 'inline-block',
+		overflow: 'hidden',
 	};
-
 	return (
 		<span
 			title={emoji.description}
 			style={containerStyle}
-			className={`emoji-container ${
-				isInitialAnimationComplete && playOnHover ? 'animate-on-hover' : ''
+			className={`${styles.emojiContainer} ${
+				isInitialAnimationComplete && playOnHover ? styles.animateOnHover : ''
 			}`}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}>
@@ -88,7 +89,7 @@ export const Emoji = ({
 				draggable="false"
 				src={`https://cdn.animated-fluent-emojis.com/sprites/${categoryFolder}/${id}.png`}
 				style={animationStyle}
-				className="emoji-image"
+				className={styles.emojiImage}
 			/>
 		</span>
 	);
