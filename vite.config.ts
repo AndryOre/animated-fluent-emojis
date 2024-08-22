@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
 	build: {
 		lib: {
-			entry: resolve(__dirname, 'lib/index.ts'),
+			entry: resolve(__dirname, 'src/index.ts'),
 			name: 'Animated-Fluent-Emojis',
 			formats: ['es', 'umd'],
 			fileName: (format) => `animated-fluent-emojis.${format}.js`,
@@ -27,14 +27,14 @@ export default defineConfig({
 	plugins: [
 		react(),
 		dts({
-			include: ['lib'],
+			include: ['src'],
 			insertTypesEntry: true,
 			tsconfigPath: './tsconfig.build.json',
 		}),
 	],
 	resolve: {
 		alias: {
-			'@': resolve(__dirname, 'lib'),
+			'@': resolve(__dirname, 'src'),
 		},
 	},
 });

@@ -30,10 +30,10 @@
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["lib/*"]
+			"@/*": ["src/*"]
 		}
 	},
-	"include": ["lib"],
+	"include": ["src"],
 	"exclude": [
 		"node_modules",
 		"dist",

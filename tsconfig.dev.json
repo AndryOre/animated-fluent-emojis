@@ -27,9 +27,9 @@
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["lib/*"]
+			"@/*": ["src/*"]
 		}
 	},
-	"include": ["src", "lib", "example", "tests"],
+	"include": ["src", "tests"],
 	"exclude": ["node_modules", "dist"]
 }
