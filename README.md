@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/assets/Cover.png" alt="Animated Fluent Emojis">
+  <img src="./docs/assets/Cover.webp" alt="Animated Fluent Emojis">
 </p>
 
 # Animated Fluent Emojis
@@ -17,6 +17,7 @@
 - [Usage](#usage-)
 - [Props](#props)
 - [Examples](#examples)
+- [Emoji Categories](#emoji-categories-)
 - [Contributing](#contributing)
 - [Support the Project](#support-the-project)
 - [License](#license-)
@@ -90,15 +91,29 @@ function App() {
 	return (
 		<div>
 			<h1>Hello, Animated Emojis!</h1>
-			<Emoji id="smiling-face" />
-			<Emoji id="thumbs-up" size={64} playOnHover />
-			<Emoji id="party-popper" animationIterations={3} />
+			<Emoji id="1f4af_hundredpointssymbol" />
+			<Emoji id="1f92f_explodinghead" size={64} playOnHover />
+			<Emoji id="launch" animationIterations={3} />
 		</div>
 	);
 }
 
 export default App;
 ```
+
+## Emoji Categories 📋
+
+For a complete list of available emojis and their corresponding IDs, Unicode representations, descriptions, and keywords, please refer to our [Emoji List](./docs/EMOJI_LIST.md). The emojis are organized into the following categories:
+
+- [Activities](./docs/EMOJI_LIST_Activities.md)
+- [Animals](./docs/EMOJI_LIST_Animals.md)
+- [Food](./docs/EMOJI_LIST_Food.md)
+- [Hand Gestures](./docs/EMOJI_LIST_Hand_gestures.md)
+- [Objects](./docs/EMOJI_LIST_Objects.md)
+- [People](./docs/EMOJI_LIST_People.md)
+- [Smileys](./docs/EMOJI_LIST_Smilies.md)
+- [Symbols](./docs/EMOJI_LIST_Symbols.md)
+- [Travel and Places](./docs/EMOJI_LIST_Travel_and_places.md)
 
 ## Contributing
 
