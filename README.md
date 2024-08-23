@@ -6,6 +6,12 @@
 
 **Animated Fluent Emojis** is a React component library that brings Microsoft's Fluent emojis to life in your web applications. This library offers an easy way to integrate expressive and engaging animated emojis, enhancing user experience and visual appeal in your React projects.
 
+<p align="center">
+  <img src="https://cdn.animated-fluent-emojis.com/webp/Travel%20and%20places/launch.webp" alt="Rocket Launch" width="100" height="100">
+  <img src="https://cdn.animated-fluent-emojis.com/webp/Travel%20and%20places/fire.webp" alt="Fire" width="100" height="100">
+  <img src="https://cdn.animated-fluent-emojis.com/webp/Smilies/1f4af_hundredpointssymbol.webp" alt="Hundred Points" width="100" height="100">
+</p>
+
 > 🎉 **Exclusive Feature:** Until now, these Animated Fluent Emojis were only available within Microsoft Teams. This library makes them accessible for use in any web application for the first time, bringing a unique and lively emoji experience to your projects!
 
 <details>
