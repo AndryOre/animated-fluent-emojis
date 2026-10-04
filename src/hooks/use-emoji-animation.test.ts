@@ -1,0 +1,65 @@
+import { expect, test } from 'vitest'
+import { renderHook } from 'vitest-browser-react'
+
+import { FIXTURE_MANIFEST } from '../test/manifest-fixture.js'
+import type { EmojiManifest } from '../utils/index.js'
+import { useEmojiAnimation } from './use-emoji-animation.js'
+
+const [firstCategory] = FIXTURE_MANIFEST.categories
+const [firstEmoticon] = firstCategory?.emoticons ?? []
+if (!firstEmoticon) throw new Error('Fixture manifest is empty')
+
+const emoji: EmojiManifest = { ...firstEmoticon, category: 'Smilies' }
+
+test('returns an empty style while the emoji is not loaded', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(null, false, 2, true, 64),
+  )
+
+  expect(result.current.animationStyle).toEqual({})
+})
+
+test('derives keyframes, timing and offset from the manifest entry', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 3, true, 64),
+  )
+
+  expect(result.current.animationStyle).toMatchObject({
+    width: 64,
+    animationName: 'emoji-grinning-face-64',
+    animationDuration: '2s',
+    animationTimingFunction: 'steps(40)',
+    animationIterationCount: 3,
+    animationPlayState: 'running',
+    transform: 'translateY(-64px)',
+  })
+})
+
+test('stays paused when autoPlay is off', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 2, false, 64),
+  )
+
+  expect(result.current.isInitialAnimationComplete).toBe(true)
+  expect(result.current.animationStyle.animationPlayState).toBe('paused')
+})
+
+test('plays forever while hovered once the initial animation is skipped', async () => {
+  const { result, act } = await renderHook(() =>
+    useEmojiAnimation(emoji, true, 2, false, 64),
+  )
+  expect(result.current.animationStyle).toMatchObject({
+    animationIterationCount: 'infinite',
+    animationPlayState: 'paused',
+  })
+
+  await act(() => {
+    result.current.handleMouseEnter()
+  })
+  expect(result.current.animationStyle.animationPlayState).toBe('running')
+
+  await act(() => {
+    result.current.handleMouseLeave()
+  })
+  expect(result.current.animationStyle.animationPlayState).toBe('paused')
+})
