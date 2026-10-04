@@ -1,7 +1,8 @@
-import { useEffect, type ReactElement } from 'react';
-import { generateEmojiStyle, type EmojiProps } from '../utils/index.js';
-import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js';
-import styles from './Emoji.module.css';
+import { useEffect, type ReactElement } from 'react'
+
+import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js'
+import { generateEmojiStyle, type EmojiProps } from '../utils/index.js'
+import styles from './Emoji.module.css'
 
 /**
  * Emoji component for displaying animated emojis.
@@ -14,83 +15,78 @@ import styles from './Emoji.module.css';
  * @returns {ReactElement | null} The rendered Emoji component or null if the emoji is not found.
  */
 export const Emoji = ({
-	id,
-	size = 100,
-	playOnHover = false,
-	animationIterations = 2,
-	autoPlay = true,
+  id,
+  size = 100,
+  playOnHover = false,
+  animationIterations = 2,
+  autoPlay = true,
 }: EmojiProps): ReactElement | null => {
-	const { emoji, categoryFolder } = useEmojiStyle(id);
-	const {
-		isInitialAnimationComplete,
-		animationStyle,
-		handleMouseEnter,
-		handleMouseLeave,
-		imageRef,
-	} = useEmojiAnimation(
-		emoji,
-		playOnHover,
-		animationIterations,
-		autoPlay,
-		size
-	);
+  const { emoji, categoryFolder } = useEmojiStyle(id)
+  const {
+    isInitialAnimationComplete,
+    animationStyle,
+    handleMouseEnter,
+    handleMouseLeave,
+    imageRef,
+  } = useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
 
-	// Effect for dynamically adding and removing emoji animation styles
-	useEffect(() => {
-		if (!emoji) return;
+  // Effect for dynamically adding and removing emoji animation styles
+  useEffect(() => {
+    if (!emoji) return
 
-		const styleId = `emoji-style-${id}-${size}`;
-		let styleElement = document.getElementById(styleId);
+    const styleId = `emoji-style-${id}-${size}`
+    let styleElement = document.getElementById(styleId)
 
-		if (!styleElement) {
-			styleElement = document.createElement('style');
-			styleElement.id = styleId;
-			document.head.appendChild(styleElement);
-		}
+    if (!styleElement) {
+      styleElement = document.createElement('style')
+      styleElement.id = styleId
+      document.head.appendChild(styleElement)
+    }
 
-		// Asynchronously generate and set the emoji style
-		generateEmojiStyle(id, size).then((style) => {
-			if (styleElement) {
-				styleElement.innerHTML = style;
-			}
-		});
+    // Asynchronously generate and set the emoji style
+    generateEmojiStyle(id, size).then((style) => {
+      if (styleElement) {
+        styleElement.innerHTML = style
+      }
+    })
 
-		// Clean up function to remove the style element when component unmounts
-		return () => {
-			if (styleElement && document.head.contains(styleElement)) {
-				document.head.removeChild(styleElement);
-			}
-		};
-	}, [id, size, emoji]);
+    // Clean up function to remove the style element when component unmounts
+    return () => {
+      if (styleElement && document.head.contains(styleElement)) {
+        document.head.removeChild(styleElement)
+      }
+    }
+  }, [id, size, emoji])
 
-	// Render nothing if the emoji is not found
-	if (!emoji) {
-		return null;
-	}
+  // Render nothing if the emoji is not found
+  if (!emoji) {
+    return null
+  }
 
-	const containerStyle = {
-		width: `${size}px`,
-		height: `${size}px`,
-		display: 'inline-block',
-		overflow: 'hidden',
-	};
-	return (
-		<span
-			title={emoji.description}
-			style={containerStyle}
-			className={`${styles.emojiContainer} ${
-				isInitialAnimationComplete && playOnHover ? styles.animateOnHover : ''
-			}`}
-			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}>
-			<img
-				ref={imageRef}
-				alt={emoji.description}
-				draggable="false"
-				src={`https://cdn.animated-fluent-emojis.com/sprites/${categoryFolder}/${id}.png`}
-				style={animationStyle}
-				className={styles.emojiImage}
-			/>
-		</span>
-	);
-};
+  const containerStyle = {
+    width: `${size}px`,
+    height: `${size}px`,
+    display: 'inline-block',
+    overflow: 'hidden',
+  }
+  return (
+    <span
+      title={emoji.description}
+      style={containerStyle}
+      className={`${styles.emojiContainer} ${
+        isInitialAnimationComplete && playOnHover ? styles.animateOnHover : ''
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <img
+        ref={imageRef}
+        alt={emoji.description}
+        draggable="false"
+        src={`https://cdn.animated-fluent-emojis.com/sprites/${categoryFolder}/${id}.png`}
+        style={animationStyle}
+        className={styles.emojiImage}
+      />
+    </span>
+  )
+}

@@ -11,9 +11,7 @@
     "branchPrefix": "ao"
   },
   "worktree": {
-    "bootstrap": [
-      "bun install --frozen-lockfile --silent"
-    ]
+    "bootstrap": ["bun install --frozen-lockfile --silent"]
   },
   "concurrency": {
     "waveSize": 4,
@@ -50,8 +48,6 @@
     "stalledMinutes": 10
   },
   "commands": {
-    "selfCheck": [
-      "bun run lint"
-    ]
+    "selfCheck": ["bun run lint"]
   }
 }

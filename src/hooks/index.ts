@@ -1,2 +1,2 @@
-export * from './useEmojiAnimation.js';
-export * from './useEmojiStyle.js';
+export * from './useEmojiAnimation.js'
+export * from './useEmojiStyle.js'

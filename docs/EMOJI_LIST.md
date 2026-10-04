@@ -1,6 +1,9 @@
 # Animated Fluent Emojis List
 
-This document provides an index to the comprehensive lists of all available emojis in the Animated Fluent Emojis library, organized by categories. Use the IDs provided in these lists when implementing the `<Emoji>` component in your React applications.
+This document provides an index to the comprehensive lists of all available
+emojis in the Animated Fluent Emojis library, organized by categories. Use the
+IDs provided in these lists when implementing the `<Emoji>` component in your
+React applications.
 
 ## Emoji Categories
 
@@ -14,7 +17,8 @@ This document provides an index to the comprehensive lists of all available emoj
 - [Symbols](EMOJI_LIST_Symbols.md)
 - [Travel and Places](EMOJI_LIST_Travel_and_places.md)
 
-Each category file contains a table with the following information for each emoji:
+Each category file contains a table with the following information for each
+emoji:
 
 | Column      | Description                                               |
 | ----------- | --------------------------------------------------------- |
@@ -25,14 +29,16 @@ Each category file contains a table with the following information for each emoj
 
 ## Usage
 
-To use an emoji in your React application, import the `Emoji` component and use the ID from the appropriate category list:
+To use an emoji in your React application, import the `Emoji` component and use
+the ID from the appropriate category list:
 
 ```jsx
-import { Emoji } from 'animated-fluent-emojis';
+import { Emoji } from 'animated-fluent-emojis'
 
 function MyComponent() {
-	return <Emoji id="1f4af_hundredpointssymbol" />;
+  return <Emoji id="1f4af_hundredpointssymbol" />
 }
 ```
 
-For more details on usage and customization options, please refer to the main README.md file.
+For more details on usage and customization options, please refer to the main
+README.md file.
