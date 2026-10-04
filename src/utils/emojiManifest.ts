@@ -1,4 +1,4 @@
-import { Manifest, EmojiManifest } from '@/utils';
+import type { Manifest, EmojiManifest } from './types.js';
 
 /**
  * Fetches the emoji manifest from the CDN.
@@ -37,7 +37,7 @@ export async function generateEmojiManifest(): Promise<
 /**
  * A promise that resolves to the processed emoji manifest.
  */
-export const emojiManifestPromise = generateEmojiManifest();
+export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> = generateEmojiManifest();
 
 /**
  * Gets the category folder for a given emoji id.

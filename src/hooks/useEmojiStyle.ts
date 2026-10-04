@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 import {
 	emojiManifestPromise,
 	getCategoryFolder,
-	EmojiManifest,
-} from '@/utils';
+	type EmojiManifest,
+} from '../utils/index.js';
+
+export interface UseEmojiStyleResult {
+	emoji: EmojiManifest | null;
+	categoryFolder: string;
+}
 
 /**
  * Custom hook for getting emoji style and category information.
@@ -12,7 +17,7 @@ import {
  * @returns {EmojiManifest | null} .emoji - The emoji manifest data or null if not found.
  * @returns {string} .categoryFolder - The category folder for the emoji.
  */
-export const useEmojiStyle = (id: string) => {
+export const useEmojiStyle = (id: string): UseEmojiStyleResult => {
 	const [emoji, setEmoji] = useState<EmojiManifest | null>(null);
 	const [categoryFolder, setCategoryFolder] = useState<string>('');
 
@@ -21,7 +26,7 @@ export const useEmojiStyle = (id: string) => {
 		const fetchEmojiData = async () => {
 			try {
 				const manifest = await emojiManifestPromise;
-				setEmoji(manifest[id]);
+				setEmoji(manifest[id] ?? null);
 				setCategoryFolder(await getCategoryFolder(id));
 			} catch (error) {
 				console.error('Error fetching emoji data:', error);

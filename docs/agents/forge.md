@@ -29,7 +29,7 @@ with the reason the coordinator generated for it (`forge lock-reason`) —
 that's built into `/forge` itself, identical in every repo, and nothing
 below needs to restate it.
 
-A fresh worktree only needs `pnpm install --frozen-lockfile`
+A fresh worktree only needs `bun install --frozen-lockfile --silent`
 (`worktree.bootstrap` in `forge.config.json`). No codegen and no env files to
 copy from the main checkout — this is a plain React library with no runtime
 secrets.
@@ -39,9 +39,9 @@ secrets.
 Commands a worker runs before considering its own change done: see
 `commands.selfCheck` in `forge.config.json`.
 
-`pnpm run lint` — the only script that checks anything. `build` (`tsc && vite
-build`) is deliberately left out: it's slow and the maintainer asks for it
-explicitly.
+`bun run lint` — the self-check. `build` (`tsc -b && vite build`) is
+deliberately left out: it's slow and the maintainer asks for it explicitly,
+except in tickets whose acceptance criteria require it.
 
 ## Concurrency
 
