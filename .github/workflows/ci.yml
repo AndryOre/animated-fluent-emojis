@@ -142,7 +142,7 @@ jobs:
       - name: Report package size
         run: |
           tarball_dir=$(mktemp -d)
-          bun pm pack --destination "$tarball_dir" --quiet
+          bun pm pack --ignore-scripts --destination "$tarball_dir" --quiet
           tarball=$(ls "$tarball_dir"/*.tgz)
           tarball_size=$(du -h "$tarball" | cut -f1)
           dist_size=$(du -sh dist | cut -f1)
