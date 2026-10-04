@@ -19,17 +19,12 @@ export interface UseEmojiAnimationResult {
 
 /**
  * Custom hook for managing emoji animation.
- * @param {EmojiManifest | null} emoji - The emoji manifest data or null if not loaded.
- * @param {boolean} playOnHover - Whether to play the animation on hover.
- * @param {number | 'infinite'} animationIterations - The number of animation iterations.
- * @param {boolean} autoPlay - Whether to autoplay the animation.
- * @param {number} size - The size of the emoji in pixels.
- * @returns {Object} An object containing animation-related states and handlers.
- * @returns {boolean} .isInitialAnimationComplete - Whether the initial animation has completed.
- * @returns {React.CSSProperties} .animationStyle - The CSS properties for the animation.
- * @returns {() => void} .handleMouseEnter - Handler for mouse enter event.
- * @returns {() => void} .handleMouseLeave - Handler for mouse leave event.
- * @returns {React.RefObject<HTMLImageElement>} .imageRef - Ref for the image element.
+ * @param emoji - The emoji manifest data or null if not loaded.
+ * @param playOnHover - Whether to play the animation on hover.
+ * @param animationIterations - The number of animation iterations.
+ * @param autoPlay - Whether to autoplay the animation.
+ * @param size - The size of the emoji in pixels.
+ * @returns Animation state, style, mouse handlers and the image element ref.
  */
 export const useEmojiAnimation = (
   emoji: EmojiManifest | null,
@@ -44,16 +39,15 @@ export const useEmojiAnimation = (
   const animationCountRef = useRef(0)
   const imageRef = useRef<HTMLImageElement>(null)
 
-  // Effect for handling animation iterations and completion
   useEffect(() => {
     if (!emoji) return
 
     const handleAnimationIteration = () => {
       animationCountRef.current += 1
       if (
+        !isInitialAnimationComplete &&
         typeof animationIterations === 'number' &&
-        animationCountRef.current >= animationIterations &&
-        !isInitialAnimationComplete
+        animationCountRef.current >= animationIterations
       ) {
         setIsInitialAnimationComplete(true)
       }
@@ -75,44 +69,42 @@ export const useEmojiAnimation = (
     }
 
     return () => {
-      if (imgElement) {
-        imgElement.removeEventListener(
-          'animationiteration',
-          handleAnimationIteration,
-        )
-        imgElement.removeEventListener('animationend', handleAnimationEnd)
-      }
+      if (!imgElement) return
+
+      imgElement.removeEventListener(
+        'animationiteration',
+        handleAnimationIteration,
+      )
+      imgElement.removeEventListener('animationend', handleAnimationEnd)
     }
   }, [emoji, animationIterations, isInitialAnimationComplete])
 
-  // Effect for handling play on hover functionality
   useEffect(() => {
     if (!playOnHover || !isInitialAnimationComplete || !emoji) return
 
     const imgElement = imageRef.current
-    if (imgElement) {
-      if (isHovered) {
-        imgElement.style.animationPlayState = 'running'
-      } else {
-        imgElement.style.animationPlayState = 'paused'
-        imgElement.style.transform = `translateY(-${
-          (emoji.animation.firstFrame - 1) * size
-        }px)`
-      }
+    if (!imgElement) return
+
+    if (isHovered) {
+      imgElement.style.animationPlayState = 'running'
+    } else {
+      imgElement.style.animationPlayState = 'paused'
+      imgElement.style.transform = `translateY(-${String(
+        (emoji.animation.firstFrame - 1) * size,
+      )}px)`
     }
   }, [isHovered, playOnHover, isInitialAnimationComplete, emoji, size])
 
-  // Memoized animation style object
-  const animationStyle = useMemo<React.CSSProperties>(() => {
+  const animationStyle = useMemo<CSSProperties>(() => {
     if (!emoji) return {}
 
     return {
       width: size,
-      animationName: `emoji-${emoji.id}-${size}`,
-      animationDuration: `${
-        emoji.animation.framesCount / emoji.animation.fps
-      }s`,
-      animationTimingFunction: `steps(${emoji.animation.framesCount})`,
+      animationName: `emoji-${emoji.id}-${String(size)}`,
+      animationDuration: `${String(
+        emoji.animation.framesCount / emoji.animation.fps,
+      )}s`,
+      animationTimingFunction: `steps(${String(emoji.animation.framesCount)})`,
       animationIterationCount:
         isInitialAnimationComplete && playOnHover
           ? 'infinite'
@@ -122,7 +114,7 @@ export const useEmojiAnimation = (
         (isInitialAnimationComplete && playOnHover && isHovered)
           ? 'running'
           : 'paused',
-      transform: `translateY(-${(emoji.animation.firstFrame - 1) * size}px)`,
+      transform: `translateY(-${String((emoji.animation.firstFrame - 1) * size)}px)`,
     }
   }, [
     emoji,
@@ -134,8 +126,12 @@ export const useEmojiAnimation = (
     isHovered,
   ])
 
-  const handleMouseEnter = () => setIsHovered(true)
-  const handleMouseLeave = () => setIsHovered(false)
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+  }
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+  }
 
   return {
     isInitialAnimationComplete,

@@ -6,13 +6,13 @@ import styles from './Emoji.module.css'
 
 /**
  * Emoji component for displaying animated emojis.
- * @param {EmojiProps} props - The properties for the Emoji component.
- * @param {string} props.id - The unique identifier of the emoji.
- * @param {number} [props.size=100] - The size of the emoji in pixels.
- * @param {boolean} [props.playOnHover=false] - Whether to play the animation on hover.
- * @param {number|'infinite'} [props.animationIterations=2] - The number of times to play the animation, or 'infinite'.
- * @param {boolean} [props.autoPlay=true] - Whether to automatically play the animation on mount.
- * @returns {ReactElement | null} The rendered Emoji component or null if the emoji is not found.
+ * @param props - The properties for the Emoji component.
+ * @param props.id - The unique identifier of the emoji.
+ * @param props.size - The size of the emoji in pixels.
+ * @param props.playOnHover - Whether to play the animation on hover.
+ * @param props.animationIterations - How many times to play the animation, or 'infinite'.
+ * @param props.autoPlay - Whether to automatically play the animation on mount.
+ * @returns The rendered Emoji component or null if the emoji is not found.
  */
 export const Emoji = ({
   id,
@@ -30,52 +30,52 @@ export const Emoji = ({
     imageRef,
   } = useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
 
-  // Effect for dynamically adding and removing emoji animation styles
   useEffect(() => {
     if (!emoji) return
 
-    const styleId = `emoji-style-${id}-${size}`
-    let styleElement = document.getElementById(styleId)
+    const styleId = `emoji-style-${id}-${String(size)}`
+    let styleElement = document.querySelector(`#${CSS.escape(styleId)}`)
 
     if (!styleElement) {
       styleElement = document.createElement('style')
       styleElement.id = styleId
-      document.head.appendChild(styleElement)
+      document.head.append(styleElement)
     }
 
-    // Asynchronously generate and set the emoji style
-    generateEmojiStyle(id, size).then((style) => {
-      if (styleElement) {
-        styleElement.innerHTML = style
-      }
+    const targetElement = styleElement
+    void generateEmojiStyle(id, size).then((style) => {
+      targetElement.innerHTML = style
     })
 
-    // Clean up function to remove the style element when component unmounts
     return () => {
-      if (styleElement && document.head.contains(styleElement)) {
-        document.head.removeChild(styleElement)
+      if (document.head.contains(targetElement)) {
+        targetElement.remove()
       }
     }
   }, [id, size, emoji])
 
-  // Render nothing if the emoji is not found
   if (!emoji) {
     return null
   }
 
   const containerStyle = {
-    width: `${size}px`,
-    height: `${size}px`,
+    width: `${String(size)}px`,
+    height: `${String(size)}px`,
     display: 'inline-block',
     overflow: 'hidden',
   }
+  const containerClassName = [
+    styles.emojiContainer,
+    isInitialAnimationComplete && playOnHover ? styles.animateOnHover : '',
+  ]
+    .join(' ')
+    .trim()
+
   return (
     <span
       title={emoji.description}
       style={containerStyle}
-      className={`${styles.emojiContainer} ${
-        isInitialAnimationComplete && playOnHover ? styles.animateOnHover : ''
-      }`}
+      className={containerClassName}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

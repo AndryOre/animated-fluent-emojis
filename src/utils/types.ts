@@ -1,8 +1,7 @@
 /**
  * Represents the animation properties of an emoji.
- * @interface
  */
-export interface Animation {
+interface Animation {
   /** The frames per second of the animation. */
   fps: number
   /** The total number of frames in the animation. */
@@ -13,9 +12,8 @@ export interface Animation {
 
 /**
  * Represents an individual emoticon.
- * @interface
  */
-export interface Emoticon {
+interface Emoticon {
   /** Unique identifier for the emoticon. */
   id: string
   /** Human-readable description of the emoticon. */
@@ -36,9 +34,8 @@ export interface Emoticon {
 
 /**
  * Represents a category of emoticons.
- * @interface
  */
-export interface Category {
+interface Category {
   /** Unique identifier for the category. */
   id: string
   /** The display title of the category. */
@@ -51,7 +48,6 @@ export interface Category {
 
 /**
  * Represents the entire manifest structure.
- * @interface
  */
 export interface Manifest {
   /** An array of Category objects representing all emoji categories. */
@@ -60,7 +56,6 @@ export interface Manifest {
 
 /**
  * Extends the Emoticon interface with category information.
- * @interface
  */
 export interface EmojiManifest extends Emoticon {
   /** The category to which this emoji belongs. */
@@ -69,7 +64,6 @@ export interface EmojiManifest extends Emoticon {
 
 /**
  * Represents the properties for the Emoji component.
- * @interface
  */
 export interface EmojiProps {
   /** The unique identifier of the emoji. */

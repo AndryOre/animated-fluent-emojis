@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 
 import { Emoji } from '../src/index.js'
 
-const rootElement = document.getElementById('root')
+const rootElement = document.querySelector('#root')
 
 if (!rootElement) {
   throw new Error('Root element #root not found')
