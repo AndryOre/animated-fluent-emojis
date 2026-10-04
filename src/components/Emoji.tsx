@@ -34,7 +34,7 @@ export const Emoji = ({
     if (!emoji) return
 
     const styleId = `emoji-style-${id}-${String(size)}`
-    let styleElement = document.querySelector(`#${styleId}`)
+    let styleElement = document.querySelector(`#${CSS.escape(styleId)}`)
 
     if (!styleElement) {
       styleElement = document.createElement('style')
