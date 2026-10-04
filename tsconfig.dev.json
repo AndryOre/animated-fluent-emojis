@@ -2,8 +2,9 @@
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.dev.tsbuildinfo",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "isolatedDeclarations": false
   },
-  "include": ["src", "playground"]
+  "include": ["src", "playground"],
+  "exclude": []
 }

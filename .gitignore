@@ -27,3 +27,5 @@ dist-ssr
 .forge
 .claude/worktrees
 .eslintcache
+
+coverage
