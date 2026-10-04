@@ -1,33 +1,33 @@
 # `/forge` operational specifics for animated-fluent-emojis
 
-Repo-specific config the global `/forge` command reads before running any of
-its 9 phases. Machine-checkable values (trunk/remote, ticket id shape,
-concurrency, preflight's required files, handoff/usage thresholds) live in
+Repo-specific config the global `/forge` command reads before running any of its
+9 phases. Machine-checkable values (trunk/remote, ticket id shape, concurrency,
+preflight's required files, handoff/usage thresholds) live in
 [`forge.config.json`](../../forge.config.json) at the repo root, matching
 `~/.claude/forge/schema/forge.config.schema.json`. This file holds the "why"
 prose and everything a JSON value can't express.
 
 ## Tracker
 
-Tracker: `linear`. See [issue-tracker.md](issue-tracker.md) for the
-literal calls `/forge` makes to create, read, and transition tickets here, and
+Tracker: `linear`. See [issue-tracker.md](issue-tracker.md) for the literal
+calls `/forge` makes to create, read, and transition tickets here, and
 [triage-labels.md](triage-labels.md) for the triage vocabulary.
 
 ## Ticket ids and branches
 
 - Ticket id shape: `^AO-\d+$` (e.g. `AO-1`), issued by Linear team `AO`.
-- Worker branch: `ao-<n>-<slug>` — each worker checks this out
-  itself at worktree step 0. Local-only, never pushed.
+- Worker branch: `ao-<n>-<slug>` — each worker checks this out itself at
+  worktree step 0. Local-only, never pushed.
 - Commit: add a trailer line referencing the ticket at the end of the commit
   body (see `commit.trailer`/`commit.trailerPosition` in `forge.config.json` if
   this repo wants something other than the built-in default).
 
 ## Worktree setup
 
-A worker's first action in a fresh worktree is always `git worktree lock`
-with the reason the coordinator generated for it (`forge lock-reason`) —
-that's built into `/forge` itself, identical in every repo, and nothing
-below needs to restate it.
+A worker's first action in a fresh worktree is always `git worktree lock` with
+the reason the coordinator generated for it (`forge lock-reason`) — that's built
+into `/forge` itself, identical in every repo, and nothing below needs to
+restate it.
 
 A fresh worktree only needs `bun install --frozen-lockfile --silent`
 (`worktree.bootstrap` in `forge.config.json`). No codegen and no env files to
@@ -46,29 +46,28 @@ except in tickets whose acceptance criteria require it.
 ## Concurrency
 
 Max `concurrency.waveSize` live agents per wave, and a global
-`concurrency.maxLiveWorkers` cap shared **host-wide** — by every
-concurrently running `/forge` coordinator on this machine, across *every*
-repo and every git worktree of every repo (e.g. several Orca worktrees of
-this same repo, or an entirely unrelated repo, all draw from one pool). The
-pool lives under `~/.local/state/forge/slots`, not this repo's own
-`--git-common-dir`. A slot is held only while its worker is actually live —
-it's released as soon as that worker reports done, not held for the rest of
-the wave.
+`concurrency.maxLiveWorkers` cap shared **host-wide** — by every concurrently
+running `/forge` coordinator on this machine, across _every_ repo and every git
+worktree of every repo (e.g. several Orca worktrees of this same repo, or an
+entirely unrelated repo, all draw from one pool). The pool lives under
+`~/.local/state/forge/slots`, not this repo's own `--git-common-dir`. A slot is
+held only while its worker is actually live — it's released as soon as that
+worker reports done, not held for the rest of the wave.
 
-`concurrency.maxLiveWorkers` defaults to `"auto"`: derived from this host's
-own cpu count and RAM rather than a fixed number, so it scales with the
-machine `/forge` actually runs on instead of an arbitrary constant. A
-separate memory-headroom brake also denies new slot acquisitions when
-`MemAvailable` is too low, regardless of how many slots are technically free
-— see `forge doctor` for this host's resolved numbers, and pin an explicit
-integer here instead of `"auto"` only when there's a specific reason to cap
-this repo lower than the host otherwise would. Both settings live in
-`forge.config.json`. `FORGE_MAX_LIVE_WORKERS` (accepting `"auto"` too) and
-`FORGE_RUN_IDLE_THRESHOLD_MS` still override their config counterparts when
-set, same as before this repo had a config file at all.
+`concurrency.maxLiveWorkers` defaults to `"auto"`: derived from this host's own
+cpu count and RAM rather than a fixed number, so it scales with the machine
+`/forge` actually runs on instead of an arbitrary constant. A separate
+memory-headroom brake also denies new slot acquisitions when `MemAvailable` is
+too low, regardless of how many slots are technically free — see `forge doctor`
+for this host's resolved numbers, and pin an explicit integer here instead of
+`"auto"` only when there's a specific reason to cap this repo lower than the
+host otherwise would. Both settings live in `forge.config.json`.
+`FORGE_MAX_LIVE_WORKERS` (accepting `"auto"` too) and
+`FORGE_RUN_IDLE_THRESHOLD_MS` still override their config counterparts when set,
+same as before this repo had a config file at all.
 
 ---
 
 Generated by `forge init` on 2026-10-04. Replace every such marker above before
-running `/forge` unattended in this repo — `forge preflight` refuses to
-dispatch while one remains.
+running `/forge` unattended in this repo — `forge preflight` refuses to dispatch
+while one remains.

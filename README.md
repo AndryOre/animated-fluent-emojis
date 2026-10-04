@@ -4,7 +4,10 @@
 
 # Animated Fluent Emojis
 
-**Animated Fluent Emojis** is a React component library that brings Microsoft's Fluent emojis to life in your web applications. This library offers an easy way to integrate expressive and engaging animated emojis, enhancing user experience and visual appeal in your React projects.
+**Animated Fluent Emojis** is a React component library that brings Microsoft's
+Fluent emojis to life in your web applications. This library offers an easy way
+to integrate expressive and engaging animated emojis, enhancing user experience
+and visual appeal in your React projects.
 
 <p align="center">
   <img src="https://cdn.animated-fluent-emojis.com/webp/Travel%20and%20places/launch.webp" alt="Rocket Launch" width="100" height="100">
@@ -12,7 +15,10 @@
   <img src="https://cdn.animated-fluent-emojis.com/webp/Smilies/1f4af_hundredpointssymbol.webp" alt="Hundred Points" width="100" height="100">
 </p>
 
-> 🎉 **Exclusive Feature:** Until now, these Animated Fluent Emojis were only available within Microsoft Teams. This library makes them accessible for use in any web application for the first time, bringing a unique and lively emoji experience to your projects!
+> 🎉 **Exclusive Feature:** Until now, these Animated Fluent Emojis were only
+> available within Microsoft Teams. This library makes them accessible for use
+> in any web application for the first time, bringing a unique and lively emoji
+> experience to your projects!
 
 <details>
 <summary>Table of Contents</summary>
@@ -33,12 +39,18 @@
 
 ## Features 🌟
 
-- 🚀 **Easy Integration**: Simple React component for quick implementation in your projects.
-- 🎨 **Customizable**: Adjust size, animation behavior, and more to fit your design needs.
-- 🔄 **Flexible Animation**: Support for autoplay and hover-triggered animations.
-- 🌈 **Wide Variety**: Access to a diverse set of emojis from Microsoft's Fluent Emoji collection.
-- 📦 **Lightweight**: Optimized for performance to keep your applications fast and responsive.
-- 🌐 **TypeScript Support**: Full TypeScript support for improved development experience.
+- 🚀 **Easy Integration**: Simple React component for quick implementation in
+  your projects.
+- 🎨 **Customizable**: Adjust size, animation behavior, and more to fit your
+  design needs.
+- 🔄 **Flexible Animation**: Support for autoplay and hover-triggered
+  animations.
+- 🌈 **Wide Variety**: Access to a diverse set of emojis from Microsoft's Fluent
+  Emoji collection.
+- 📦 **Lightweight**: Optimized for performance to keep your applications fast
+  and responsive.
+- 🌐 **TypeScript Support**: Full TypeScript support for improved development
+  experience.
 
 ## Tech Stack 🧰
 
@@ -48,7 +60,8 @@
 
 ## Installation 🔧
 
-To install Animated Fluent Emojis in your project, run one of the following commands:
+To install Animated Fluent Emojis in your project, run one of the following
+commands:
 
 ```sh
 npm install animated-fluent-emojis
@@ -61,7 +74,7 @@ pnpm add animated-fluent-emojis
 1. Import the Emoji component in your React file:
 
    ```jsx
-   import { Emoji } from 'animated-fluent-emojis';
+   import { Emoji } from 'animated-fluent-emojis'
    ```
 
 2. Use the component in your JSX:
@@ -90,26 +103,29 @@ pnpm add animated-fluent-emojis
 ### Basic Usage
 
 ```jsx
-import React from 'react';
-import { Emoji } from 'animated-fluent-emojis';
+import { Emoji } from 'animated-fluent-emojis'
+import React from 'react'
 
 function App() {
-	return (
-		<div>
-			<h1>Hello, Animated Emojis!</h1>
-			<Emoji id="1f4af_hundredpointssymbol" />
-			<Emoji id="1f92f_explodinghead" size={64} playOnHover />
-			<Emoji id="launch" animationIterations={3} />
-		</div>
-	);
+  return (
+    <div>
+      <h1>Hello, Animated Emojis!</h1>
+      <Emoji id="1f4af_hundredpointssymbol" />
+      <Emoji id="1f92f_explodinghead" size={64} playOnHover />
+      <Emoji id="launch" animationIterations={3} />
+    </div>
+  )
 }
 
-export default App;
+export default App
 ```
 
 ## Emoji Categories 📋
 
-For a complete list of available emojis and their corresponding IDs, Unicode representations, descriptions, and keywords, please refer to our [Emoji List](./docs/EMOJI_LIST.md). The emojis are organized into the following categories:
+For a complete list of available emojis and their corresponding IDs, Unicode
+representations, descriptions, and keywords, please refer to our
+[Emoji List](./docs/EMOJI_LIST.md). The emojis are organized into the following
+categories:
 
 - [Activities](./docs/EMOJI_LIST_Activities.md)
 - [Animals](./docs/EMOJI_LIST_Animals.md)
@@ -123,13 +139,18 @@ For a complete list of available emojis and their corresponding IDs, Unicode rep
 
 ## Contributing
 
-We welcome contributions to Animated Fluent Emojis! If you have suggestions for improvements or encounter any issues, please feel free to open an issue or submit a pull request.
+We welcome contributions to Animated Fluent Emojis! If you have suggestions for
+improvements or encounter any issues, please feel free to open an issue or
+submit a pull request.
 
-Contribution guidelines are currently being developed. In the meantime, please feel free to open issues or submit pull requests following common open-source practices.
+Contribution guidelines are currently being developed. In the meantime, please
+feel free to open issues or submit pull requests following common open-source
+practices.
 
 ## Support the Project
 
-If you find Animated Fluent Emojis useful, please consider supporting the project:
+If you find Animated Fluent Emojis useful, please consider supporting the
+project:
 
 - [![GitHub Stars][GitHub Stars]][GitHub-url]
 - [![GitHub Follow][GitHub Follow]][GitHub-follow-url]
@@ -140,27 +161,38 @@ Your support helps maintain and improve Animated Fluent Emojis!
 
 ## License 📄
 
-Animated Fluent Emojis is totally free for commercial and personal use, this software is licensed under the [ISC License](LICENSE).
+Animated Fluent Emojis is totally free for commercial and personal use, this
+software is licensed under the [ISC License](LICENSE).
 
 ## Acknowledgements
 
 - Microsoft for their [Fluent Emoji][Microsoft Fluent Emojis] set
-- [Tarikul Islam Anik][Tarikul Islam Anik Profile] for the [Animated Fluent Emojis][Tarikul Islam Anik Repo] project, which served as inspiration for this library
+- [Tarikul Islam Anik][Tarikul Islam Anik Profile] for the [Animated Fluent
+  Emojis][Tarikul Islam Anik Repo] project, which served as inspiration for this
+  library
 
-[React]: https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black
+[React]:
+  https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black
 [React-url]: https://react.dev/
-[TypeScript]: https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white
+[TypeScript]:
+  https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white
 [TypeScript-url]: https://www.typescriptlang.org/
-[Vite]: https://img.shields.io/badge/Vite-646CFF.svg?style=for-the-badge&logo=Vite&logoColor=white
+[Vite]:
+  https://img.shields.io/badge/Vite-646CFF.svg?style=for-the-badge&logo=Vite&logoColor=white
 [Vite-url]: https://vitejs.dev/
-[GitHub Stars]: https://img.shields.io/github/stars/andryore/animated-fluent-emojis?style=for-the-badge&logo=github&logoColor=white&labelColor=24292e
+[GitHub Stars]:
+  https://img.shields.io/github/stars/andryore/animated-fluent-emojis?style=for-the-badge&logo=github&logoColor=white&labelColor=24292e
 [GitHub-url]: https://github.com/andryore/animated-fluent-emojis
-[X-follow]: https://img.shields.io/badge/X-000000.svg?style=for-the-badge&logo=X&logoColor=white
+[X-follow]:
+  https://img.shields.io/badge/X-000000.svg?style=for-the-badge&logo=X&logoColor=white
 [X-url]: https://twitter.com/andryore
-[GitHub Follow]: https://img.shields.io/github/followers/andryore?style=for-the-badge&logo=github&logoColor=white&labelColor=24292e
+[GitHub Follow]:
+  https://img.shields.io/github/followers/andryore?style=for-the-badge&logo=github&logoColor=white&labelColor=24292e
 [GitHub-follow-url]: https://github.com/andryore
-[Ko-fi]: https://img.shields.io/badge/Kofi-FF5E5B.svg?style=for-the-badge&logo=Ko-fi&logoColor=white
+[Ko-fi]:
+  https://img.shields.io/badge/Kofi-FF5E5B.svg?style=for-the-badge&logo=Ko-fi&logoColor=white
 [Ko-fi-url]: https://ko-fi.com/andryore
 [Microsoft Fluent Emojis]: https://github.com/microsoft/fluentui-emoji
 [Tarikul Islam Anik Profile]: https://github.com/Tarikul-Islam-Anik
-[Tarikul Islam Anik Repo]: https://github.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis
+[Tarikul Islam Anik Repo]:
+  https://github.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis

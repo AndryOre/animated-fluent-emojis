@@ -3,12 +3,12 @@
  * @interface
  */
 export interface Animation {
-	/** The frames per second of the animation. */
-	fps: number;
-	/** The total number of frames in the animation. */
-	framesCount: number;
-	/** The index of the first frame in the animation. */
-	firstFrame: number;
+  /** The frames per second of the animation. */
+  fps: number
+  /** The total number of frames in the animation. */
+  framesCount: number
+  /** The index of the first frame in the animation. */
+  firstFrame: number
 }
 
 /**
@@ -16,22 +16,22 @@ export interface Animation {
  * @interface
  */
 export interface Emoticon {
-	/** Unique identifier for the emoticon. */
-	id: string;
-	/** Human-readable description of the emoticon. */
-	description: string;
-	/** Array of shortcut strings to represent this emoticon. */
-	shortcuts: string[];
-	/** Unicode representation of the emoticon. */
-	unicode: string;
-	/** Entity tag for caching purposes. */
-	etag: string;
-	/** Whether this emoticon has diverse (skin tone) variants. */
-	diverse: boolean;
-	/** Animation properties for this emoticon. */
-	animation: Animation;
-	/** Array of keywords associated with this emoticon. */
-	keywords: string[];
+  /** Unique identifier for the emoticon. */
+  id: string
+  /** Human-readable description of the emoticon. */
+  description: string
+  /** Array of shortcut strings to represent this emoticon. */
+  shortcuts: string[]
+  /** Unicode representation of the emoticon. */
+  unicode: string
+  /** Entity tag for caching purposes. */
+  etag: string
+  /** Whether this emoticon has diverse (skin tone) variants. */
+  diverse: boolean
+  /** Animation properties for this emoticon. */
+  animation: Animation
+  /** Array of keywords associated with this emoticon. */
+  keywords: string[]
 }
 
 /**
@@ -39,14 +39,14 @@ export interface Emoticon {
  * @interface
  */
 export interface Category {
-	/** Unique identifier for the category. */
-	id: string;
-	/** The display title of the category. */
-	title: string;
-	/** A brief description of the category. */
-	description: string;
-	/** An array of Emoticon objects in this category. */
-	emoticons: Emoticon[];
+  /** Unique identifier for the category. */
+  id: string
+  /** The display title of the category. */
+  title: string
+  /** A brief description of the category. */
+  description: string
+  /** An array of Emoticon objects in this category. */
+  emoticons: Emoticon[]
 }
 
 /**
@@ -54,8 +54,8 @@ export interface Category {
  * @interface
  */
 export interface Manifest {
-	/** An array of Category objects representing all emoji categories. */
-	categories: Category[];
+  /** An array of Category objects representing all emoji categories. */
+  categories: Category[]
 }
 
 /**
@@ -63,8 +63,8 @@ export interface Manifest {
  * @interface
  */
 export interface EmojiManifest extends Emoticon {
-	/** The category to which this emoji belongs. */
-	category: string;
+  /** The category to which this emoji belongs. */
+  category: string
 }
 
 /**
@@ -72,14 +72,14 @@ export interface EmojiManifest extends Emoticon {
  * @interface
  */
 export interface EmojiProps {
-	/** The unique identifier of the emoji. */
-	id: string;
-	/** The size of the emoji in pixels. Default is 100. */
-	size?: number;
-	/** Whether to play the animation on hover. Default is false. */
-	playOnHover?: boolean;
-	/** The number of times to play the animation, or 'infinite'. Default is 2. */
-	animationIterations?: number | 'infinite';
-	/** Whether to automatically play the animation on mount. Default is true. */
-	autoPlay?: boolean;
+  /** The unique identifier of the emoji. */
+  id: string
+  /** The size of the emoji in pixels. Default is 100. */
+  size?: number
+  /** Whether to play the animation on hover. Default is false. */
+  playOnHover?: boolean
+  /** The number of times to play the animation, or 'infinite'. Default is 2. */
+  animationIterations?: number | 'infinite'
+  /** Whether to automatically play the animation on mount. Default is true. */
+  autoPlay?: boolean
 }

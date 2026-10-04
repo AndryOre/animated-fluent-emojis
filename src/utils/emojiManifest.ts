@@ -1,14 +1,14 @@
-import type { Manifest, EmojiManifest } from './types.js';
+import type { EmojiManifest, Manifest } from './types.js'
 
 /**
  * Fetches the emoji manifest from the CDN.
  * @returns {Promise<Manifest>} A promise that resolves to the raw manifest data.
  */
 async function fetchManifest(): Promise<Manifest> {
-	const response = await fetch(
-		'https://cdn.animated-fluent-emojis.com/manifest.json'
-	);
-	return response.json();
+  const response = await fetch(
+    'https://cdn.animated-fluent-emojis.com/manifest.json',
+  )
+  return response.json()
 }
 
 /**
@@ -16,28 +16,29 @@ async function fetchManifest(): Promise<Manifest> {
  * @returns {Promise<Record<string, EmojiManifest>>} A promise that resolves to the processed emoji manifest.
  */
 export async function generateEmojiManifest(): Promise<
-	Record<string, EmojiManifest>
+  Record<string, EmojiManifest>
 > {
-	const rawManifest = await fetchManifest();
-	// Reduce the raw manifest into a flat object with emoji id as key
-	return rawManifest.categories.reduce(
-		(acc, category) => ({
-			...acc,
-			...Object.fromEntries(
-				category.emoticons.map((emoticon) => [
-					emoticon.id,
-					{ ...emoticon, category: category.title },
-				])
-			),
-		}),
-		{}
-	);
+  const rawManifest = await fetchManifest()
+  // Reduce the raw manifest into a flat object with emoji id as key
+  return rawManifest.categories.reduce(
+    (acc, category) => ({
+      ...acc,
+      ...Object.fromEntries(
+        category.emoticons.map((emoticon) => [
+          emoticon.id,
+          { ...emoticon, category: category.title },
+        ]),
+      ),
+    }),
+    {},
+  )
 }
 
 /**
  * A promise that resolves to the processed emoji manifest.
  */
-export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> = generateEmojiManifest();
+export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> =
+  generateEmojiManifest()
 
 /**
  * Gets the category folder for a given emoji id.
@@ -46,10 +47,10 @@ export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> = gene
  * @throws {Error} If the emoji is not found.
  */
 export async function getCategoryFolder(id: string): Promise<string> {
-	const manifest = await emojiManifestPromise;
-	const emoji = manifest[id];
-	if (!emoji) throw new Error(`Emoji with id "${id}" not found`);
-	return emoji.category;
+  const manifest = await emojiManifestPromise
+  const emoji = manifest[id]
+  if (!emoji) throw new Error(`Emoji with id "${id}" not found`)
+  return emoji.category
 }
 
 /**
@@ -60,17 +61,17 @@ export async function getCategoryFolder(id: string): Promise<string> {
  * @throws {Error} If the emoji is not found.
  */
 export async function generateEmojiStyle(
-	id: string,
-	size: number
+  id: string,
+  size: number,
 ): Promise<string> {
-	const manifest = await emojiManifestPromise;
-	const emoji = manifest[id];
-	if (!emoji) throw new Error(`Emoji with id "${id}" not found`);
+  const manifest = await emojiManifestPromise
+  const emoji = manifest[id]
+  if (!emoji) throw new Error(`Emoji with id "${id}" not found`)
 
-	return `
+  return `
     @keyframes emoji-${id}-${size} {
       0% { transform: translateY(0); }
       100% { transform: translateY(-${emoji.animation.framesCount * size}px); }
     }
-  `;
+  `
 }

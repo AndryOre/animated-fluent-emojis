@@ -1,11 +1,11 @@
 .emojiImage {
-	transform: translateY(0) !important;
+  transform: translateY(0) !important;
 }
 
 .animateOnHover .emojiImage {
-	animation-play-state: paused !important;
+  animation-play-state: paused !important;
 }
 
 .animateOnHover:hover .emojiImage {
-	animation-play-state: running !important;
+  animation-play-state: running !important;
 }
