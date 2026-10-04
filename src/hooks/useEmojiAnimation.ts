@@ -1,5 +1,20 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { EmojiManifest } from '@/utils';
+import {
+	useState,
+	useRef,
+	useEffect,
+	useMemo,
+	type CSSProperties,
+	type RefObject,
+} from 'react';
+import type { EmojiManifest } from '../utils/index.js';
+
+export interface UseEmojiAnimationResult {
+	isInitialAnimationComplete: boolean;
+	animationStyle: CSSProperties;
+	handleMouseEnter: () => void;
+	handleMouseLeave: () => void;
+	imageRef: RefObject<HTMLImageElement | null>;
+}
 
 /**
  * Custom hook for managing emoji animation.
@@ -21,7 +36,7 @@ export const useEmojiAnimation = (
 	animationIterations: number | 'infinite',
 	autoPlay: boolean,
 	size: number
-) => {
+): UseEmojiAnimationResult => {
 	const [isInitialAnimationComplete, setIsInitialAnimationComplete] = useState(
 		!autoPlay
 	);

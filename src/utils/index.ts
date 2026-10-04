@@ -1,2 +1,2 @@
-export * from './emojiManifest';
-export * from './types';
+export * from './emojiManifest.js';
+export * from './types.js';
