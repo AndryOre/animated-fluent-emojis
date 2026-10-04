@@ -47,6 +47,8 @@
 		"dev": "vite",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
+		"format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,json5,md,css,yml,yaml}\" --cache",
+		"format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,json5,md,css,yml,yaml}\" --cache",
 		"lint:package": "publint --strict && attw --pack . --profile esm-only",
 		"size": "size-limit"
 	},
@@ -57,6 +59,7 @@
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
 		"@eslint/js": "^9.39.5",
+		"@ianvs/prettier-plugin-sort-imports": "^4.7.1",
 		"@size-limit/file": "^14.1.0",
 		"@types/node": "^22.4.0",
 		"@types/react": "^19.3.0",
@@ -66,6 +69,7 @@
 		"eslint-plugin-react-hooks": "^7.1.1",
 		"eslint-plugin-react-refresh": "^0.5.7",
 		"globals": "^17.13.0",
+		"prettier": "^3.9.9",
 		"publint": "^0.3.25",
 		"react": "^19.3.0",
 		"react-dom": "^19.3.0",
