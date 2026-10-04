@@ -12,23 +12,26 @@ git hooks on `bun install` through the `prepare` script.
 
 ## Scripts
 
-| Script                  | What it does                                                                      |
-| ----------------------- | --------------------------------------------------------------------------------- |
-| `bun run dev`           | Starts the Vite dev server serving the playground.                                |
-| `bun run build`         | Type-checks (`tsc -b`) and builds the library with Vite. Slow; run only if asked. |
-| `bun run check`         | Aggregate gate: format:check, lint, typecheck, knip, lint:package.                |
-| `bun run fix`           | Aggregate autofix: format:write, lint:fix, typecheck.                             |
-| `bun run format:check`  | Checks formatting with Prettier (no writes).                                      |
-| `bun run format:write`  | Formats the repository with Prettier.                                             |
-| `bun run lint`          | Runs ESLint with `--max-warnings=0` (cached).                                     |
-| `bun run lint:fix`      | Runs ESLint with `--fix`.                                                         |
-| `bun run typecheck`     | Runs `tsc -b`.                                                                    |
-| `bun run knip`          | Finds unused files, exports and dependencies.                                     |
-| `bun run lint:package`  | Builds, then runs `publint --strict` and `attw --profile esm-only`.               |
-| `bun run size`          | Checks bundle and stylesheet sizes against `size-limit`. Needs a prior build.     |
-| `bun run test`          | Runs the Vitest suite once (browser and node projects).                           |
-| `bun run test:watch`    | Runs Vitest in watch mode.                                                        |
-| `bun run test:coverage` | Runs Vitest with v8 coverage and enforces the thresholds.                         |
+| Script                  | What it does                                                                        |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `bun run dev`           | Starts the Vite dev server serving the playground.                                  |
+| `bun run build`         | Type-checks (`tsc -b`) and builds the library with Vite. Slow; run only if asked.   |
+| `bun run check`         | Aggregate gate: format:check, lint, typecheck, knip, lint:package.                  |
+| `bun run fix`           | Aggregate autofix: format:write, lint:fix, typecheck.                               |
+| `bun run format:check`  | Checks formatting with Prettier (no writes).                                        |
+| `bun run format:write`  | Formats the repository with Prettier.                                               |
+| `bun run lint`          | Runs ESLint with `--max-warnings=0` (cached).                                       |
+| `bun run lint:fix`      | Runs ESLint with `--fix`.                                                           |
+| `bun run typecheck`     | Runs `tsc -b`.                                                                      |
+| `bun run knip`          | Finds unused files, exports and dependencies.                                       |
+| `bun run lint:package`  | Builds, then runs `publint --strict` and `attw --profile esm-only`.                 |
+| `bun run size`          | Checks bundle and stylesheet sizes against `size-limit`. Needs a prior build.       |
+| `bun run test`          | Runs the Vitest suite once (browser and node projects).                             |
+| `bun run test:watch`    | Runs Vitest in watch mode.                                                          |
+| `bun run test:coverage` | Runs Vitest with v8 coverage and enforces the thresholds.                           |
+| `bun run lint:docs`     | Runs lychee over the docs with the same arguments as `lint-docs.yml`.               |
+| `bun run lint:commits`  | Runs commitlint over the commits since `origin/main`, like the CI job.              |
+| `bun run ci:local`      | Runs the CI pipeline locally: install, commits, docs, check, coverage, build, size. |
 
 ## Git hooks
 
@@ -85,8 +88,8 @@ Vitest has two projects (`vitest.config.ts`):
 - **`browser`**: `src/components/**` and `src/hooks/**` tests run in headless
   Chromium through Playwright, with MSW mocking the CDN manifest
   (`src/test/browser-setup.ts`). Run `bunx playwright install chromium` once.
-- **`node`**: `src/utils/**`, `src/test/**`, `eslint-rules/**` and `docs/adr/**`
-  tests.
+- **`node`**: `src/utils/**`, `src/test/**`, `eslint-rules/**`, `docs/adr/**`
+  and `scripts/**` tests.
 
 `src/test/coverage-manifest.test.ts` fails when a source module has no test and
 no documented exemption. Rationale: [ADR 0004](adr/0004-vitest-browser-mode.md).
