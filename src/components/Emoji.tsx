@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { EmojiProps, generateEmojiStyle } from '@/utils';
-import { useEmojiAnimation, useEmojiStyle } from '@/hooks';
+import { useEffect, type ReactElement } from 'react';
+import { generateEmojiStyle, type EmojiProps } from '../utils/index.js';
+import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js';
 import styles from './Emoji.module.css';
 
 /**
@@ -11,7 +11,7 @@ import styles from './Emoji.module.css';
  * @param {boolean} [props.playOnHover=false] - Whether to play the animation on hover.
  * @param {number|'infinite'} [props.animationIterations=2] - The number of times to play the animation, or 'infinite'.
  * @param {boolean} [props.autoPlay=true] - Whether to automatically play the animation on mount.
- * @returns {JSX.Element | null} The rendered Emoji component or null if the emoji is not found.
+ * @returns {ReactElement | null} The rendered Emoji component or null if the emoji is not found.
  */
 export const Emoji = ({
 	id,
@@ -19,7 +19,7 @@ export const Emoji = ({
 	playOnHover = false,
 	animationIterations = 2,
 	autoPlay = true,
-}: EmojiProps): JSX.Element | null => {
+}: EmojiProps): ReactElement | null => {
 	const { emoji, categoryFolder } = useEmojiStyle(id);
 	const {
 		isInitialAnimationComplete,

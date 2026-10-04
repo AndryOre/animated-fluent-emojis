@@ -12,7 +12,7 @@
   },
   "worktree": {
     "bootstrap": [
-      "pnpm install --frozen-lockfile --silent"
+      "bun install --frozen-lockfile --silent"
     ]
   },
   "concurrency": {
@@ -51,7 +51,7 @@
   },
   "commands": {
     "selfCheck": [
-      "pnpm run lint"
+      "bun run lint"
     ]
   }
 }

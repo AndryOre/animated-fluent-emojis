@@ -1,1 +1,1 @@
-export { Emoji } from '@/components/Emoji';
+export { Emoji } from './components/Emoji.js';
