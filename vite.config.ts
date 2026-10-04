@@ -1,25 +1,20 @@
-import { defineConfig } from 'vite';
+import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react-swc';
-import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import { defineConfig } from 'vite';
+
+const rootDirectory = import.meta.dirname;
 
 export default defineConfig({
 	build: {
 		lib: {
-			entry: resolve(__dirname, 'src/index.ts'),
-			name: 'Animated-Fluent-Emojis',
-			formats: ['es', 'umd'],
-			fileName: (format) => `animated-fluent-emojis.${format}.js`,
+			entry: resolve(rootDirectory, 'src/index.ts'),
+			formats: ['es'],
+			fileName: 'animated-fluent-emojis',
+			cssFileName: 'style',
 		},
-		rollupOptions: {
-			external: ['react', 'react-dom', 'react/jsx-runtime'],
-			output: {
-				globals: {
-					react: 'React',
-					'react-dom': 'ReactDOM',
-					'react/jsx-runtime': 'jsxRuntime',
-				},
-			},
+		rolldownOptions: {
+			external: ['react', 'react-dom', /^react\//, /^react-dom\//],
 		},
 		sourcemap: true,
 		emptyOutDir: true,
@@ -28,13 +23,7 @@ export default defineConfig({
 		react(),
 		dts({
 			include: ['src'],
-			insertTypesEntry: true,
 			tsconfigPath: './tsconfig.build.json',
 		}),
 	],
-	resolve: {
-		alias: {
-			'@': resolve(__dirname, 'src'),
-		},
-	},
 });

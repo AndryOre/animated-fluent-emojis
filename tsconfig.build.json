@@ -1,45 +1,24 @@
 {
 	"compilerOptions": {
-		"target": "ES2020",
-		"useDefineForClassFields": true,
-		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.build.tsbuildinfo",
+		"target": "ES2022",
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"types": [],
 		"module": "ESNext",
-		"skipLibCheck": true,
-
-		/* Bundler mode */
 		"moduleResolution": "bundler",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
 		"jsx": "react-jsx",
+		"skipLibCheck": true,
+		"noEmit": true,
 
-		/* Linting */
 		"strict": true,
+		"noUncheckedIndexedAccess": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
-
-		/* Emit */
 		"declaration": true,
-		"declarationMap": true,
-		"sourceMap": true,
-		"outDir": "./dist",
-
-		/* Additional */
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"forceConsistentCasingInFileNames": true,
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["src/*"]
-		}
+		"isolatedDeclarations": true,
+		"verbatimModuleSyntax": true,
+		"erasableSyntaxOnly": true
 	},
-	"include": ["src"],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"tests",
-		"example",
-		"**/*.test.ts",
-		"**/*.test.tsx"
-	]
+	"include": ["src"]
 }
