@@ -4,6 +4,13 @@
 
 # Animated Fluent Emojis
 
+<p align="center">
+  <a href="https://github.com/AndryOre/animated-fluent-emojis/actions/workflows/ci.yml"><img src="https://github.com/AndryOre/animated-fluent-emojis/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/animated-fluent-emojis"><img src="https://img.shields.io/npm/v/animated-fluent-emojis" alt="npm version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/npm/l/animated-fluent-emojis" alt="License"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/AndryOre/animated-fluent-emojis"><img src="https://api.scorecard.dev/projects/github.com/AndryOre/animated-fluent-emojis/badge" alt="OpenSSF Scorecard"></a>
+</p>
+
 **Animated Fluent Emojis** is a React component library that brings Microsoft's
 Fluent emojis to life in your web applications. This library offers an easy way
 to integrate expressive and engaging animated emojis, enhancing user experience
@@ -64,17 +71,25 @@ To install Animated Fluent Emojis in your project, run one of the following
 commands:
 
 ```sh
+bun add animated-fluent-emojis
+# or
 npm install animated-fluent-emojis
 # or
 pnpm add animated-fluent-emojis
 ```
 
+The package supports React 18 and 19 (`react` and `react-dom` are peer
+dependencies) and is ESM-only.
+
 ## Usage 📚
 
-1. Import the Emoji component in your React file:
+1. Import the Emoji component and the stylesheet in your React file (the
+   stylesheet import is required once, for example in your app entry):
 
    ```jsx
    import { Emoji } from 'animated-fluent-emojis'
+
+   import 'animated-fluent-emojis/style.css'
    ```
 
 2. Use the component in your JSX:
@@ -104,6 +119,9 @@ pnpm add animated-fluent-emojis
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis'
+
+import 'animated-fluent-emojis/style.css'
+
 import React from 'react'
 
 function App() {
@@ -139,13 +157,10 @@ categories:
 
 ## Contributing
 
-We welcome contributions to Animated Fluent Emojis! If you have suggestions for
-improvements or encounter any issues, please feel free to open an issue or
-submit a pull request.
-
-Contribution guidelines are currently being developed. In the meantime, please
-feel free to open issues or submit pull requests following common open-source
-practices.
+We welcome contributions to Animated Fluent Emojis! Read
+[CONTRIBUTING](CONTRIBUTING.md) for setup and conventions, and the
+[development guide](docs/development.md) for scripts and tooling. To report a
+vulnerability, follow [SECURITY](.github/SECURITY.md).
 
 ## Support the Project
 

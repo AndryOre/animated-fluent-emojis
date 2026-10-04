@@ -45,6 +45,7 @@ export default defineConfig({
             'src/utils/**/*.test.ts',
             'src/test/**/*.test.ts',
             'eslint-rules/**/*.test.ts',
+            'docs/adr/**/*.test.ts',
           ],
         },
       },
