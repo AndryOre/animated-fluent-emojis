@@ -59,7 +59,10 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "lint:docs": "bun scripts/lint-docs.ts",
+    "lint:commits": "bun scripts/lint-commits.ts",
+    "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -101,7 +104,8 @@
     "vite": "^8.3.2",
     "vite-plugin-dts": "^5.1.2",
     "vitest": "^5",
-    "vitest-browser-react": "^2.3.0"
+    "vitest-browser-react": "^2.3.0",
+    "yaml": "^2.9.1"
   },
   "size-limit": [
     {

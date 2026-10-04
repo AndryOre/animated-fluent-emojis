@@ -13,5 +13,11 @@
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "eslint-rules", "docs/adr"]
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "eslint-rules",
+    "docs/adr",
+    "scripts"
+  ]
 }
