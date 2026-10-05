@@ -25,7 +25,7 @@ git hooks on `bun install` through the `prepare` script.
 | `bun run typecheck`     | Runs `tsc -b`.                                                                                         |
 | `bun run knip`          | Finds unused files, exports and dependencies.                                                          |
 | `bun run lint:package`  | Builds, then runs `publint --strict` and `attw --profile esm-only`.                                    |
-| `bun run size`          | Checks the entry, `/lookup` and stylesheet sizes (brotli) against `size-limit`. Needs a prior build.   |
+| `bun run size`          | Checks the entry, `/lookup` (each with the shared chunk) and stylesheet sizes (brotli). Needs a build. |
 | `bun run test`          | Runs the Vitest suite once (browser and node projects).                                                |
 | `bun run test:watch`    | Runs Vitest in watch mode.                                                                             |
 | `bun run test:coverage` | Runs Vitest with v8 coverage and enforces the thresholds.                                              |

@@ -340,7 +340,8 @@ the import.
 Vite 8 library mode builds two ES modules, `dist/animated-fluent-emojis.js` and
 `dist/lookup.js`, plus a shared chunk with the manifest store, with `react` and
 `react-dom` externalized, and type declarations. `size-limit` measures each
-entry file (brotli): 2.5 kB for the component bundle, 780 B for lookup and 170 B
-for the stylesheet. The shared chunk is not counted. The bundle starts with a
-`"use client";` banner so it works from Next.js server components. See
+entry together with the shared manifest chunk (brotli), since importing either
+subpath loads both: 3.9 kB for the component bundle and 2.2 kB for lookup. The
+stylesheet is limited to 170 B. The bundle starts with a `"use client";` banner
+so it works from Next.js server components. See
 [ADR 0003](adr/0003-esm-only-and-vite-8.md).

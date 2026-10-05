@@ -10,13 +10,8 @@ and this project adheres to
 
 ## [0.5.1] - 2026-10-05
 
-### Fixed
-
-- The release workflow passed the tarball to `npm publish` without a leading
-  `./`, so npm read it as a GitHub shorthand and the 0.5.0 publish failed. 0.5.0
-  was never published to npm; 0.5.1 carries the same changes plus this fix.
-
-## [0.5.0] - 2026-10-05
+0.5.0 was tagged but never published to npm; 0.5.1 carries all of its changes
+plus the release workflow fix below.
 
 ### Added
 
@@ -106,6 +101,9 @@ and this project adheres to
 - State resets when the sprite changes, not only when the `id` does, and a
   failed sprite is retried on a source change or when the browser goes online.
 - An unknown `skinTone` falls back to the default sheet.
+
+- The release workflow passed the tarball to `npm publish` without a leading
+  `./`, so npm read it as a GitHub shorthand and the 0.5.0 publish failed.
 
 ### Security
 
@@ -247,9 +245,7 @@ and this project adheres to
 [Unreleased]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.1...HEAD
 [0.5.1]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.0...v0.5.1
-[0.5.0]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...v0.5.0
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...v0.5.1
 [0.4.0]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.3.0...v0.4.0
 [0.3.0]:
