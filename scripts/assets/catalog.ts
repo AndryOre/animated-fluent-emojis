@@ -122,6 +122,31 @@ function buildTeamsTasks(manifest: Manifest): SpriteTask[] {
   )
 }
 
+function collectPinnedOfficialIds(
+  previousManifest: Manifest | undefined,
+  mitEmojis: readonly MitEmoji[],
+  teamsIds: ReadonlySet<string>,
+): Map<string, string> {
+  const pinnedIdByCodepoints = new Map<string, string>()
+  const officialCodepoints = new Set(mitEmojis.map((emoji) => emoji.codepoints))
+  const previousCategories = previousManifest?.categories ?? []
+  for (const category of previousCategories) {
+    for (const emoticon of category.emoticons) {
+      if (emoticon.origin !== 'official') continue
+      const codepoints = glyphToCodepoints(emoticon.unicode)
+      if (!officialCodepoints.has(codepoints)) {
+        throw new Error(
+          `Pinned official emoji "${emoticon.id}" no longer exists in the official repository`,
+        )
+      }
+      if (!teamsIds.has(emoticon.id)) {
+        pinnedIdByCodepoints.set(codepoints, emoticon.id)
+      }
+    }
+  }
+  return pinnedIdByCodepoints
+}
+
 function buildMitEmoticon(emoji: MitEmoji, id: string, etag: string): Emoticon {
   return {
     id,
@@ -132,18 +157,23 @@ function buildMitEmoticon(emoji: MitEmoji, id: string, etag: string): Emoticon {
     diverse: emoji.sprites.some((sprite) => sprite.toneSuffix !== ''),
     animation: PLACEHOLDER_ANIMATION,
     keywords: [...emoji.keywords],
+    origin: 'official',
   }
 }
 
 /**
  * Merges the Teams manifest with the official emojis Teams does not have.
  * @param teamsManifest The Teams emoticon manifest.
+ * Official ids published before are pinned: they stay in the catalog, sourced
+ * from the official repository, even when Teams now has the emoji.
  * @param mitEmojis The official repository emojis.
+ * @param previousManifest The previously published manifest, if any.
  * @returns The final manifest and the sprites to produce.
  */
 export function buildCatalog(
   teamsManifest: Manifest,
   mitEmojis: readonly MitEmoji[],
+  previousManifest?: Manifest,
 ): Catalog {
   const teams = dedupeKeepingLast(teamsManifest)
   const teamsCodepoints = new Set(
@@ -157,8 +187,17 @@ export function buildCatalog(
     ),
   )
 
+  const pinnedIdByCodepoints = collectPinnedOfficialIds(
+    previousManifest,
+    mitEmojis,
+    usedIds,
+  )
+  for (const pinnedId of pinnedIdByCodepoints.values()) usedIds.add(pinnedId)
+
   const missing = mitEmojis.filter(
-    (emoji) => !teamsCodepoints.has(emoji.codepoints),
+    (emoji) =>
+      !teamsCodepoints.has(emoji.codepoints) ||
+      pinnedIdByCodepoints.has(emoji.codepoints),
   )
   const tasks = buildTeamsTasks(teams)
   const additionsByCategory = new Map<string, Emoticon[]>()
@@ -166,7 +205,9 @@ export function buildCatalog(
 
   for (const emoji of missing) {
     const baseId = `${emoji.codepoints.replaceAll('-', '_')}_${slugify(emoji.cldr)}`
-    const id = usedIds.has(baseId) ? `${baseId}_mit` : baseId
+    const id =
+      pinnedIdByCodepoints.get(emoji.codepoints) ??
+      (usedIds.has(baseId) ? `${baseId}_mit` : baseId)
     usedIds.add(id)
     mitEmojiIds.add(id)
     const category = resolveCategory(emoji)
