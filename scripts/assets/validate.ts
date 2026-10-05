@@ -190,10 +190,10 @@ async function findMissingSprites(
 }
 
 async function readDimensions(
-  filePath: string,
+  source: Buffer | string,
 ): Promise<SpriteDimensions | Error> {
   try {
-    const { width, height } = await sharp(filePath).metadata()
+    const { width, height } = await sharp(source).metadata()
     return { width, height }
   } catch (error: unknown) {
     return error instanceof Error ? error : new Error(String(error))
@@ -291,6 +291,35 @@ function findHdFlagProblems(
         : []
     }),
   )
+}
+
+/**
+ * Decodes one sprite sheet and checks it is one frame wide and `framesCount`
+ * frames tall.
+ * @param source The sheet bytes or a path to the sheet.
+ * @param frameSize The frame edge in pixels (100 standard, 200 HD).
+ * @param framesCount The number of frames the sheet must hold.
+ * @returns A description of the first problem found, or undefined when valid.
+ */
+export async function findSpriteSheetProblem(
+  source: Buffer | string,
+  frameSize: number,
+  framesCount: number,
+): Promise<string | undefined> {
+  const dimensions = await readDimensions(source)
+  if (dimensions instanceof Error) {
+    return `could not be decoded (${dimensions.message})`
+  }
+  if (dimensions.width !== frameSize) {
+    return `is ${String(dimensions.width)}px wide, expected ${String(frameSize)}px`
+  }
+  const expectedHeight = framesCount * frameSize
+  if (!Number.isSafeInteger(framesCount) || framesCount < 1) {
+    return `has an invalid expected frame count (${String(framesCount)})`
+  }
+  return dimensions.height === expectedHeight
+    ? undefined
+    : `is ${String(dimensions.height)}px tall, expected ${String(expectedHeight)}px (${String(framesCount)} frames)`
 }
 
 /**

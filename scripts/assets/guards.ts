@@ -14,7 +14,7 @@ const MAX_REMOVED_FRACTION = 0.05
 /**
  * Most files the output may hold. Cloudflare Pages allows 20,000.
  */
-const MAX_OUTPUT_FILES = 19_000
+export const MAX_OUTPUT_FILES = 19_000
 
 /**
  * Fails when both advertised Teams discovery sources yielded nothing, which
