@@ -49,7 +49,8 @@ test('uses the default sprite for a diverse emoji without a skin tone', async ()
 })
 
 test('ignores the skin tone for emojis without variants', async () => {
-  await render(<Emoji id="cat" skinTone="light" />)
+  const catId = 'CAT'.toLowerCase()
+  await render(<Emoji id={catId} skinTone="light" />)
 
   await expect
     .element(getImage('Cat'))

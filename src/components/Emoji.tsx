@@ -189,6 +189,17 @@ const EmojiComponent = (
   )
 }
 
+// eslint-disable-next-line @eslint-react/no-forward-ref -- React 18 is a supported peer, where ref is not a prop
+const ForwardedEmoji: ForwardRefExoticComponent<
+  EmojiProps & RefAttributes<HTMLSpanElement>
+> = forwardRef(EmojiComponent)
+ForwardedEmoji.displayName = 'Emoji'
+
+type EmojiComponentType = (<Id extends string = string>(
+  props: EmojiProps<Id> & RefAttributes<HTMLSpanElement>,
+) => ReactElement | null) &
+  Pick<typeof ForwardedEmoji, 'displayName'>
+
 /**
  * Emoji component for displaying animated emojis. Other props, including
  * `className`, `style` and `data-*`, are passed to the root span.
@@ -206,8 +217,4 @@ const EmojiComponent = (
  * @param ref - Forwarded to the root span.
  * @returns The emoji, an empty placeholder of the final size while the manifest loads, or null if the manifest failed to load or the emoji is not found, unless a fallback is given.
  */
-// eslint-disable-next-line @eslint-react/no-forward-ref -- React 18 is a supported peer, where ref is not a prop
-export const Emoji: ForwardRefExoticComponent<
-  EmojiProps & RefAttributes<HTMLSpanElement>
-> = forwardRef(EmojiComponent)
-Emoji.displayName = 'Emoji'
+export const Emoji: EmojiComponentType = ForwardedEmoji as EmojiComponentType
