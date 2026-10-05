@@ -51,11 +51,13 @@ export interface SpriteTask {
 
 /**
  * An emoji that has an official HD source for some tones but not all, so it
- * is published without HD sheets.
+ * is published without HD sheets. `transient` marks a failure that a retry
+ * can fix, which keeps the site stale until a build clears it.
  */
 export interface HdSkippedEmoji {
   readonly id: string
   readonly reason: string
+  readonly transient?: true
 }
 
 /**

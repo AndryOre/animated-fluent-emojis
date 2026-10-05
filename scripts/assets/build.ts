@@ -310,7 +310,9 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
   const skippedIds = [
     ...new Set([
       ...skipped.map((entry) => entry.id),
-      ...hd.skipped.map((entry) => entry.id),
+      ...hd.skipped
+        .filter((entry) => entry.transient === true)
+        .map((entry) => entry.id),
     ]),
   ].toSorted((a, b) => a.localeCompare(b))
 
