@@ -1,253 +1,266 @@
 # Objects
 
-| ID                               | Unicode | Description              | Keywords                                                        |
-| -------------------------------- | ------- | ------------------------ | --------------------------------------------------------------- |
-| 1f453_glasses                    | 👓      | Glasses                  | glasses                                                         |
-| 1f576_sunglasses                 | 🕶️      | Sunglasses               | sunglasses                                                      |
-| 1f97d_goggles                    | 🥽      | Goggles                  | goggles                                                         |
-| 1f97c_labcoat                    | 🥼      | Labcoat                  | labcoat                                                         |
-| 1f9ba_safetyvest                 | 🦺      | Safety vest              | safety vest                                                     |
-| 1f454_necktie                    | 👔      | Neck tie                 | neck tie                                                        |
-| 1f455_tshirt                     | 👕      | T-shirt                  | t, shirt                                                        |
-| 1f456_jeans                      | 👖      | Jeans                    | jeans                                                           |
-| 1f9e3_scarf                      | 🧣      | Scarf                    | scarf                                                           |
-| 1f9e4_gloves                     | 🧤      | Gloves                   | gloves                                                          |
-| 1f9e5_coat                       | 🧥      | Coat                     | coat                                                            |
-| 1f9e6_socks                      | 🧦      | Socks                    | socks                                                           |
-| 1f457_dress                      | 👗      | Dress                    | dress                                                           |
-| 1f458_kimono                     | 👘      | Kimono                   | kimono                                                          |
-| 1f97b_sari                       | 🥻      | Sari                     | sari                                                            |
-| 1fa71_onepiece                   | 🩱      | Swimming suit            | one, piece                                                      |
-| 1fa72_briefs                     | 🩲      | Briefs                   | briefs                                                          |
-| 1fa73_shorts                     | 🩳      | Shorts                   | shorts                                                          |
-| 1f459_bikini                     | 👙      | Bikini                   | bikini                                                          |
-| 1f45a_womansclothes              | 👚      | Blouse                   | womans, clothes, blouse                                         |
-| 1f45b_purse                      | 👛      | Purse                    | purse                                                           |
-| 1f45c_handbag                    | 👜      | Handbag                  | handbag                                                         |
-| 1f45d_pouch                      | 👝      | Pouch                    | pouch                                                           |
-| shopping                         | 🛍️      | Shopping bags            | shopping, bags                                                  |
-| 1f392_schoolsatchel              | 🎒      | Backpack                 | school, satchel                                                 |
-| thongsandal                      | 🩴      | Thong Sandal             | thong, sandal                                                   |
-| 1f45e_mansshoe                   | 👞      | Mans shoe                | mans shoe                                                       |
-| 1f45f_athleticshoe               | 👟      | Sneaker                  | atheletic, shoe, Trainer, Sneaker                               |
-| 1f97e_hikingboot                 | 🥾      | Hiking boot              | hiking, boot                                                    |
-| 1f97f_womansflatshoe             | 🥿      | Womans flat shoe         | womans flat shoe                                                |
-| 1f460_highheeledshoe             | 👠      | High heels               | high, heeled, shoe, heels, stiletto                             |
-| 1f461_womanssandal               | 👡      | Womans sandal            | womans sandal                                                   |
-| 1fa70_balletshoes                | 🩰      | Ballet shoes             | ballet shoes                                                    |
-| 1f462_womansboots                | 👢      | Womans boot              | womans, boot                                                    |
-| 1f451_crown                      | 👑      | Crown                    | crown                                                           |
-| 1f452_womanshat                  | 👒      | Womans hat               | womans hat                                                      |
-| 1f3a9_tophat                     | 🎩      | Top hat                  | top hat                                                         |
-| 1f393_graduationcap              | 🎓      | Graduate                 | graduation, cap                                                 |
-| 1f9e2_billedcap                  | 🧢      | Baseball cap             | billed, cap                                                     |
-| militaryhelmet                   | 🪖      | Military Helmet          | military, helmet                                                |
-| 26d1_helmetwithwhitecross        | ⛑️      | Rescue helmet            | helmet, with, white, cross                                      |
-| 1f4ff_prayerbeads                | 📿      | Prayer beads             | prayer beads                                                    |
-| lipstick                         | 💄      | Lipstick                 | lipstick                                                        |
-| ring                             | 💍      | Engagement ring          | love, romance, ring, diamond, jewellery, gold                   |
-| diamond                          | 💎      | Diamond                  | diamond, jewel, expensive, shiny, twinkle, engagement, proposal |
-| 1f507_mutedspeaker               | 🔇      | Mute                     | speaker, with, canellation, stroke                              |
-| 1f508_speaker                    | 🔈      | Speaker                  | speaker                                                         |
-| 1f509_speakerwithonesoundwave    | 🔉      | Medium volume            | speaker, with, one, sound, wave                                 |
-| 1f50a_speakerwiththreesoundwaves | 🔊      | High volume              | speaker, with, three, sound, waves                              |
-| 1f4e2_publicaddressloudspeaker   | 📢      | PA loudspeaker           | public, address, loud, speaker                                  |
-| 1f4e3_cheeringmegaphone          | 📣      | Megaphone                | cheering, megaphone                                             |
-| 1f4ef_postalhorn                 | 📯      | Postal horn              | postal horn                                                     |
-| bell                             | 🔔      | Bell                     | bell, ding, alarm, gold                                         |
-| 1f515_bellwithslash              | 🔕      | Muted bell               | bell, with, slash                                               |
-| 1f3bc_musicalscore               | 🎼      | Musical score            | musical score                                                   |
-| music                            | 🎵      | Music                    | party, celebrate                                                |
-| 1f3b6_multiplemusicalnotes       | 🎶      | Multiple musical notes   | multiple, musical, notes                                        |
-| 1f399_studiomicrophone           | 🎙️      | Studio microphone        | studio microphone                                               |
-| 1f39a_levelslider                | 🎚️      | Level slider             | level slider                                                    |
-| 1f39b_controlknobs               | 🎛️      | Control knobs            | control knobs                                                   |
-| 1f3a4_microphone                 | 🎤      | Microphone               | microphone                                                      |
-| headphone                        | 🎧      | Headphone                | headphone                                                       |
-| 1f4fb_radio                      | 📻      | Radio                    | radio                                                           |
-| 1f3b7_saxophone                  | 🎷      | Saxophone                | saxophone                                                       |
-| accordion                        | 🪗      | Accordion                | accordion                                                       |
-| guitar                           | 🎸      | Guitar                   | guitar                                                          |
-| 1f3b9_musicalkeyboard            | 🎹      | Musical keyboard         | musical keyboard                                                |
-| 1f3ba_trumpet                    | 🎺      | Trumpet                  | trumpet                                                         |
-| 1f3bb_violin                     | 🎻      | violin                   | violin                                                          |
-| 1fa95_banjo                      | 🪕      | Banjo                    | banjo                                                           |
-| 1f941_drumwithdrumsticks         | 🥁      | Drum                     | drum, with, drum, sticks                                        |
-| longdrum                         | 🪘      | Long Drum                | long, drum                                                      |
-| phone                            | 📱      | Phone                    |                                                                 |
-| 1f4f2_mobilephonewitharrow       | 📲      | Mobile phone with arrow  | mobile phone with arrow                                         |
-| 260e_blacktelephone              | ☎️      | Telephone                | telephone                                                       |
-| telephonereceiver                | 📞      | Telephone receiver       | phone, handset                                                  |
-| 1f4df_pager                      | 📟      | Pager                    | pager                                                           |
-| 1f4e0_faxmachine                 | 📠      | Fax machine              | fax, machine                                                    |
-| 1f50b_battery                    | 🔋      | Battery                  | battery                                                         |
-| 1f50c_electricplug               | 🔌      | Electric plug            | electric plug                                                   |
-| computer                         | 💻      | Computer                 | surface, computer, keyboard, windows, microsoft                 |
-| 1f5a5_desktopcomputer            | 🖥️      | Computer                 | desktop, computer                                               |
-| 1f5a8_printer                    | 🖨️      | Printer                  | printer                                                         |
-| 2328_keyboard                    | ⌨️      | Keyboard                 | keyboard                                                        |
-| 1f5b1_threebuttonmouse           | 🖱️      | Mouse                    | three, button, mouse                                            |
-| 1f5b2_trackball                  | 🖲️      | Track ball               | track ball                                                      |
-| 1f4bd_minidisc                   | 💽      | Mini disc                | mini disc                                                       |
-| 1f4be_floppydisk                 | 💾      | Floppy disk              | floppy disk                                                     |
-| 1f4bf_opticaldisc                | 💿      | CD                       | optical, disc, cd                                               |
-| 1f4c0_dvd                        | 📀      | Dvd                      | dvd, digital, video, disc                                       |
-| 1f9ee_abacus                     | 🧮      | Abacus                   | abacus                                                          |
-| 1f3a5_moviecamera                | 🎥      | Movie camera             | movie camera                                                    |
-| 1f39e_filmframes                 | 🎞️      | Film frames              | film frames                                                     |
-| 1f4fd_filmprojector              | 📽️      | Film projector           | film projector                                                  |
-| movie                            | 🎬      | Movie                    | film, movie, clapper                                            |
-| 1f4fa_television                 | 📺      | Television               | television                                                      |
-| 1f4f7_camera                     | 📷      | Camera                   | camera                                                          |
-| camera                           | 📸      | Camera                   | camera, film, photography                                       |
-| 1f4f9_videocamera                | 📹      | Video camera             | video camera                                                    |
-| 1f4fc_videocassette              | 📼      | Video cassette           | video cassette                                                  |
-| 1f50d_magnifiertiltedleft        | 🔍      | Magnifying glass left    | left, pointing, magnifying, glass                               |
-| 1f50e_magnifiertiltedright       | 🔎      | Magnifying glass right   | right, pointing, magnifying, glass                              |
-| 1f56f_candle                     | 🕯️      | Candle                   | candle                                                          |
-| 1f4a1_electriclightbulb          | 💡      | Electric light bulb      | electric light bulb                                             |
-| 1f526_electrictorch              | 🔦      | Torch                    | electric, torch                                                 |
-| 1f3ee_izakayalantern             | 🏮      | Izakaya lantern          | izakaya lantern                                                 |
-| 1fa94_diyalamp                   | 🪔      | Diya lamp                | diya lamp                                                       |
-| 1f4d4_decorativenotebook         | 📔      | Decorative notebook      | notebook, with, decorative, cover                               |
-| 1f4d5_closedbook                 | 📕      | Red book                 | closed, book                                                    |
-| 1f4d6_openbook                   | 📖      | Open book                | open, book                                                      |
-| 1f4d7_greenbook                  | 📗      | Green book               | green book                                                      |
-| 1f4d8_bluebook                   | 📘      | Blue book                | blue book                                                       |
-| 1f4d9_orangebook                 | 📙      | Orange book              | orange, book                                                    |
-| 1f4da_books                      | 📚      | Books                    | books                                                           |
-| 1f4d3_notebook                   | 📓      | Notebook                 | notebook                                                        |
-| 1f4d2_ledger                     | 📒      | Binder                   | ledger, binder                                                  |
-| 1f4c3_pagewithcurl               | 📃      | Curled page              | page, with, curl                                                |
-| 1f4dc_scroll                     | 📜      | Scroll                   | scroll                                                          |
-| 1f4c4_pagefacingup               | 📄      | Page                     | page, facing, up                                                |
-| 1f4f0_newspaper                  | 📰      | Newspaper                | newspaper                                                       |
-| 1f5de_rolledupnewspaper          | 🗞️      | Rolled up newspaper      | rolled, up, news, paper                                         |
-| 1f4d1_bookmarktabs               | 📑      | Bookmark tabs            | bookmark tabs                                                   |
-| 1f516_bookmark                   | 🔖      | Bookmark                 | bookmark                                                        |
-| 1f3f7_label                      | 🏷️      | Label tag                | label                                                           |
-| 1f4b0_moneybag                   | 💰      | Money bag                | money bag                                                       |
-| coin                             | 🪙      | Coin                     | coin                                                            |
-| 1f4b4_banknotewithyensign        | 💴      | Yen                      | bank, note, with, yen, sign                                     |
-| 1f4b5_banknotewithdollarsign     | 💵      | Dollar                   | bank, note, with, dollar, sign                                  |
-| 1f4b6_banknotewitheurosign       | 💶      | Euro                     | bank, note, with, euro, sign                                    |
-| 1f4b7_banknotewithpoundsign      | 💷      | Pound                    | bank, note, with, pound, sign                                   |
-| 1f4b8_moneywithwings             | 💸      | Flying money             | money, with, wings, flying                                      |
-| 1f4b3_creditcard                 | 💳      | Credit card              | credit card                                                     |
-| 1f9fe_receipt                    | 🧾      | Receipt                  | receipt                                                         |
-| 1f4b9_yengraph                   | 💹      | Yen graph                | chart, with, upwards, trend, and, yen, sign                     |
-| 1f9e7_redenvelope                | 🧧      | Red envelope             | red envelope                                                    |
-| 1f4e7_email                      | 📧      | Email                    | email                                                           |
-| 1f4e8_incomingenvelope           | 📨      | Income envelope          | income envelope                                                 |
-| 1f4e9_envelopewitharrow          | 📩      | Envelope with arrow      | envelope with arrow                                             |
-| 1f4e4_outboxtray                 | 📤      | Outbox                   | outbox, tray                                                    |
-| 1f4e5_inboxtray                  | 📥      | Inbox                    | inbox, tray                                                     |
-| 1f4e6_package                    | 📦      | Package                  | package                                                         |
-| 1f4eb_mailboxclosedflagup        | 📫      | Closed mailbox with flag | closed, mailbox, with, raised, flag                             |
-| 1f4ea_mailboxclosedflagdown      | 📪      | Closed mailbox           | closed, mailbox, with, lowered, flag                            |
-| 1f4ec_openmailboxwithraisedflag  | 📬      | Open mailbox with flag   | open, mailbox, with, raised, flag                               |
-| 1f4ed_openmailboxwithloweredflag | 📭      | Open mailbox             | open, mailbox, with, lowered, flag                              |
-| 1f4ee_postbox                    | 📮      | Post box                 | post box                                                        |
-| 1f5f3_ballotboxwithballot        | 🗳️      | Ballot box               | ballot, box, with, ballot                                       |
-| 270f_pencil                      | ✏️      | Pencil                   | pencil                                                          |
-| 2712_blacknib                    | ✒️      | Black nib                | black nib                                                       |
-| 1f58b_lowerleftfountainpen       | 🖋️      | Fountain pen             | fountain, pen                                                   |
-| 1f58a_lowerleftballpointpen      | 🖊️      | Ball point pen           | ball, point, pen                                                |
-| 1f58c_lowerleftpaintbrush        | 🖌️      | Paint brush              | paint, brush                                                    |
-| 1f58d_lowerleftcrayon            | 🖍️      | Crayon                   | crayon                                                          |
-| 1f4dd_memo                       | 📝      | Memo                     | memo                                                            |
-| 1f4bc_briefcase                  | 💼      | Briefcase                | briefcase                                                       |
-| 1f4c1_filefolder                 | 📁      | Folder                   | file, folder                                                    |
-| 1f4c2_openfilefolder             | 📂      | Open folder              | open, file, folder                                              |
-| 1f5c2_cardindexdividers          | 🗂️      | Folder dividers          | card, index, dividers                                           |
-| 1f4c5_calendar                   | 📅      | Calendar                 | calendar                                                        |
-| spiralcalendar                   | 📆      | Spiral calendar          | spiral, calendar                                                |
-| 1f4c6_tearoffcalendar            | 🗓️      | Tear off calendar        | tear off calendar                                               |
-| 1f5d2_spiralnotepad              | 🗒️      | Spiral notepad           | spiral notepad                                                  |
-| 1f4c7_cardindex                  | 📇      | Rolodex                  | card, index                                                     |
-| 1f4c8_chartwithupwardstrend      | 📈      | Positive graph           | chart, with, upwards, trend, graph, positive                    |
-| 1f4c9_chartwithdownwardstrend    | 📉      | Negative graph           | chart, with, downwards, trend, graph, negative                  |
-| 1f4ca_barchart                   | 📊      | Bar chart                | bar, chart, graph                                               |
-| 1f4cb_clipboard                  | 📋      | Clipboard                | clipboard                                                       |
-| 1f4cc_pushpin                    | 📌      | Pin                      | push, pin                                                       |
-| 1f4cd_roundpushpin               | 📍      | Pin                      | round, push, pin                                                |
-| 1f4ce_paperclip                  | 📎      | Paperclip                | paper, clip, clippy                                             |
-| 1f587_linkedpaperclips           | 🖇️      | Paper clips              | linked, paper, clips                                            |
-| 1f4cf_straightruler              | 📏      | Ruler                    | straight, ruler                                                 |
-| 1f4d0_triangularruler            | 📐      | Triangular ruler         | triangular, ruler, set, square                                  |
-| 2702_blackscissors               | ✂️      | Scissors                 | Scissors                                                        |
-| 1f5c3_cardfilebox                | 🗃️      | File box                 | card, file, box                                                 |
-| 1f5c4_filecabinet                | 🗄️      | Filing cabinet           | file, cabinet                                                   |
-| 1f5d1_wastebasket                | 🗑️      | Trash bin                | waste, basket                                                   |
-| 1f512_locked                     | 🔒      | Locked                   | locked                                                          |
-| 1f513_unlocked                   | 🔓      | Unlocked                 | unlocked                                                        |
-| 1f50f_lockedwithpen              | 🔏      | Locked with pen          | locked with pen                                                 |
-| 1f510_lockedwithkey              | 🔐      | Lock and key             | locked, with, key                                               |
-| 1f511_key                        | 🔑      | Key                      | key                                                             |
-| oldkey                           | 🗝️      | Old key                  | key, lock, password, secret, success                            |
-| 1f528_hammer                     | 🔨      | Hammer                   | hammer                                                          |
-| 1fa93_axe                        | 🪓      | Axe                      | axe                                                             |
-| 26cf_pick                        | ⛏️      | Pick                     | pick                                                            |
-| 2692_hammerandpick               | ⚒️      | Hammer and pick          | hammer and pick                                                 |
-| 1f6e0_hammerandwrench            | 🛠️      | Hammer and wrench        | hammer, and, wrench, spanner                                    |
-| 1f5e1_daggerknife                | 🗡️      | Dagger                   | dagger, knife                                                   |
-| boomerang                        | 🪃      | Boomerang                | boomerang                                                       |
-| 2694_crossedswords               | ⚔️      | Swords                   | crossed, swords                                                 |
-| 1f52b_pistol                     | 🔫      | Water pistol             | pistol                                                          |
-| 1f3f9_bowandarrow                | 🏹      | Bow and arrow            | bow and arrow                                                   |
-| 1f6e1_shield                     | 🛡️      | Shield                   | shield                                                          |
-| carpentrysaw                     | 🪚      | Carpentry Saw            | carpentry, saw                                                  |
-| 1f527_wrench                     | 🔧      | Wrench                   | wrench, spanner                                                 |
-| screwdriver                      | 🪛      | Screwdriver              | screwdriver                                                     |
-| 1f529_nutandbolt                 | 🔩      | Bolt                     | nut, and, bolt                                                  |
-| 2699_gear                        | ⚙️      | Cog                      | gear                                                            |
-| 1f5dc_compression                | 🗜️      | Clamp                    | compression                                                     |
-| 2696_scales                      | ⚖️      | Scales                   | scales                                                          |
-| 1f9af_probingcane                | 🦯      | Probing cane             | probing cane                                                    |
-| 1f517_linksymbol                 | 🔗      | Link                     | link, symbol                                                    |
-| 26d3_chains                      | ⛓️      | Chains                   | chains                                                          |
-| hook                             | 🪝      | Hook                     | hook                                                            |
-| 1f9f0_toolbox                    | 🧰      | Toolbox                  | toolbox                                                         |
-| 1f9f2_magnet                     | 🧲      | Magnet                   | magnet                                                          |
-| ladder                           | 🪜      | Ladder                   | ladder                                                          |
-| 2697_alembic                     | ⚗️      | Alembic                  | alembic                                                         |
-| 1f9ea_testtube                   | 🧪      | Test tube                | test tube                                                       |
-| 1f9eb_petridish                  | 🧫      | Petri dish               | petri dish                                                      |
-| 1f9ec_dna                        | 🧬      | DNA                      | dna                                                             |
-| 1f52c_microscope                 | 🔬      | Microscope               | microscope                                                      |
-| 1f52d_telescope                  | 🔭      | Telescope                | telescope                                                       |
-| 1f4e1_satelliteantenna           | 📡      | Satellite antenna        | satellite antenna                                               |
-| 1f489_syringe                    | 💉      | Syringe                  | syringe                                                         |
-| 1fa78_blooddrop                  | 🩸      | Blood drop               | blood, drop                                                     |
-| 1f48a_pill                       | 💊      | Pill                     | pill                                                            |
-| 1fa79_adhesivebandage            | 🩹      | Plaster                  | adhesive, bandage                                               |
-| 1fa7a_stethoscope                | 🩺      | Stethoscope              | stethoscope                                                     |
-| 1f6aa_door                       | 🚪      | Door                     | door                                                            |
-| elevator                         | 🛗      | Elevator                 | elevator                                                        |
-| mirror                           | 🪞      | Mirror                   | mirror                                                          |
-| window                           | 🪟      | Window                   | window                                                          |
-| 1f6cf_bed                        | 🛏️      | Bed                      | bed                                                             |
-| 1f6cb_couchandlamp               | 🛋️      | Couch and lamp           | couch and lamp                                                  |
-| 1fa91_chair                      | 🪑      | Chair                    | chair                                                           |
-| toilet                           | 🚽      | Toilet                   | toilet seat, toilet                                             |
-| plunger                          | 🪠      | Plunger                  | plunger                                                         |
-| 1f6bf_shower                     | 🚿      | Shower                   | shower                                                          |
-| 1f6c1_bathtub                    | 🛁      | Bath tub                 | bath tub                                                        |
-| mousetrap                        | 🪤      | Mouse Trap               | mouse, trap                                                     |
-| 1fa92_razor                      | 🪒      | Razor                    | razor                                                           |
-| 1f9f4_lotionbottle               | 🧴      | Lotion                   | lotion, bottle                                                  |
-| 1f9f9_broom                      | 🧹      | Broom                    | broom                                                           |
-| 1f9fa_basket                     | 🧺      | Laundry basket           | basket                                                          |
-| 1f9fb_toiletpaper                | 🧻      | Toilet paper             | toilet paper                                                    |
-| bucket                           | 🪣      | Bucket                   | bucket                                                          |
-| 1f9fc_soap                       | 🧼      | Soap                     | soap                                                            |
-| toothbrush                       | 🪥      | Toothbrush               | toothbrush                                                      |
-| 1f9fd_sponge                     | 🧽      | Sponge                   | sponge                                                          |
-| 1f9ef_fireextinguisher           | 🧯      | Fire extinguisher        | fire extinguisher                                               |
-| 1f6d2_shoppingtrolley            | 🛒      | Shopping trolley         | shopping trolley                                                |
-| cigarette                        | 🚬      | Cigarette                | cigarette, smoke, smoking                                       |
-| 26b0_coffin                      | ⚰️      | Coffin                   | coffin                                                          |
-| headstone                        | 🪦      | Headstone                | headstone                                                       |
-| 26b1_funeralurn                  | ⚱️      | Funeral urn              | funeral urn                                                     |
-| 1f5ff_moyai                      | 🗿      | Moyai                    | moyai, Easter, island, statue                                   |
-| placard                          | 🪧      | Placard                  | placard                                                         |
+| ID                               | Unicode | Description               | Keywords                                                                                                                       |
+| -------------------------------- | ------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1f453_glasses                    | 👓      | Glasses                   | clothing, eye, eyeglasses, eyewear, glasses                                                                                    |
+| 1f576_sunglasses                 | 🕶️      | Sunglasses                | dark, eye, eyewear, glasses, sunglasses                                                                                        |
+| 1f97d_goggles                    | 🥽      | Goggles                   | dive, eye, goggles, protection, scuba, swimming, welding                                                                       |
+| 1f97c_labcoat                    | 🥼      | Lab coat                  | clothes, coat, doctor, dr, experiment, jacket, lab, scientist, white                                                           |
+| 1f9ba_safetyvest                 | 🦺      | Safety vest               | emergency, safety, vest                                                                                                        |
+| 1f454_necktie                    | 👔      | Necktie                   | clothing, employed, necktie, serious, shirt, tie                                                                               |
+| 1f455_tshirt                     | 👕      | T-shirt                   | blue, casual, clothes, clothing, collar, dressed, shirt, shopping, t-shirt, tshirt, weekend                                    |
+| 1f456_jeans                      | 👖      | Jeans                     | blue, casual, clothes, clothing, denim, dressed, jeans, pants, shopping, trousers, weekend                                     |
+| 1f9e3_scarf                      | 🧣      | Scarf                     | bundle, cold, neck, scarf, up                                                                                                  |
+| 1f9e4_gloves                     | 🧤      | Gloves                    | cold, gloves, hand                                                                                                             |
+| 1f9e5_coat                       | 🧥      | Coat                      | brr, bundle, coat, cold, jacket, up                                                                                            |
+| 1f9e6_socks                      | 🧦      | Socks                     | socks, stocking                                                                                                                |
+| 1f457_dress                      | 👗      | Dress                     | clothes, clothing, dress, dressed, fancy, shopping                                                                             |
+| 1f458_kimono                     | 👘      | Kimono                    | clothing, comfortable, kimono                                                                                                  |
+| 1f97b_sari                       | 🥻      | Sari                      | clothing, dress, sari                                                                                                          |
+| 1fa71_onepiece                   | 🩱      | Swimming suit             | bathing, one-piece, onepiece, suit, swimsuit                                                                                   |
+| 1fa72_briefs                     | 🩲      | Briefs                    | bathing, briefs, one-piece, onepiece, suit, swimsuit, underwear                                                                |
+| 1fa73_shorts                     | 🩳      | Shorts                    | bathing, pants, shorts, suit, swimsuit, underwear                                                                              |
+| 1f459_bikini                     | 👙      | Bikini                    | bathing, beach, bikini, clothing, pool, suit, swim, tan                                                                        |
+| 1f45a_womansclothes              | 👚      | Blouse                    | blouse, clothes, clothing, collar, dress, dressed, female, lady, shirt, shopping, woman, woman’s, women                        |
+| fan                              | 🪭      | Fan                       | clack, clap, cool, cooling, dance, fan, flirt, flutter, folding, hand, hot, shy                                                |
+| 1f45b_purse                      | 👛      | Purse                     | clothes, clothing, coin, dress, fancy, handbag, purse, shopping                                                                |
+| 1f45c_handbag                    | 👜      | Handbag                   | bag, clothes, clothing, dress, handbag, lady, purse, shopping                                                                  |
+| 1f45d_pouch                      | 👝      | Pouch                     | bag, clothes, clothing, clutch, dress, handbag, pouch, purse                                                                   |
+| shopping                         | 🛍️      | Shopping bags             | bag, bags, hotel, shopping                                                                                                     |
+| 1f392_schoolsatchel              | 🎒      | Backpack                  | backpack, backpacking, bag, bookbag, education, rucksack, satchel, school                                                      |
+| thongsandal                      | 🩴      | Thong Sandal              | Flip, beach, flip, flop, flops, sandal, sandals, shoe, thong, thongs, zōri                                                     |
+| 1f45e_mansshoe                   | 👞      | Man's shoe                | brown, clothes, clothing, feet, foot, kick, man, man’s, s, shoe, shoes, shopping                                               |
+| 1f45f_athleticshoe               | 👟      | Sneaker                   | Sneaker, Trainer, atheletic, athletic, clothes, clothing, fast, kick, running, shoe, shoes, shopping, sneaker, tennis          |
+| 1f97e_hikingboot                 | 🥾      | Hiking boot               | Hike, backpacking, boot, brown, camping, hiker, hiking, outdoors, shoe                                                         |
+| 1f97f_womansflatshoe             | 🥿      | Womans flat shoe          | ballet, comfy, female, flat, flats, shoe, slip-on, slipper, woman                                                              |
+| 1f460_highheeledshoe             | 👠      | High heels                | clothes, clothing, dress, fashion, heel, heeled, heels, high, high-heeled, shoe, shoes, shopping, stiletto, woman              |
+| 1f461_womanssandal               | 👡      | Womans sandal             | clothing, female, heel, sandal, shoe, woman, woman’s                                                                           |
+| 1fa70_balletshoes                | 🩰      | Ballet shoes              | ballet, dance, shoes                                                                                                           |
+| 1f462_womansboots                | 👢      | Womans boot               | boot, clothes, clothing, dress, female, shoe, shoes, shopping, woman, woman’s, women                                           |
+| hairpick                         | 🪮      | Hair pick                 | Afro, comb, groom, hair, pick                                                                                                  |
+| 1f451_crown                      | 👑      | Crown                     | clothing, crown, family, jewels, king, medieval, prince, princess, queen, royal, royalty, tiara, win                           |
+| 1f452_womanshat                  | 👒      | Womans hat                | clothes, clothing, female, garden, hat, hats, party, sun, woman, woman’s                                                       |
+| 1f3a9_tophat                     | 🎩      | Top hat                   | clothes, clothing, fancy, formal, hat, magic, monopoly, top, tophat                                                            |
+| 1f393_graduationcap              | 🎓      | Graduate                  | cap, celebration, clothing, education, graduation, hat, scholar                                                                |
+| 1f9e2_billedcap                  | 🧢      | Baseball cap              | baseball, bent, billed, cap, dad, hat                                                                                          |
+| militaryhelmet                   | 🪖      | Military helmet           | army, helmet, military, soldier, war, warrior                                                                                  |
+| 26d1_helmetwithwhitecross        | ⛑️      | Rescue helmet             | aid, cross, face, hat, helmet, rescue, white                                                                                   |
+| 1f4ff_prayerbeads                | 📿      | Prayer beads              | beads, clothing, necklace, prayer, religion                                                                                    |
+| lipstick                         | 💄      | Lipstick                  | cosmetics, date, lipstick, makeup                                                                                              |
+| ring                             | 💍      | Engagement ring           | celebrate, celebration, diamond, engaged, engagement, gold, jewellery, love, married, ring, romance, shiny, sparkling, wedding |
+| diamond                          | 💎      | Diamond                   | diamond, engagement, expensive, gem, jewel, money, proposal, romance, shiny, stone, twinkle, wedding                           |
+| 1f507_mutedspeaker               | 🔇      | Mute                      | canellation, mute, muted, quiet, silent, sound, speaker, stroke, volume, with                                                  |
+| 1f508_speaker                    | 🔈      | Speaker                   | address, communication, loud, loudspeaker, low, public, soft, sound, speaker, volume                                           |
+| 1f509_speakerwithonesoundwave    | 🔉      | Medium volume             | medium, sound, speaker, volume                                                                                                 |
+| 1f50a_speakerwiththreesoundwaves | 🔊      | High volume               | high, loud, music, sound, speaker, volume                                                                                      |
+| 1f4e2_publicaddressloudspeaker   | 📢      | PA loudspeaker            | address, communication, loud, loudspeaker, public, sound, speaker                                                              |
+| 1f4e3_cheeringmegaphone          | 📣      | Megaphone                 | cheering, megaphone, sound                                                                                                     |
+| 1f4ef_postalhorn                 | 📯      | Postal horn               | horn, post, postal                                                                                                             |
+| bell                             | 🔔      | Bell                      | bell, break, church, sound                                                                                                     |
+| 1f515_bellwithslash              | 🔕      | Muted bell                | bell, forbidden, mute, no, not, prohibited, quiet, silent, slash, sound                                                        |
+| 1f3bc_musicalscore               | 🎼      | Musical score             | music, musical, note, score                                                                                                    |
+| music                            | 🎵      | Music                     | celebrate, celebration, music, musical, note, party, sing, song, sound, tune                                                   |
+| 1f3b6_multiplemusicalnotes       | 🎶      | Multiple musical notes    | multiple, music, musical, note, notes, sing, song, sound, tune                                                                 |
+| 1f399_studiomicrophone           | 🎙️      | Studio microphone         | mic, microphone, music, studio                                                                                                 |
+| 1f39a_levelslider                | 🎚️      | Level slider              | level, music, slider                                                                                                           |
+| 1f39b_controlknobs               | 🎛️      | Control knobs             | control, knobs, music                                                                                                          |
+| 1f3a4_microphone                 | 🎤      | Microphone                | karaoke, mic, microphone, music, sing, sound                                                                                   |
+| headphone                        | 🎧      | Headphone                 | earbud, headphone, sound                                                                                                       |
+| 1f4fb_radio                      | 📻      | Radio                     | entertainment, radio, tbt, video                                                                                               |
+| 1f3b7_saxophone                  | 🎷      | Saxophone                 | band, instrument, music, sax, saxophone                                                                                        |
+| accordion                        | 🪗      | Accordion                 | accordion, box, concertina, instrument, music, squeeze, squeezebox                                                             |
+| guitar                           | 🎸      | Guitar                    | guitar, instrument, music, strat                                                                                               |
+| 1f3b9_musicalkeyboard            | 🎹      | Musical keyboard          | instrument, keyboard, music, musical, piano                                                                                    |
+| 1f3ba_trumpet                    | 🎺      | Trumpet                   | band, instrument, music, trumpet                                                                                               |
+| 1f3bb_violin                     | 🎻      | Violin                    | instrument, music, strings, viola, violin                                                                                      |
+| 1fa95_banjo                      | 🪕      | Banjo                     | banjo, instrument, music, stringed                                                                                             |
+| 1f941_drumwithdrumsticks         | 🥁      | Drum                      | drum, drumsticks, instrument, music, sticks, with                                                                              |
+| longdrum                         | 🪘      | Long Drum                 | beat, conga, drum, instrument, long, rhythm                                                                                    |
+| maracas                          | 🪇      | Maracas                   | cha, dance, instrument, maracas, music, party, percussion, rattle, shake, shaker                                               |
+| flute                            | 🪈      | Flute                     | band, fife, flautist, flute, instrument, marching, music, orchestra, piccolo, pipe, recorder, woodwind                         |
+| 1fa89_harp                       | 🪉      | Harp                      | harp, cupid, instrument, love, music, orchestra                                                                                |
+| phone                            | 📱      | Phone                     | cell, communication, handheld, mobile, phone, smartphone, technology, telephone, touchscreen                                   |
+| 1f4f2_mobilephonewitharrow       | 📲      | Mobile phone with arrow   | arrow, build, call, cell, communication, mobile, phone, receive, technology, telephone, with                                   |
+| 260e_blacktelephone              | ☎️      | Telephone                 | telephone, landline                                                                                                            |
+| telephonereceiver                | 📞      | Telephone receiver        | communication, handset, phone, receiver, telephone, voip                                                                       |
+| 1f4df_pager                      | 📟      | Pager                     | communication, pager                                                                                                           |
+| 1f4e0_faxmachine                 | 📠      | Fax machine               | communication, fax, machine                                                                                                    |
+| 1f50b_battery                    | 🔋      | Battery                   | battery, charge                                                                                                                |
+| lowbattery                       | 🪫      | Low battery               | battery, drained, electronic, energy, low, power                                                                               |
+| 1f50c_electricplug               | 🔌      | Electric plug             | electric, electricity, eletricity, plug                                                                                        |
+| computer                         | 💻      | Computer                  | computer, keyboard, laptop, microsoft, office, pc, personal, surface, windows                                                  |
+| 1f5a5_desktopcomputer            | 🖥️      | Computer                  | desktop, computer, monitor                                                                                                     |
+| 1f5a8_printer                    | 🖨️      | Printer                   | printer, computer                                                                                                              |
+| 2328_keyboard                    | ⌨️      | Keyboard                  | keyboard, computer                                                                                                             |
+| 1f5b1_threebuttonmouse           | 🖱️      | Mouse                     | three, button, mouse, computer                                                                                                 |
+| 1f5b2_trackball                  | 🖲️      | Trackball                 | trackball, computer                                                                                                            |
+| 1f4bd_minidisc                   | 💽      | Minidisc                  | computer, disk, minidisk, optical                                                                                              |
+| 1f4be_floppydisk                 | 💾      | Floppy disk               | computer, disk, floppy                                                                                                         |
+| 1f4bf_opticaldisc                | 💿      | Optical disk              | CD, blu, blu-ray, computer, disk, dvd, optical, ray                                                                            |
+| 1f4c0_dvd                        | 📀      | DVD                       | Blu-ray, Bluray, DVD, cd, computer, disk, optical                                                                              |
+| 1f9ee_abacus                     | 🧮      | Abacus                    | abacus, algebra, calculate, calculation, calculator, math                                                                      |
+| 1f3a5_moviecamera                | 🎥      | Movie camera              | bollywood, camera, cinema, film, hollywood, movie, record                                                                      |
+| 1f39e_filmframes                 | 🎞️      | Film frames               | film, frames, Cinema, movie                                                                                                    |
+| 1f4fd_filmprojector              | 📽️      | Film projector            | cinema, film, movie, projector, video                                                                                          |
+| movie                            | 🎬      | Movie                     | action, board, clapper, film, movie                                                                                            |
+| 1f4fa_television                 | 📺      | Television                | television, tv, video                                                                                                          |
+| 1f4f7_camera                     | 📷      | Camera                    | camera, film, photo, photograph, photos, selfie, snap, tbt, trip, video                                                        |
+| camera                           | 📸      | Camera                    | camera, film, flash, photo, photography, video                                                                                 |
+| 1f4f9_videocamera                | 📹      | Video camera              | camcorder, camera, film, tbt, video                                                                                            |
+| 1f4fc_videocassette              | 📼      | Video cassette            | betamax, cassette, old, school, tape, vcr, vhs, video, videocassette                                                           |
+| 1f50d_magnifiertiltedleft        | 🔍      | Magnifying glass left     | glass, lab, left, left-pointing, magnifying, pointing, science, search, tilted, tool                                           |
+| 1f50e_magnifiertiltedright       | 🔎      | Magnifying glass right    | contact, glass, lab, magnifying, pointing, right, right-pointing, science, search, tilted, tool                                |
+| 1f56f_candle                     | 🕯️      | Candle                    | candle, light                                                                                                                  |
+| 1f4a1_electriclightbulb          | 💡      | Electric light bulb       | bulb, comic, electric, idea, light                                                                                             |
+| 1f526_electrictorch              | 🔦      | Torch                     | electric, flashlight, light, tool, torch                                                                                       |
+| 1f3ee_izakayalantern             | 🏮      | Izakaya lantern           | bar, izakaya, lantern, light, paper, red, restaurant                                                                           |
+| 1fa94_diyalamp                   | 🪔      | Diya lamp                 | diya, lamp, light, oil                                                                                                         |
+| 1f4d4_decorativenotebook         | 📔      | Decorative notebook       | book, cover, decorated, decorative, education, journal, notebook, notes, planner, school, with, writing                        |
+| 1f4d5_closedbook                 | 📕      | Red book                  | book, closed, education, journal, notes, planner                                                                               |
+| 1f4d6_openbook                   | 📖      | Open book                 | book, education, fantasy, journal, knowledge, library, notes, novels, open, planner, read, reading                             |
+| 1f4d7_greenbook                  | 📗      | Green book                | book, education, fantasy, green, journal, library, notes, planner, read, reading                                               |
+| 1f4d8_bluebook                   | 📘      | Blue book                 | blue, book, education, fantasy, journal, library, notes, planner, read, reading                                                |
+| 1f4d9_orangebook                 | 📙      | Orange book               | book, education, fantasy, journal, library, notes, orange, planner, read, reading                                              |
+| 1f4da_books                      | 📚      | Books                     | book, books, education, fantasy, knowledge, library, notes, novels, read, reading, school, study                               |
+| 1f4d3_notebook                   | 📓      | Notebook                  | journal, notebook, notes, planner                                                                                              |
+| 1f4d2_ledger                     | 📒      | Binder                    | binder, ledger, notebook                                                                                                       |
+| 1f4c3_pagewithcurl               | 📃      | Curled page               | curl, document, notes, page, paper, with                                                                                       |
+| 1f4dc_scroll                     | 📜      | Scroll                    | notes, paper, scroll                                                                                                           |
+| 1f4c4_pagefacingup               | 📄      | Page                      | document, facing, page, paper, up                                                                                              |
+| 1f4f0_newspaper                  | 📰      | Newspaper                 | communication, news, newspaper, paper                                                                                          |
+| 1f5de_rolledupnewspaper          | 🗞️      | Rolled up newspaper       | rolled, up, news, paper, newspaper                                                                                             |
+| 1f4d1_bookmarktabs               | 📑      | Bookmark tabs             | bookmark, mark, marker, tabs                                                                                                   |
+| 1f516_bookmark                   | 🔖      | Bookmark                  | bookmark, mark                                                                                                                 |
+| 1f3f7_label                      | 🏷️      | Label tag                 | label, tag                                                                                                                     |
+| 1f4b0_moneybag                   | 💰      | Money bag                 | bag, bank, bet, billion, cash, cost, dollar, gold, million, money, moneybag, paid, paying, pot, rich, win                      |
+| coin                             | 🪙      | Coin                      | coin, dollar, euro, gold, metal, money, rich, silver, treasure                                                                 |
+| 1f4b4_banknotewithyensign        | 💴      | Yen                       | bank, banknote, bill, currency, money, note, sign, with, yen                                                                   |
+| 1f4b5_banknotewithdollarsign     | 💵      | Dollar                    | bank, banknote, bill, currency, dollar, money, note, sign, with                                                                |
+| 1f4b6_banknotewitheurosign       | 💶      | Euro                      | 100, bank, banknote, bill, currency, euro, money, note, rich, sign, with                                                       |
+| 1f4b7_banknotewithpoundsign      | 💷      | Pound                     | bank, banknote, bill, billion, cash, currency, money, note, pound, pounds, sign, with                                          |
+| 1f4b8_moneywithwings             | 💸      | Flying money              | bank, banknote, bill, billion, cash, dollar, fly, flying, million, money, note, pay, wings, with                               |
+| 1f4b3_creditcard                 | 💳      | Credit card               | bank, card, cash, charge, credit, magnetic, money, pay, strip                                                                  |
+| 1f9fe_receipt                    | 🧾      | Receipt                   | accounting, bill, bookkeeping, evidence, invoice, proof, receipt                                                               |
+| 1f4b9_yengraph                   | 💹      | Chart increasing with yen | bank, chart, currency, graph, growth, increasing, market, money, rise, trend, upward, yen                                      |
+| 1f4e7_email                      | 📧      | Email                     | e-mail, email, letter, mail                                                                                                    |
+| 1f4e8_incomingenvelope           | 📨      | Income envelope           | delivering, e-mail, email, envelope, income envelope, incoming, letter, mail, receive, sent                                    |
+| 1f4e9_envelopewitharrow          | 📩      | Envelope with arrow       | arrow, communication, down, e-mail, email, envelope, letter, mail, outgoing, send, sent                                        |
+| 1f4e4_outboxtray                 | 📤      | Outbox                    | box, email, letter, mail, outbox, sent, tray                                                                                   |
+| 1f4e5_inboxtray                  | 📥      | Inbox                     | box, email, inbox, letter, mail, receive, tray, zero                                                                           |
+| 1f4e6_package                    | 📦      | Package                   | box, communication, delivery, package, parcel, shipping                                                                        |
+| 1f4eb_mailboxclosedflagup        | 📫      | Closed mailbox with flag  | closed, communication, flag, mail, mailbox, postbox, raised, with                                                              |
+| 1f4ea_mailboxclosedflagdown      | 📪      | Closed mailbox            | closed, flag, lowered, mail, mailbox, postbox, with                                                                            |
+| 1f4ec_openmailboxwithraisedflag  | 📬      | Open mailbox with flag    | flag, mail, mailbox, open, postbox, raised, with                                                                               |
+| 1f4ed_openmailboxwithloweredflag | 📭      | Open mailbox              | flag, lowered, mail, mailbox, open, postbox, with                                                                              |
+| 1f4ee_postbox                    | 📮      | Post box                  | mail, mailbox, post box, postbox                                                                                               |
+| 1f5f3_ballotboxwithballot        | 🗳️      | Ballot box                | ballot, box, with                                                                                                              |
+| 270f_pencil                      | ✏️      | Pencil                    | pencil                                                                                                                         |
+| 2712_blacknib                    | ✒️      | Black nib                 | black, nib, pen                                                                                                                |
+| 1f58b_lowerleftfountainpen       | 🖋️      | Fountain pen              | fountain, pen                                                                                                                  |
+| 1f58a_lowerleftballpointpen      | 🖊️      | Ball point pen            | ball, point, pen                                                                                                               |
+| 1f58c_lowerleftpaintbrush        | 🖌️      | Paint brush               | paintbrush, painting, brush                                                                                                    |
+| 1f58d_lowerleftcrayon            | 🖍️      | Crayon                    | crayon, write, paint, writing, painting                                                                                        |
+| 1f4dd_memo                       | 📝      | Memo                      | communication, media, memo, notes, pencil                                                                                      |
+| 1f4bc_briefcase                  | 💼      | Briefcase                 | briefcase, office                                                                                                              |
+| 1f4c1_filefolder                 | 📁      | Folder                    | file, folder                                                                                                                   |
+| 1f4c2_openfilefolder             | 📂      | Open folder               | file, folder, open                                                                                                             |
+| 1f5c2_cardindexdividers          | 🗂️      | Folder dividers           | card, index, dividers                                                                                                          |
+| 1f4c5_calendar                   | 📅      | Calendar                  | calendar, date                                                                                                                 |
+| spiralcalendar                   | 📆      | Spiral calendar           | calendar, date, spiral, tear-off                                                                                               |
+| 1f4c6_tearoffcalendar            | 🗓️      | Tear off calendar         | tearoff, calendar, date                                                                                                        |
+| 1f5d2_spiralnotepad              | 🗒️      | Spiral notepad            | note, notepad, pad, spiral                                                                                                     |
+| 1f4c7_cardindex                  | 📇      | Rolodex                   | card, index, old, rolodex, school                                                                                              |
+| 1f4c8_chartwithupwardstrend      | 📈      | Positive graph            | chart, data, graph, growth, increasing, positive, right, trend, up, upward, upwards, with                                      |
+| 1f4c9_chartwithdownwardstrend    | 📉      | Negative graph            | chart, data, decreasing, down, downward, downwards, graph, negative, trend, with                                               |
+| 1f4ca_barchart                   | 📊      | Bar chart                 | bar, chart, data, graph                                                                                                        |
+| 1f4cb_clipboard                  | 📋      | Clipboard                 | clipboard, do, list, notes                                                                                                     |
+| 1f4cc_pushpin                    | 📌      | Pin                       | collage, pin, push, pushpin, thumbtack                                                                                         |
+| 1f4cd_roundpushpin               | 📍      | Pin                       | location, map, pin, push, pushpin, round                                                                                       |
+| 1f4ce_paperclip                  | 📎      | Paperclip                 | clip, clippy, paper, paperclip                                                                                                 |
+| 1f587_linkedpaperclips           | 🖇️      | Paper clips               | linked, paper, clips                                                                                                           |
+| 1f4cf_straightruler              | 📏      | Ruler                     | angle, edge, math, measure, ruler, straight, straightedge                                                                      |
+| 1f4d0_triangularruler            | 📐      | Triangular ruler          | angle, math, measure, rule, ruler, set, slide, square, triangle, triangular                                                    |
+| 2702_blackscissors               | ✂️      | Scissors                  | cut, cutting, paper, scissors, tool                                                                                            |
+| 1f5c3_cardfilebox                | 🗃️      | File box                  | card, file, box                                                                                                                |
+| 1f5c4_filecabinet                | 🗄️      | Filing cabinet            | cabinet, file, filing, paper                                                                                                   |
+| 1f5d1_wastebasket                | 🗑️      | Trash bin                 | waste, basket, trash, bin                                                                                                      |
+| 1f512_locked                     | 🔒      | Locked                    | closed, lock, locked, private                                                                                                  |
+| 1f513_unlocked                   | 🔓      | Unlocked                  | cracked, lock, open, unlock, unlocked                                                                                          |
+| 1f50f_lockedwithpen              | 🔏      | Locked with pen           | ink, lock, locked, nib, pen, privacy                                                                                           |
+| 1f510_lockedwithkey              | 🔐      | Lock and key              | bike, closed, key, lock, locked, secure                                                                                        |
+| 1f511_key                        | 🔑      | Key                       | key, keys, lock, major, password, unlock                                                                                       |
+| oldkey                           | 🗝️      | Old key                   | key, lock, password, secret, success, skeleton                                                                                 |
+| 1f528_hammer                     | 🔨      | Hammer                    | hammer, home, improvement, repairs, tool                                                                                       |
+| 1fa93_axe                        | 🪓      | Axe                       | ax, axe, chop, hatchet, split, wood                                                                                            |
+| 26cf_pick                        | ⛏️      | Pick                      | hammer, mining, pick, tool                                                                                                     |
+| 2692_hammerandpick               | ⚒️      | Hammer and pick           | hammer, pick, tool                                                                                                             |
+| 1f6e0_hammerandwrench            | 🛠️      | Hammer and wrench         | hammer, and, wrench, spanner                                                                                                   |
+| 1f5e1_daggerknife                | 🗡️      | Dagger                    | dagger, knife, weapon                                                                                                          |
+| boomerang                        | 🪃      | Boomerang                 | boomerang, rebound, repercussion, weapon                                                                                       |
+| 2694_crossedswords               | ⚔️      | Swords                    | crossed, swords                                                                                                                |
+| 1f52b_pistol                     | 🔫      | Water pistol              | gun, handgun, pistol, revolver, tool, water, weapon                                                                            |
+| 1f3f9_bowandarrow                | 🏹      | Bow and arrow             | Sagittarius, archer, archery, arrow, bow, tool, weapon, zodiac                                                                 |
+| 1f6e1_shield                     | 🛡️      | Shield                    | shield, weapon, protection                                                                                                     |
+| carpentrysaw                     | 🪚      | Carpentry saw             | carpenter, carpentry, cut, lumber, saw, tool, trim                                                                             |
+| 1f527_wrench                     | 🔧      | Wrench                    | home, improvement, spanner, tool, wrench                                                                                       |
+| screwdriver                      | 🪛      | Screwdriver               | flathead, handy, screw, screwdriver, tool                                                                                      |
+| 1f529_nutandbolt                 | 🔩      | Bolt                      | and, bolt, home, improvement, nut, tool                                                                                        |
+| 2699_gear                        | ⚙️      | Cog                       | cog, cogwheel, gear, tool                                                                                                      |
+| 1f5dc_compression                | 🗜️      | Clamp                     | clamp, compress, tool, vice                                                                                                    |
+| 2696_scales                      | ⚖️      | Scales                    | balance, justice, Libra, scale, scales, tool, weight, zodiac                                                                   |
+| 1f9af_probingcane                | 🦯      | Probing cane              | accessibility, blind, cane, probing, white                                                                                     |
+| 1f517_linksymbol                 | 🔗      | Link                      | link, links, symbol                                                                                                            |
+| brokenchain8                     | ⛓️‍💥      | Broken chain              | break, breaking, broken, chain, cuffs, freedom                                                                                 |
+| 26d3_chains                      | ⛓️      | Chains                    | chains                                                                                                                         |
+| hook                             | 🪝      | Hook                      | catch, crook, curve, ensnare, hook, point, selling                                                                             |
+| 1f9f0_toolbox                    | 🧰      | Toolbox                   | box, chest, mechanic, red, tool, toolbox                                                                                       |
+| 1f9f2_magnet                     | 🧲      | Magnet                    | attraction, horseshoe, magnet, magnetic, negative, positive, shape, u                                                          |
+| 1fa8f_shovel                     | 🪏      | Shovel                    | shovel, bury, dig, garden, hole, plant, scoop, snow, spade                                                                     |
+| ladder                           | 🪜      | Ladder                    | climb, ladder, rung, step                                                                                                      |
+| 2697_alembic                     | ⚗️      | Alembic                   | alembic, chemistry, tool                                                                                                       |
+| 1f9ea_testtube                   | 🧪      | Test tube                 | chemist, chemistry, experiment, lab, science, test, tube                                                                       |
+| 1f9eb_petridish                  | 🧫      | Petri dish                | bacteria, biologist, biology, culture, dish, lab, petri                                                                        |
+| 1f9ec_dna                        | 🧬      | DNA                       | biologist, dna, evolution, gene, genetics, life                                                                                |
+| 1f52c_microscope                 | 🔬      | Microscope                | experiment, lab, microscope, science, tool                                                                                     |
+| 1f52d_telescope                  | 🔭      | Telescope                 | contact, extraterrestrial, science, telescope, tool                                                                            |
+| 1f4e1_satelliteantenna           | 📡      | Satellite antenna         | aliens, antenna, contact, dish, satellite, science                                                                             |
+| 1f489_syringe                    | 💉      | Syringe                   | doctor, flu, medicine, needle, shot, sick, syringe, tool, vaccinate, vaccination                                               |
+| 1fa78_blooddrop                  | 🩸      | Blood drop                | bleed, blood, donate, donation, drop, injury, medicine, menstruation                                                           |
+| 1f48a_pill                       | 💊      | Pill                      | doctor, drugs, medicated, medicine, pill, pills, sick, vitamin                                                                 |
+| 1fa79_adhesivebandage            | 🩹      | Plaster                   | adhesive, bandage, bandaid, wound                                                                                              |
+| crutch                           | 🩼      | Crutch                    | aid, cane, crutch, disability, help, hurt, injured, mobility, stick                                                            |
+| 1fa7a_stethoscope                | 🩺      | Stethoscope               | Doctor, checkup, doctor, heart, medicine, stethoscope                                                                          |
+| xray                             | 🩻      | X-ray                     | bones, doctor, medical, ray, skeleton, skull, x, x-ray, xray                                                                   |
+| 1f6aa_door                       | 🚪      | Door                      | back, closet, door, front                                                                                                      |
+| elevator                         | 🛗      | Elevator                  | accessibility, elevator, hoist, lift                                                                                           |
+| mirror                           | 🪞      | Mirror                    | makeup, mirror, reflection, reflector, speculum                                                                                |
+| window                           | 🪟      | Window                    | air, frame, fresh, opening, transparent, view, window                                                                          |
+| 1f6cf_bed                        | 🛏️      | Bed                       | bed, sleep, hotel                                                                                                              |
+| 1f6cb_couchandlamp               | 🛋️      | Couch and lamp            | couch, and, lamp, chill, relax                                                                                                 |
+| 1fa91_chair                      | 🪑      | Chair                     | chair, seat, sit                                                                                                               |
+| toilet                           | 🚽      | Toilet                    | bathroom, lavatory, poop, restroom, seat, toilet                                                                               |
+| plunger                          | 🪠      | Plunger                   | bathroom, cup, force, lavatory, plumber, plunger, poop, restroom, suction, toilet                                              |
+| 1f6bf_shower                     | 🚿      | Shower                    | shower, water                                                                                                                  |
+| 1f6c1_bathtub                    | 🛁      | Bath tub                  | bath, bathtub                                                                                                                  |
+| mousetrap                        | 🪤      | Mouse trap                | bait, cheese, lure, mouse, mousetrap, snare, trap                                                                              |
+| 1f9f7_safetypin                  | 🧷      | Safetypin                 | safetypin, diaper, pin, punk, rock, safety                                                                                     |
+| 1fa92_razor                      | 🪒      | Razor                     | razor, sharp, shave                                                                                                            |
+| 1f9f4_lotionbottle               | 🧴      | Lotion                    | bottle, lotion, moisturizer, shampoo, sunscreen                                                                                |
+| 1f9f9_broom                      | 🧹      | Broom                     | broom, cleaning, sweeping, witch                                                                                               |
+| 1f9fa_basket                     | 🧺      | Laundry basket            | basket, farming, laundry, picnic                                                                                               |
+| 1f9fb_toiletpaper                | 🧻      | Roll of paper             | bathroom, lavatory, paper, restroom, roll, toilet, towels                                                                      |
+| bucket                           | 🪣      | Bucket                    | bucket, cask, pail, vat                                                                                                        |
+| 1f9fc_soap                       | 🧼      | Soap                      | bar, bathing, clean, cleaning, lather, soap, soapdish                                                                          |
+| bubbles                          | 🫧      | Bubbles                   | bubble, bubbles, burp, clean, floating, pearl, soap, underwater                                                                |
+| toothbrush                       | 🪥      | Toothbrush                | bathroom, brush, clean, dental, hygiene, teeth, toiletry, toothbrush                                                           |
+| 1f9fd_sponge                     | 🧽      | Sponge                    | absorbing, cleaning, porous, soak, sponge                                                                                      |
+| 1f9ef_fireextinguisher           | 🧯      | Fire extinguisher         | extinguish, extinguisher, fire, quench                                                                                         |
+| 1f6d2_shoppingtrolley            | 🛒      | Shopping trolley          | cart, shopping, trolley                                                                                                        |
+| cigarette                        | 🚬      | Cigarette                 | cigarette, smoke, smoking                                                                                                      |
+| 26b0_coffin                      | ⚰️      | Coffin                    | coffin                                                                                                                         |
+| headstone                        | 🪦      | Headstone                 | cemetery, dead, grave, graveyard, headstone, memorial, rip, tomb, tombstone                                                    |
+| 26b1_funeralurn                  | ⚱️      | Funeral urn               | ashes, death, funeral, urn                                                                                                     |
+| hamsa                            | 🪬      | Hamsa                     | Fatima, Mary, Miriam, amulet, fortune, guide, hamsa, hand, palm, protect, protection                                           |
+| 1f5ff_moyai                      | 🗿      | Moyai                     | Easter, face, island, moai, moyai, statue, stoneface, travel                                                                   |
+| placard                          | 🪧      | Placard                   | card, demonstration, notice, picket, placard, plaque, protest, sign                                                            |
+| idcard                           | 🪪      | ID card                   | ID, card, credentials, document, identification, license, security                                                             |

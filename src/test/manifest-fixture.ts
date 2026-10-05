@@ -1,10 +1,10 @@
 import type { Manifest } from '../utils/index.js'
 
 export const MANIFEST_URL =
-  'https://cdn.animated-fluent-emojis.com/manifest.json'
+  'https://animated-fluent-emojis.pages.dev/manifest.json'
 
 export const SPRITE_URL_PATTERN =
-  'https://cdn.animated-fluent-emojis.com/sprites/*'
+  'https://animated-fluent-emojis.pages.dev/sprites/*'
 
 export const FIXTURE_MANIFEST: Manifest = {
   categories: [
@@ -22,6 +22,16 @@ export const FIXTURE_MANIFEST: Manifest = {
           diverse: false,
           animation: { fps: 20, framesCount: 40, firstFrame: 2 },
           keywords: ['grin'],
+        },
+        {
+          id: 'waving-hand',
+          description: 'Waving hand',
+          shortcuts: [],
+          unicode: '1f44b',
+          etag: 'etag-wave',
+          diverse: true,
+          animation: { fps: 24, framesCount: 21, firstFrame: 1 },
+          keywords: ['wave'],
         },
       ],
     },

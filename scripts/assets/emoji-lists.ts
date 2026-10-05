@@ -1,0 +1,62 @@
+import { format, resolveConfig } from 'prettier'
+
+import type { Manifest } from '../../src/utils/types.js'
+
+/**
+ * Builds the file name of a category's emoji list.
+ * @param categoryTitle The category title, such as `Travel and places`.
+ * @returns A name like `EMOJI_LIST_Travel_and_places.md`.
+ */
+export function buildCategoryFileName(categoryTitle: string): string {
+  return `EMOJI_LIST_${categoryTitle.replaceAll(' ', '_')}.md`
+}
+
+function escapeCell(text: string): string {
+  return text
+    .replaceAll('|', String.raw`\|`)
+    .replaceAll(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * Renders the per-category Markdown emoji lists for a manifest. The hand-written
+ * `EMOJI_LIST.md` index is left untouched.
+ * @param manifest The final emoji manifest.
+ * @returns File contents keyed by file name, unformatted.
+ */
+export function renderEmojiLists(manifest: Manifest): Map<string, string> {
+  const files = new Map<string, string>()
+  for (const category of manifest.categories) {
+    const rows = category.emoticons.map(
+      (emoticon) =>
+        `| ${escapeCell(emoticon.id)} | ${emoticon.unicode} | ${escapeCell(emoticon.description)} | ${escapeCell([...new Set(emoticon.keywords)].join(', '))} |`,
+    )
+    files.set(
+      buildCategoryFileName(category.title),
+      [
+        `# ${category.title}`,
+        '',
+        '| ID | Unicode | Description | Keywords |',
+        '| -- | ------- | ----------- | -------- |',
+        ...rows,
+        '',
+      ].join('\n'),
+    )
+  }
+
+  return files
+}
+
+/**
+ * Formats Markdown with the repository's Prettier configuration.
+ * @param source The Markdown text.
+ * @param filePath A path used to resolve the Prettier config.
+ * @returns The formatted Markdown.
+ */
+export async function formatMarkdown(
+  source: string,
+  filePath: string,
+): Promise<string> {
+  const options = await resolveConfig(filePath)
+  return format(source, { ...options, filepath: filePath })
+}

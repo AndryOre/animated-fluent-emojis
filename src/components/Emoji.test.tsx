@@ -4,7 +4,7 @@ import { page, userEvent } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
 
-const SPRITE_BASE = 'https://cdn.animated-fluent-emojis.com/sprites'
+const SPRITE_BASE = 'https://animated-fluent-emojis.pages.dev/sprites'
 
 const getImage = (name: string) => page.getByRole('img', { name })
 
@@ -14,8 +14,38 @@ test('renders the sprite for the given id', async () => {
   const image = getImage('Cat')
   await expect
     .element(image)
-    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.png`)
+    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.png?v=etag-cat`)
   await expect.element(image).toHaveAttribute('draggable', 'false')
+})
+
+test('uses the skin tone variant of a diverse emoji', async () => {
+  await render(<Emoji id="waving-hand" skinTone="dark" />)
+
+  await expect
+    .element(getImage('Waving hand'))
+    .toHaveAttribute(
+      'src',
+      `${SPRITE_BASE}/Smilies/waving-hand_s6.png?v=etag-wave`,
+    )
+})
+
+test('uses the default sprite for a diverse emoji without a skin tone', async () => {
+  await render(<Emoji id="waving-hand" />)
+
+  await expect
+    .element(getImage('Waving hand'))
+    .toHaveAttribute(
+      'src',
+      `${SPRITE_BASE}/Smilies/waving-hand.png?v=etag-wave`,
+    )
+})
+
+test('ignores the skin tone for emojis without variants', async () => {
+  await render(<Emoji id="cat" skinTone="light" />)
+
+  await expect
+    .element(getImage('Cat'))
+    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.png?v=etag-cat`)
 })
 
 test('applies the size to the container and the image', async () => {

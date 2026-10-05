@@ -1,13 +1,30 @@
-import type { EmojiManifest, Manifest } from './types.js'
+import type { EmojiManifest, Manifest, SkinTone } from './types.js'
+
+/**
+ * Origin that serves the manifest and the sprite sheets.
+ */
+export const CDN_BASE_URL = 'https://animated-fluent-emojis.pages.dev'
+
+const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
+  default: '',
+  light: '_s2',
+  'medium-light': '_s3',
+  medium: '_s4',
+  'medium-dark': '_s5',
+  dark: '_s6',
+}
 
 /**
  * Fetches the emoji manifest from the CDN.
  * @returns A promise that resolves to the raw manifest data.
  */
 async function fetchManifest(): Promise<Manifest> {
-  const response = await fetch(
-    'https://cdn.animated-fluent-emojis.com/manifest.json',
-  )
+  const response = await fetch(`${CDN_BASE_URL}/manifest.json`)
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch the emoji manifest (${String(response.status)})`,
+    )
+  }
   return (await response.json()) as Manifest
 }
 
@@ -33,19 +50,6 @@ export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> =
   generateEmojiManifest()
 
 /**
- * Gets the category folder for a given emoji id.
- * @param id - Key of the emoji in the CDN manifest.
- * @returns A promise that resolves to the category folder name.
- * @throws {Error} If the emoji is not found.
- */
-export async function getCategoryFolder(id: string): Promise<string> {
-  const manifest = await emojiManifestPromise
-  const emoji = manifest[id]
-  if (!emoji) throw new Error(`Emoji with id "${id}" not found`)
-  return emoji.category
-}
-
-/**
  * Builds the CSS keyframes that step through an emoji's sprite frames.
  * @param id - Key of the emoji in the CDN manifest.
  * @param size - Rendered edge length of the emoji, in pixels.
@@ -66,4 +70,18 @@ export async function generateEmojiStyle(
       100% { transform: translateY(-${String(emoji.animation.framesCount * size)}px); }
     }
   `
+}
+
+/**
+ * Builds the URL of an emoji's sprite sheet.
+ * @param emoji - The emoji manifest entry.
+ * @param skinTone - The requested skin tone; ignored when the emoji has no variants.
+ * @returns The sprite sheet URL, versioned by the emoji's etag.
+ */
+export function getSpriteUrl(
+  emoji: EmojiManifest,
+  skinTone: SkinTone = 'default',
+): string {
+  const suffix = emoji.diverse ? SKIN_TONE_SUFFIXES[skinTone] : ''
+  return `${CDN_BASE_URL}/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${suffix}.png?v=${encodeURIComponent(emoji.etag)}`
 }

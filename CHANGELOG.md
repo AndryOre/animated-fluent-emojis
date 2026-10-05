@@ -8,6 +8,24 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `skinTone` prop on `Emoji` to pick a skin tone for emojis with variants.
+- The 40 official Fluent animated emojis that Teams does not ship, such as
+  flags, 😀, 🖕 and the "facing right" variants.
+- Sprite URLs carry the emoji `etag` so updated sprites are never served stale.
+
+### Changed
+
+- The manifest and sprites are served from
+  `https://animated-fluent-emojis.pages.dev` and refreshed automatically each
+  week.
+
+### Fixed
+
+- Emojis no longer fail to load now that `cdn.animated-fluent-emojis.com` no
+  longer exists.
+
 ## [0.2.0] - 2026-10-05
 
 ### Added

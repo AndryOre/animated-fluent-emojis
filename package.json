@@ -62,6 +62,9 @@
     "test:coverage": "vitest run --coverage",
     "lint:docs": "bun scripts/lint-docs.ts",
     "lint:commits": "bun scripts/lint-commits.ts",
+    "assets:detect": "bun scripts/assets/sync.ts detect",
+    "assets:build": "bun scripts/assets/sync.ts build",
+    "assets:lists": "bun scripts/assets/sync.ts lists",
     "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },
   "peerDependencies": {
@@ -98,6 +101,7 @@
     "publint": "^0.3.25",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "sharp": "^0.35.5",
     "size-limit": "^14.1.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.0",
@@ -111,7 +115,7 @@
     {
       "name": "ESM bundle",
       "path": "dist/animated-fluent-emojis.js",
-      "limit": "1.6 kB"
+      "limit": "1.7 kB"
     },
     {
       "name": "Stylesheet",
