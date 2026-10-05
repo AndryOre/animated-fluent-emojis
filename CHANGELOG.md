@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-05
+
 ### Added
 
 - `skinTone` prop on `Emoji` to pick a skin tone for emojis with variants.
@@ -74,7 +76,9 @@ and this project adheres to
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.2.0...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.3.0...HEAD
+[0.3.0]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.2.0...v0.3.0
 [0.2.0]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/AndryOre/animated-fluent-emojis/releases/tag/v0.1.2
