@@ -20,6 +20,26 @@ Useful scripts (see `package.json` for the full list):
 - `bun run check` runs the static checks (formatting, linting, type-checking).
 - `bun run test` runs the test suite.
 
+## Where to start
+
+Browse issues labeled
+[`good first issue`](https://github.com/AndryOre/animated-fluent-emojis/labels/good%20first%20issue)
+for small, well-scoped tasks, or
+[`help wanted`](https://github.com/AndryOre/animated-fluent-emojis/labels/help%20wanted)
+for work where a contribution is especially welcome. [`ROADMAP.md`](ROADMAP.md)
+describes where the project is heading.
+
+## Review process
+
+Andry reviews pull requests within a few days. Once a PR is approved and CI is
+green, it is squash merged as described in [Merging](#merging).
+
+## Questions
+
+Ask questions, share ideas, or get help in
+[GitHub Discussions](https://github.com/AndryOre/animated-fluent-emojis/discussions).
+Use Discussions rather than issues for open-ended questions.
+
 ## Branch naming and commit format
 
 Use a short, descriptive feature branch (never work directly on `main`). Commits

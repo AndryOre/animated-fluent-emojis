@@ -36,6 +36,11 @@ Fixes are published to npm as a new version. Upgrade with your package manager
 (for example `bun update animated-fluent-emojis`). There is no separate patch
 channel.
 
+## Security Design
+
+For the trust boundaries, CSP requirements, supply chain and known limitations
+of the library, see [`docs/security.md`](../docs/security.md).
+
 ## Credit
 
 Reporters are credited by name (or handle) in the GitHub Security Advisory

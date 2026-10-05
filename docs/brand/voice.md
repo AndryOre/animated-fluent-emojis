@@ -92,7 +92,7 @@ care, not to replace it.
 - **What it means**: say what ships now, and say whose artwork it is.
 - **How it shows up**: the same idea everywhere people decide to use the
   library, at two levels of detail. README and npm: the artwork is Microsoft's,
-  the code is ISC, the project is not affiliated with or endorsed by Microsoft.
+  the code is MIT, the project is not affiliated with or endorsed by Microsoft.
   Landing page and social: "The emoji artwork is Microsoft's. The code is open
   source. Not affiliated with or endorsed by Microsoft." Future features (a
   landing page, README-embeddable files) are never described as available.
@@ -203,7 +203,7 @@ README-embeddable files are planned and stay out of copy until they exist.
    - Core idea: the artwork is Microsoft's, the code is ours, and nobody should
      have to guess.
    - When to use: README, npm page, landing footer, licensing questions.
-   - Example phrasing: "The artwork belongs to Microsoft. The code is ISC. This
+   - Example phrasing: "The artwork belongs to Microsoft. The code is MIT. This
      project is not affiliated with or endorsed by Microsoft." For non-technical
      readers: "The emoji artwork is Microsoft's. The code is open source. Not
      affiliated with or endorsed by Microsoft."
@@ -311,7 +311,7 @@ non-technical person would. The facts stay the same; only the words change.
 | fallback glyph                | the regular emoji shows instead                  |
 | lookup                        | find an emoji                                    |
 | reduced motion                | "less motion" (an option on the person's device) |
-| ISC, MIT-licensed repository  | "open source" (code), "artwork by Microsoft"     |
+| MIT-licensed repository       | "open source" (code), "artwork by Microsoft"     |
 | catalog                       | "all the emojis"; no count unless verified       |
 
 ### Preferred Terms
@@ -324,14 +324,14 @@ non-technical person would. The facts stay the same; only the words change.
 
 ### Avoid These Terms
 
-| Term                                                                                            | Reason                                                     | Alternative                                                               |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
-| "lightweight", "optimized"                                                                      | Vague without the mechanism                                | State it: lazy manifest, HD only on HD screens                            |
-| "official emoji" in public copy                                                                 | Reads as endorsement; keep it for internal docs            | README: "from Microsoft's MIT-licensed repository". Landing: leave it out |
-| Glossary terms on the landing page (sprite sheet, manifest, poster frame, repository, ISC, MIT) | Jargon for a non-technical visitor                         | The plain column in "Two vocabularies"                                    |
-| "Teams emoji" in public copy                                                                    | Implies a Microsoft product tie; keep it for internal docs | "the animated emojis Microsoft Teams uses", once                          |
-| "easy", "simply", "just"                                                                        | Condescending to a peer                                    | Show the code                                                             |
-| "accessible", "a11y ready"                                                                      | Claims conformance we have not tested                      | Describe the behavior: reduced motion, alt text                           |
+| Term                                                                                       | Reason                                                     | Alternative                                                               |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| "lightweight", "optimized"                                                                 | Vague without the mechanism                                | State it: lazy manifest, HD only on HD screens                            |
+| "official emoji" in public copy                                                            | Reads as endorsement; keep it for internal docs            | README: "from Microsoft's MIT-licensed repository". Landing: leave it out |
+| Glossary terms on the landing page (sprite sheet, manifest, poster frame, repository, MIT) | Jargon for a non-technical visitor                         | The plain column in "Two vocabularies"                                    |
+| "Teams emoji" in public copy                                                               | Implies a Microsoft product tie; keep it for internal docs | "the animated emojis Microsoft Teams uses", once                          |
+| "easy", "simply", "just"                                                                   | Condescending to a peer                                    | Show the code                                                             |
+| "accessible", "a11y ready"                                                                 | Claims conformance we have not tested                      | Describe the behavior: reduced motion, alt text                           |
 
 ### Never-Use Terms
 
@@ -373,7 +373,7 @@ non-technical person would. The facts stay the same; only the words change.
 > still frame when someone asks for less motion, and hold their space in the
 > layout while they load.
 >
-> The artwork belongs to Microsoft. The code is ISC. This project is not
+> The artwork belongs to Microsoft. The code is MIT. This project is not
 > affiliated with or endorsed by Microsoft.
 
 Why it works: one playful line, then three facts that are all true today

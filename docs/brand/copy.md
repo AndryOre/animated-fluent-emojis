@@ -31,7 +31,7 @@ three animated emojis already under the intro stay.
 >
 > Works with React 18 and 19.
 >
-> The artwork belongs to Microsoft. The code is ISC. This project is not
+> The artwork belongs to Microsoft. The code is MIT. This project is not
 > affiliated with or endorsed by Microsoft. See "Assets and licensing" (a link
 > to that README section).
 
@@ -139,7 +139,7 @@ For `[Unreleased]`, in the project's candid style:
 | Fallback glyph or custom `fallback`                   | `README.md` "Fallback"                                                         |
 | Lookup has no React                                   | `README.md` "Lookup"                                                           |
 | React 18 and 19, TypeScript, id autocomplete          | `package.json` `peerDependencies`; `README.md` props, `id`                     |
-| The code is ISC; the artwork is Microsoft's           | `README.md` "License" and "Assets and licensing"                               |
+| The code is MIT; the artwork is Microsoft's           | `README.md` "License" and "Assets and licensing"                               |
 
 ## Brand review (2026-10-05)
 
