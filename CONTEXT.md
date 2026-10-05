@@ -40,3 +40,13 @@ sheet, large sprite
 
 **Asset site**: The Cloudflare Pages site that serves the manifest and the
 sprite sheets. _Avoid_: CDN, bucket
+
+**Fallback glyph**: The emoji's native unicode character, shown when its sprite
+sheet fails to load. _Avoid_: Placeholder (the loading box), alt text
+
+**Asset layout version**: The `/v1/` prefix under which the asset site publishes
+its slim manifest and etag-named sprite sheets. A new version is added only when
+the shape of the slim manifest breaks. _Avoid_: API version, manifest version
+
+**Sprite generation**: The set of sprite sheets one sync publishes. The asset
+site keeps the current generation and the one before it. _Avoid_: Release, build
