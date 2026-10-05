@@ -26,17 +26,17 @@ emoji's shortcuts, unicode and keywords. Only the pipeline and the emoji lists
 read it. _Avoid_: Catalog file, index
 
 **Slim manifest**: The `manifest.slim.json` the runtime fetches, lazily and
-once: only id, description, etag, `diverse`, animation and `hd` per emoji.
-_Avoid_: Light manifest, mini manifest
+once: only id, description, etag, `diverse`, animation and `hd` per emoji, with
+every field at its default value omitted. _Avoid_: Light manifest, mini manifest
 
 **Poster frame**: The frame an emoji rests on when nothing animates: before
 playback, with `autoPlay` off, or under reduced motion. It is the animation's
 `firstFrame`. _Avoid_: Thumbnail, still, first image
 
 **HD sprite sheet**: The `@2x` sprite sheet with 200px frames, published next to
-the standard one for emojis with an official counterpart and served through
-`srcSet`. It has the same frame count as the standard sheet. _Avoid_: Retina
-sheet, large sprite
+the standard one for emojis with an official counterpart and at most 81 frames,
+so the sheet stays within 16,384 px, and served through `srcSet`. It has the
+same frame count as the standard sheet. _Avoid_: Retina sheet, large sprite
 
 **Asset site**: The Cloudflare Pages site that serves the manifest and the
 sprite sheets. _Avoid_: CDN, bucket
@@ -50,3 +50,11 @@ the shape of the slim manifest breaks. _Avoid_: API version, manifest version
 
 **Sprite generation**: The set of sprite sheets one sync publishes. The asset
 site keeps the current generation and the one before it. _Avoid_: Release, build
+
+**Lookup**: Resolving text (a unicode emoji, a string containing emojis or a
+description query) to catalog emojis without rendering them. _Avoid_: Search
+API, finder, resolver
+
+**Pipeline version**: The version of the build rules; a change republishes every
+sprite even when no upstream source changed. _Avoid_: Build version, schema
+version
