@@ -167,6 +167,26 @@ test('onPlaybackEnd is called when a playing run ends', async () => {
     .toBe(1)
 })
 
+test('reduced motion turned on mid-run leaves the poster frame and never replays', async () => {
+  const onPlaybackEnd = vi.fn()
+  await render(
+    <Emoji id="cat" animationIterations={50} onPlaybackEnd={onPlaybackEnd} />,
+  )
+
+  const image = getImage('Cat')
+  await expect.poll(() => getPlayState(image)).toBe('running')
+
+  await emulateReducedMotion('reduce')
+  await expect.poll(() => image.element().style.animationName).toBe('none')
+  expect(getPlayState(image)).toBe('paused')
+
+  await emulateReducedMotion('no-preference')
+  await pause()
+  expect(image.element().style.animationName).toBe('none')
+  expect(getPlayState(image)).toBe('paused')
+  expect(onPlaybackEnd).not.toHaveBeenCalled()
+})
+
 test('onPlaybackEnd is never called for infinite runs', async () => {
   const onPlaybackEnd = vi.fn()
   await render(
