@@ -114,16 +114,17 @@ attribute are also accepted. Every prop, with edge cases, is in the
 
 ## Documentation
 
-| Doc                                   | Covers                                        |
-| ------------------------------------- | --------------------------------------------- |
-| [Usage guide](docs/usage.md)          | Props, playback, fallback, preloading, lookup |
-| [Docs index](docs/README.md)          | Every document in this repository             |
-| [Security design](docs/security.md)   | Threat model and assurance case               |
-| [Changelog](CHANGELOG.md)             | Release notes                                 |
-| [Roadmap](ROADMAP.md)                 | Project direction                             |
-| [Governance](GOVERNANCE.md)           | Decisions and project continuity              |
-| [Contributing](CONTRIBUTING.md)       | Setup, conventions and merging                |
-| [Code of Conduct](CODE_OF_CONDUCT.md) | Community standards                           |
+| Doc                                        | Covers                                        |
+| ------------------------------------------ | --------------------------------------------- |
+| [Usage guide](docs/usage.md)               | Props, playback, fallback, preloading, lookup |
+| [Docs index](docs/README.md)               | Every document in this repository             |
+| [Troubleshooting](docs/troubleshooting.md) | Fixes for common problems, by symptom         |
+| [Security design](docs/security.md)        | Threat model and assurance case               |
+| [Changelog](CHANGELOG.md)                  | Release notes                                 |
+| [Roadmap](ROADMAP.md)                      | Project direction                             |
+| [Governance](GOVERNANCE.md)                | Decisions and project continuity              |
+| [Contributing](CONTRIBUTING.md)            | Setup, conventions and merging                |
+| [Code of Conduct](CODE_OF_CONDUCT.md)      | Community standards                           |
 
 ## Migrating from 0.4
 
