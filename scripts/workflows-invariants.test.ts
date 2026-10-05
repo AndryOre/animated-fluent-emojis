@@ -163,6 +163,19 @@ describe('sync-assets.yml smoke steps', () => {
     expect(legacy?.run).toContain('/sprites/')
   })
 
+  test('retries every legacy request', () => {
+    const requests = (legacy?.run ?? '')
+      .split('\n')
+      .filter((line) => line.includes('curl '))
+    expect(requests.length).toBeGreaterThanOrEqual(2)
+    for (const line of requests) expect(line).toContain('--retry 5')
+  })
+
+  test('polls the v1 builtAt check in a bounded loop', () => {
+    expect(v1?.run).toMatch(/for \w+ in \$\(seq 1 \d+\)/)
+    expect(v1?.run).toContain('sleep ')
+  })
+
   test('always runs the v1 checks, including builtAt and an @2x sprite', () => {
     expect(v1?.if).not.toContain('smoke_v1')
     expect(v1?.run).toContain('/v1/version.json')
@@ -188,6 +201,11 @@ describe('sync-assets.yml smoke steps', () => {
 
 describe('sync-assets.yml emoji-lists job', () => {
   const job = readWorkflow('sync-assets.yml').jobs?.['emoji-lists']
+
+  test('runs whenever sync did not fail, regardless of changed', () => {
+    expect(job?.needs).toBe('sync')
+    expect(job?.if ?? '').not.toContain('changed')
+  })
   const runs = job?.steps?.map((step) => step.run ?? '').join('\n') ?? ''
 
   test('installs without running lifecycle scripts', () => {
@@ -289,12 +307,22 @@ describe('release.yml job split', () => {
     expect(JSON.stringify(workflow)).not.toContain('npm@latest')
   })
 
-  test('verify gates on the v1 layout returning 200', () => {
-    expect(verifyScript).toContain(
-      'https://animated-fluent-emojis.pages.dev/v1/version.json',
+  test('verify gates on assets:verify-live after bun is installed', () => {
+    const steps = verify?.steps ?? []
+    const gateIndex = steps.findIndex((step) =>
+      step.run?.includes('bun run assets:verify-live'),
     )
-    expect(verifyScript).toContain('%{http_code}')
-    expect(verifyScript).toContain('"200"')
+    const bunIndex = steps.findIndex((step) => step.uses?.includes('setup-bun'))
+    const installIndex = steps.findIndex((step) => step.run === 'bun ci')
+    expect(gateIndex).toBeGreaterThan(bunIndex)
+    expect(gateIndex).toBeGreaterThan(installIndex)
+    expect(verifyScript).not.toContain('%{http_code}')
+  })
+
+  test('publish derives the npm dist-tag from a prerelease version', () => {
+    expect(publishScript).toContain('--tag "${dist_tag}"')
+    expect(publishScript).toContain('dist_tag=latest')
+    expect(publishScript).toContain('${version#*-}')
   })
 
   test('verify checks the tag, main ancestry and non-empty notes', () => {
@@ -313,5 +341,15 @@ describe('release.yml job split', () => {
   test('does not interpolate expressions into the scripts', () => {
     expect(verifyScript).not.toContain('${{')
     expect(publishScript).not.toContain('${{')
+  })
+})
+
+describe('ci.yml eslint cache', () => {
+  const cacheStep = collectSteps(readWorkflow('ci.yml')).find((step) =>
+    step.with?.path?.toString().includes('.eslintcache'),
+  )
+
+  test('keys the cache on the local eslint rules too', () => {
+    expect(String(cacheStep?.with?.key)).toContain('eslint-rules/**')
   })
 })

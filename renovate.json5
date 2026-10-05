@@ -34,7 +34,21 @@
     automerge: true,
   },
 
+  customManagers: [
+    {
+      customType: 'regex',
+      managerFilePatterns: ['/^\\.github/workflows/.+\\.ya?ml$/'],
+      matchStrings: ['npm install -g npm@(?<currentValue>\\d+\\.\\d+\\.\\d+)'],
+      datasourceTemplate: 'npm',
+      depNameTemplate: 'npm',
+    },
+  ],
+
   packageRules: [
+    {
+      matchPackageNames: ['@types/node'],
+      allowedVersions: '<25',
+    },
     {
       matchDepTypes: ['devDependencies'],
       semanticCommitScope: 'deps-dev',
