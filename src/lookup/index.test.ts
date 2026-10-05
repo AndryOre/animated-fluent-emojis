@@ -220,6 +220,41 @@ test('text presentation bases require VS16 while emoji presentation bases do not
   })
 })
 
+test('a zwj sequence still resolves without the VS16 it carries inside', async () => {
+  server.use(
+    http.get(MANIFEST_URL, () =>
+      HttpResponse.json({
+        categories: [
+          {
+            id: 'people',
+            title: 'People',
+            description: 'People',
+            emoticons: [
+              {
+                id: 'woman-running',
+                description: 'Woman running',
+                etag: 'e9',
+                unicode: '\u{1F3C3}\u{200D}\u{2640}\u{FE0F}',
+                animation: { framesCount: 10 },
+              },
+            ],
+          },
+        ],
+      }),
+    ),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('\u{1F3C3}\u{200D}\u{2640}')).toEqual({
+    id: 'woman-running',
+  })
+  expect(await findEmojiByUnicode('\u{1F3C3}\u{200D}\u{2640}\u{FE0F}')).toEqual(
+    {
+      id: 'woman-running',
+    },
+  )
+})
+
 test('keycap sequences resolve whole', async () => {
   serveSymbolManifest()
   const { extractEmojis } = await importFresh()

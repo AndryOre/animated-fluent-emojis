@@ -93,6 +93,9 @@ export async function verifyLive(
   if (!version.layouts.includes(V1_DIRECTORY)) {
     throw new Error(`${url} does not list the ${V1_DIRECTORY} layout`)
   }
+  if (version.limited === true) {
+    throw new Error(`${url} was built with --limit and is not the full catalog`)
+  }
   if (isV1LayoutStale(version)) {
     throw new Error(
       `${url} has pipelineVersion ${String(version.pipelineVersion)}, expected ${String(PIPELINE_VERSION)}`,

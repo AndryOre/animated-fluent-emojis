@@ -222,6 +222,13 @@ test('verify-live fails when v1 is not listed', async () => {
   await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('layout')
 })
 
+test('verify-live fails on a limited build', async () => {
+  const { fetch } = createFakeFetch({
+    [liveVersionKey]: { body: { ...published, limited: true } },
+  })
+  await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('--limit')
+})
+
 test('verify-live fails on another pipeline version', async () => {
   const { fetch } = createFakeFetch({
     [liveVersionKey]: {

@@ -59,6 +59,18 @@ function stripVariationSelector(text: string): string {
 }
 
 /**
+ * Tells whether VS16 directly follows the first code point, which marks a
+ * text-presentation base such as a copyright sign.
+ * @param text - An emoji, if known.
+ * @returns Whether the second code point is VS16.
+ */
+function hasVariationSelectorAfterBase(text: string | undefined): boolean {
+  const base = text?.codePointAt(0)
+  if (base === undefined) return false
+  return text?.codePointAt(base > 0xff_ff ? 2 : 1) === 0xfe_0f
+}
+
+/**
  * Indexes the catalog by its unicode without VS16, once per manifest.
  * @param manifest - The loaded manifest.
  * @returns A map from VS16-free unicode to the manifest entry.
@@ -89,9 +101,10 @@ function resolveEmoji(
   const plain = stripVariationSelector(text)
   const direct = index.get(plain)
   if (direct) {
-    return text === direct.unicode || plain === direct.unicode
-      ? { id: direct.id }
-      : undefined
+    return hasVariationSelectorAfterBase(direct.unicode) &&
+      !hasVariationSelectorAfterBase(text)
+      ? undefined
+      : { id: direct.id }
   }
   const modifiers = plain.match(SKIN_TONE_MODIFIERS)
   const base = index.get(plain.replaceAll(SKIN_TONE_MODIFIERS, ''))
