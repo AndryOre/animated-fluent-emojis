@@ -88,10 +88,10 @@ The manifest is fetched on first render, never at import; see the
 
 ### Next.js and server components
 
-The published bundle starts with `"use client";`, so you can import `Emoji` from
-a server component in the App Router. Import the stylesheet once, for example in
-the root layout. Call `configureEmojis` and `preloadEmojis` from a client module
-(one with `"use client"`), not from a Server Component.
+The bundle starts with `"use client";`, so a server component can import
+`Emoji`. Import the stylesheet once, in the root layout. It renders a
+placeholder on the server and the emoji after hydration. Call `configureEmojis`
+and `preloadEmojis` from a client module, not a Server Component.
 
 ## Props
 
