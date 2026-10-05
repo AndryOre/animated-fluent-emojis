@@ -148,10 +148,10 @@ animation while the tab is hidden and resumes it when the tab comes back.
 Changing the sprite source (`id` or `skinTone`) resets the load, visibility and
 initial-run state, so the new emoji plays its initial run. A sprite that failed
 is retried when its source changes and when the browser comes back online,
-through the same single shared `online` listener. `onError` fires once per
-failure, and not for a failure left by a previous attempt. `animationIterations`
-is normalized: `Infinity` means `'infinite'`, and `NaN` or a negative value
-means `0`, which disables autoplay.
+through a single `online` listener shared by all `Emoji` instances. `onError`
+fires once per failure, and not for a failure left by a previous attempt.
+`animationIterations` is normalized: `Infinity` means `'infinite'`, and `NaN` or
+a negative value means `0`, which disables autoplay.
 
 ## Manifest
 
@@ -193,9 +193,8 @@ The store has four statuses:
   `console.error`; subscribers see `error`.
 
 A store in `error` is retried, never left failed for good: on the next `Emoji`
-mount, on the next `preloadEmojis` call, and when the browser fires `online`
-(one shared `online` listener for all emojis, not one per emoji). Each retry
-goes through `loading` again.
+mount, on the next `preloadEmojis` call, and when the browser fires `online` (a
+single store-level listener at a time). Each retry goes through `loading` again.
 
 `configureEmojis({ assetSiteUrl })` replaces the default asset site
 (`https://animated-fluent-emojis.pages.dev`). Call it before the first `Emoji`
@@ -233,9 +232,8 @@ match, 20 results by default; a `limit` that is not a positive number means no
 limit, except `0`, which returns nothing). The catalog is indexed by its unicode
 without VS16, once per manifest. Text-default symbols such as `©` match only
 with VS16 (U+FE0F); mixed skin tones resolve to the base emoji, and a single
-tone to `skinTone`. The functions and the functions never reject: they resolve
-to `undefined` or `[]` when the manifest cannot be loaded. It has its own
-`size-limit` entry.
+tone to `skinTone`. The functions never reject: they resolve to `undefined` or
+`[]` when the manifest cannot be loaded. It has its own `size-limit` entry.
 
 ## Emoji ids
 
