@@ -61,5 +61,27 @@ test('renders the EmojiId union with one literal per id', () => {
   expect(source).toContain('export type EmojiId =')
   expect(source).toContain('  | "1f603_grinningfacewithbigeyes"')
   expect(source).toContain('  | "1f44b_wavinghand"')
-  expect(source.match(/^ {2}\| "/gm)).toHaveLength(2)
+  expect(source.match(/^ {2}\| "/gm)).toHaveLength(3)
+})
+
+test('renders DiverseEmojiId with only the diverse ids', () => {
+  const source = renderEmojiIdModule(createTeamsManifest())
+  const diverseSection = source.slice(
+    source.indexOf('export type DiverseEmojiId'),
+  )
+
+  expect(diverseSection).toContain('  | "1f44b_wavinghand"')
+  expect(diverseSection).not.toContain('1f603_grinningfacewithbigeyes')
+  expect(diverseSection.match(/^ {2}\| "/gm)).toHaveLength(1)
+})
+
+test('renders DiverseEmojiId as never when no id is diverse', () => {
+  const manifest = createTeamsManifest()
+  for (const category of manifest.categories) {
+    for (const emoticon of category.emoticons) emoticon.diverse = false
+  }
+
+  expect(renderEmojiIdModule(manifest)).toContain(
+    'export type DiverseEmojiId = never',
+  )
 })

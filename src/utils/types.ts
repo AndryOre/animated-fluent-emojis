@@ -5,7 +5,7 @@ import type {
   SyntheticEvent,
 } from 'react'
 
-import type { EmojiId } from './emoji-id.generated.js'
+import type { DiverseEmojiId, EmojiId } from './emoji-id.generated.js'
 
 /**
  * Represents the animation properties of an emoji.
@@ -139,10 +139,10 @@ export type SkinTone =
 type ControlledSpanProps = 'id' | 'children' | 'onLoad' | 'onError'
 
 /**
- * Represents the properties for the Emoji component. Any other prop is
- * passed to the root span.
+ * The base properties of the Emoji component, without the id-dependent
+ * `skinTone` rule. Any other prop is passed to the root span.
  */
-export interface EmojiProps extends Omit<
+interface EmojiBaseProps extends Omit<
   HTMLAttributes<HTMLSpanElement>,
   ControlledSpanProps
 > {
@@ -156,8 +156,6 @@ export interface EmojiProps extends Omit<
   animationIterations?: number | 'infinite'
   /** Whether to automatically play the animation on mount. Default is true. */
   autoPlay?: boolean
-  /** The skin tone, for emojis that support it. Default is 'default'. */
-  skinTone?: SkinTone
   /** Accessible text. Defaults to the emoji description; an empty string marks the emoji as decorative. */
   alt?: string
   /** Rendered when the image fails or the manifest fails to load. Defaults to the emoji's Unicode glyph when known; `null` renders nothing. */
@@ -167,3 +165,28 @@ export interface EmojiProps extends Omit<
   /** Called when the image fails to load, and with no event when the manifest fails to load. */
   onError?: (event?: SyntheticEvent<HTMLImageElement>) => void
 }
+
+/**
+ * Ids that are known not to support skin tones.
+ */
+type NonDiverseEmojiId = Exclude<EmojiId, DiverseEmojiId>
+
+/**
+ * The `skinTone` prop, rejected when `Id` is a known id without skin tone
+ * variants and accepted for diverse ids and arbitrary strings.
+ */
+type SkinToneProps<Id extends string> = [Id] extends [NonDiverseEmojiId]
+  ? { skinTone?: never }
+  : {
+      /** The skin tone, for emojis that support it. Default is 'default'. */
+      skinTone?: SkinTone
+    }
+
+/**
+ * Represents the properties for the Emoji component. `skinTone` is only
+ * accepted when `Id` is a diverse or an arbitrary string id.
+ */
+export type EmojiProps<Id extends string = string> = Omit<
+  EmojiBaseProps,
+  'id'
+> & { id: Id | EmojiId | (string & {}) } & SkinToneProps<Id>
