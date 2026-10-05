@@ -189,6 +189,25 @@ test('limits the build to the first emojis', async () => {
   ).rejects.toThrow()
 })
 
+test('writes nothing when the catalog fails validation', async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const options = {
+    ...baseOptions(fakeFetch),
+    convert: () =>
+      Promise.resolve({
+        png: Buffer.from('converted'),
+        framesCount: 0,
+        fps: 0,
+      }),
+  }
+
+  await expect(buildAssets(options)).rejects.toThrow(
+    'Catalog validation failed',
+  )
+
+  await expect(stat(options.outputDirectory)).rejects.toThrow()
+})
+
 test('diffManifests reports added, removed and changed ids', () => {
   const previous = createTeamsManifest()
   const next = createTeamsManifest()
