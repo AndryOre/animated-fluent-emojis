@@ -48,6 +48,58 @@ export function isV1LayoutStale(
   )
 }
 
+function hasUnfinishedBuild(version: PublishedVersion | undefined): boolean {
+  return (
+    version?.limited === true ||
+    (version?.skippedIds !== undefined && version.skippedIds.length > 0)
+  )
+}
+
+/**
+ * Parses the `--limit` option.
+ * @param value The raw option value, if given.
+ * @returns The limit, or undefined when the option is absent.
+ * @throws {Error} When the value is not a positive integer.
+ */
+export function parseLimit(value: string | undefined): number | undefined {
+  if (value === undefined) return undefined
+  const limit = Number(value)
+  if (!/^\d+$/.test(value) || !Number.isSafeInteger(limit) || limit < 1) {
+    throw new Error(
+      `Invalid --limit "${value}": expected a positive whole number`,
+    )
+  }
+  return limit
+}
+
+/**
+ * Checks that the live site serves a current v1 layout.
+ * @param fetchImplementation The fetch to use.
+ * @param baseUrl The site URL.
+ * @throws {Error} When `/v1/version.json` is missing, lacks the v1 layout or was built by another pipeline version.
+ */
+export async function verifyLive(
+  fetchImplementation: FetchLike,
+  baseUrl: string,
+): Promise<void> {
+  const url = `${baseUrl}/${V1_DIRECTORY}/version.json`
+  const response = await fetchImplementation(url, {
+    headers: { 'cache-control': 'no-cache' },
+  })
+  if (response.status !== 200) {
+    throw new Error(`${url} answered ${String(response.status)}, expected 200`)
+  }
+  const version = (await response.json()) as PublishedVersion
+  if (!version.layouts.includes(V1_DIRECTORY)) {
+    throw new Error(`${url} does not list the ${V1_DIRECTORY} layout`)
+  }
+  if (isV1LayoutStale(version)) {
+    throw new Error(
+      `${url} has pipelineVersion ${String(version.pipelineVersion)}, expected ${String(PIPELINE_VERSION)}`,
+    )
+  }
+}
+
 /**
  * Decides whether the published catalog is out of date.
  * @param published The root version marker, if any.
@@ -68,6 +120,8 @@ export function needsRebuild(
     rebuild ||
     published?.teamsHash !== latest.teamsHash ||
     published.mitSha !== latest.mitSha ||
+    hasUnfinishedBuild(published) ||
+    hasUnfinishedBuild(publishedV1) ||
     isV1LayoutStale(publishedV1)
   )
 }
@@ -360,9 +414,13 @@ async function main(): Promise<void> {
         publishedUrl: values['published-url'],
         outputDirectory: values.out,
         cacheDirectory: values.cache,
-        limit: values.limit === undefined ? undefined : Number(values.limit),
+        limit: parseLimit(values.limit),
         bypassGuards: values['bypass-guards'],
       })
+      break
+    }
+    case 'verify-live': {
+      await verifyLive(fetch, values['published-url'])
       break
     }
     case 'lists': {
@@ -370,7 +428,9 @@ async function main(): Promise<void> {
       break
     }
     default: {
-      throw new Error('Usage: sync.ts <detect|build|lists> [options]')
+      throw new Error(
+        'Usage: sync.ts <detect|build|verify-live|lists> [options]',
+      )
     }
   }
 }

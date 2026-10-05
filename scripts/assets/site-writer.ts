@@ -23,7 +23,7 @@ export const LICENSE_FILE_COUNT = 1
 const LICENSE_FILE_NAME = 'LICENSE-fluentui-emoji-animated.txt'
 
 const HEADERS_FILE = `/sprites/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=86400
   Access-Control-Allow-Origin: *
 
 /manifest.json
@@ -49,6 +49,16 @@ export interface PublishedVersion {
   readonly builtAt: string
   readonly pipelineVersion: number
   readonly layouts: readonly string[]
+  /**
+   * Emoji that failed to build, or whose HD sheet failed. Present only when
+   * non-empty; a published catalog that lists any is stale.
+   */
+  readonly skippedIds?: readonly string[]
+  /**
+   * Set when the build was cut short by `--limit`. Such a catalog is never
+   * current.
+   */
+  readonly limited?: true
 }
 
 async function copyFileInto(
