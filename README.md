@@ -35,6 +35,7 @@ and visual appeal in your React projects.
 - [Installation](#installation-)
 - [Usage](#usage-)
 - [Props](#props)
+- [Migrating from 0.4](#migrating-from-04)
 - [Examples](#examples)
 - [Emoji Categories](#emoji-categories-)
 - [Contributing](#contributing)
@@ -112,7 +113,9 @@ dependencies) and is ESM-only.
 The component fetches a small manifest from the asset site the first time an
 emoji renders, never at import time. While it loads, `Emoji` renders an empty,
 `aria-hidden` placeholder of the final size, so the layout does not shift. If
-the manifest cannot be loaded, or the id is unknown, it renders nothing.
+the id is unknown it renders nothing. If the manifest cannot be loaded, it
+renders your `fallback` node, or nothing, and retries on the next mount, the
+next `preloadEmojis` call or when the browser comes back online.
 
 ### Next.js and server components
 
@@ -123,15 +126,25 @@ and the emoji after hydration.
 
 ## Props
 
-| Prop                | Type                 | Default     | Description                                                                     |
-| ------------------- | -------------------- | ----------- | ------------------------------------------------------------------------------- |
-| id                  | `EmojiId` or string  | -           | The unique identifier of the emoji; known ids autocomplete                      |
-| size                | number               | 100         | The size of the emoji in pixels                                                 |
-| playOnHover         | boolean              | false       | Whether to play the animation on hover and on keyboard focus                    |
-| animationIterations | number or 'infinite' | 2           | The number of times to play the animation on load                               |
-| autoPlay            | boolean              | true        | Whether to automatically play the animation on mount                            |
-| skinTone            | SkinTone             | 'default'   | Skin tone for emojis that have variants (see below)                             |
-| alt                 | string               | description | Accessible text; defaults to the emoji description, `""` marks it as decorative |
+| Prop                | Type                   | Default     | Description                                                                     |
+| ------------------- | ---------------------- | ----------- | ------------------------------------------------------------------------------- |
+| id                  | `EmojiId` or string    | -           | The unique identifier of the emoji; known ids autocomplete                      |
+| size                | number                 | 100         | The size of the emoji in pixels                                                 |
+| playOnHover         | boolean                | false       | Whether to play the animation on hover and on keyboard focus                    |
+| animationIterations | number or 'infinite'   | 2           | The number of times to play the animation on load                               |
+| autoPlay            | boolean                | true        | Whether to automatically play the animation on mount                            |
+| skinTone            | SkinTone               | 'default'   | Skin tone for emojis that have variants (see below)                             |
+| alt                 | string                 | description | Accessible text; defaults to the emoji description, `""` marks it as decorative |
+| className           | string                 | -           | Class name for the root `<span>`, merged with the component's own               |
+| style               | CSSProperties          | -           | Inline style for the root `<span>`; `width` and `height` follow `size`          |
+| ref                 | `Ref<HTMLSpanElement>` | -           | Forwarded to the root `<span>`; works on React 18 and 19                        |
+| fallback            | ReactNode              | glyph       | Rendered when the image or the manifest fails; `null` renders nothing           |
+| onLoad              | function               | -           | Called when the sprite sheet loads                                              |
+| onError             | function               | -           | Called when the image fails, and with no event when the manifest fails          |
+
+Any other `<span>` attribute (`data-*`, `aria-*`, `title`, event handlers) is
+passed to the root. `size` is rounded; anything but a finite positive number
+falls back to 100.
 
 `skinTone` is one of `'default'`, `'light'`, `'medium-light'`, `'medium'`,
 `'medium-dark'` or `'dark'`. It only applies to emojis marked `diverse`; for any
@@ -150,11 +163,49 @@ When the user's system asks to reduce motion (`prefers-reduced-motion: reduce`),
 of the animation. `playOnHover` still plays on hover and focus, because that is
 an explicit user action.
 
+### Fallback
+
+If the sprite sheet fails to load, `Emoji` shows the fallback glyph: the emoji's
+native Unicode character, labelled with `alt`. Pass `fallback` to render your
+own node instead, or `fallback={null}` to render nothing:
+
+```jsx
+<Emoji id="1f44b_wavinghand" fallback={<span>👋</span>} />
+<Emoji id="1f44b_wavinghand" fallback={null} />
+```
+
+`onError` runs when the image fails (with the event) and when the manifest fails
+(without one). The fallback glyph needs the manifest, so when the manifest
+itself failed only an explicit `fallback` node renders.
+
+### Playback
+
+Autoplay waits until the sprite sheet has loaded, the emoji is on screen and the
+tab is visible, so offscreen or background emojis do not animate. Hidden tabs
+pause every emoji and resume when the tab returns. Changing `id` starts the new
+emoji's initial run again. `animationIterations` of `0`, a negative number or
+`NaN` disables autoplay; `Infinity` is the same as `'infinite'`.
+
 ### Images and HD sprite sheets
 
 Sprite sheets are loaded with `loading="lazy"` and `decoding="async"`. Emojis
-that have an HD sprite sheet (200px frames) also get a `srcSet`, so the browser
-picks the `@2x` sheet on high-density displays.
+that have an HD sprite sheet (200px frames) also get a width-based `srcSet`
+(`100w` and `200w`) with `sizes` set to the rendered size, so the browser picks
+the `@2x` sheet on high-density displays.
+
+### Preloading
+
+`preloadEmojis` starts fetching the manifest before any `Emoji` renders and,
+when given ids, requests their sprite sheets once it is ready. It never rejects:
+
+```jsx
+import { preloadEmojis } from 'animated-fluent-emojis'
+
+void preloadEmojis()
+void preloadEmojis(['1f44b_wavinghand', '1f525_fire'], { skinTone: 'medium' })
+```
+
+`skinTone` picks the variant to warm for emojis that have skin tones.
 
 ### Asset site
 
@@ -170,11 +221,30 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 
 ### Types
 
-The package exports `Emoji`, `configureEmojis` and the types `EmojiProps`,
-`SkinTone` and `EmojiId`. `EmojiId` is the union of every published id and is
-generated from the catalog; the `id` prop is typed `EmojiId | (string & {})`, so
-known ids autocomplete and ids added to the catalog after your installed version
-still compile.
+The package exports `Emoji`, `configureEmojis`, `preloadEmojis` and the types
+`EmojiProps`, `SkinTone` and `EmojiId`. `EmojiId` is the union of every
+published id and is generated from the catalog; the `id` prop is typed
+`EmojiId | (string & {})`, so known ids autocomplete and ids added to the
+catalog after your installed version still compile.
+
+## Migrating from 0.4
+
+- The glyph fallback is the new default: when a sprite sheet fails, `Emoji`
+  shows the emoji's native character instead of an empty box. Pass
+  `fallback={null}` to restore the 0.4 behaviour.
+- `Emoji` now forwards `ref` and any `<span>` attribute to its root span, and
+  merges `className` and `style`. Wrappers that relied on those props being
+  dropped may need adjusting.
+- A failed manifest load no longer sticks: it is retried on the next mount,
+  `preloadEmojis` call or `online` event. `onError` now also reports it.
+- Autoplay waits for the image, the viewport and a visible tab; see
+  [Playback](#playback).
+- The runtime reads the versioned asset layout (`/v1/`). If you mirror the asset
+  site, publish that layout; see the [changelog](CHANGELOG.md) and
+  [ADR 0010](docs/adr/0010-versioned-asset-layout-and-live-seeding.md).
+
+Terms such as fallback glyph and asset layout version are defined in
+[`CONTEXT.md`](CONTEXT.md).
 
 ## Examples
 
