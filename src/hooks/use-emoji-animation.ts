@@ -10,6 +10,13 @@ import {
 import type { EmojiManifest } from '../utils/index.js'
 import { usePrefersReducedMotion } from './use-prefers-reduced-motion.js'
 
+const normalizeIterations = (
+  value: number | 'infinite',
+): number | 'infinite' => {
+  if (value === 'infinite' || value === Infinity) return 'infinite'
+  return Number.isNaN(value) || value < 0 ? 0 : value
+}
+
 export interface UseEmojiAnimationResult {
   isInitialAnimationComplete: boolean
   animationStyle: CSSProperties
@@ -33,57 +40,38 @@ export const useEmojiAnimation = (
   size: number,
 ): UseEmojiAnimationResult => {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const autoPlay = autoPlayRequested && !prefersReducedMotion
+  const iterationCount = normalizeIterations(animationIterations)
+  const autoPlay =
+    autoPlayRequested && !prefersReducedMotion && iterationCount !== 0
+  const emojiId = emoji?.id
+  const [trackedEmojiId, setTrackedEmojiId] = useState(emojiId)
   const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
+  if (trackedEmojiId !== emojiId) {
+    setTrackedEmojiId(emojiId)
+    setHasInitialRunFinished(false)
+  }
   const isInitialAnimationComplete = hasInitialRunFinished || !autoPlay
-  const animationCountRef = useRef(0)
   const imageRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
-    if (!emoji) return
-
-    const handleAnimationIteration = () => {
-      animationCountRef.current += 1
-      if (
-        !isInitialAnimationComplete &&
-        typeof animationIterations === 'number' &&
-        animationCountRef.current >= animationIterations
-      ) {
-        setHasInitialRunFinished(true)
-      }
-    }
+    const imgElement = imageRef.current
+    if (emojiId === undefined || !imgElement) return
 
     const handleAnimationEnd = () => {
-      if (!isInitialAnimationComplete) {
-        setHasInitialRunFinished(true)
-      }
+      setHasInitialRunFinished(true)
     }
 
-    const imgElement = imageRef.current
-    if (imgElement) {
-      imgElement.addEventListener(
-        'animationiteration',
-        handleAnimationIteration,
-      )
-      imgElement.addEventListener('animationend', handleAnimationEnd)
-    }
-
+    imgElement.addEventListener('animationend', handleAnimationEnd)
     return () => {
-      if (!imgElement) return
-
-      imgElement.removeEventListener(
-        'animationiteration',
-        handleAnimationIteration,
-      )
       imgElement.removeEventListener('animationend', handleAnimationEnd)
     }
-  }, [emoji, animationIterations, isInitialAnimationComplete])
+  }, [emojiId])
 
   const animationStyle = useMemo<CSSProperties>(() => {
     if (!emoji) return {}
 
     const { framesCount, fps, firstFrame } = emoji.animation
-    const isIdle = !autoPlay && !playOnHover
+    const isIdle = !playOnHover && isInitialAnimationComplete
 
     return {
       width: size,
@@ -91,20 +79,11 @@ export const useEmojiAnimation = (
       animationDuration: `${String(framesCount / fps)}s`,
       animationTimingFunction: `steps(${String(framesCount)})`,
       animationIterationCount:
-        isInitialAnimationComplete && playOnHover
-          ? 'infinite'
-          : animationIterations,
+        isInitialAnimationComplete && playOnHover ? 'infinite' : iterationCount,
       animationPlayState: isIdle ? 'paused' : 'running',
       transform: `translateY(${String((-(firstFrame - 1) / framesCount) * 100)}%)`,
     }
-  }, [
-    emoji,
-    size,
-    isInitialAnimationComplete,
-    playOnHover,
-    animationIterations,
-    autoPlay,
-  ])
+  }, [emoji, size, isInitialAnimationComplete, playOnHover, iterationCount])
 
   return {
     isInitialAnimationComplete,
