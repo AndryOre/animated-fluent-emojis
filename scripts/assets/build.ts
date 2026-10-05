@@ -7,6 +7,7 @@ import {
   stat,
   writeFile,
 } from 'node:fs/promises'
+import { availableParallelism } from 'node:os'
 import path from 'node:path'
 
 import type { Manifest } from '../../src/utils/types.js'
@@ -18,6 +19,7 @@ import {
   type SpriteTask,
 } from './catalog.js'
 import { fetchOk, mapWithConcurrency, type FetchLike } from './http.js'
+import { createLimiter } from './limiter.js'
 import {
   buildMitMediaUrl,
   loadMitIndex,
@@ -29,7 +31,22 @@ import { convertAnimatedPng, type ConvertedSprite } from './sprites.js'
 import { fetchTeamsManifest, type TeamsVersion } from './teams.js'
 import { validateCatalog } from './validate.js'
 
-const DOWNLOAD_CONCURRENCY = 8
+/**
+ * How many sprite tasks run at once. Each task is mostly waiting on the
+ * network, so this is far above the CPU count.
+ */
+export const DOWNLOAD_CONCURRENCY = 24
+
+/**
+ * How many ffmpeg conversions run at once, independent of
+ * {@link DOWNLOAD_CONCURRENCY}. Conversions are CPU-bound.
+ * @returns The number of CPUs available to this process.
+ */
+export function getConversionConcurrency(): number {
+  return availableParallelism()
+}
+
+const SPRITE_FRAME_SIZE = 100
 
 const HD_FRAME_SIZE = 200
 
@@ -62,8 +79,8 @@ export interface PublishedVersion {
 
 type ConvertSprite = (
   animatedPng: Buffer,
-  frameSize?: number,
-) => Promise<ConvertedSprite>
+  frameSizes: readonly number[],
+) => Promise<ConvertedSprite[]>
 
 interface AnimationState {
   readonly fps: number
@@ -286,13 +303,68 @@ async function produceSprite(
       options.fetchImplementation,
       buildMitMediaUrl(mitSha, task.mitPath),
     )
-    const converted = await convert(Buffer.from(await response.arrayBuffer()))
+    const includeHd = await needsHdFromSameSource(task, state, options)
+    const [converted, hdConverted] = await convert(
+      Buffer.from(await response.arrayBuffer()),
+      includeHd ? [SPRITE_FRAME_SIZE, HD_FRAME_SIZE] : [SPRITE_FRAME_SIZE],
+    )
+    if (!converted) throw new Error('Converter returned no sprite')
     await writeBytes(target, converted.png)
     const animation = { fps: converted.fps, framesCount: converted.framesCount }
     state[task.outputPath] = { etag: task.etag, animation }
+    if (includeHd && hdConverted)
+      await storeHdSprite(task, hdConverted, context)
     return { task, animation, reused: false }
   }
   throw new Error(`Sprite task has no source: ${task.outputPath}`)
+}
+
+function getHdEtag(task: SpriteTask): string {
+  return hashEtag(['hd', task.hdBlobSha ?? ''])
+}
+
+async function isHdCached(
+  task: SpriteTask,
+  state: StateFile,
+  options: BuildOptions,
+): Promise<boolean> {
+  if (!task.hdOutputPath) return false
+  const cached = state[task.hdOutputPath]
+  return (
+    cached?.etag === getHdEtag(task) &&
+    cached.animation !== undefined &&
+    (await fileExists(path.join(options.cacheDirectory, task.hdOutputPath)))
+  )
+}
+
+async function needsHdFromSameSource(
+  task: SpriteTask,
+  state: StateFile,
+  options: BuildOptions,
+): Promise<boolean> {
+  return (
+    task.hdOutputPath !== undefined &&
+    task.hdBlobSha !== undefined &&
+    task.hdMitPath === task.mitPath &&
+    !(await isHdCached(task, state, options))
+  )
+}
+
+async function storeHdSprite(
+  task: SpriteTask,
+  converted: ConvertedSprite,
+  context: Parameters<typeof produceSprite>[1],
+): Promise<void> {
+  const { options, state } = context
+  if (!task.hdOutputPath) return
+  await writeBytes(
+    path.join(options.cacheDirectory, task.hdOutputPath),
+    converted.png,
+  )
+  state[task.hdOutputPath] = {
+    etag: getHdEtag(task),
+    animation: { fps: converted.fps, framesCount: converted.framesCount },
+  }
 }
 
 async function produceHdSprite(
@@ -304,25 +376,19 @@ async function produceHdSprite(
   if (!hdOutputPath || !hdMitPath || !hdBlobSha) {
     throw new Error(`Sprite task has no HD source: ${task.outputPath}`)
   }
-  const target = path.join(options.cacheDirectory, hdOutputPath)
-  const etag = hashEtag(['hd', hdBlobSha])
   const cached = state[hdOutputPath]
-  if (cached?.etag === etag && cached.animation && (await fileExists(target))) {
+  if (cached?.animation && (await isHdCached(task, state, options))) {
     return cached.animation.framesCount
   }
   const response = await fetchOk(
     options.fetchImplementation,
     buildMitMediaUrl(mitSha, hdMitPath),
   )
-  const converted = await convert(
-    Buffer.from(await response.arrayBuffer()),
+  const [converted] = await convert(Buffer.from(await response.arrayBuffer()), [
     HD_FRAME_SIZE,
-  )
-  await writeBytes(target, converted.png)
-  state[hdOutputPath] = {
-    etag,
-    animation: { fps: converted.fps, framesCount: converted.framesCount },
-  }
+  ])
+  if (!converted) throw new Error('Converter returned no sprite')
+  await storeHdSprite(task, converted, context)
   return converted.framesCount
 }
 
@@ -527,7 +593,10 @@ function limitCatalog(
  * @returns A summary of what was built.
  */
 export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
-  const convert = options.convert ?? convertAnimatedPng
+  const limitConversion = createLimiter(getConversionConcurrency())
+  const rawConvert = options.convert ?? convertAnimatedPng
+  const convert: ConvertSprite = (animatedPng, frameSizes) =>
+    limitConversion(() => rawConvert(animatedPng, frameSizes))
   const githubHeaders = options.githubHeaders ?? {}
   const teamsManifest = await fetchTeamsManifest(
     options.fetchImplementation,
