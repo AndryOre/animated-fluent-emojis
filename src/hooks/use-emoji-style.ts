@@ -1,48 +1,40 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 
-import { loadEmojiManifest, type EmojiManifest } from '../utils/index.js'
+import {
+  getManifestSnapshot,
+  getServerManifestSnapshot,
+  startManifestLoad,
+  subscribeToManifest,
+  type EmojiManifest,
+} from '../utils/index.js'
 
 export type UseEmojiStyleResult =
   | { status: 'loading'; emoji: null }
   | { status: 'ready'; emoji: EmojiManifest }
   | { status: 'missing'; emoji: null }
-
-interface Resolution {
-  id: string
-  emoji: EmojiManifest | null
-}
+  | { status: 'error'; emoji: null }
 
 /**
- * Loads the manifest entry for an emoji.
+ * Reads the manifest entry for an emoji from the shared manifest store.
  * @param id - Key of the emoji in the manifest.
- * @returns `loading` while the manifest is pending, `ready` with the entry, or
- * `missing` when the id is unknown or the manifest failed to load.
+ * @returns `loading` while the manifest is pending, `ready` with the entry,
+ * `missing` when the id is unknown, or `error` when the manifest failed to
+ * load. A failed load is retried on mount, on `preloadEmojis` and when the
+ * browser comes back online.
  */
 export const useEmojiStyle = (id: string): UseEmojiStyleResult => {
-  const [resolution, setResolution] = useState<Resolution | null>(null)
+  const snapshot = useSyncExternalStore(
+    subscribeToManifest,
+    getManifestSnapshot,
+    getServerManifestSnapshot,
+  )
 
   useEffect(() => {
-    let isCurrent = true
+    void startManifestLoad()
+  }, [])
 
-    const resolve = async () => {
-      let emoji: EmojiManifest | null = null
-      try {
-        const manifest = await loadEmojiManifest()
-        emoji = manifest[id] ?? null
-      } catch (error) {
-        console.error('Error fetching emoji data:', error)
-      }
-      if (isCurrent) setResolution({ id, emoji })
-    }
-
-    void resolve()
-    return () => {
-      isCurrent = false
-    }
-  }, [id])
-
-  if (resolution?.id !== id) return { status: 'loading', emoji: null }
-  return resolution.emoji
-    ? { status: 'ready', emoji: resolution.emoji }
-    : { status: 'missing', emoji: null }
+  if (snapshot.status === 'error') return { status: 'error', emoji: null }
+  if (snapshot.status !== 'ready') return { status: 'loading', emoji: null }
+  const emoji = snapshot.manifest[id]
+  return emoji ? { status: 'ready', emoji } : { status: 'missing', emoji: null }
 }
