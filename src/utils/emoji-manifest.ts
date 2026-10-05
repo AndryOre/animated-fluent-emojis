@@ -122,7 +122,7 @@ const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
  * @returns A promise that resolves to the raw manifest data.
  */
 async function fetchManifest(): Promise<SlimManifest> {
-  const response = await fetch(`${state.assetSiteUrl}/manifest.slim.json`)
+  const response = await fetch(`${state.assetSiteUrl}/v1/manifest.slim.json`)
   if (!response.ok) {
     throw new Error(
       `Failed to fetch the emoji manifest (${String(response.status)})`,
@@ -220,7 +220,7 @@ export async function loadEmojiManifest(): Promise<ManifestRecord> {
  * @param emoji - The emoji manifest entry.
  * @param skinTone - The requested skin tone.
  * @param resolutionSuffix - Filename suffix placed before the extension, e.g. `@2x`.
- * @returns The sprite sheet URL, versioned by the emoji's etag.
+ * @returns The sprite sheet URL, named by the emoji etag.
  */
 function buildSpriteUrl(
   emoji: EmojiManifest,
@@ -228,14 +228,14 @@ function buildSpriteUrl(
   resolutionSuffix: string,
 ): string {
   const toneSuffix = emoji.diverse ? SKIN_TONE_SUFFIXES[skinTone] : ''
-  return `${state.assetSiteUrl}/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${toneSuffix}${resolutionSuffix}.png?v=${encodeURIComponent(emoji.etag)}`
+  return `${state.assetSiteUrl}/v1/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${toneSuffix}.${emoji.etag}${resolutionSuffix}.png`
 }
 
 /**
  * Builds the URL of an emoji's sprite sheet.
  * @param emoji - The emoji manifest entry.
  * @param skinTone - The requested skin tone; ignored when the emoji has no variants.
- * @returns The sprite sheet URL, versioned by the emoji's etag.
+ * @returns The sprite sheet URL, named by the emoji etag.
  */
 export function getSpriteUrl(
   emoji: EmojiManifest,
