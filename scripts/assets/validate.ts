@@ -14,7 +14,7 @@ const HD_FRAME_SIZE = 200
  */
 export interface ValidationInput {
   readonly manifest: Manifest
-  readonly tasks: readonly (SpriteTask & { readonly hdOutputPath?: string })[]
+  readonly tasks: readonly SpriteTask[]
   readonly cacheDirectory: string
 }
 
@@ -271,6 +271,28 @@ function findToneFrameCountProblems(
     )
 }
 
+function findHdFlagProblems(
+  manifest: Manifest,
+  tasks: readonly SpriteTask[],
+): string[] {
+  const tasksById = Map.groupBy(tasks, (task) => task.id)
+  return manifest.categories.flatMap((category) =>
+    category.emoticons.flatMap((emoticon) => {
+      const emojiTasks = tasksById.get(emoticon.id) ?? []
+      const flagged = (emoticon as { hd?: unknown }).hd === true
+      const withHd = emojiTasks.filter((task) => task.hdOutputPath)
+      if (flagged && withHd.length !== emojiTasks.length) {
+        return [
+          `${emoticon.id}: flagged hd but not every tone has an HD sprite`,
+        ]
+      }
+      return !flagged && withHd.length > 0
+        ? [`${emoticon.id}: has HD sprites but is not flagged hd`]
+        : []
+    }),
+  )
+}
+
 /**
  * Checks that a built catalog is safe to publish. Every emoji must have a
  * valid animation, a URL-safe unique id and category, a base sprite task and
@@ -296,6 +318,7 @@ export async function validateCatalog(input: ValidationInput): Promise<void> {
     ...findNameProblems(manifest, tasks),
     ...findDuplicateIdProblems(manifest),
     ...findToneProblems(manifest, tasks),
+    ...findHdFlagProblems(manifest, tasks),
     ...missing,
     ...dimensions.problems,
     ...findToneFrameCountProblems(dimensions.frameCounts),

@@ -10,7 +10,13 @@ import {
 import path from 'node:path'
 
 import type { Manifest } from '../../src/utils/types.js'
-import { buildCatalog, type SpriteTask } from './catalog.js'
+import {
+  buildCatalog,
+  hashEtag,
+  hashHdEtag,
+  type HdSkippedEmoji,
+  type SpriteTask,
+} from './catalog.js'
 import { fetchOk, mapWithConcurrency, type FetchLike } from './http.js'
 import {
   buildMitMediaUrl,
@@ -24,6 +30,8 @@ import { fetchTeamsManifest, type TeamsVersion } from './teams.js'
 import { validateCatalog } from './validate.js'
 
 const DOWNLOAD_CONCURRENCY = 8
+
+const HD_FRAME_SIZE = 200
 
 const HEADERS_FILE = `/sprites/*
   Cache-Control: public, max-age=31536000, immutable
@@ -51,6 +59,11 @@ export interface PublishedVersion {
   readonly mitSha: string
   readonly builtAt: string
 }
+
+type ConvertSprite = (
+  animatedPng: Buffer,
+  frameSize?: number,
+) => Promise<ConvertedSprite>
 
 interface AnimationState {
   readonly fps: number
@@ -92,6 +105,8 @@ export interface BuildResult {
   readonly downloaded: number
   readonly reused: number
   readonly skipped: readonly SkippedEmoji[]
+  readonly hdSkipped: readonly HdSkippedEmoji[]
+  readonly hdCount: number
   readonly diff: ManifestDiff | undefined
 }
 
@@ -106,7 +121,7 @@ export interface BuildOptions {
   readonly cacheDirectory: string
   readonly limit?: number
   readonly previousManifest?: Manifest
-  readonly convert?: (animatedPng: Buffer) => Promise<ConvertedSprite>
+  readonly convert?: ConvertSprite
   readonly now?: () => Date
   readonly stepSummaryPath?: string
 }
@@ -145,6 +160,27 @@ export function diffManifests(
       .filter(([id, etag]) => before.has(id) && before.get(id) !== etag)
       .map(([id]) => id)
       .toArray(),
+  }
+}
+
+/**
+ * Marks emoticons as having HD sheets and moves their etag to the HD-aware one.
+ * @param manifest The manifest with real animations.
+ * @param hdEtagById The HD-aware etag of every emoji published with HD sheets.
+ * @returns A manifest where those emoticons carry `hd: true`.
+ */
+export function applyHd(
+  manifest: Manifest,
+  hdEtagById: ReadonlyMap<string, string>,
+): Manifest {
+  return {
+    categories: manifest.categories.map((category) => ({
+      ...category,
+      emoticons: category.emoticons.map((emoticon) => {
+        const etag = hdEtagById.get(emoticon.id)
+        return etag === undefined ? emoticon : { ...emoticon, etag, hd: true }
+      }),
+    })),
   }
 }
 
@@ -228,7 +264,7 @@ async function produceSprite(
     options: BuildOptions
     mitSha: string
     state: StateFile
-    convert: (animatedPng: Buffer) => Promise<ConvertedSprite>
+    convert: ConvertSprite
   },
 ): Promise<{ task: SpriteTask; animation?: AnimationState; reused: boolean }> {
   const { options, mitSha, state, convert } = context
@@ -257,6 +293,137 @@ async function produceSprite(
     return { task, animation, reused: false }
   }
   throw new Error(`Sprite task has no source: ${task.outputPath}`)
+}
+
+async function produceHdSprite(
+  task: SpriteTask,
+  context: Parameters<typeof produceSprite>[1],
+): Promise<number> {
+  const { options, mitSha, state, convert } = context
+  const { hdOutputPath, hdMitPath, hdBlobSha } = task
+  if (!hdOutputPath || !hdMitPath || !hdBlobSha) {
+    throw new Error(`Sprite task has no HD source: ${task.outputPath}`)
+  }
+  const target = path.join(options.cacheDirectory, hdOutputPath)
+  const etag = hashEtag(['hd', hdBlobSha])
+  const cached = state[hdOutputPath]
+  if (cached?.etag === etag && cached.animation && (await fileExists(target))) {
+    return cached.animation.framesCount
+  }
+  const response = await fetchOk(
+    options.fetchImplementation,
+    buildMitMediaUrl(mitSha, hdMitPath),
+  )
+  const converted = await convert(
+    Buffer.from(await response.arrayBuffer()),
+    HD_FRAME_SIZE,
+  )
+  await writeBytes(target, converted.png)
+  state[hdOutputPath] = {
+    etag,
+    animation: { fps: converted.fps, framesCount: converted.framesCount },
+  }
+  return converted.framesCount
+}
+
+async function settleHdSprite(
+  task: SpriteTask,
+  context: Parameters<typeof produceSprite>[1],
+): Promise<
+  { task: SpriteTask; framesCount: number } | { task: SpriteTask; error: Error }
+> {
+  try {
+    return { task, framesCount: await produceHdSprite(task, context) }
+  } catch (error: unknown) {
+    return {
+      task,
+      error: error instanceof Error ? error : new Error(String(error)),
+    }
+  }
+}
+
+function withoutHd(task: SpriteTask): SpriteTask {
+  return {
+    source: task.source,
+    id: task.id,
+    category: task.category,
+    toneSuffix: task.toneSuffix,
+    etag: task.etag,
+    sourceUrl: task.sourceUrl,
+    mitPath: task.mitPath,
+    outputPath: task.outputPath,
+  }
+}
+
+function describeHdProblem(
+  emojiTasks: readonly Awaited<ReturnType<typeof settleHdSprite>>[],
+  standardFrames: number,
+): string | undefined {
+  for (const outcome of emojiTasks) {
+    if ('error' in outcome) {
+      return `${outcome.task.hdOutputPath ?? ''}: ${outcome.error.message}`
+    }
+    if (outcome.framesCount !== standardFrames) {
+      return `${outcome.task.hdOutputPath ?? ''} has ${String(outcome.framesCount)} frames, standard sheet has ${String(standardFrames)}`
+    }
+  }
+  return undefined
+}
+
+async function buildHdSheets(
+  tasks: readonly SpriteTask[],
+  manifest: Manifest,
+  context: Parameters<typeof produceSprite>[1],
+): Promise<{
+  tasks: SpriteTask[]
+  hdEtagById: Map<string, string>
+  skipped: HdSkippedEmoji[]
+}> {
+  const emoticonById = new Map(
+    manifest.categories.flatMap((category) =>
+      category.emoticons.map((emoticon) => [emoticon.id, emoticon] as const),
+    ),
+  )
+  const emojiTasksById = Map.groupBy(
+    tasks.filter((task) => task.hdOutputPath !== undefined),
+    (task) => task.id,
+  )
+  const outcomes = await mapWithConcurrency(
+    emojiTasksById.values().toArray().flat(),
+    DOWNLOAD_CONCURRENCY,
+    (task) => settleHdSprite(task, context),
+  )
+  const outcomesById = Map.groupBy(outcomes, (outcome) => outcome.task.id)
+  const hdEtagById = new Map<string, string>()
+  const skipped: HdSkippedEmoji[] = []
+  for (const [id, emojiOutcomes] of outcomesById) {
+    const emoticon = emoticonById.get(id)
+    const problem =
+      emoticon === undefined
+        ? 'emoji is not in the manifest'
+        : describeHdProblem(emojiOutcomes, emoticon.animation.framesCount)
+    if (problem !== undefined || emoticon === undefined) {
+      skipped.push({ id, reason: problem ?? 'emoji is not in the manifest' })
+      continue
+    }
+    hdEtagById.set(
+      id,
+      hashHdEtag(
+        emoticon.etag,
+        emojiOutcomes.map(({ task }) => ({
+          toneSuffix: task.toneSuffix,
+          blobSha: task.hdBlobSha ?? '',
+        })),
+      ),
+    )
+  }
+  return {
+    tasks: tasks.map((task) =>
+      hdEtagById.has(task.id) ? task : withoutHd(task),
+    ),
+    hdEtagById,
+    skipped,
+  }
 }
 
 async function settleSprite(
@@ -323,6 +490,22 @@ async function reportSkipped(
   )
 }
 
+async function reportHdSkipped(
+  skipped: readonly HdSkippedEmoji[],
+  stepSummaryPath: string | undefined,
+): Promise<void> {
+  if (skipped.length === 0) return
+  for (const entry of skipped) {
+    console.warn(`Skipped HD for ${entry.id}: ${entry.reason}`)
+  }
+  if (!stepSummaryPath) return
+  const lines = skipped.map((entry) => `- \`${entry.id}\`: ${entry.reason}`)
+  await appendFile(
+    stepSummaryPath,
+    `### Emojis without HD (${String(skipped.length)})\n\n${lines.join('\n')}\n`,
+  )
+}
+
 function limitCatalog(
   tasks: readonly SpriteTask[],
   limit: number | undefined,
@@ -362,16 +545,11 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
   const limitedTasks = limitCatalog(catalog.tasks, options.limit)
 
   const state = await readState(options.cacheDirectory)
+  const context = { options, mitSha: mitIndex.commitSha, state, convert }
   const outcomes = await mapWithConcurrency(
     limitedTasks,
     DOWNLOAD_CONCURRENCY,
-    (task) =>
-      settleSprite(task, {
-        options,
-        mitSha: mitIndex.commitSha,
-        state,
-        convert,
-      }),
+    (task) => settleSprite(task, context),
   )
   await mkdir(options.cacheDirectory, { recursive: true })
   await writeFile(
@@ -414,7 +592,7 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     }
   }
   const generatedIds = new Set(tasks.map((task) => task.id))
-  const manifest = applyAnimations(
+  const animatedManifest = applyAnimations(
     {
       categories: catalog.manifest.categories
         .map((category) => ({
@@ -436,17 +614,32 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     animationsById,
   )
 
+  const hd = await buildHdSheets(tasks, animatedManifest, context)
+  await writeFile(
+    path.join(options.cacheDirectory, 'state.json'),
+    JSON.stringify(state),
+  )
+  const hdSkipped = [...catalog.hdSkipped, ...hd.skipped]
+  await reportHdSkipped(
+    hdSkipped,
+    options.stepSummaryPath ?? process.env.GITHUB_STEP_SUMMARY,
+  )
+  const manifest = applyHd(animatedManifest, hd.hdEtagById)
+
   await validateCatalog({
     manifest,
-    tasks,
+    tasks: hd.tasks,
     cacheDirectory: options.cacheDirectory,
   })
 
   await rm(options.outputDirectory, { recursive: true, force: true })
-  for (const task of tasks) {
-    const destination = path.join(options.outputDirectory, task.outputPath)
-    await mkdir(path.dirname(destination), { recursive: true })
-    await cp(path.join(options.cacheDirectory, task.outputPath), destination)
+  for (const task of hd.tasks) {
+    for (const relativePath of [task.outputPath, task.hdOutputPath]) {
+      if (relativePath === undefined) continue
+      const destination = path.join(options.outputDirectory, relativePath)
+      await mkdir(path.dirname(destination), { recursive: true })
+      await cp(path.join(options.cacheDirectory, relativePath), destination)
+    }
   }
 
   const license = await fetchOk(
@@ -485,6 +678,8 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     downloaded: results.length - reused,
     reused,
     skipped,
+    hdSkipped,
+    hdCount: hd.hdEtagById.size,
     diff: options.previousManifest
       ? diffManifests(options.previousManifest, manifest)
       : undefined,

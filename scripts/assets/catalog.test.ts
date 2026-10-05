@@ -3,8 +3,10 @@ import { expect, test } from 'vitest'
 
 import {
   buildCatalog,
+  buildHdOutputPath,
   buildOutputPath,
   hashEtag,
+  hashHdEtag,
   PIPELINE_VERSION,
   resolveCategory,
 } from './catalog.js'
@@ -303,4 +305,90 @@ test('hashEtag depends on the pipeline version', () => {
   expect(PIPELINE_VERSION).toBeGreaterThan(0)
   const bumped = createHashWithVersion(PIPELINE_VERSION + 1, ['aaaa'])
   expect(bumped).not.toBe(current)
+})
+
+const TONE_SUFFIXES = ['', '_s2', '_s3', '_s4', '_s5', '_s6']
+
+const wavingHand = (suffixes: readonly string[]): MitEmoji =>
+  mitEmoji({
+    codepoints: '1f44b',
+    glyph: '👋',
+    cldr: 'waving hand',
+    group: 'People & Body',
+    sprites: suffixes.map((toneSuffix) => ({
+      toneSuffix,
+      path: `assets/Waving hand/${toneSuffix}.png`,
+      blobSha: `wave${toneSuffix}`,
+    })),
+  })
+
+test('buildHdOutputPath puts @2x before the extension, after the tone', () => {
+  expect(buildHdOutputPath('Smilies', '1f603_x', '')).toBe(
+    'sprites/Smilies/1f603_x@2x.png',
+  )
+  expect(buildHdOutputPath('Hand gestures', '1f44b_wavinghand', '_s3')).toBe(
+    'sprites/Hand gestures/1f44b_wavinghand_s3@2x.png',
+  )
+})
+
+test('plans HD tasks for Teams emojis matching an official one, every tone', () => {
+  const catalog = buildCatalog(createTeamsManifest(), [
+    wavingHand(TONE_SUFFIXES),
+  ])
+
+  const waving = catalog.tasks.filter((task) => task.id === '1f44b_wavinghand')
+  expect(waving.map((task) => task.hdOutputPath)).toEqual(
+    TONE_SUFFIXES.map(
+      (suffix) => `sprites/Hand gestures/1f44b_wavinghand${suffix}@2x.png`,
+    ),
+  )
+  expect(waving[1]).toMatchObject({
+    hdMitPath: 'assets/Waving hand/_s2.png',
+    hdBlobSha: 'wave_s2',
+  })
+  const smiley = catalog.tasks.find(
+    (task) => task.id === '1f603_grinningfacewithbigeyes',
+  )
+  expect(smiley?.hdOutputPath).toBeUndefined()
+  expect(catalog.hdSkipped).toEqual([])
+})
+
+test('gives no HD to a diverse emoji whose official source lacks a tone', () => {
+  const catalog = buildCatalog(createTeamsManifest(), [
+    wavingHand(['', '_s2', '_s3']),
+  ])
+
+  const waving = catalog.tasks.filter((task) => task.id === '1f44b_wavinghand')
+  expect(waving.some((task) => task.hdOutputPath !== undefined)).toBe(false)
+  expect(catalog.hdSkipped).toHaveLength(1)
+  expect(catalog.hdSkipped[0]?.id).toBe('1f44b_wavinghand')
+  expect(catalog.hdSkipped[0]?.reason).toContain('_s4, _s5, _s6')
+})
+
+test('plans HD for official-only emojis from their own sprites', () => {
+  const catalog = buildCatalog(createTeamsManifest(), [mitEmoji()])
+
+  expect(catalog.tasks.at(-1)).toMatchObject({
+    source: 'mit',
+    hdOutputPath: 'sprites/Symbols/1f3c1_chequeredflag@2x.png',
+    hdMitPath: 'assets/Chequered flag/a.png',
+    hdBlobSha: 'deadbeefcafe',
+  })
+})
+
+test('hashHdEtag changes with the HD source and is independent of order', () => {
+  const sources = [
+    { toneSuffix: '', blobSha: 'a' },
+    { toneSuffix: '_s2', blobSha: 'b' },
+  ]
+  const hash = hashHdEtag('v5', sources)
+
+  expect(hashHdEtag('v5', sources.toReversed())).toBe(hash)
+  const changedSources = [
+    { toneSuffix: '', blobSha: 'a2' },
+    { toneSuffix: '_s2', blobSha: 'b' },
+  ]
+  expect(hashHdEtag('v5', changedSources)).not.toBe(hash)
+  expect(hashHdEtag('v6', sources)).not.toBe(hash)
+  expect(hash).not.toBe(hashEtag(['v5']))
 })
