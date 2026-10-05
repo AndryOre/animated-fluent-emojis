@@ -5,9 +5,10 @@ Instructions for coding agents working in this repository.
 ## Stack
 
 A React component library (`Emoji`) that renders Microsoft's Fluent animated
-emojis from a CDN. React 18/19 peer dependency, TypeScript (strict), ESM-only,
-built with Vite 8 library mode, tested with Vitest Browser Mode, managed with
-bun. See [`docs/architecture.md`](docs/architecture.md) for the code map.
+emojis from an asset site. React 18/19 peer dependency, TypeScript (strict),
+ESM-only, built with Vite 8 library mode, tested with Vitest Browser Mode,
+managed with bun. See [`docs/architecture.md`](docs/architecture.md) for the
+code map.
 
 ## Running scripts
 
@@ -47,8 +48,8 @@ non-JSDoc `/* */` comments, except lint or type directives. Detail:
   [`docs/development.md#packaging`](docs/development.md#packaging).
 - `style.css` is a separate export consumers must import; keep `sideEffects`
   covering CSS: [`docs/architecture.md#css`](docs/architecture.md#css).
-- The emoji manifest is fetched from the CDN at module load, so tests mock it
-  with MSW: [`docs/architecture.md#manifest`](docs/architecture.md#manifest).
+- The slim manifest is fetched lazily on first render, so tests mock it with
+  MSW: [`docs/architecture.md#manifest`](docs/architecture.md#manifest).
 - Every new source module needs a test or an entry in the exemptions list of
   `src/test/coverage-manifest.test.ts`:
   [`docs/development.md#testing`](docs/development.md#testing).

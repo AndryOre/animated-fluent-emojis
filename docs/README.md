@@ -20,9 +20,11 @@ An index of every document in this repository.
 - [`development.md`](development.md): setup, scripts, git hooks, CI,
   conventions, testing, playground and repository settings.
 - [`architecture.md`](architecture.md): code map of the component, hooks,
-  utilities, manifest and CSS.
+  manifest, animation, asset pipeline and CSS.
 - [`how-to/cut-a-release.md`](how-to/cut-a-release.md): releasing and the npm
   trusted publisher setup.
+- [`how-to/set-up-asset-hosting.md`](how-to/set-up-asset-hosting.md): creating
+  the Cloudflare Pages project and the secrets behind the asset site.
 
 ## Architecture decision records
 
@@ -32,6 +34,10 @@ An index of every document in this repository.
 - [`adr/0003-esm-only-and-vite-8.md`](adr/0003-esm-only-and-vite-8.md)
 - [`adr/0004-vitest-browser-mode.md`](adr/0004-vitest-browser-mode.md)
 - [`adr/0005-npm-trusted-publishing.md`](adr/0005-npm-trusted-publishing.md)
+- [`adr/0006-cloudflare-pages-asset-hosting.md`](adr/0006-cloudflare-pages-asset-hosting.md)
+- [`adr/0007-pinned-official-emoji-ids.md`](adr/0007-pinned-official-emoji-ids.md)
+- [`adr/0008-static-keyframes-and-lazy-slim-manifest.md`](adr/0008-static-keyframes-and-lazy-slim-manifest.md)
+- [`adr/0009-hd-sprite-sheets-and-strict-validation.md`](adr/0009-hd-sprite-sheets-and-strict-validation.md)
 
 ## Agent workflow
 
