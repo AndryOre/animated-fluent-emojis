@@ -34,8 +34,9 @@ playback, with `autoPlay` off, or under reduced motion. It is the animation's
 `firstFrame`. _Avoid_: Thumbnail, still, first image
 
 **HD sprite sheet**: The `@2x` sprite sheet with 200px frames, published next to
-the standard one for official emojis and served through `srcSet`. It has the
-same frame count as the standard sheet. _Avoid_: Retina sheet, large sprite
+the standard one for emojis with an official counterpart and served through
+`srcSet`. It has the same frame count as the standard sheet. _Avoid_: Retina
+sheet, large sprite
 
 **Asset site**: The Cloudflare Pages site that serves the manifest and the
 sprite sheets. _Avoid_: CDN, bucket

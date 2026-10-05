@@ -21,20 +21,25 @@ that only showed up in the browser:
 
 ## Decision
 
-- **HD sheets from the official repository.** For official emojis the pipeline
-  also builds an `@2x` sheet with 200px frames from the same APNG, published
-  next to the standard one. The slim manifest flags these emojis with `hd: true`
-  and the component adds a `srcSet`. Teams emojis have no HD source and stay 1x.
-- **Frame parity.** The HD sheet has exactly the standard sheet's frame count
-  and the same animation entry, so one set of timings serves both.
+- **HD sheets from the official repository.** For every catalog emoji, Teams or
+  official, whose codepoints match an official emoji, the pipeline builds an
+  `@2x` sheet with 200px frames from the official APNG, published next to the
+  standard one. The slim manifest flags these emojis with `hd: true` and the
+  component adds a `srcSet`. Emojis with no official counterpart stay 1x.
+- **Frame parity.** The HD sheet must have exactly the standard sheet's frame
+  count, so one animation entry serves both. For a Teams emoji this compares the
+  Teams 1x sheet with the official 2x sheet; on a mismatch HD is skipped and
+  logged.
 - **All tones or none.** An emoji is published with HD only when every skin tone
   has an HD source; otherwise it is skipped, listed in the build summary, and
   stays 1x.
-- **Content-hashed etags with a pipeline version.** Every etag is a hash of
-  `PIPELINE_VERSION` and the source identifiers (the blob SHAs of the sources;
-  for HD emojis also each tone's HD source). One etag is the `?v=` of both the
-  1x and the 2x URL. Bump `PIPELINE_VERSION` whenever sprite conversion changes
-  so every URL changes at once.
+- **Content-hashed etags with a pipeline version.** The etag of every sprite the
+  pipeline converts is a hash of `PIPELINE_VERSION` and the source identifiers
+  (the blob SHAs of the sources; for HD emojis also each tone's HD source). One
+  etag is the `?v=` of both the 1x and the 2x URL. Teams-only emojis without HD
+  keep the etag Teams publishes, since their sprites are not converted here.
+  Bump `PIPELINE_VERSION` whenever sprite conversion changes so every converted
+  URL changes at once.
 - **Strict build validation.** Before publishing, `validate.ts` checks every
   animation (`framesCount` an integer of at least 1, `firstFrame` within
   `[1, framesCount]`, a positive `fps`), every URL segment, and every file: not
@@ -58,9 +63,9 @@ now a content hash.
 
 ## Consequences
 
-- The first build with this pipeline changes every etag, so every sprite URL
-  changes once.
-- The asset site grows by the HD sheets of the official emojis.
+- The first build with this pipeline changes the etag of every converted sprite,
+  so those URLs change once.
+- The asset site grows by the HD sheets.
 - A catalog problem blocks the weekly publish until a maintainer fixes it, which
   is intended: the previous site stays live.
 - Changing conversion code without bumping `PIPELINE_VERSION` can still serve

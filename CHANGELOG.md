@@ -14,8 +14,8 @@ and this project adheres to
   an empty string marks the emoji as decorative.
 - `configureEmojis({ assetSiteUrl })` to serve the manifest and sprite sheets
   from your own asset site.
-- HD (`@2x`, 200px) sprite sheets for the official emojis, served through
-  `srcSet`.
+- HD (`@2x`, 200px) sprite sheets for every emoji with an official counterpart,
+  served through `srcSet`.
 - `playOnHover` also plays when the emoji sits inside a focused `<button>` or
   `<a>`.
 - `EmojiId`, `EmojiProps` and `SkinTone` are exported from the package.
@@ -28,7 +28,8 @@ and this project adheres to
   placeholder of the final size instead of `null`. It still renders `null` for
   an unknown id or a failed load.
 - **Breaking:** under `prefers-reduced-motion: reduce`, `autoPlay` is ignored
-  and the emoji rests on its poster frame; hover and focus still play it.
+  and the emoji rests on its poster frame; with `playOnHover`, hover and focus
+  still play it.
 - **Breaking:** images are rendered with `loading="lazy"` and
   `decoding="async"`, so offscreen emojis load when they approach the viewport.
 - **Breaking:** the `id` prop is typed `EmojiId | (string & {})` instead of
@@ -36,8 +37,8 @@ and this project adheres to
 - **Breaking:** the runtime fetches `manifest.slim.json` instead of
   `manifest.json`, on first render instead of at import. Asset sites that mirror
   the catalog must publish the slim manifest.
-- Sprite etags are content hashes that include a pipeline version, and the
-  animation frame rate is exact instead of rounded.
+- Etags of converted sprites are content hashes that include a pipeline version,
+  and the animation frame rate is exact instead of rounded.
 - The asset build validates every animation and sprite sheet and fails on any
   problem.
 
