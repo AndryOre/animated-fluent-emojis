@@ -65,7 +65,12 @@ const TONES: readonly SkinTone[] = [
   'dark',
 ]
 
-const indexCache = new WeakMap<ManifestRecord, Map<string, EmojiManifest>>()
+interface UnicodeIndex {
+  readonly canonical: Map<string, EmojiManifest>
+  readonly diverse: Map<string, EmojiManifest>
+}
+
+const indexCache = new WeakMap<ManifestRecord, UnicodeIndex>()
 
 /**
  * Removes the variation selector so text and catalog glyphs share one key.
@@ -118,11 +123,14 @@ function pickCanonicalEmoji(
 }
 
 /**
- * Indexes the catalog by its unicode without VS16, once per manifest.
+ * Indexes the catalog by its unicode without VS16, once per manifest. The
+ * canonical map answers bare glyphs; the diverse map answers glyphs with a skin
+ * tone, preferring the canonical entry when it has tones and otherwise the
+ * first entry of the group that does.
  * @param manifest - The loaded manifest.
- * @returns A map from VS16-free unicode to the manifest entry.
+ * @returns Maps from VS16-free unicode to the canonical and the diverse entry.
  */
-function indexByUnicode(manifest: ManifestRecord): Map<string, EmojiManifest> {
+function indexByUnicode(manifest: ManifestRecord): UnicodeIndex {
   const cached = indexCache.get(manifest)
   if (cached) return cached
   const groups = new Map<string, NonEmptyGroup>()
@@ -133,10 +141,15 @@ function indexByUnicode(manifest: ManifestRecord): Map<string, EmojiManifest> {
     if (group) group.push(emoji)
     else groups.set(key, [emoji])
   }
-  const index = new Map<string, EmojiManifest>()
+  const canonical = new Map<string, EmojiManifest>()
+  const diverse = new Map<string, EmojiManifest>()
   for (const [key, group] of groups) {
-    index.set(key, pickCanonicalEmoji(key, group, manifest))
+    const picked = pickCanonicalEmoji(key, group, manifest)
+    canonical.set(key, picked)
+    const toned = picked.diverse ? picked : group.find((emoji) => emoji.diverse)
+    if (toned) diverse.set(key, toned)
   }
+  const index = { canonical, diverse }
   indexCache.set(manifest, index)
   return index
 }
@@ -154,7 +167,7 @@ function resolveEmoji(
 ): EmojiMatch | undefined {
   const index = indexByUnicode(manifest)
   const plain = stripVariationSelector(text)
-  const direct = index.get(plain)
+  const direct = index.canonical.get(plain)
   if (direct) {
     return !direct.unicode?.includes(ZERO_WIDTH_JOINER) &&
       hasVariationSelectorAfterBase(direct.unicode) &&
@@ -163,8 +176,8 @@ function resolveEmoji(
       : { id: direct.id }
   }
   const modifiers = plain.match(SKIN_TONE_MODIFIERS)
-  const base = index.get(plain.replaceAll(SKIN_TONE_MODIFIERS, ''))
-  if (!modifiers || !base?.diverse) return undefined
+  const base = index.diverse.get(plain.replaceAll(SKIN_TONE_MODIFIERS, ''))
+  if (!modifiers || !base) return undefined
   return new Set(modifiers).size > 1
     ? { id: base.id }
     : {

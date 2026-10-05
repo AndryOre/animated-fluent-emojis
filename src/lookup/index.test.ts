@@ -433,13 +433,24 @@ test('the live shared groups resolve to the canonical emoji', async () => {
   ])
 })
 
-test('a skin tone only applies when the canonical entry is diverse', async () => {
+test('a skin tone falls back to a diverse entry sharing the glyph', async () => {
   serveManifest(
     buildManifest([
-      { id: 'soccerball', unicode: '⚽' },
-      { id: 'other', unicode: '⚽', diverse: true },
+      { id: 'like', unicode: '👍' },
+      { id: 'yes', unicode: '👍', diverse: true },
     ]),
   )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('👍')).toEqual({ id: 'like' })
+  expect(await findEmojiByUnicode('👍🏽')).toEqual({
+    id: 'yes',
+    skinTone: 'medium',
+  })
+})
+
+test('a skin tone is ignored when no entry sharing the glyph is diverse', async () => {
+  serveManifest(buildManifest([{ id: 'soccerball', unicode: '⚽' }]))
   const { findEmojiByUnicode } = await importFresh()
 
   expect(await findEmojiByUnicode('⚽🏻')).toBeUndefined()
