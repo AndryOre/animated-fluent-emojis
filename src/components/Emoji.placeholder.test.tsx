@@ -1,8 +1,12 @@
-import { expect, test, vi } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 
 import { FIXTURE_MANIFEST } from '../test/manifest-fixture.js'
 import { Emoji } from './Emoji.js'
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 test('renders a placeholder of the final size until the manifest resolves', async () => {
   let isReleased = false
@@ -26,5 +30,4 @@ test('renders a placeholder of the final size until the manifest resolves', asyn
   expect(container.querySelector('span')?.getBoundingClientRect().height).toBe(
     64,
   )
-  vi.unstubAllGlobals()
 })
