@@ -212,6 +212,7 @@ async function runBuild(options: {
     cacheDirectory: options.cacheDirectory,
     limit: options.limit,
     previousManifest,
+    liveUrl: options.publishedUrl,
   })
   if (previousManifest && result.diff && options.limit === undefined) {
     assertRemovalsWithinLimit(previousManifest, result.diff, options.force)
@@ -231,6 +232,8 @@ async function runBuild(options: {
         sprites: result.spriteCount,
         downloaded: result.downloaded,
         reused: result.reused,
+        seeded: result.seeded,
+        retained: result.retained,
         diff: result.diff && {
           added: result.diff.added.length,
           removed: result.diff.removed.length,

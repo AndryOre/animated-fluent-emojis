@@ -83,10 +83,13 @@ test('configureEmojis with a new url refetches from it and warns after a fetch',
       requested.push(request.url)
       return HttpResponse.json(FIXTURE_MANIFEST)
     }),
-    http.get('https://other.example.com/manifest.slim.json', ({ request }) => {
-      requested.push(request.url)
-      return HttpResponse.json(FIXTURE_MANIFEST)
-    }),
+    http.get(
+      'https://other.example.com/v1/manifest.slim.json',
+      ({ request }) => {
+        requested.push(request.url)
+        return HttpResponse.json(FIXTURE_MANIFEST)
+      },
+    ),
   )
   const warnSpy = silence('warn')
   const { configureEmojis, loadEmojiManifest, getManifestSnapshot } =
@@ -101,7 +104,7 @@ test('configureEmojis with a new url refetches from it and warns after a fetch',
 
   expect(requested).toEqual([
     MANIFEST_URL,
-    'https://other.example.com/manifest.slim.json',
+    'https://other.example.com/v1/manifest.slim.json',
   ])
   expect(warnSpy).toHaveBeenCalledTimes(1)
 })
@@ -138,7 +141,7 @@ test('preloadEmojis warms the sprite sheets of the given ids once', async () => 
   await preloadEmojis(['cat'], { skinTone: 'dark' })
 
   expect(requestedSources).toEqual([
-    'https://animated-fluent-emojis.pages.dev/sprites/Animals/cat.png?v=etag-cat',
-    'https://animated-fluent-emojis.pages.dev/sprites/Smilies/waving-hand_s6.png?v=etag-wave',
+    'https://animated-fluent-emojis.pages.dev/v1/sprites/Animals/cat.etag-cat.png',
+    'https://animated-fluent-emojis.pages.dev/v1/sprites/Smilies/waving-hand_s6.etag-wave.png',
   ])
 })

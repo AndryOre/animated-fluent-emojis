@@ -44,6 +44,7 @@ export interface UseEmojiAnimationResult {
  * Autoplay, including looping, runs only once the image has loaded, while the
  * emoji is on screen and while the document is visible.
  * @param size - The size of the emoji in pixels.
+ * @param spriteSource - The current sprite URL. A change re-attaches the listeners to the new image element.
  * @returns Animation state, inline style and the image element ref.
  */
 export const useEmojiAnimation = (
@@ -52,6 +53,7 @@ export const useEmojiAnimation = (
   animationIterations: number | 'infinite',
   autoPlayRequested: boolean,
   size: number,
+  spriteSource?: string,
 ): UseEmojiAnimationResult => {
   const prefersReducedMotion = usePrefersReducedMotion()
   const iterationCount = normalizeIterations(animationIterations)
@@ -99,7 +101,7 @@ export const useEmojiAnimation = (
       imgElement.removeEventListener('load', handleLoad)
       stopObserving()
     }
-  }, [emojiId])
+  }, [emojiId, spriteSource])
 
   const animationStyle = useMemo<CSSProperties>(() => {
     if (!emoji) return {}

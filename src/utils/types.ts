@@ -1,3 +1,10 @@
+import type {
+  HTMLAttributes,
+  ReactEventHandler,
+  ReactNode,
+  SyntheticEvent,
+} from 'react'
+
 import type { EmojiId } from './emoji-id.generated.js'
 
 /**
@@ -28,10 +35,12 @@ interface SlimEmoticon {
   animation: Animation
   /** Whether the asset site also serves an HD sprite sheet for this emoticon. */
   hd?: boolean
+  /** The emoji as a Unicode string, used as the fallback glyph. */
+  unicode?: string
 }
 
 /**
- * The slim manifest the runtime fetches: no shortcuts, unicode or keywords.
+ * The slim manifest the runtime fetches: no shortcuts or keywords.
  */
 export interface SlimManifest {
   /** The emoji categories. */
@@ -104,9 +113,18 @@ export type SkinTone =
   'default' | 'light' | 'medium-light' | 'medium' | 'medium-dark' | 'dark'
 
 /**
- * Represents the properties for the Emoji component.
+ * Props the component controls itself, so they are not passed to the root span.
  */
-export interface EmojiProps {
+type ControlledSpanProps = 'id' | 'children' | 'onLoad' | 'onError'
+
+/**
+ * Represents the properties for the Emoji component. Any other prop is
+ * passed to the root span.
+ */
+export interface EmojiProps extends Omit<
+  HTMLAttributes<HTMLSpanElement>,
+  ControlledSpanProps
+> {
   /** The unique identifier of the emoji. Known ids autocomplete; any string compiles. */
   id: EmojiId | (string & {})
   /** The size of the emoji in pixels. Default is 100. */
@@ -121,4 +139,10 @@ export interface EmojiProps {
   skinTone?: SkinTone
   /** Accessible text. Defaults to the emoji description; an empty string marks the emoji as decorative. */
   alt?: string
+  /** Rendered when the image fails or the manifest fails to load. Defaults to the emoji's Unicode glyph when known; `null` renders nothing. */
+  fallback?: ReactNode
+  /** Called when the image loads. */
+  onLoad?: ReactEventHandler<HTMLImageElement>
+  /** Called when the image fails to load, and with no event when the manifest fails to load. */
+  onError?: (event?: SyntheticEvent<HTMLImageElement>) => void
 }

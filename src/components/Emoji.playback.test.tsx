@@ -77,7 +77,7 @@ test('describes the sheets by width and sizes the image at 24px', async () => {
   const image = getImage('Waving hand').element()
   expect(image.getAttribute('sizes')).toBe('24px')
   expect(image.getAttribute('srcset')).toMatch(
-    /waving-hand\.png\?v=etag-wave 100w, .*waving-hand@2x\.png\?v=etag-wave 200w$/,
+    /waving-hand\.etag-wave\.png 100w, .*waving-hand\.etag-wave@2x\.png 200w$/,
   )
 })
 

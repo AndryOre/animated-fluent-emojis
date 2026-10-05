@@ -4,7 +4,7 @@ import { page, userEvent } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
 
-const SPRITE_BASE = 'https://animated-fluent-emojis.pages.dev/sprites'
+const SPRITE_BASE = 'https://animated-fluent-emojis.pages.dev/v1/sprites'
 
 const getTransform = (image: ReturnType<typeof getImage>) =>
   getComputedStyle(image.element()).transform
@@ -25,7 +25,7 @@ test('renders the sprite for the given id', async () => {
   const image = getImage('Cat')
   await expect
     .element(image)
-    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.png?v=etag-cat`)
+    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.etag-cat.png`)
   await expect.element(image).toHaveAttribute('draggable', 'false')
 })
 
@@ -36,7 +36,7 @@ test('uses the skin tone variant of a diverse emoji', async () => {
     .element(getImage('Waving hand'))
     .toHaveAttribute(
       'src',
-      `${SPRITE_BASE}/Smilies/waving-hand_s6.png?v=etag-wave`,
+      `${SPRITE_BASE}/Smilies/waving-hand_s6.etag-wave.png`,
     )
 })
 
@@ -45,10 +45,7 @@ test('uses the default sprite for a diverse emoji without a skin tone', async ()
 
   await expect
     .element(getImage('Waving hand'))
-    .toHaveAttribute(
-      'src',
-      `${SPRITE_BASE}/Smilies/waving-hand.png?v=etag-wave`,
-    )
+    .toHaveAttribute('src', `${SPRITE_BASE}/Smilies/waving-hand.etag-wave.png`)
 })
 
 test('ignores the skin tone for emojis without variants', async () => {
@@ -56,7 +53,7 @@ test('ignores the skin tone for emojis without variants', async () => {
 
   await expect
     .element(getImage('Cat'))
-    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.png?v=etag-cat`)
+    .toHaveAttribute('src', `${SPRITE_BASE}/Animals/cat.etag-cat.png`)
 })
 
 test('applies the size to the container and the image', async () => {
@@ -226,7 +223,7 @@ test('offers the HD sprite sheet through srcset for hd emojis', async () => {
     .element(getImage('Waving hand'))
     .toHaveAttribute(
       'srcset',
-      `${SPRITE_BASE}/Smilies/waving-hand_s6.png?v=etag-wave 100w, ${SPRITE_BASE}/Smilies/waving-hand_s6@2x.png?v=etag-wave 200w`,
+      `${SPRITE_BASE}/Smilies/waving-hand_s6.etag-wave.png 100w, ${SPRITE_BASE}/Smilies/waving-hand_s6.etag-wave@2x.png 200w`,
     )
 })
 

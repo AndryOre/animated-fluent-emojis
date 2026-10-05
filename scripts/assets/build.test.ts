@@ -1,4 +1,12 @@
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import {
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises'
 import { availableParallelism, tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, expect, test } from 'vitest'
@@ -16,6 +24,7 @@ import {
   type BuildOptions,
 } from './build.js'
 import { hashHdEtag } from './catalog.js'
+import { buildLiveSpriteUrl } from './seed.js'
 import { toSlimManifest } from './slim-manifest.js'
 import type { ConvertedSprite } from './sprites.js'
 import { buildManifestUrl, buildSpriteUrl } from './teams.js'
@@ -681,4 +690,210 @@ test('leaves the legacy output byte-for-byte unchanged', async () => {
       path.join(out, 'sprites/Smilies/1f603_grinningfacewithbigeyes.png'),
     ),
   ).toEqual(SMILEY_PNG)
+})
+
+const LIVE_URL = 'https://live.example'
+
+const listV1Sprites = async (directory: string): Promise<string[]> => {
+  const entries = await readdir(path.join(directory, 'v1/sprites'), {
+    recursive: true,
+    withFileTypes: true,
+  })
+  return entries
+    .filter((entry) => entry.isFile())
+    .map((entry) =>
+      path
+        .relative(directory, path.join(entry.parentPath, entry.name))
+        .split(path.sep)
+        .join('/'),
+    )
+}
+
+type LiveRoutes = Record<string, { body: Uint8Array }>
+
+const readLiveRoute = async (
+  directory: string,
+  v1Path: string,
+  rename: (v1Path: string) => string,
+): Promise<[string, { body: Uint8Array }]> => [
+  `GET ${buildLiveSpriteUrl(LIVE_URL, rename(v1Path))}`,
+  { body: new Uint8Array(await readFile(path.join(directory, v1Path))) },
+]
+
+const buildLiveRoutes = async (
+  directory: string,
+  rename: (v1Path: string) => string = (v1Path) => v1Path,
+): Promise<LiveRoutes> => {
+  const v1Paths = await listV1Sprites(directory)
+  const entries = await Promise.all(
+    v1Paths.map((v1Path) => readLiveRoute(directory, v1Path, rename)),
+  )
+  return Object.fromEntries(entries)
+}
+
+const hasOldEtag = (file: string): boolean => file.includes('.old1.')
+
+const isSourceHostRequest = (request: string): boolean =>
+  new URL(request.slice(request.indexOf(' ') + 1)).hostname ===
+  'media.githubusercontent.com'
+
+const isSourceSpriteRequest = (request: string): boolean =>
+  request.includes('100_anim_f') || isSourceHostRequest(request)
+
+const withoutSourceSprites = (routes: ReturnType<typeof spriteRoutes>) =>
+  Object.fromEntries(
+    Object.entries(routes).filter(([route]) => !isSourceSpriteRequest(route)),
+  )
+
+const seedOptions = (
+  fakeFetch: ReturnType<typeof createFakeFetch>,
+  previousManifest: Manifest,
+): BuildOptions => ({
+  ...baseOptions(fakeFetch),
+  outputDirectory: path.join(context.workDirectory, 'out-next'),
+  cacheDirectory: path.join(context.workDirectory, 'cache-next'),
+  previousManifest,
+  liveUrl: LIVE_URL,
+})
+
+const publishFirstGeneration = async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const first = await buildAssets(baseOptions(fakeFetch))
+  return {
+    manifest: first.manifest,
+    liveRoutes: await buildLiveRoutes(path.join(context.workDirectory, 'out')),
+  }
+}
+
+test('seeds an unchanged emoji from the live site without touching the source', async () => {
+  const { manifest, liveRoutes } = await publishFirstGeneration()
+  const sourceRoutes = withoutSourceSprites(spriteRoutes())
+  const fakeFetch = createFakeFetch({ ...sourceRoutes, ...liveRoutes })
+  const liveFileCount = Object.keys(liveRoutes).length
+
+  const result = await buildAssets({
+    ...seedOptions(fakeFetch, manifest),
+    convert: () => Promise.reject(new Error('must not convert')),
+  })
+
+  expect(result.seeded).toBe(3)
+  expect(result.downloaded).toBe(0)
+  expect(result.skipped).toEqual([])
+  expect(
+    fakeFetch.requests.some((request) => isSourceSpriteRequest(request)),
+  ).toBe(false)
+  const liveRequests = fakeFetch.requests.filter((request) =>
+    request.startsWith(`GET ${LIVE_URL}/v1/sprites/`),
+  )
+  expect(liveRequests).toHaveLength(liveFileCount)
+  expect(new Set(liveRequests).size).toBe(liveFileCount)
+  expect(result.manifest).toEqual(manifest)
+  expect(
+    await listV1Sprites(path.join(context.workDirectory, 'out-next')),
+  ).toEqual(await listV1Sprites(path.join(context.workDirectory, 'out')))
+})
+
+test('keeps the previous etag file of a changed emoji next to the new one', async () => {
+  const { manifest, liveRoutes } = await publishFirstGeneration()
+  const previousManifest: Manifest = {
+    categories: manifest.categories.map((category) => ({
+      ...category,
+      emoticons: category.emoticons.map((emoticon) =>
+        emoticon.id === '1f44b_wavinghand'
+          ? { ...emoticon, etag: 'old1' }
+          : emoticon,
+      ),
+    })),
+  }
+  const renamedLiveRoutes = await buildLiveRoutes(
+    path.join(context.workDirectory, 'out'),
+    (v1Path) => v1Path.replace('.v5.png', '.old1.png'),
+  )
+  const fakeFetch = createFakeFetch({
+    ...spriteRoutes(),
+    ...liveRoutes,
+    ...renamedLiveRoutes,
+  })
+
+  const result = await buildAssets(seedOptions(fakeFetch, previousManifest))
+
+  const out = path.join(context.workDirectory, 'out-next')
+  const files = await listV1Sprites(out)
+  expect(result.retained).toBe(1)
+  expect(result.seeded).toBe(2)
+  for (const suffix of ['', '_s2', '_s3', '_s4', '_s5', '_s6']) {
+    expect(files).toContain(
+      `v1/sprites/Hand gestures/1f44b_wavinghand${suffix}.v5.png`,
+    )
+    expect(files).toContain(
+      `v1/sprites/Hand gestures/1f44b_wavinghand${suffix}.old1.png`,
+    )
+  }
+})
+
+test('does not retain the previous generation beyond the file cap', async () => {
+  const { manifest, liveRoutes } = await publishFirstGeneration()
+  const previousManifest: Manifest = {
+    categories: manifest.categories.map((category) => ({
+      ...category,
+      emoticons: category.emoticons.map((emoticon) =>
+        emoticon.id === '1f44b_wavinghand'
+          ? { ...emoticon, etag: 'old1' }
+          : emoticon,
+      ),
+    })),
+  }
+  const renamedLiveRoutes = await buildLiveRoutes(
+    path.join(context.workDirectory, 'out'),
+    (v1Path) => v1Path.replace('.v5.png', '.old1.png'),
+  )
+  const fakeFetch = createFakeFetch({
+    ...spriteRoutes(),
+    ...liveRoutes,
+    ...renamedLiveRoutes,
+  })
+
+  const result = await buildAssets({
+    ...seedOptions(fakeFetch, previousManifest),
+    maxOutputFiles: 1,
+  })
+
+  expect(result.retained).toBe(0)
+  const files = await listV1Sprites(
+    path.join(context.workDirectory, 'out-next'),
+  )
+  expect(files.some((file) => hasOldEtag(file))).toBe(false)
+})
+
+test('falls back to the source when no v1 layout is live', async () => {
+  const { manifest } = await publishFirstGeneration()
+  const fakeFetch = createFakeFetch(spriteRoutes())
+
+  const result = await buildAssets(seedOptions(fakeFetch, manifest))
+
+  expect(result.seeded).toBe(0)
+  expect(result.retained).toBe(0)
+  expect(result.downloaded).toBe(8)
+  expect(result.skipped).toEqual([])
+})
+
+test('rebuilds an emoji from the source when its live file is corrupt', async () => {
+  const { manifest, liveRoutes } = await publishFirstGeneration()
+  const corruptRoute = Object.keys(liveRoutes).find((route) =>
+    route.includes('chequeredflag'),
+  )
+  expect(corruptRoute).toBeDefined()
+  const fakeFetch = createFakeFetch({
+    ...spriteRoutes(),
+    ...liveRoutes,
+    [corruptRoute ?? '']: { body: new Uint8Array([1, 2, 3]) },
+  })
+
+  const result = await buildAssets(seedOptions(fakeFetch, manifest))
+
+  expect(result.seeded).toBe(2)
+  expect(result.downloaded).toBe(1)
+  expect(
+    fakeFetch.requests.some((request) => isSourceHostRequest(request)),
+  ).toBe(true)
 })

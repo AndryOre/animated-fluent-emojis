@@ -37,7 +37,9 @@ test('emojis mounted during a failed load render after a later load succeeds, lo
   shouldFail = false
   globalThis.dispatchEvent(new Event('online'))
 
-  await expect.poll(() => container.querySelectorAll('img').length).toBe(3)
+  await expect
+    .poll(() => container.querySelectorAll('img, [role="img"]').length)
+    .toBe(3)
   expect(errorSpy).toHaveBeenCalledTimes(1)
 })
 
