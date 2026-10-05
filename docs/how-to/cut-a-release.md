@@ -19,18 +19,34 @@ package to npm and creates the GitHub Release.
 
 ## What the workflow does
 
-Pushing the tag triggers `.github/workflows/release.yml`, which runs in the
-`npm` GitHub Environment and:
+Pushing the tag triggers `.github/workflows/release.yml`, which has two jobs.
+
+The `verify` job has `contents: read` only. It:
 
 1. Fails unless the tag matches the `package.json` version.
-2. Runs `bun ci`, `bun run check`, `bun run test` and `bun run build`.
-3. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
+2. Fails unless the tagged commit is on `main`.
+3. Fails unless `https://animated-fluent-emojis.pages.dev/v1/version.json`
+   returns 200. This is the v1 gate: the release stops if the v1 asset layout is
+   not live, so run the asset sync first.
+4. Runs `bun ci`, `bun run check`, `bun run test` and `bun run build`.
+5. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
    and fails if it is empty.
-4. Updates npm to the latest version (trusted publishing needs npm 11.5.1 or
-   newer) and runs `npm publish`. Authentication uses OIDC trusted publishing,
-   so no token is stored and provenance is generated automatically.
-5. Creates the GitHub Release with `gh release create`, using the extracted
-   notes.
+6. Packs the tarball and uploads it with the notes as the `release-artifact`
+   artifact.
+
+The `publish` job needs `verify`, runs in the `npm` GitHub Environment and is
+the only job with `id-token: write` (plus `contents: write`). It installs no
+dependencies and runs no tests or build. It:
+
+1. Downloads the artifact.
+2. Pins npm to 11.5.1, the minimum for trusted publishing, never `latest`.
+3. Runs `npm publish` on the tarball, unless `npm view <name>@<version>` shows
+   it is already published. Authentication uses OIDC trusted publishing, so no
+   token is stored and provenance is generated automatically.
+4. Creates the GitHub Release with `gh release create` and the extracted notes,
+   unless a release for the tag already exists.
+
+Both publish steps are idempotent, so re-running a failed `publish` job is safe.
 
 `bun publish` is not used because it has no OIDC support.
 
