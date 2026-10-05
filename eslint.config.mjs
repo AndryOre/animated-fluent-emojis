@@ -92,11 +92,16 @@ export default defineConfig([
       ],
       'unicorn/consistent-boolean-name': 'off',
       'unicorn/single-line-block-comment-style': 'off',
+      'unicorn/no-asterisk-prefix-in-documentation-comments': 'off',
       'unicorn/filename-case': [
         'error',
         { cases: { kebabCase: true, pascalCase: true } },
       ],
     },
+  },
+  {
+    files: ['*.config.{ts,mjs}'],
+    rules: { 'unicorn/no-top-level-side-effects': 'off' },
   },
   {
     files: ['**/*.{ts,tsx,mjs}'],

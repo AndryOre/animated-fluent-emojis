@@ -19,6 +19,12 @@ export default defineConfig({
     rolldownOptions: {
       external: ['react', 'react-dom', /^react\//, /^react-dom\//],
       output: {
+        chunkFileNames: 'chunks/[name]-[hash].js',
+        advancedChunks: {
+          groups: [
+            { name: 'manifest', test: /src[\\/]utils[\\/]emoji-manifest/ },
+          ],
+        },
         banner: (chunk) =>
           chunk.name === 'animated-fluent-emojis' ? '"use client";' : '',
       },

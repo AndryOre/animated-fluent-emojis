@@ -29,7 +29,7 @@ const listFiles = (directory: string): string[] =>
     if (entry.isDirectory()) {
       return entry.name === 'test' ? [] : listFiles(absolute)
     }
-    return [absolute]
+    return absolute
   })
 
 const allFiles = listFiles(SOURCE_ROOT).map((file) =>

@@ -58,15 +58,14 @@ const createManifest = (
 const createTasks = (
   suffixes: readonly string[],
   source: SpriteTask['source'] = 'teams',
-  id = 'e1',
 ): SpriteTask[] =>
   suffixes.map((toneSuffix) => ({
     source,
-    id,
+    id: 'e1',
     category: 'Cat',
     toneSuffix,
     etag: 'a',
-    outputPath: `sprites/Cat/${id}${toneSuffix}.png`,
+    outputPath: `sprites/Cat/e1${toneSuffix}.png`,
   }))
 
 const writeFileInCache = async (
@@ -258,7 +257,7 @@ test('rejects category and id values that are not URL-safe', async () => {
   ]
   for (const value of unsafeValues) {
     await expect(
-      run(createManifest({ id: value }), createTasks([''], 'teams', 'e1')),
+      run(createManifest({ id: value }), createTasks([''], 'teams')),
     ).rejects.toThrow(`id ${JSON.stringify(value)} is not URL-safe`)
     await expect(
       run(createManifest({ category: value }), createTasks([''])),
