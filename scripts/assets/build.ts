@@ -19,6 +19,13 @@ import {
   type SpriteTask,
 } from './catalog.js'
 import { fetchOk, mapWithConcurrency, type FetchLike } from './http.js'
+import {
+  buildV1SpritePath,
+  toV1Manifest,
+  V1_DIRECTORY,
+  V1_HEADERS_FILE,
+  validateV1Layout,
+} from './layout-v1.js'
 import { createLimiter } from './limiter.js'
 import {
   buildMitMediaUrl,
@@ -701,6 +708,13 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     cacheDirectory: options.cacheDirectory,
   })
 
+  const etagById = new Map(
+    manifest.categories.flatMap((category) =>
+      category.emoticons.map(
+        (emoticon) => [emoticon.id, emoticon.etag] as const,
+      ),
+    ),
+  )
   await rm(options.outputDirectory, { recursive: true, force: true })
   for (const task of hd.tasks) {
     for (const relativePath of [task.outputPath, task.hdOutputPath]) {
@@ -708,6 +722,12 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
       const destination = path.join(options.outputDirectory, relativePath)
       await mkdir(path.dirname(destination), { recursive: true })
       await cp(path.join(options.cacheDirectory, relativePath), destination)
+      const versioned = path.join(
+        options.outputDirectory,
+        buildV1SpritePath(relativePath, etagById.get(task.id) ?? task.etag),
+      )
+      await mkdir(path.dirname(versioned), { recursive: true })
+      await cp(path.join(options.cacheDirectory, relativePath), versioned)
     }
   }
 
@@ -733,7 +753,25 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     path.join(options.outputDirectory, 'version.json'),
     JSON.stringify(version, null, 2),
   )
-  await writeFile(path.join(options.outputDirectory, '_headers'), HEADERS_FILE)
+  const versionedDirectory = path.join(options.outputDirectory, V1_DIRECTORY)
+  await mkdir(versionedDirectory, { recursive: true })
+  await writeFile(
+    path.join(versionedDirectory, 'manifest.slim.json'),
+    JSON.stringify(toV1Manifest(manifest)),
+  )
+  await writeFile(
+    path.join(versionedDirectory, 'version.json'),
+    JSON.stringify(version, null, 2),
+  )
+  await writeFile(
+    path.join(options.outputDirectory, '_headers'),
+    `${HEADERS_FILE}\n${V1_HEADERS_FILE}`,
+  )
+  await validateV1Layout({
+    manifest,
+    tasks: hd.tasks,
+    outputDirectory: options.outputDirectory,
+  })
   await writeFile(
     path.join(options.outputDirectory, 'LICENSE-fluentui-emoji-animated.txt'),
     await license.text(),

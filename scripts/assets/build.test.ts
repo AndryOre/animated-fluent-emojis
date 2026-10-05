@@ -16,6 +16,7 @@ import {
   type BuildOptions,
 } from './build.js'
 import { hashHdEtag } from './catalog.js'
+import { toSlimManifest } from './slim-manifest.js'
 import type { ConvertedSprite } from './sprites.js'
 import { buildManifestUrl, buildSpriteUrl } from './teams.js'
 import {
@@ -585,4 +586,99 @@ test('fetches an official source once and decodes it once for both sheets', asyn
 test('limits conversions independently from downloads', () => {
   expect(DOWNLOAD_CONCURRENCY).toBe(24)
   expect(getConversionConcurrency()).toBe(availableParallelism())
+})
+
+const LEGACY_HEADERS = `/sprites/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/manifest.json
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+
+/manifest.slim.json
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+
+/version.json
+  Cache-Control: no-cache
+  Access-Control-Allow-Origin: *
+`
+
+test('publishes the versioned layout next to the legacy one', async () => {
+  const options = baseOptions(createFakeFetch(spriteRoutes()))
+  const result = await buildAssets(options)
+  const out = options.outputDirectory
+
+  const v1Manifest = JSON.parse(
+    await readFile(path.join(out, 'v1/manifest.slim.json'), 'utf8'),
+  ) as { categories: { emoticons: { id: string; unicode: string }[] }[] }
+  const entries = v1Manifest.categories.flatMap(
+    (category) => category.emoticons,
+  )
+  expect(entries.length).toBe(3)
+  for (const entry of entries) expect(entry.unicode.length).toBeGreaterThan(0)
+  const v1Version: unknown = JSON.parse(
+    await readFile(path.join(out, 'v1/version.json'), 'utf8'),
+  )
+  expect(v1Version).toEqual(result.version)
+
+  const wave = result.manifest.categories
+    .flatMap((category) => category.emoticons)
+    .find((emoticon) => emoticon.id === '1f44b_wavinghand')
+  expect(
+    await readFile(
+      path.join(
+        out,
+        `v1/sprites/Hand gestures/1f44b_wavinghand_s6.${wave?.etag ?? ''}.png`,
+      ),
+    ),
+  ).toEqual(WAVE_PNG)
+  expect(
+    await fileExists(path.join(out, 'sprites/Symbols/1f3c1_chequeredflag.png')),
+  ).toBe(true)
+})
+
+test('writes versioned headers and keeps the legacy ones first', async () => {
+  const options = baseOptions(createFakeFetch(spriteRoutes()))
+  await buildAssets(options)
+  const headers = await readFile(
+    path.join(options.outputDirectory, '_headers'),
+    'utf8',
+  )
+
+  expect(headers.startsWith(LEGACY_HEADERS)).toBe(true)
+  expect(headers).toContain(
+    '/v1/sprites/*\n  Cache-Control: public, max-age=31536000, immutable\n  Access-Control-Allow-Origin: *',
+  )
+  expect(headers).toContain(
+    '/v1/manifest.slim.json\n  Cache-Control: public, max-age=3600\n  Access-Control-Allow-Origin: *',
+  )
+  expect(headers).toContain(
+    '/v1/version.json\n  Cache-Control: no-cache\n  Access-Control-Allow-Origin: *',
+  )
+})
+
+test('leaves the legacy output byte-for-byte unchanged', async () => {
+  const options = baseOptions(createFakeFetch(spriteRoutes()))
+  const result = await buildAssets(options)
+  const out = options.outputDirectory
+
+  expect(await readFile(path.join(out, 'manifest.json'), 'utf8')).toBe(
+    JSON.stringify(result.manifest),
+  )
+  const legacySlim = await readFile(
+    path.join(out, 'manifest.slim.json'),
+    'utf8',
+  )
+  expect(legacySlim).toBe(JSON.stringify(toSlimManifest(result.manifest)))
+  expect(legacySlim).not.toContain('"unicode"')
+  expect(await readFile(path.join(out, 'version.json'), 'utf8')).toBe(
+    JSON.stringify(result.version, null, 2),
+  )
+  expect(
+    await readFile(
+      path.join(out, 'sprites/Smilies/1f603_grinningfacewithbigeyes.png'),
+    ),
+  ).toEqual(SMILEY_PNG)
 })
