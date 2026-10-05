@@ -42,9 +42,14 @@ dependencies and runs no tests or build. It:
 2. Pins npm to 11.5.1, the minimum for trusted publishing, never `latest`.
 3. Runs `npm publish` on the tarball, unless `npm view <name>@<version>` shows
    it is already published. Authentication uses OIDC trusted publishing, so no
-   token is stored and provenance is generated automatically.
+   token is stored and provenance is generated automatically. A stable version
+   publishes under `latest`; a prerelease publishes under the first identifier
+   of its suffix (`1.0.0-beta.1` under `beta`), and a numeric one (`1.0.0-0`,
+   `1.0.0-1.2`) under `next`.
 4. Creates the GitHub Release with `gh release create` and the extracted notes,
-   unless a release for the tag already exists.
+   unless a release for the tag already exists. A prerelease version (one with a
+   `-` suffix) is created with `--prerelease --latest=false`, so it is marked as
+   a prerelease on GitHub and never becomes "Latest".
 
 Both publish steps are idempotent, so re-running a failed `publish` job is safe.
 

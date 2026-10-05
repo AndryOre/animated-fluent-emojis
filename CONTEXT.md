@@ -55,9 +55,16 @@ site keeps the current generation and the one before it. _Avoid_: Release, build
 description query) to catalog emojis without rendering them. _Avoid_: Search
 API, finder, resolver
 
-**Skipped emoji**: An emoji the sync failed to build. It is left out of the
-catalog, recorded in `version.json`, and the next sync rebuilds it. _Avoid_:
-Dropped emoji, missing emoji
+**Skipped emoji**: An emoji the sync failed to build because of an error
+(download, decode, conversion). It is left out of the catalog, recorded in
+`version.json`, and the next sync rebuilds it. An HD sheet whose frame count
+does not match the standard one is not a skipped emoji: the emoji ships without
+HD. _Avoid_: Dropped emoji, missing emoji
+
+**Canonical emoji**: The catalog entry a glyph resolves to when several entries
+share it: the official id prefixed with its code points, otherwise a reviewed
+override, otherwise the first one in catalog order. _Avoid_: Primary emoji,
+default variant
 
 **Pipeline version**: The version of the build rules; a change republishes every
 sprite even when no upstream source changed. _Avoid_: Build version, schema

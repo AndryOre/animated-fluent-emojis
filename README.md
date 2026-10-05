@@ -124,6 +124,10 @@ a server component in the Next.js App Router. Import the stylesheet once, for
 example in the root layout. The component renders its placeholder on the server
 and the emoji after hydration.
 
+`configureEmojis` and `preloadEmojis` are functions of that same client entry,
+so call them from a client module (one with `"use client"`), not from a Server
+Component such as the root layout.
+
 ## Props
 
 | Prop                | Type                   | Default     | Description                                                                      |
@@ -261,7 +265,14 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
 
 - `findEmojiByUnicode(text)` resolves one emoji and maps a single skin tone
   modifier to `skinTone`; mixed tones resolve to the base emoji. Symbols such as
-  `©` or `™` need the emoji variation selector (U+FE0F) to match.
+  `©` or `™` need the emoji variation selector (U+FE0F) to match, while ZWJ
+  sequences match even when the variation selector is missing (minimally
+  qualified).
+- When several catalog entries share a glyph, lookup returns the canonical
+  emoji: the official id prefixed with the glyph's code points, otherwise a
+  reviewed override, otherwise the first entry in catalog order. For example,
+  `❤️` resolves to the heart rather than a variant that reuses the glyph. With a
+  skin tone, it falls back to a sibling entry that has tones.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
   sequences whole, with its offset and length. Without `Intl.Segmenter` it falls
   back to a code point grouper, and neither function ever rejects.

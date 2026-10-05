@@ -230,10 +230,16 @@ grouper keeps ZWJ sequences, variation selectors, skin tones, keycaps and flags
 together, so it never rejects) and `searchEmojis` (case-insensitive description
 match, 20 results by default; a `limit` that is not a positive number means no
 limit, except `0`, which returns nothing). The catalog is indexed by its unicode
-without VS16, once per manifest. Text-default symbols such as `©` match only
-with VS16 (U+FE0F); mixed skin tones resolve to the base emoji, and a single
-tone to `skinTone`. The functions never reject: they resolve to `undefined` or
-`[]` when the manifest cannot be loaded. It has its own `size-limit` entry.
+without VS16, once per manifest. Several entries can share a glyph (165 entries
+share 68 glyphs); `pickCanonicalEmoji` picks the canonical one: the id prefixed
+with the glyph's code points, then a reviewed entry of `CANONICAL_OVERRIDES`
+present in the manifest, then the first entry in catalog order. A glyph with a
+skin tone resolves to the canonical entry when it has tones, otherwise to the
+first entry of the group that does. Text-default symbols such as `©` match only
+with VS16 (U+FE0F), but ZWJ sequences match without it (minimally qualified);
+mixed skin tones resolve to the base emoji, and a single tone to `skinTone`. The
+functions never reject: they resolve to `undefined` or `[]` when the manifest
+cannot be loaded. It has its own `size-limit` entry.
 
 ## Emoji ids
 
@@ -278,8 +284,9 @@ committed. See [ADR 0006](adr/0006-cloudflare-pages-asset-hosting.md),
   production), `manifest-ops.ts` (diff, animation, HD and prune helpers) and
   `site-writer.ts` (the legacy and v1 copies, manifests, `_headers` and the
   license).
-- `sync.ts` is the CLI behind `assets:detect`, `assets:build` and
-  `assets:lists`.
+- `sync.ts` is the CLI behind `assets:detect`, `assets:build`, `assets:lists`
+  and `assets:verify-live`. Its `--cache` option defaults to `.cache/assets`,
+  the local directory that holds the sprites keyed by `etag`.
 
 ### Asset layout v1
 
@@ -299,14 +306,17 @@ The legacy layout (`/manifest.slim.json` and `?v=<etag>` sprite paths) is still
 emitted for installed 0.4.x versions; its `/sprites/*` files are not
 content-addressed, so they are cached for one day only.
 
-`version.json` lists `skippedIds` when an emoji, or only its HD sheet, failed to
-build, and `limited` when the build was cut short by `--limit`. Either marks the
-published site as unfinished, so the next detect rebuilds. `sync.ts verify-live`
-(`bun run assets:verify-live`) fetches `/v1/version.json` without cache and
-fails when it is missing, lacks the `v1` layout, is `limited` or has another
-pipeline version; `release.yml` runs it before publishing. `validateV1Layout`
-checks that every file name's etag matches the manifest and that the v1 manifest
-and `version.json` exist.
+`version.json` lists `skippedIds` when an emoji failed to build or its HD sheet
+failed with a transient error (download, decode, conversion), and `limited` when
+the build was cut short by `--limit`. Either marks the published site as
+unfinished, so the next detect rebuilds. An HD sheet whose frame count differs
+from the standard sheet is deterministic, so it is not a skipped emoji: the
+emoji ships without HD and a retry would change nothing. `sync.ts verify-live`
+(`bun run assets:verify-live`) fetches `/v1/version.json` without cache, with
+the retries of `fetchOk`, and fails when it is missing, lacks the `v1` layout,
+is `limited` or has another pipeline version; `release.yml` runs it before
+publishing. `validateV1Layout` checks that every file name's etag matches the
+manifest and that the v1 manifest and `version.json` exist.
 
 ### Seeding and the previous generation
 
@@ -338,12 +348,19 @@ it.
 
 After the deploy, the workflow smoke-tests the legacy layout by fetching the
 manifest and one sprite from the live site, and the v1 layout by checking its
-`builtAt`, one standard and one `@2x` sprite (always). A failing run opens, or
-comments on, a `sync-assets failing` issue through the `report-failure` job. To
-undo a bad deployment, see
+`builtAt`, one standard and one `@2x` sprite. The smoke checks run on every
+sync, including a run where detect found nothing to build; without a local build
+they skip the `builtAt` comparison. A failing run opens, or comments on, a
+`sync-assets failing` issue through the `report-failure` job. To undo a bad
+deployment, see
 [how to roll back the asset site](how-to/roll-back-the-asset-site.md).
 
 ### Sync inputs and triggers
+
+The sync job times out after 90 minutes, enough for a full rebuild when there is
+nothing to seed from. `.cache/assets` is not persisted between runs: seeding
+from the live site replaces it. The Wrangler version used to deploy is pinned in
+the workflow.
 
 `sync-assets.yml` detects a `/v1/version.json` that is missing, lacks the `v1`
 layout or carries another pipeline version, and builds in that case even when
