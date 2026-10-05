@@ -186,13 +186,21 @@ committed. See [ADR 0006](adr/0006-cloudflare-pages-asset-hosting.md),
 - `sprites.ts` converts the official APNGs into vertical sprite sheets (100px
   frames, 200px for HD) with ffmpeg and sharp, keeping the exact fps. Each
   official source is decoded once, whatever the number of sizes.
-- `seed.ts` downloads sheets from the live site (see below).
+- `constants.ts` holds the frame sizes (100 and 200), the skin tone suffixes and
+  `indexEmoticons`, shared by every module below.
+- `seed.ts` downloads sheets from the live site, seeds the cache with the
+  unchanged emoji and retains the previous generation (see below).
 - `validate.ts` checks the planned catalog and the generated files before
   anything is published.
 - `slim-manifest.ts` reduces the full manifest to the slim manifest, and
   `layout-v1.ts` adds `unicode` and writes the v1 layout.
 - `guards.ts` holds the sync guards.
-- `build.ts` runs the plan, caches by `etag` and writes `dist-assets/`.
+- `build.ts` orchestrates the run: it plans, produces sprites with a cache keyed
+  by `etag` and assembles `dist-assets/`. It delegates to `build-context.ts`
+  (`BuildContext`, options and cache state), `hd.ts` (HD planning, cache and
+  production), `manifest-ops.ts` (diff, animation, HD and prune helpers) and
+  `site-writer.ts` (the legacy and v1 copies, manifests, `_headers` and the
+  license).
 - `sync.ts` is the CLI behind `assets:detect`, `assets:build` and
   `assets:lists`.
 

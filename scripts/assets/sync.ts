@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 
 import type { Manifest } from '../../src/utils/types.js'
-import { buildAssets, diffManifests, type PublishedVersion } from './build.js'
+import { buildAssets } from './build.js'
 import { PIPELINE_VERSION } from './catalog.js'
 import {
   formatSource,
@@ -21,7 +21,9 @@ import {
 import { fetchOkOrMissing, type FetchLike } from './http.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { V1_DIRECTORY } from './layout-v1.js'
+import { diffManifests } from './manifest-ops.js'
 import { fetchMitCommitSha } from './mit.js'
+import type { PublishedVersion } from './site-writer.js'
 import {
   discoverTeamsVersion,
   probeVersion,

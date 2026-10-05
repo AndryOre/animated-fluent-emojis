@@ -22,6 +22,22 @@ test('props extend span attributes and ref targets the root span', () => {
   expectTypeOf<ComponentRef<typeof Emoji>>().toEqualTypeOf<HTMLSpanElement>()
 })
 
+test('size accepts numbers and CSS length strings', () => {
+  expectTypeOf<{ id: 'cat'; size: 24 }>().toExtend<EmojiProps>()
+  expectTypeOf<{ id: 'cat'; size: '2rem' }>().toExtend<EmojiProps>()
+  expectTypeOf<{ id: 'cat'; size: boolean }>().not.toExtend<EmojiProps>()
+})
+
+test('playing and onPlaybackEnd are typed', () => {
+  expectTypeOf<{
+    id: 'cat'
+    playing: boolean
+    onPlaybackEnd: () => void
+  }>().toExtend<EmojiProps>()
+  expectTypeOf<{ id: 'cat'; playing: 'yes' }>().not.toExtend<EmojiProps>()
+  expectTypeOf<EmojiProps['playing']>().toEqualTypeOf<boolean | undefined>()
+})
+
 test('skinTone is rejected for a known non-diverse id', () => {
   expectTypeOf<{
     id: '1f603_grinningfacewithbigeyes'

@@ -3,7 +3,7 @@ import { readdir } from 'node:fs/promises'
 import path from 'node:path'
 
 import type { Manifest } from '../../src/utils/types.js'
-import type { ManifestDiff } from './build.js'
+import type { ManifestDiff } from './manifest-ops.js'
 import type { TeamsDiscovery } from './teams.js'
 
 /**

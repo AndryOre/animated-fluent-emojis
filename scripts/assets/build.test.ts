@@ -13,17 +13,15 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import type { Manifest } from '../../src/utils/types.js'
 import {
-  applyAnimations,
-  applyHd,
-  buildAssets,
-  diffManifests,
   DOWNLOAD_CONCURRENCY,
   fileExists,
   getConversionConcurrency,
   readState,
   type BuildOptions,
-} from './build.js'
+} from './build-context.js'
+import { buildAssets } from './build.js'
 import { hashHdEtag, PIPELINE_VERSION } from './catalog.js'
+import { applyAnimations, applyHd, diffManifests } from './manifest-ops.js'
 import { buildLiveSpriteUrl } from './seed.js'
 import { toSlimManifest } from './slim-manifest.js'
 import type { ConvertedSprite } from './sprites.js'
