@@ -18,22 +18,49 @@ export interface ConvertedSprite {
 }
 
 /**
+ * The frame rate used when ffprobe reports no usable rate.
+ */
+const DEFAULT_FRAME_RATE = 24
+
+function tryParseFrameRate(rate: string | undefined): number | undefined {
+  if (rate === undefined) return undefined
+  const [numerator, denominator] = rate.split('/').map(Number)
+  const isUsable =
+    numerator !== undefined &&
+    denominator !== undefined &&
+    denominator !== 0 &&
+    Number.isFinite(numerator) &&
+    Number.isFinite(denominator)
+  return isUsable ? Math.max(1, Math.round(numerator / denominator)) : undefined
+}
+
+/**
  * Parses an ffprobe frame rate such as `143/6` into frames per second.
  * @param rate The ratio string reported by ffprobe.
  * @returns The rate rounded to a whole number of frames per second.
  */
 export function parseFrameRate(rate: string): number {
-  const [numerator, denominator] = rate.split('/').map(Number)
-  if (
-    denominator === 0 ||
-    numerator === undefined ||
-    denominator === undefined ||
-    !Number.isFinite(numerator) ||
-    !Number.isFinite(denominator)
-  ) {
-    throw new Error(`Invalid frame rate "${rate}"`)
-  }
-  return Math.max(1, Math.round(numerator / denominator))
+  const parsed = tryParseFrameRate(rate)
+  if (parsed === undefined) throw new Error(`Invalid frame rate "${rate}"`)
+  return parsed
+}
+
+/**
+ * Picks the frame rate from ffprobe's reported rates, preferring the average
+ * rate, then the base rate, then 24 fps.
+ * @param averageRate The `avg_frame_rate` value, possibly `0/0`.
+ * @param baseRate The `r_frame_rate` value, possibly missing or `0/0`.
+ * @returns A whole number of frames per second, never throwing.
+ */
+export function resolveFrameRate(
+  averageRate: string | undefined,
+  baseRate: string | undefined,
+): number {
+  return (
+    tryParseFrameRate(averageRate) ??
+    tryParseFrameRate(baseRate) ??
+    DEFAULT_FRAME_RATE
+  )
 }
 
 /**
@@ -58,14 +85,18 @@ export async function convertAnimatedPng(
       '-select_streams',
       'v:0',
       '-show_entries',
-      'stream=nb_read_frames,avg_frame_rate',
+      'stream=nb_read_frames,avg_frame_rate,r_frame_rate',
       '-of',
       'json',
       inputPath,
     ])
     const stream = (
       JSON.parse(probe.stdout) as {
-        streams: { nb_read_frames: string; avg_frame_rate: string }[]
+        streams: {
+          nb_read_frames: string
+          avg_frame_rate?: string
+          r_frame_rate?: string
+        }[]
       }
     ).streams[0]
     const framesCount = Number(stream?.nb_read_frames)
@@ -90,7 +121,11 @@ export async function convertAnimatedPng(
     const png = await sharp(await readFile(outputPath))
       .png({ palette: true, quality: 90, effort: 10 })
       .toBuffer()
-    return { png, framesCount, fps: parseFrameRate(stream.avg_frame_rate) }
+    return {
+      png,
+      framesCount,
+      fps: resolveFrameRate(stream.avg_frame_rate, stream.r_frame_rate),
+    }
   } finally {
     await rm(workingDirectory, { recursive: true, force: true })
   }

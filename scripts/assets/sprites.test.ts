@@ -5,7 +5,11 @@ import path from 'node:path'
 import sharp from 'sharp'
 import { expect, test } from 'vitest'
 
-import { convertAnimatedPng, parseFrameRate } from './sprites.js'
+import {
+  convertAnimatedPng,
+  parseFrameRate,
+  resolveFrameRate,
+} from './sprites.js'
 
 const hasFfmpeg =
   spawnSync('ffmpeg', ['-version']).status === 0 &&
@@ -19,6 +23,21 @@ test('parseFrameRate rounds ffprobe ratios', () => {
 test('parseFrameRate rejects invalid ratios', () => {
   expect(() => parseFrameRate('0/0')).toThrow('Invalid frame rate')
   expect(() => parseFrameRate('abc')).toThrow('Invalid frame rate')
+})
+
+test('resolveFrameRate prefers the average rate', () => {
+  expect(resolveFrameRate('10/1', '30/1')).toBe(10)
+})
+
+test('resolveFrameRate falls back to the base rate on 0/0', () => {
+  expect(resolveFrameRate('0/0', '30/1')).toBe(30)
+  expect(resolveFrameRate(undefined, '12/1')).toBe(12)
+})
+
+test('resolveFrameRate falls back to 24 when no rate is usable', () => {
+  expect(resolveFrameRate('0/0', '0/0')).toBe(24)
+  expect(resolveFrameRate(undefined, undefined)).toBe(24)
+  expect(resolveFrameRate('abc', '')).toBe(24)
 })
 
 test.skipIf(!hasFfmpeg)(
