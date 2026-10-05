@@ -87,7 +87,7 @@ lazy loading and sizes, CI, OpenSSF Scorecard.
 ## Relationship with Microsoft
 
 - The artwork is Microsoft's. The official set is MIT. Teams sprites have no
-  explicit license (ADR 0006). The code is ours, under ISC.
+  explicit license (ADR 0006). The code is ours, under MIT.
 - The project is not affiliated with or endorsed by Microsoft. Say it once,
   clearly, where people decide to use it.
 - No Microsoft, Teams or Fluent logos.

@@ -12,7 +12,8 @@ GitHub API. Downloads are the last 30 days.
 
 - **Package:** `animated-fluent-emojis` 0.5.1, first published 2024-08-22
 - **Downloads:** 280 last month (129 a month earlier)
-- **GitHub:** 0 stars, ISC license, active (last push 2026-10-05)
+- **GitHub:** 0 stars, ISC license (MIT since 0.5.3), active (last push
+  2026-10-05)
 - **Positioning:** React component that renders Microsoft's animated Fluent
   emoji from an asset site; lazy slim manifest, HD sprite sheets, ESM only
 - **Name:** generic and literal. It is also the name of other GitHub repos (see
@@ -56,7 +57,7 @@ GitHub API. Downloads are the last 30 days.
   "animated, light, easy" visible instead of listing mechanics.
 - **There is a trust angle.** The sprites are Microsoft's. LobeHub and Tarikul
   both rely on the same assets, and Tarikul's repo shows a license of "other". A
-  clear, short statement of what is ours (the code, ISC) and what is Microsoft's
+  clear, short statement of what is ours (the code, MIT) and what is Microsoft's
   (the artwork, MIT) is a differentiator, and it is also the protection against
   looking like an official Microsoft project.
 - **Demand is small and real.** 280 downloads a month for a package with 0 stars
