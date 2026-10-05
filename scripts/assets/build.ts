@@ -20,7 +20,7 @@ import {
   type HdSkippedEmoji,
   type SpriteTask,
 } from './catalog.js'
-import { countFiles, MAX_OUTPUT_FILES } from './guards.js'
+import { appendStepSummary, countFiles, MAX_OUTPUT_FILES } from './guards.js'
 import { fetchOk, mapWithConcurrency, type FetchLike } from './http.js'
 import {
   buildV1SpritePath,
@@ -659,6 +659,11 @@ async function retainPreviousGeneration(input: {
   }
   const liveUrl = options.liveUrl
   const previousById = indexPreviousEmojis(options.previousManifest)
+  const currentIds = new Set(
+    manifest.categories.flatMap((category) =>
+      category.emoticons.map((emoticon) => emoticon.id),
+    ),
+  )
   const changed = manifest.categories
     .flatMap((category) => category.emoticons)
     .filter((emoticon) => emojiIds.has(emoticon.id))
@@ -667,13 +672,34 @@ async function retainPreviousGeneration(input: {
       return previous && previous.etag !== emoticon.etag ? [previous] : []
     })
     .toSorted((left, right) => left.id.localeCompare(right.id))
+  const removed =
+    options.limit === undefined
+      ? previousById
+          .values()
+          .filter((previous) => !currentIds.has(previous.id))
+          .toArray()
+          .toSorted((left, right) => left.id.localeCompare(right.id))
+      : []
   let remaining = fileBudget
   const affordable: PreviousEmoji[] = []
-  for (const previous of changed) {
+  let truncated = 0
+  for (const previous of [...changed, ...removed]) {
     const fileCount = listPreviousFiles(previous).length
-    if (fileCount > remaining) continue
+    if (fileCount > remaining) {
+      truncated += 1
+      continue
+    }
     remaining -= fileCount
     affordable.push(previous)
+  }
+  if (truncated > 0) {
+    appendStepSummary(
+      'Previous generation retention truncated',
+      [
+        `${String(truncated)} changed or removed emoji(s) were not retained: the file budget was exhausted`,
+      ],
+      options.stepSummaryPath,
+    )
   }
   const downloaded = await mapWithConcurrency(
     affordable,

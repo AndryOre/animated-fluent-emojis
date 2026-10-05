@@ -3,13 +3,13 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type CSSProperties,
   type RefObject,
 } from 'react'
 
 import type { EmojiManifest } from '../utils/index.js'
 import { observeVisibility } from '../utils/visibility-observer.js'
+import { useDocumentHidden } from './use-document-hidden.js'
 import { usePrefersReducedMotion } from './use-prefers-reduced-motion.js'
 
 const normalizeIterations = (
@@ -18,16 +18,6 @@ const normalizeIterations = (
   if (value === 'infinite' || value === Infinity) return 'infinite'
   return Number.isNaN(value) || value < 0 ? 0 : value
 }
-
-const subscribeToDocumentVisibility = (onChange: () => void) => {
-  document.addEventListener('visibilitychange', onChange)
-  return () => {
-    document.removeEventListener('visibilitychange', onChange)
-  }
-}
-
-const getDocumentHidden = () => document.hidden
-const getServerDocumentHidden = () => false
 
 export interface UseEmojiAnimationResult {
   isInitialAnimationComplete: boolean
@@ -65,11 +55,6 @@ export const useEmojiAnimation = (
   const [trackedSource, setTrackedSource] = useState(spriteSource)
   const [hasImageLoaded, setHasImageLoaded] = useState(false)
   const [isOnScreen, setIsOnScreen] = useState(false)
-  const isDocumentHidden = useSyncExternalStore(
-    subscribeToDocumentVisibility,
-    getDocumentHidden,
-    getServerDocumentHidden,
-  )
   const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
   if (trackedSource !== spriteSource) {
     setTrackedSource(spriteSource)
@@ -78,6 +63,7 @@ export const useEmojiAnimation = (
     setIsOnScreen(false)
   }
   const isInitialAnimationComplete = hasInitialRunFinished || !autoPlay
+  const isDocumentHidden = useDocumentHidden(!isInitialAnimationComplete)
   const imageRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {

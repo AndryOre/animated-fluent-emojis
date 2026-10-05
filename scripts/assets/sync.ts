@@ -278,6 +278,12 @@ async function runBuild(options: {
       `Changed: ${String(result.diff.changed.length)}`,
     ])
   }
+  appendStepSummary('Sprite sources', [
+    `Seeded from the live site: ${String(result.seeded)} emoji(s)`,
+    `Built from source: ${String(result.downloaded)} sprite(s)`,
+    `Reused from the cache: ${String(result.reused)} sprite(s)`,
+    `Retained from the previous generation: ${String(result.retained)} emoji(s)`,
+  ])
   console.log(
     JSON.stringify(
       {
