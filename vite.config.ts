@@ -8,14 +8,20 @@ const rootDirectory = import.meta.dirname
 export default defineConfig({
   build: {
     lib: {
-      entry: path.resolve(rootDirectory, 'src/index.ts'),
+      entry: {
+        'animated-fluent-emojis': path.resolve(rootDirectory, 'src/index.ts'),
+        lookup: path.resolve(rootDirectory, 'src/lookup/index.ts'),
+      },
       formats: ['es'],
-      fileName: 'animated-fluent-emojis',
+      fileName: (_format, entryName) => `${entryName}.js`,
       cssFileName: 'style',
     },
     rolldownOptions: {
       external: ['react', 'react-dom', /^react\//, /^react-dom\//],
-      output: { banner: '"use client";' },
+      output: {
+        banner: (chunk) =>
+          chunk.name === 'animated-fluent-emojis' ? '"use client";' : '',
+      },
     },
     sourcemap: true,
     emptyOutDir: true,

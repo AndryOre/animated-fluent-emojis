@@ -44,6 +44,7 @@ export default defineConfig({
           environment: 'node',
           include: [
             'src/utils/**/*.test.ts',
+            'src/lookup/**/*.test.ts',
             'src/test/**/*.test.ts',
             'eslint-rules/**/*.test.ts',
             'docs/adr/**/*.test.ts',

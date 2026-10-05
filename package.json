@@ -39,6 +39,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/animated-fluent-emojis.js"
     },
+    "./lookup": {
+      "types": "./dist/lookup/index.d.ts",
+      "import": "./dist/lookup.js"
+    },
     "./style.css": "./dist/style.css",
     "./dist/style.css": "./dist/style.css",
     "./package.json": "./package.json"
@@ -116,6 +120,11 @@
       "name": "ESM bundle",
       "path": "dist/animated-fluent-emojis.js",
       "limit": "3.1 kB"
+    },
+    {
+      "name": "Lookup bundle",
+      "path": "dist/lookup.js",
+      "limit": "1.5 kB"
     },
     {
       "name": "Stylesheet",
