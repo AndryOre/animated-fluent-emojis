@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-05
+
 ### Added
 
 - `className` and `style` on `Emoji`, merged with the component's own, and any
@@ -235,7 +237,9 @@ and this project adheres to
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.0...HEAD
+[0.5.0]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...v0.5.0
 [0.4.0]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.3.0...v0.4.0
 [0.3.0]:
