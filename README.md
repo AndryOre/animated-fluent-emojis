@@ -11,10 +11,21 @@
   <a href="https://scorecard.dev/viewer/?uri=github.com/AndryOre/animated-fluent-emojis"><img src="https://api.scorecard.dev/projects/github.com/AndryOre/animated-fluent-emojis/badge" alt="OpenSSF Scorecard"></a>
 </p>
 
-**Animated Fluent Emojis** is a React component library that brings Microsoft's
-Fluent emojis to life in your web applications. This library offers an easy way
-to integrate expressive and engaging animated emojis, enhancing user experience
-and visual appeal in your React projects.
+**Fluent emojis, but they move.**
+
+Drop Microsoft's animated Fluent emojis into a React app: one import, one tag.
+They play on load or on hover, rest on a still frame when someone asks for less
+motion, and hold their space in the layout while they load.
+
+```jsx
+<Emoji id="1f44b_wavinghand" />
+```
+
+Works with React 18 and 19.
+
+The artwork belongs to Microsoft. The code is ISC. This project is not
+affiliated with or endorsed by Microsoft. See
+[Assets and licensing](#assets-and-licensing).
 
 <p align="center">
   <img src="docs/assets/rocket-launch.webp" alt="Rocket Launch" width="100" height="100">
@@ -22,55 +33,50 @@ and visual appeal in your React projects.
   <img src="docs/assets/hundred-points.webp" alt="Hundred Points" width="100" height="100">
 </p>
 
-> 🎉 **Exclusive Feature:** Until now, these Animated Fluent Emojis were only
-> available within Microsoft Teams. This library makes them accessible for use
-> in any web application for the first time, bringing a unique and lively emoji
-> experience to your projects!
-
 <details>
 <summary>Table of Contents</summary>
 
-- [Features](#features-)
-- [Tech Stack](#tech-stack-)
-- [Installation](#installation-)
-- [Usage](#usage-)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
 - [Props](#props)
 - [Migrating from 0.4](#migrating-from-04)
 - [Examples](#examples)
-- [Emoji Categories](#emoji-categories-)
+- [Emoji Categories](#emoji-categories)
 - [Contributing](#contributing)
 - [Support the Project](#support-the-project)
-- [License](#license-)
+- [License](#license)
 - [Acknowledgements](#acknowledgements)
 
 </details>
 
-## Features 🌟
+## Features
 
-- 🚀 **Easy Integration**: Simple React component for quick implementation in
-  your projects.
-- 🎨 **Customizable**: Adjust size, animation behavior, and more to fit your
-  design needs.
-- 🔄 **Flexible Animation**: Support for autoplay and hover- or focus-triggered
-  animations, and a still poster frame when the user prefers reduced motion.
-- ♿ **Accessible**: Descriptive `alt` text by default, or mark an emoji as
-  decorative.
-- 🖼️ **Sharp on HD screens**: Emojis with an HD sprite sheet are served at 2x to
+- **One component.** `<Emoji id="…" />`, with `size`, `skinTone` and the other
+  props below.
+- **Plays when you want.** On load, on hover or focus, or driven by `playing`.
+- **Rests when asked.** Under reduced motion it stays on its poster frame.
+- **Holds its space.** An empty placeholder of the final size keeps the layout
+  steady while it loads. The manifest is fetched on first render, never at
+  import.
+- **Sharp on HD screens.** Emojis with an HD sprite sheet are served at 2x to
   high-density displays.
-- 🌈 **Wide Variety**: Access to a diverse set of emojis from Microsoft's Fluent
-  Emoji collection, with skin tone variants.
-- 📦 **Lightweight**: Optimized for performance to keep your applications fast
-  and responsive.
-- 🌐 **TypeScript Support**: Full TypeScript support for improved development
-  experience.
+- **Described by default.** `alt` comes from the emoji's description, and
+  `alt=""` marks it decorative.
+- **Fails softly.** A sprite sheet that does not load shows the emoji's native
+  character, or your own `fallback`.
+- **Findable.** `animated-fluent-emojis/lookup` turns a character or a
+  description into an id, with no React.
+- **Typed.** TypeScript types, with autocomplete for emoji ids.
 
-## Tech Stack 🧰
+## Tech Stack
 
 - [![React][React]][React-url]
 - [![TypeScript][TypeScript]][TypeScript-url]
 - [![Vite][Vite]][Vite-url]
 
-## Installation 🔧
+## Installation
 
 To install Animated Fluent Emojis in your project, run one of the following
 commands:
@@ -86,7 +92,7 @@ pnpm add animated-fluent-emojis
 The package supports React 18 and 19 (`react` and `react-dom` are peer
 dependencies) and is ESM-only.
 
-## Usage 📚
+## Usage
 
 1. Import the Emoji component and the stylesheet in your React file (the
    stylesheet import is required once, for example in your app entry). The
@@ -269,10 +275,10 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
   sequences match even when the variation selector is missing (minimally
   qualified).
 - When several catalog entries share a glyph, lookup returns the canonical
-  emoji: the official id prefixed with the glyph's code points, otherwise a
-  reviewed override, otherwise the first entry in catalog order. For example,
-  `❤️` resolves to the heart rather than a variant that reuses the glyph. With a
-  skin tone, it falls back to a sibling entry that has tones.
+  emoji: the Microsoft-published id prefixed with the glyph's code points,
+  otherwise a reviewed override, otherwise the first entry in catalog order. For
+  example, `❤️` resolves to the heart rather than a variant that reuses the
+  glyph. With a skin tone, it falls back to a sibling entry that has tones.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
   sequences whole, with its offset and length. Without `Intl.Segmenter` it falls
   back to a code point grouper, and neither function ever rejects.
@@ -337,7 +343,7 @@ function App() {
 export default App
 ```
 
-## Emoji Categories 📋
+## Emoji Categories
 
 For a complete list of available emojis and their corresponding IDs, Unicode
 representations, descriptions, and keywords, please refer to our
@@ -373,7 +379,7 @@ project:
 
 Your support helps maintain and improve Animated Fluent Emojis!
 
-## License 📄
+## License
 
 Animated Fluent Emojis is totally free for commercial and personal use, this
 software is licensed under the [ISC License](LICENSE).
@@ -386,7 +392,7 @@ refreshed automatically. Most emojis come from the animated Fluent emoji set
 that Microsoft Teams publishes; the rest come from Microsoft's MIT-licensed
 [fluentui-emoji-animated][Microsoft Fluent Emojis Animated] repository. The
 sprites remain Microsoft's assets: this package's ISC license covers the code
-only. The MIT notice for the official repository is published at
+only. The MIT notice for the upstream repository is published at
 `/LICENSE-fluentui-emoji-animated.txt` on the asset site.
 
 ## Acknowledgements
