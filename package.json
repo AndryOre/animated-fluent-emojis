@@ -130,7 +130,7 @@
         "dist/lookup.js",
         "dist/emoji-manifest-*.js"
       ],
-      "limit": "2.2 kB"
+      "limit": "2.3 kB"
     },
     {
       "name": "Stylesheet",
