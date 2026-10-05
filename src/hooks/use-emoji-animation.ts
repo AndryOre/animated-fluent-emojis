@@ -8,6 +8,7 @@ import {
 } from 'react'
 
 import type { EmojiManifest } from '../utils/index.js'
+import { usePrefersReducedMotion } from './use-prefers-reduced-motion.js'
 
 export interface UseEmojiAnimationResult {
   isInitialAnimationComplete: boolean
@@ -20,7 +21,7 @@ export interface UseEmojiAnimationResult {
  * @param emoji - The emoji manifest data or null if not loaded.
  * @param playOnHover - Whether to play the animation on hover.
  * @param animationIterations - The number of animation iterations.
- * @param autoPlay - Whether to autoplay the animation.
+ * @param autoPlayRequested - Whether to autoplay the animation. Ignored while the user prefers reduced motion.
  * @param size - The size of the emoji in pixels.
  * @returns Animation state, inline style and the image element ref.
  */
@@ -28,11 +29,13 @@ export const useEmojiAnimation = (
   emoji: EmojiManifest | null,
   playOnHover: boolean,
   animationIterations: number | 'infinite',
-  autoPlay: boolean,
+  autoPlayRequested: boolean,
   size: number,
 ): UseEmojiAnimationResult => {
-  const [isInitialAnimationComplete, setIsInitialAnimationComplete] =
-    useState(!autoPlay)
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const autoPlay = autoPlayRequested && !prefersReducedMotion
+  const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
+  const isInitialAnimationComplete = hasInitialRunFinished || !autoPlay
   const animationCountRef = useRef(0)
   const imageRef = useRef<HTMLImageElement>(null)
 
@@ -46,13 +49,13 @@ export const useEmojiAnimation = (
         typeof animationIterations === 'number' &&
         animationCountRef.current >= animationIterations
       ) {
-        setIsInitialAnimationComplete(true)
+        setHasInitialRunFinished(true)
       }
     }
 
     const handleAnimationEnd = () => {
       if (!isInitialAnimationComplete) {
-        setIsInitialAnimationComplete(true)
+        setHasInitialRunFinished(true)
       }
     }
 
