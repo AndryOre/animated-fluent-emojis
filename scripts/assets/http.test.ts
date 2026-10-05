@@ -1,0 +1,136 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { fetchOk, type FetchLike } from './http.js'
+
+function sequence(...outcomes: (Response | Error)[]): {
+  fetch: FetchLike
+  calls: () => number
+} {
+  let index = 0
+  const fetch: FetchLike = () => {
+    const outcome =
+      outcomes[Math.min(index, outcomes.length - 1)] ?? new Error('no outcome')
+    index += 1
+    return outcome instanceof Error
+      ? Promise.reject(outcome)
+      : Promise.resolve(outcome.clone())
+  }
+  return { fetch, calls: () => index }
+}
+
+function status(code: number, headers?: Record<string, string>): Response {
+  return new Response('x', { status: code, headers })
+}
+
+describe('fetchOk', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('returns a successful response without waiting', async () => {
+    const { fetch, calls } = sequence(status(200))
+    const response = await fetchOk(fetch, 'https://x.test/a')
+    expect(response.status).toBe(200)
+    expect(calls()).toBe(1)
+  })
+
+  it('waits for Retry-After seconds on 429 and then succeeds', async () => {
+    const { fetch, calls } = sequence(
+      status(429, { 'retry-after': '7' }),
+      status(200),
+    )
+    const pending = fetchOk(fetch, 'https://x.test/a')
+    await vi.advanceTimersByTimeAsync(6999)
+    expect(calls()).toBe(1)
+    await vi.advanceTimersByTimeAsync(1)
+    const response = await pending
+    expect(response.status).toBe(200)
+    expect(calls()).toBe(2)
+  })
+
+  it('honours a Retry-After HTTP date', async () => {
+    const date = new Date('2026-01-01T00:00:10Z').toUTCString()
+    const { fetch, calls } = sequence(
+      status(429, { 'retry-after': date }),
+      status(200),
+    )
+    const pending = fetchOk(fetch, 'https://x.test/a')
+    await vi.advanceTimersByTimeAsync(9999)
+    expect(calls()).toBe(1)
+    await vi.advanceTimersByTimeAsync(1)
+    await pending
+    expect(calls()).toBe(2)
+  })
+
+  it('caps Retry-After at 60 seconds', async () => {
+    const { fetch, calls } = sequence(
+      status(429, { 'retry-after': '3600' }),
+      status(200),
+    )
+    const pending = fetchOk(fetch, 'https://x.test/a')
+    await vi.advanceTimersByTimeAsync(59_999)
+    expect(calls()).toBe(1)
+    await vi.advanceTimersByTimeAsync(1)
+    await pending
+    expect(calls()).toBe(2)
+  })
+
+  it.each([408, 500, 502, 503])('retries status %i', async (code) => {
+    const { fetch, calls } = sequence(status(code), status(200))
+    const pending = fetchOk(fetch, 'https://x.test/a')
+    await vi.runAllTimersAsync()
+    const response = await pending
+    expect(response.status).toBe(200)
+    expect(calls()).toBe(2)
+  })
+
+  it('retries network errors', async () => {
+    const { fetch, calls } = sequence(new TypeError('boom'), status(200))
+    const pending = fetchOk(fetch, 'https://x.test/a')
+    await vi.runAllTimersAsync()
+    await pending
+    expect(calls()).toBe(2)
+  })
+
+  it('backs off exponentially between attempts', async () => {
+    const { fetch, calls } = sequence(status(500))
+    const pending = expect(fetchOk(fetch, 'https://x.test/a')).rejects.toThrow()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(calls()).toBe(1)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(calls()).toBe(2)
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(calls()).toBe(3)
+    await vi.advanceTimersByTimeAsync(2000)
+    expect(calls()).toBe(4)
+    await vi.advanceTimersByTimeAsync(4000)
+    expect(calls()).toBe(5)
+    await pending
+  })
+
+  it.each([400, 401, 403, 404])('does not retry status %i', async (code) => {
+    const { fetch, calls } = sequence(status(code), status(200))
+    await expect(fetchOk(fetch, 'https://x.test/a')).rejects.toThrow(
+      `HTTP ${String(code)}`,
+    )
+    expect(calls()).toBe(1)
+  })
+
+  it('rethrows the last error after 5 attempts', async () => {
+    const { fetch, calls } = sequence(
+      status(503),
+      status(503),
+      status(503),
+      status(503),
+      new TypeError('last'),
+    )
+    const pending = expect(fetchOk(fetch, 'https://x.test/a')).rejects.toThrow()
+    await vi.runAllTimersAsync()
+    await pending
+    expect(calls()).toBe(5)
+  })
+})

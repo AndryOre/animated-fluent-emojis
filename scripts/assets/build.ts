@@ -13,7 +13,7 @@ import {
 import { convertAnimatedPng, type ConvertedSprite } from './sprites.js'
 import { fetchTeamsManifest, type TeamsVersion } from './teams.js'
 
-const DOWNLOAD_CONCURRENCY = 12
+const DOWNLOAD_CONCURRENCY = 8
 
 const HEADERS_FILE = `/sprites/*
   Cache-Control: public, max-age=31536000, immutable
