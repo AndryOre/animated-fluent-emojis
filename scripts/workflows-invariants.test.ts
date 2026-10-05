@@ -99,13 +99,26 @@ describe('sync-assets.yml build step', () => {
   const script =
     steps.find((step) => step.run?.includes('assets:build'))?.run ?? ''
 
-  test('forwards the force input to the build', () => {
-    expect(script).toContain('--force')
-    expect(script).toContain('FORCE')
+  test('forwards bypass_guards to the build and never rebuild', () => {
+    expect(script).toContain('--bypass-guards')
+    expect(script).toContain('BYPASS_GUARDS')
+    expect(script).not.toContain('--force')
   })
 
   test('does not interpolate expressions into the script', () => {
     expect(script).not.toContain('${{')
+  })
+})
+
+describe('sync-assets.yml dispatch inputs', () => {
+  const workflow = readWorkflow('sync-assets.yml')
+  const raw = JSON.stringify(workflow)
+
+  test('splits force into rebuild and bypass_guards and drops smoke_v1', () => {
+    expect(raw).toContain('"rebuild"')
+    expect(raw).toContain('"bypass_guards"')
+    expect(raw).not.toContain('"force"')
+    expect(raw).not.toContain('smoke_v1')
   })
 })
 
@@ -150,10 +163,21 @@ describe('sync-assets.yml smoke steps', () => {
     expect(legacy?.run).toContain('/sprites/')
   })
 
-  test('guards the v1 checks behind the smoke_v1 input', () => {
-    expect(v1?.if).toContain('inputs.smoke_v1')
+  test('always runs the v1 checks, including builtAt and an @2x sprite', () => {
+    expect(v1?.if).not.toContain('smoke_v1')
+    expect(v1?.run).toContain('/v1/version.json')
+    expect(v1?.run).toContain('builtAt')
     expect(v1?.run).toContain('/v1/manifest.slim.json')
     expect(v1?.run).toContain('/v1/sprites/')
+    expect(v1?.run).toContain('@2x.png')
+  })
+
+  test('retries every v1 request', () => {
+    const requests = (v1?.run ?? '')
+      .split('\n')
+      .filter((line) => line.includes('curl '))
+    expect(requests.length).toBeGreaterThanOrEqual(4)
+    for (const line of requests) expect(line).toContain('--retry 5')
   })
 
   test('does not interpolate expressions into the scripts', () => {

@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 
 import type { Manifest } from '../../src/utils/types.js'
-import { buildAssets, type PublishedVersion } from './build.js'
+import { buildAssets, diffManifests, type PublishedVersion } from './build.js'
+import { PIPELINE_VERSION } from './catalog.js'
 import {
   formatSource,
   renderEmojiIdModule,
@@ -19,6 +20,7 @@ import {
 } from './guards.js'
 import { fetchOkOrMissing, type FetchLike } from './http.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
+import { V1_DIRECTORY } from './layout-v1.js'
 import { fetchMitCommitSha } from './mit.js'
 import {
   discoverTeamsVersion,
@@ -29,24 +31,64 @@ import {
 const DEFAULT_PUBLISHED_URL = 'https://animated-fluent-emojis.pages.dev'
 
 /**
+ * Decides whether the published v1 layout is missing or was built by another
+ * pipeline version.
+ * @param publishedV1 The `/v1/version.json` marker, if it exists.
+ * @returns Whether the layout must be published again.
+ */
+export function isV1LayoutStale(
+  publishedV1: PublishedVersion | undefined,
+): boolean {
+  return (
+    publishedV1 === undefined ||
+    !publishedV1.layouts.includes(V1_DIRECTORY) ||
+    publishedV1.pipelineVersion !== PIPELINE_VERSION
+  )
+}
+
+/**
  * Decides whether the published catalog is out of date.
- * @param published The published version marker, if any.
+ * @param published The root version marker, if any.
+ * @param publishedV1 The `/v1/version.json` marker, if any.
  * @param latest The newest Teams hash and official repository commit.
  * @param latest.teamsHash The newest Teams metadata hash.
  * @param latest.mitSha The latest official repository commit.
- * @param force Whether to rebuild regardless.
+ * @param rebuild Whether to rebuild regardless.
  * @returns Whether a new build is needed.
  */
 export function needsRebuild(
   published: PublishedVersion | undefined,
+  publishedV1: PublishedVersion | undefined,
   latest: { teamsHash: string; mitSha: string },
-  force: boolean,
+  rebuild: boolean,
 ): boolean {
   return (
-    force ||
+    rebuild ||
     published?.teamsHash !== latest.teamsHash ||
-    published.mitSha !== latest.mitSha
+    published.mitSha !== latest.mitSha ||
+    isV1LayoutStale(publishedV1)
   )
+}
+
+/**
+ * Creates the removal guard that runs on the planned catalog, before any
+ * sprite is converted.
+ * @param previous The previously published manifest, if any.
+ * @param bypassGuards Whether the guard is bypassed.
+ * @returns A callback for `onPlanned`, or undefined when there is nothing to compare.
+ */
+export function createPlanGuard(
+  previous: Manifest | undefined,
+  bypassGuards: boolean,
+): ((planned: Manifest) => void) | undefined {
+  if (!previous) return undefined
+  return (planned) => {
+    assertRemovalsWithinLimit(
+      previous,
+      diffManifests(previous, planned),
+      bypassGuards,
+    )
+  }
 }
 
 /**
@@ -135,12 +177,21 @@ function reportDiscovery(warnings: readonly string[]): void {
   appendStepSummary('Teams discovery warnings', warnings)
 }
 
-async function runDetect(publishedUrl: string, force: boolean): Promise<void> {
+async function runDetect(
+  publishedUrl: string,
+  rebuild: boolean,
+  bypassGuards: boolean,
+): Promise<void> {
   const fetchImplementation: FetchLike = fetch
   const published = await fetchPublishedJson<PublishedVersion>(
     fetchImplementation,
     publishedUrl,
     'version.json',
+  )
+  const publishedV1 = await fetchPublishedJson<PublishedVersion>(
+    fetchImplementation,
+    publishedUrl,
+    `${V1_DIRECTORY}/version.json`,
   )
   const discovery = await discoverTeamsVersion({
     fetchImplementation,
@@ -150,19 +201,20 @@ async function runDetect(publishedUrl: string, force: boolean): Promise<void> {
     ],
   })
   reportDiscovery(discovery.warnings)
-  assertDiscoveryHealthy(discovery, force)
+  assertDiscoveryHealthy(discovery, bypassGuards)
   const mitSha = await fetchMitCommitSha(
     fetchImplementation,
     buildGithubHeaders(),
   )
   const changed = needsRebuild(
     published,
+    publishedV1,
     { teamsHash: discovery.version.hash, mitSha },
-    force,
+    rebuild,
   )
   console.log(
     JSON.stringify(
-      { published, latest: discovery.version, mitSha, changed },
+      { published, publishedV1, latest: discovery.version, mitSha, changed },
       null,
       2,
     ),
@@ -180,7 +232,7 @@ async function runBuild(options: {
   outputDirectory: string
   cacheDirectory: string
   limit: number | undefined
-  force: boolean
+  bypassGuards: boolean
 }): Promise<void> {
   const fetchImplementation: FetchLike = fetch
   let teamsVersion: TeamsVersion | undefined
@@ -195,7 +247,7 @@ async function runBuild(options: {
       knownHashes: KNOWN_TEAMS_HASHES,
     })
     reportDiscovery(discovery.warnings)
-    assertDiscoveryHealthy(discovery, options.force)
+    assertDiscoveryHealthy(discovery, options.bypassGuards)
     teamsVersion = discovery.version
   }
 
@@ -213,10 +265,11 @@ async function runBuild(options: {
     limit: options.limit,
     previousManifest,
     liveUrl: options.publishedUrl,
+    onPlanned:
+      options.limit === undefined
+        ? createPlanGuard(previousManifest, options.bypassGuards)
+        : undefined,
   })
-  if (previousManifest && result.diff && options.limit === undefined) {
-    assertRemovalsWithinLimit(previousManifest, result.diff, options.force)
-  }
   await assertFileCountWithinLimit(options.outputDirectory)
   if (result.diff) {
     appendStepSummary('Catalog diff', [
@@ -279,13 +332,18 @@ async function main(): Promise<void> {
         type: 'string',
         default: 'src/utils/emoji-id.generated.ts',
       },
-      force: { type: 'boolean', default: false },
+      rebuild: { type: 'boolean', default: false },
+      'bypass-guards': { type: 'boolean', default: false },
     },
   })
   const [command] = positionals
   switch (command) {
     case 'detect': {
-      await runDetect(values['published-url'], values.force)
+      await runDetect(
+        values['published-url'],
+        values.rebuild,
+        values['bypass-guards'],
+      )
       break
     }
     case 'build': {
@@ -295,7 +353,7 @@ async function main(): Promise<void> {
         outputDirectory: values.out,
         cacheDirectory: values.cache,
         limit: values.limit === undefined ? undefined : Number(values.limit),
-        force: values.force,
+        bypassGuards: values['bypass-guards'],
       })
       break
     }
