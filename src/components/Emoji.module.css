@@ -17,6 +17,6 @@
 }
 
 .animateOnHover:hover .emojiImage,
-:focus .animateOnHover .emojiImage {
+:is(a, button):focus-visible .animateOnHover .emojiImage {
   animation-name: emoji-play;
 }

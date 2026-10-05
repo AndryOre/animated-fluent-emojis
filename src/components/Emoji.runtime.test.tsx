@@ -1,5 +1,5 @@
 /// <reference types="@vitest/browser-playwright" />
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { cdp, page, userEvent } from 'vitest/browser'
 
@@ -105,6 +105,36 @@ test('plays while focus is inside a wrapping button with playOnHover', async () 
 
   await userEvent.tab()
   await expect.poll(() => image.getAnimations().length).toBe(0)
+})
+
+test('does not play when only a distant ancestor has focus', async () => {
+  await render(
+    <main tabIndex={-1} data-testid="wrapper">
+      <Emoji id="cat" autoPlay={false} playOnHover alt="" />
+    </main>,
+  )
+
+  const wrapper = page.getByTestId('wrapper').element()
+  const image = wrapper.querySelector('img')
+  if (!image) throw new Error('image not rendered')
+
+  if (!(wrapper instanceof HTMLElement)) throw new Error('wrapper missing')
+  wrapper.focus()
+  expect(document.activeElement).toBe(wrapper)
+  await new Promise((resolve) => {
+    setTimeout(resolve, 150)
+  })
+  expect(image.getAnimations()).toHaveLength(0)
+})
+
+test('renders where matchMedia is unavailable', async () => {
+  vi.stubGlobal('matchMedia', undefined)
+  try {
+    await render(<Emoji id="cat" />)
+    await expect.element(getImage('Cat')).toBeVisible()
+  } finally {
+    vi.unstubAllGlobals()
+  }
 })
 
 test('uses the emoji description as alt text and has no title', async () => {

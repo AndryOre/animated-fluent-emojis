@@ -2,16 +2,20 @@ import { useSyncExternalStore } from 'react'
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 
+const hasMatchMedia = (): boolean => typeof globalThis.matchMedia === 'function'
+
 const subscribe = (onChange: () => void): (() => void) => {
-  const mediaQuery = globalThis.matchMedia(REDUCED_MOTION_QUERY)
-  mediaQuery.addEventListener('change', onChange)
+  const mediaQuery = hasMatchMedia()
+    ? globalThis.matchMedia(REDUCED_MOTION_QUERY)
+    : undefined
+  mediaQuery?.addEventListener('change', onChange)
   return () => {
-    mediaQuery.removeEventListener('change', onChange)
+    mediaQuery?.removeEventListener('change', onChange)
   }
 }
 
 const getSnapshot = (): boolean =>
-  globalThis.matchMedia(REDUCED_MOTION_QUERY).matches
+  hasMatchMedia() && globalThis.matchMedia(REDUCED_MOTION_QUERY).matches
 
 const getServerSnapshot = (): boolean => false
 
