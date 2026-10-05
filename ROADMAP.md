@@ -32,7 +32,8 @@ The following are explicitly not planned:
 - **Non-React framework wrappers** — Vue, Svelte, Solid, and similar bindings
   are not planned; the library targets React only.
 - **Backend services and telemetry** — the library is a client-side component
-  set; it makes no network calls of its own and collects no usage data.
+  set; its only network requests are the manifest and sprite sheets it loads
+  from the asset site, and it collects no usage data.
 
 ## Where planning actually happens
 

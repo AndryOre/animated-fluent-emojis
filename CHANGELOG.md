@@ -8,6 +8,58 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `alt` prop on `Emoji`: accessible text, defaulting to the emoji description;
+  an empty string marks the emoji as decorative.
+- `configureEmojis({ assetSiteUrl })` to serve the manifest and sprite sheets
+  from your own asset site.
+- HD (`@2x`, 200px) sprite sheets for every emoji with an official counterpart,
+  served through `srcSet`.
+- `playOnHover` also plays when the emoji sits inside a focused `<button>` or
+  `<a>`.
+- `EmojiId`, `EmojiProps` and `SkinTone` are exported from the package.
+- The bundle starts with `"use client";`, so `Emoji` works from Next.js server
+  components.
+
+### Changed
+
+- **Breaking:** while the manifest loads, `Emoji` renders an empty `aria-hidden`
+  placeholder of the final size instead of `null`. It still renders `null` for
+  an unknown id or a failed load.
+- **Breaking:** under `prefers-reduced-motion: reduce`, `autoPlay` is ignored
+  and the emoji rests on its poster frame; with `playOnHover`, hover and focus
+  still play it.
+- **Breaking:** images are rendered with `loading="lazy"` and
+  `decoding="async"`, so offscreen emojis load when they approach the viewport.
+- **Breaking:** the `id` prop is typed `EmojiId | (string & {})` instead of
+  `string`. Known ids autocomplete; any string still compiles.
+- **Breaking:** the runtime fetches `manifest.slim.json` instead of
+  `manifest.json`, on first render instead of at import. Asset sites that mirror
+  the catalog must publish the slim manifest.
+- Etags of converted sprites are content hashes that include a pipeline version,
+  and the animation frame rate is exact instead of rounded.
+- The asset build validates every animation and sprite sheet and fails on any
+  problem.
+
+### Fixed
+
+- Emojis animate again: no per-emoji `<style>` with a
+  `transform: ... !important` rule overrides the keyframe anymore.
+- A failed manifest fetch is retried on the next render instead of leaving every
+  emoji blank.
+
+### Migration
+
+- Make sure `animated-fluent-emojis/style.css` is imported: it carries the
+  animation keyframes.
+- If you styled or tested around `null` while loading, handle the placeholder
+  `<span aria-hidden="true">` instead.
+- If you mirror the asset site, publish `manifest.slim.json` and, optionally,
+  the `@2x` sheets, and call `configureEmojis` before the first render.
+- To get type checking against published ids, type your ids as `EmojiId`; plain
+  `string` values keep compiling.
+
 ## [0.3.0] - 2026-10-05
 
 ### Added

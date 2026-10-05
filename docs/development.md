@@ -94,8 +94,10 @@ comments. Rationale: [ADR 0002](adr/0002-tsdoc-only-code-comments.md).
 Vitest has two projects (`vitest.config.ts`):
 
 - **`browser`**: `src/components/**` and `src/hooks/**` tests run in headless
-  Chromium through Playwright, with MSW mocking the CDN manifest
-  (`src/test/browser-setup.ts`). Run `bunx playwright install chromium` once.
+  Chromium through Playwright, with MSW mocking the slim manifest request
+  (`src/test/browser-setup.ts`). The manifest is fetched lazily, so a test that
+  needs a fresh load resets the module state first. Run
+  `bunx playwright install chromium` once.
 - **`node`**: `src/utils/**`, `src/test/**`, `eslint-rules/**`, `docs/adr/**`
   and `scripts/**` tests.
 

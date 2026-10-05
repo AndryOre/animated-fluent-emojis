@@ -50,8 +50,12 @@ and visual appeal in your React projects.
   your projects.
 - 🎨 **Customizable**: Adjust size, animation behavior, and more to fit your
   design needs.
-- 🔄 **Flexible Animation**: Support for autoplay and hover-triggered
-  animations.
+- 🔄 **Flexible Animation**: Support for autoplay and hover- or focus-triggered
+  animations, and a still poster frame when the user prefers reduced motion.
+- ♿ **Accessible**: Descriptive `alt` text by default, or mark an emoji as
+  decorative.
+- 🖼️ **Sharp on HD screens**: Emojis with an HD sprite sheet are served at 2x to
+  high-density displays.
 - 🌈 **Wide Variety**: Access to a diverse set of emojis from Microsoft's Fluent
   Emoji collection, with skin tone variants.
 - 📦 **Lightweight**: Optimized for performance to keep your applications fast
@@ -84,7 +88,9 @@ dependencies) and is ESM-only.
 ## Usage 📚
 
 1. Import the Emoji component and the stylesheet in your React file (the
-   stylesheet import is required once, for example in your app entry):
+   stylesheet import is required once, for example in your app entry). The
+   stylesheet carries the animation keyframes, so without it emojis render as
+   static sprite sheets:
 
    ```jsx
    import { Emoji } from 'animated-fluent-emojis'
@@ -103,20 +109,72 @@ dependencies) and is ESM-only.
    <Emoji id="1f44b_wavinghand" size={64} playOnHover skinTone="medium" />
    ```
 
+The component fetches a small manifest from the asset site the first time an
+emoji renders, never at import time. While it loads, `Emoji` renders an empty,
+`aria-hidden` placeholder of the final size, so the layout does not shift. If
+the manifest cannot be loaded, or the id is unknown, it renders nothing.
+
+### Next.js and server components
+
+The published bundle starts with `"use client";`, so you can import `Emoji` from
+a server component in the Next.js App Router. Import the stylesheet once, for
+example in the root layout. The component renders its placeholder on the server
+and the emoji after hydration.
+
 ## Props
 
-| Prop                | Type                 | Default | Description                                          |
-| ------------------- | -------------------- | ------- | ---------------------------------------------------- |
-| id                  | string               | -       | The unique identifier of the emoji                   |
-| size                | number               | 100     | The size of the emoji in pixels                      |
-| playOnHover         | boolean              | false   | Whether to play the animation on hover               |
-| animationIterations | number or 'infinite' | 2       | The number of times to play the animation on load    |
-| autoPlay            | boolean              | true    | Whether to automatically play the animation on mount |
-| skinTone            | SkinTone             | default | Skin tone for emojis that have variants (see below)  |
+| Prop                | Type                 | Default     | Description                                                                     |
+| ------------------- | -------------------- | ----------- | ------------------------------------------------------------------------------- |
+| id                  | `EmojiId` or string  | -           | The unique identifier of the emoji; known ids autocomplete                      |
+| size                | number               | 100         | The size of the emoji in pixels                                                 |
+| playOnHover         | boolean              | false       | Whether to play the animation on hover and on keyboard focus                    |
+| animationIterations | number or 'infinite' | 2           | The number of times to play the animation on load                               |
+| autoPlay            | boolean              | true        | Whether to automatically play the animation on mount                            |
+| skinTone            | SkinTone             | 'default'   | Skin tone for emojis that have variants (see below)                             |
+| alt                 | string               | description | Accessible text; defaults to the emoji description, `""` marks it as decorative |
 
 `skinTone` is one of `'default'`, `'light'`, `'medium-light'`, `'medium'`,
 `'medium-dark'` or `'dark'`. It only applies to emojis marked `diverse`; for any
 other emoji it is ignored.
+
+### Hover and focus
+
+With `playOnHover`, the animation plays after the initial run when the pointer
+enters the emoji, and also when the emoji sits inside a `<button>` or `<a>` that
+receives keyboard focus (`:focus-visible`).
+
+### Reduced motion
+
+When the user's system asks to reduce motion (`prefers-reduced-motion: reduce`),
+`autoPlay` is ignored and the emoji rests on its poster frame, the first frame
+of the animation. `playOnHover` still plays on hover and focus, because that is
+an explicit user action.
+
+### Images and HD sprite sheets
+
+Sprite sheets are loaded with `loading="lazy"` and `decoding="async"`. Emojis
+that have an HD sprite sheet (200px frames) also get a `srcSet`, so the browser
+picks the `@2x` sheet on high-density displays.
+
+### Asset site
+
+By default the manifest and sprite sheets come from
+`https://animated-fluent-emojis.pages.dev`. To serve them from your own copy,
+call `configureEmojis` once, before the first `Emoji` renders:
+
+```jsx
+import { configureEmojis } from 'animated-fluent-emojis'
+
+configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
+```
+
+### Types
+
+The package exports `Emoji`, `configureEmojis` and the types `EmojiProps`,
+`SkinTone` and `EmojiId`. `EmojiId` is the union of every published id and is
+generated from the catalog; the `id` prop is typed `EmojiId | (string & {})`, so
+known ids autocomplete and ids added to the catalog after your installed version
+still compile.
 
 ## Examples
 
@@ -127,15 +185,14 @@ import { Emoji } from 'animated-fluent-emojis'
 
 import 'animated-fluent-emojis/style.css'
 
-import React from 'react'
-
 function App() {
   return (
     <div>
       <h1>Hello, Animated Emojis!</h1>
       <Emoji id="1f4af_hundredpointssymbol" />
       <Emoji id="1f92f_explodinghead" size={64} playOnHover />
-      <Emoji id="launch" animationIterations={3} />
+      <Emoji id="launch" animationIterations={3} alt="Rocket" />
+      <Emoji id="fire" alt="" />
     </div>
   )
 }
@@ -186,8 +243,8 @@ software is licensed under the [ISC License](LICENSE).
 
 ## Assets and licensing
 
-The manifest and sprite sheets are served from Cloudflare Pages
-(`animated-fluent-emojis.pages.dev`), generated by `scripts/assets` and
+The manifest and sprite sheets are served from the asset site on Cloudflare
+Pages (`animated-fluent-emojis.pages.dev`), generated by `scripts/assets` and
 refreshed automatically. Most emojis come from the animated Fluent emoji set
 that Microsoft Teams publishes; the rest come from Microsoft's MIT-licensed
 [fluentui-emoji-animated][Microsoft Fluent Emojis Animated] repository. The
