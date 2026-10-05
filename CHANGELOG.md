@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-10-05
+
 ### Fixed
 
 - **Behavior change (lookup):** `findEmojiByUnicode` requires the variation
@@ -301,7 +303,9 @@ plus the release workflow fix below.
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.1...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.2...HEAD
+[0.5.2]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.1...v0.5.2
 [0.5.1]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...v0.5.1
 [0.4.0]:
