@@ -42,15 +42,6 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/assets
-          key:
-            assets-${{ hashFiles('scripts/assets/catalog.ts',
-            'scripts/assets/sprites.ts') }}-${{ github.run_id }}
-          restore-keys: |
-            assets-${{ hashFiles('scripts/assets/catalog.ts', 'scripts/assets/sprites.ts') }}-
-
       - name: Detect new versions
         id: detect
         env:
