@@ -103,3 +103,21 @@ test('loadMitIndex names the emoji whose metadata is invalid', async () => {
     'Invalid metadata for official emoji at assets/Thumbs up/metadata.json',
   )
 })
+
+test('every tone sprite of the official repository resolves to a media URL', () => {
+  const sprites = groupTreeByEmoji(TREE).get('Thumbs up')?.sprites ?? []
+
+  expect(
+    sprites
+      .map((sprite) => sprite.toneSuffix)
+      .toSorted((a, b) => a.localeCompare(b)),
+  ).toEqual(['', '_s3', '_s6'])
+  for (const sprite of sprites) {
+    expect(buildMitMediaUrl(SHA, sprite.path)).toBe(
+      `https://media.githubusercontent.com/media/microsoft/fluentui-emoji-animated/${SHA}/${sprite.path
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/')}`,
+    )
+  }
+})

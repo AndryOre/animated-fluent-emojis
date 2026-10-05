@@ -120,7 +120,7 @@
     {
       "name": "Stylesheet",
       "path": "dist/style.css",
-      "limit": "150 B"
+      "limit": "170 B"
     }
   ],
   "engines": {

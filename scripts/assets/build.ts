@@ -18,6 +18,7 @@ import {
   MIT_REPOSITORY,
   type MitIndex,
 } from './mit.js'
+import { toSlimManifest } from './slim-manifest.js'
 import { convertAnimatedPng, type ConvertedSprite } from './sprites.js'
 import { fetchTeamsManifest, type TeamsVersion } from './teams.js'
 import { validateCatalog } from './validate.js'
@@ -29,6 +30,10 @@ const HEADERS_FILE = `/sprites/*
   Access-Control-Allow-Origin: *
 
 /manifest.json
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+
+/manifest.slim.json
   Cache-Control: public, max-age=3600
   Access-Control-Allow-Origin: *
 
@@ -457,6 +462,10 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
   await writeFile(
     path.join(options.outputDirectory, 'manifest.json'),
     JSON.stringify(manifest),
+  )
+  await writeFile(
+    path.join(options.outputDirectory, 'manifest.slim.json'),
+    JSON.stringify(toSlimManifest(manifest)),
   )
   await writeFile(
     path.join(options.outputDirectory, 'version.json'),
