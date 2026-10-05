@@ -5,6 +5,7 @@ import { afterEach, beforeEach, expect, test } from 'vitest'
 
 import type { Manifest } from '../../src/utils/types.js'
 import type { SpriteTask } from './catalog.js'
+import { createSpritePng } from './test-support.js'
 import { validateCatalog } from './validate.js'
 
 const TONES = ['', '_s2', '_s3', '_s4', '_s5', '_s6']
@@ -19,15 +20,22 @@ afterEach(async () => {
 })
 
 const createManifest = (
-  overrides: { fps?: number; framesCount?: number; diverse?: boolean } = {},
+  overrides: {
+    fps?: number
+    framesCount?: number
+    firstFrame?: number
+    diverse?: boolean
+    id?: string
+    category?: string
+  } = {},
 ): Manifest => ({
   categories: [
     {
       id: 'c',
-      title: 'Cat',
+      title: overrides.category ?? 'Cat',
       emoticons: [
         {
-          id: 'e1',
+          id: overrides.id ?? 'e1',
           description: 'E',
           shortcuts: [],
           unicode: 'x',
@@ -36,7 +44,7 @@ const createManifest = (
           animation: {
             fps: overrides.fps ?? 24,
             framesCount: overrides.framesCount ?? 40,
-            firstFrame: 1,
+            firstFrame: overrides.firstFrame ?? 1,
           },
           keywords: [],
         },
@@ -45,22 +53,35 @@ const createManifest = (
   ] as unknown as Manifest['categories'],
 })
 
-const createTasks = (suffixes: readonly string[]): SpriteTask[] =>
+const createTasks = (
+  suffixes: readonly string[],
+  source: SpriteTask['source'] = 'teams',
+  id = 'e1',
+): SpriteTask[] =>
   suffixes.map((toneSuffix) => ({
-    source: 'teams',
-    id: 'e1',
+    source,
+    id,
     category: 'Cat',
     toneSuffix,
     etag: 'a',
-    outputPath: `sprites/Cat/e1${toneSuffix}.png`,
+    outputPath: `sprites/Cat/${id}${toneSuffix}.png`,
   }))
 
-const writeSprites = async (tasks: readonly SpriteTask[]): Promise<void> => {
-  for (const task of tasks) {
-    const target = path.join(context.cacheDirectory, task.outputPath)
-    await mkdir(path.dirname(target), { recursive: true })
-    await writeFile(target, 'png')
-  }
+const writeFileInCache = async (
+  relativePath: string,
+  bytes: Uint8Array,
+): Promise<void> => {
+  const target = path.join(context.cacheDirectory, relativePath)
+  await mkdir(path.dirname(target), { recursive: true })
+  await writeFile(target, bytes)
+}
+
+const writeSprites = async (
+  tasks: readonly SpriteTask[],
+  framesCount = 40,
+): Promise<void> => {
+  const png = await createSpritePng(framesCount)
+  for (const task of tasks) await writeFileInCache(task.outputPath, png)
 }
 
 test('passes a complete catalog', async () => {
@@ -117,4 +138,145 @@ test('lists every problem in one error', async () => {
       cacheDirectory: context.cacheDirectory,
     }),
   ).rejects.toThrow(/7 problem\(s\)/)
+})
+
+const run = (manifest: Manifest, tasks: readonly SpriteTask[]): Promise<void> =>
+  validateCatalog({ manifest, tasks, cacheDirectory: context.cacheDirectory })
+
+test('rejects a non-finite fps', async () => {
+  const tasks = createTasks([''])
+  await writeSprites(tasks)
+  await expect(run(createManifest({ fps: Infinity }), tasks)).rejects.toThrow(
+    'fps must be finite',
+  )
+  await expect(run(createManifest({ fps: NaN }), tasks)).rejects.toThrow(
+    'fps must be finite',
+  )
+})
+
+test('rejects a firstFrame outside the frame range', async () => {
+  const tasks = createTasks([''])
+  await writeSprites(tasks)
+  await expect(run(createManifest({ firstFrame: 0 }), tasks)).rejects.toThrow(
+    'firstFrame must be within [1, framesCount]',
+  )
+  await expect(run(createManifest({ firstFrame: 41 }), tasks)).rejects.toThrow(
+    'firstFrame must be within [1, framesCount]',
+  )
+})
+
+test('rejects a sprite whose width differs from the frame size', async () => {
+  const tasks = createTasks([''])
+  await writeFileInCache(
+    tasks[0]?.outputPath ?? '',
+    await createSpritePng(40, { width: 64 }),
+  )
+  await expect(run(createManifest(), tasks)).rejects.toThrow(
+    'is 64px wide, expected 100px',
+  )
+})
+
+test('rejects a sprite whose height does not match framesCount', async () => {
+  const tasks = createTasks([''])
+  await writeSprites(tasks, 39)
+  await expect(run(createManifest(), tasks)).rejects.toThrow(
+    'is 3900px tall, expected 4000px (40 frames)',
+  )
+})
+
+test('rejects a sprite that cannot be decoded', async () => {
+  const tasks = createTasks([''])
+  await writeFileInCache(tasks[0]?.outputPath ?? '', Buffer.from('not a png'))
+  await expect(run(createManifest(), tasks)).rejects.toThrow(
+    'could not be decoded',
+  )
+})
+
+test('validates HD sheets against 200px frames', async () => {
+  const tasks = createTasks([''])
+  const hdTasks = tasks.map((task) => ({
+    ...task,
+    hdOutputPath: 'sprites/Cat/e1@2x.png',
+  }))
+  await writeSprites(tasks)
+  await writeFileInCache(
+    'sprites/Cat/e1@2x.png',
+    await createSpritePng(40, { frameSize: 100 }),
+  )
+  await expect(run(createManifest(), hdTasks)).rejects.toThrow(
+    'e1@2x.png is 100px wide, expected 200px',
+  )
+  await writeFileInCache(
+    'sprites/Cat/e1@2x.png',
+    await createSpritePng(40, { frameSize: 200 }),
+  )
+  await expect(run(createManifest(), hdTasks)).resolves.toBeUndefined()
+})
+
+test('rejects category and id values that are not URL-safe', async () => {
+  const unsafeValues = [
+    'a/b',
+    String.raw`a\b`,
+    '..',
+    'a..b',
+    `a${String.fromCodePoint(0)}b`,
+    'a\nb',
+    '',
+  ]
+  for (const value of unsafeValues) {
+    await expect(
+      run(createManifest({ id: value }), createTasks([''], 'teams', 'e1')),
+    ).rejects.toThrow(`id ${JSON.stringify(value)} is not URL-safe`)
+    await expect(
+      run(createManifest({ category: value }), createTasks([''])),
+    ).rejects.toThrow(`category ${JSON.stringify(value)} is not URL-safe`)
+  }
+})
+
+test('rejects a duplicate id across categories', async () => {
+  const tasks = createTasks([''])
+  await writeSprites(tasks)
+  const [category] = createManifest().categories
+  if (!category) throw new Error('fixture has no category')
+  const manifest: Manifest = {
+    categories: [category, { ...category, id: 'other', title: 'Other' }],
+  }
+  await expect(run(manifest, tasks)).rejects.toThrow(
+    'e1: duplicate id across categories',
+  )
+})
+
+test('rejects an emoji with no base sprite task', async () => {
+  const tasks = createTasks(['_s2'])
+  await writeSprites(tasks)
+  await expect(run(createManifest(), tasks)).rejects.toThrow(
+    'e1: missing base sprite task',
+  )
+})
+
+test('rejects an official emoji whose tones have different frame counts', async () => {
+  const tasks = createTasks(TONES, 'mit')
+  await writeSprites(tasks, 40)
+  await writeFileInCache('sprites/Cat/e1_s3.png', await createSpritePng(30))
+  await expect(run(createManifest({ diverse: true }), tasks)).rejects.toThrow(
+    /e1: skin tones have different frame counts \(40, 30\)/,
+  )
+})
+
+test('lists every violation of different rules in one error', async () => {
+  const tasks = createTasks(['_s2'])
+  await writeFileInCache(
+    tasks[0]?.outputPath ?? '',
+    await createSpritePng(40, { width: 64 }),
+  )
+  let message = ''
+  try {
+    await run(createManifest({ fps: 0, id: 'a/b', firstFrame: 99 }), tasks)
+  } catch (error: unknown) {
+    message = error instanceof Error ? error.message : ''
+  }
+  expect(message).toContain('invalid animation')
+  expect(message).toContain('is not URL-safe')
+  expect(message).toContain('missing base sprite task')
+  expect(message).toContain('is 64px wide')
 })
