@@ -28,6 +28,8 @@ interface Emoticon {
   diverse: boolean
   /** Animation properties for this emoticon. */
   animation: Animation
+  /** Set to `"official"` on emoticons sourced from the official repository. Ignored at runtime. */
+  origin?: 'official'
   /** Array of keywords associated with this emoticon. */
   keywords: string[]
 }

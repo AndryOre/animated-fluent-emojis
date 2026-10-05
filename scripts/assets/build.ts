@@ -313,7 +313,11 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     options.fetchImplementation,
     githubHeaders,
   )
-  const catalog = buildCatalog(teamsManifest, mitIndex.emojis)
+  const catalog = buildCatalog(
+    teamsManifest,
+    mitIndex.emojis,
+    options.previousManifest,
+  )
   const limitedTasks = limitCatalog(catalog.tasks, options.limit)
 
   const state = await readState(options.cacheDirectory)

@@ -138,6 +138,80 @@ test('resolveCategory maps groups and throws on unknown ones', () => {
   )
 })
 
+const middleFinger = (): MitEmoji =>
+  mitEmoji({
+    codepoints: '1f595',
+    glyph: '🖕',
+    cldr: 'middle finger',
+    group: 'People & Body',
+  })
+
+const previousManifestPinning = (id: string) => {
+  const manifest = createTeamsManifest()
+  manifest.categories[1]?.emoticons.push({
+    id,
+    description: 'Middle finger',
+    shortcuts: [],
+    unicode: '🖕',
+    etag: 'old',
+    diverse: false,
+    animation: { fps: 0, framesCount: 0, firstFrame: 1 },
+    keywords: [],
+    origin: 'official',
+  })
+  return manifest
+}
+
+test('marks added official emojis with origin official', () => {
+  const catalog = buildCatalog(createTeamsManifest(), [mitEmoji()])
+
+  expect(
+    allEmoticons(catalog).find(
+      (emoticon) => emoticon.id === '1f3c1_chequeredflag',
+    )?.origin,
+  ).toBe('official')
+})
+
+test('keeps a pinned official id when Teams now has the emoji', () => {
+  const teams = createTeamsManifest()
+  teams.categories[1]?.emoticons.push({
+    id: 'middlefinger_teams',
+    description: 'Middle finger',
+    shortcuts: [],
+    unicode: '🖕',
+    etag: 'v1',
+    diverse: false,
+    animation: { fps: 24, framesCount: 10, firstFrame: 1 },
+    keywords: [],
+  })
+
+  const catalog = buildCatalog(
+    teams,
+    [middleFinger()],
+    previousManifestPinning('1f595_middlefinger'),
+  )
+
+  const ids = allEmoticons(catalog).map((emoticon) => emoticon.id)
+  expect(ids).toContain('middlefinger_teams')
+  expect(ids).toContain('1f595_middlefinger')
+  expect(catalog.mitEmojiIds.has('1f595_middlefinger')).toBe(true)
+  expect(
+    catalog.tasks.find(
+      (task) => task.id === '1f595_middlefinger' && task.source === 'mit',
+    ),
+  ).toBeDefined()
+})
+
+test('fails naming a pinned id whose official source vanished', () => {
+  expect(() =>
+    buildCatalog(
+      createTeamsManifest(),
+      [mitEmoji()],
+      previousManifestPinning('1f595_middlefinger'),
+    ),
+  ).toThrow('1f595_middlefinger')
+})
+
 test('every official codepoint is present in the final manifest', () => {
   const mitEmojis = [
     mitEmoji(),
