@@ -526,6 +526,24 @@ async function buildHdSheets(
   }
 }
 
+/**
+ * Drops the HD source of a task, for an emoji whose frame count is above the HD cap.
+ * @param task The planned sprite task.
+ * @returns The task without HD fields.
+ */
+function withoutHdSource(task: SpriteTask): SpriteTask {
+  return {
+    source: task.source,
+    id: task.id,
+    category: task.category,
+    toneSuffix: task.toneSuffix,
+    etag: task.etag,
+    outputPath: task.outputPath,
+    ...(task.sourceUrl !== undefined && { sourceUrl: task.sourceUrl }),
+    ...(task.mitPath !== undefined && { mitPath: task.mitPath }),
+  }
+}
+
 async function seedEmoji(
   emojiTasks: readonly SpriteTask[],
   previous: PreviousEmoji,
@@ -598,6 +616,12 @@ async function seedUnchangedEmojis(
   )
   const candidates = Map.groupBy(tasks, (task) => task.id)
     .entries()
+    .map(([id, emojiTasks]): [string, readonly SpriteTask[]] => [
+      id,
+      (previousById.get(id)?.framesCount ?? 0) > HD_MAX_FRAMES
+        ? emojiTasks.map((task) => withoutHdSource(task))
+        : emojiTasks,
+    ])
     .filter(([id, emojiTasks]) => {
       const previous = previousById.get(id)
       const baseEtag = baseEtagById.get(id)

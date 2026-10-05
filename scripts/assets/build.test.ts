@@ -844,6 +844,48 @@ test('seeds an unchanged emoji from the live site without touching the source', 
   ).toEqual(await listV1Sprites(path.join(context.workDirectory, 'out')))
 })
 
+test('seeds an emoji above the HD frame cap from the live site', async () => {
+  const routes = withOfficialSmiley(spriteRoutes())
+  routes[`GET ${buildSpriteUrl(SMILEY_ID, '')}`] = {
+    body: await createSpritePng(121),
+  }
+  const teamsManifest = createTeamsManifest()
+  const teamsSmiley = teamsManifest.categories[0]?.emoticons[0]
+  if (teamsSmiley) teamsSmiley.animation.framesCount = 121
+  routes[`GET ${buildManifestUrl(HASH)}`] = { body: teamsManifest }
+  const convertAboveCap = (
+    _png: Buffer,
+    frameSizes: readonly number[],
+  ): Promise<ConvertedSprite[]> =>
+    Promise.all(
+      frameSizes.map(async (frameSize): Promise<ConvertedSprite> => ({
+        png: await createSpritePng(121, { frameSize }),
+        framesCount: 121,
+        fps: 24,
+      })),
+    )
+  const first = await buildAssets({
+    ...baseOptions(createFakeFetch(routes)),
+    convert: convertAboveCap,
+  })
+  const liveRoutes = await buildLiveRoutes(
+    path.join(context.workDirectory, 'out'),
+  )
+  const fakeFetch = createFakeFetch({
+    ...withoutSourceSprites(routes),
+    ...liveRoutes,
+  })
+
+  const result = await buildAssets({
+    ...seedOptions(fakeFetch, first.manifest),
+    convert: () => Promise.reject(new Error('must not convert')),
+  })
+
+  expect(findEmoticon(result.manifest, SMILEY_ID)?.hd).toBeUndefined()
+  expect(result.seeded).toBe(3)
+  expect(result.skipped).toEqual([])
+})
+
 test('keeps the previous etag file of a changed emoji next to the new one', async () => {
   const { manifest, liveRoutes } = await publishFirstGeneration()
   const previousManifest: Manifest = {
