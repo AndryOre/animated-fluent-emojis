@@ -33,6 +33,16 @@ test('has no violations when decorative', async () => {
   await expectNoBlockingViolations(container)
 })
 
+test('has no violations in the glyph fallback state', async () => {
+  const { container } = await render(<Emoji id="cat" />)
+  await expect.poll(() => container.querySelector('img')).not.toBeNull()
+  container.querySelector('img')?.dispatchEvent(new Event('error'))
+
+  await expect.poll(() => container.querySelector('img')).toBeNull()
+
+  await expectNoBlockingViolations(container)
+})
+
 test('has no violations while hovered with playOnHover', async () => {
   const { container } = await render(<Emoji id="cat" playOnHover />)
   const image = page.getByRole('img', { name: 'Cat' })
