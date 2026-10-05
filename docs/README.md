@@ -40,6 +40,14 @@ An index of every document in this repository.
 - [`adr/0007-pinned-official-emoji-ids.md`](adr/0007-pinned-official-emoji-ids.md)
 - [`adr/0008-static-keyframes-and-lazy-slim-manifest.md`](adr/0008-static-keyframes-and-lazy-slim-manifest.md)
 - [`adr/0009-hd-sprite-sheets-and-strict-validation.md`](adr/0009-hd-sprite-sheets-and-strict-validation.md)
+- [`adr/0010-versioned-asset-layout-and-live-seeding.md`](adr/0010-versioned-asset-layout-and-live-seeding.md)
+- [`adr/0011-compact-slim-manifest-and-hd-frame-cap.md`](adr/0011-compact-slim-manifest-and-hd-frame-cap.md)
+- [`adr/0012-brand-kit-in-docs-brand.md`](adr/0012-brand-kit-in-docs-brand.md)
+
+## Brand
+
+- [`brand/README.md`](brand/README.md): the brand kit, with the brief, naming,
+  voice, copy, logo, tokens and brand book.
 
 ## Agent workflow
 
