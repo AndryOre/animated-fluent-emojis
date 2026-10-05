@@ -181,7 +181,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "${branch}"
           if [[ -n "$(git status --porcelain -- src/utils/emoji-id.generated.ts)" ]]; then
-            entry='- Updated the `EmojiId` union from the published emoji catalog.'
+            entry="- Updated the \`EmojiId\` union from the published emoji catalog."
             if ! grep --fixed-strings --quiet "${entry}" CHANGELOG.md; then
               awk -v entry="${entry}" '{ print } /^## \[Unreleased\]/ && !done { print ""; print entry; done = 1 }' CHANGELOG.md > CHANGELOG.md.tmp
               mv CHANGELOG.md.tmp CHANGELOG.md
