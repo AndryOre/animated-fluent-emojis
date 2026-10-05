@@ -9,6 +9,7 @@ generation are defined in [`CONTEXT.md`](../CONTEXT.md).
 scripts/assets/         builds the manifests and sprites published to Pages
 src/
   index.ts              public entry: Emoji, configureEmojis, preloadEmojis, types
+  lookup/index.ts       the `animated-fluent-emojis/lookup` entry, no React
   components/
     Emoji.tsx           the component
     Emoji.module.css    the sprite keyframe and hover/focus rules (CSS modules)
@@ -16,9 +17,11 @@ src/
     use-emoji-style.ts            resolves an id to its manifest entry
     use-emoji-animation.ts        animation state, playback gating, inline style, image ref
     use-prefers-reduced-motion.ts tracks prefers-reduced-motion
+    use-document-hidden.ts        tracks document.hidden
   utils/
     emoji-manifest.ts   manifest store, asset site config, sprite URLs, preload
     visibility-observer.ts  one IntersectionObserver shared by every emoji
+    shared-subscription.ts  one listener fanned out to every subscriber
     emoji-id.generated.ts  the generated EmojiId union
     types.ts            manifest and prop types
   test/                 browser setup, fixtures, coverage-manifest guard
@@ -29,31 +32,41 @@ playground/main.tsx     manual playground rendered by `bun run dev`
 
 `Emoji` is a `forwardRef` component, so a `ref` reaches the root `<span>` on
 React 18 and 19. Besides its own props (`id`, `size`, `playOnHover`,
-`animationIterations`, `autoPlay`, `skinTone`, `alt`, `fallback`, `onLoad`,
-`onError`) it accepts any other `<span>` attribute: `className` and `style` are
-merged with the component's own, and `data-*`, `aria-*` and event handlers go to
-the root. `id`, `children`, `onLoad` and `onError` are not forwarded to the
-span.
+`animationIterations`, `autoPlay`, `playing`, `onPlaybackEnd`, `skinTone`,
+`alt`, `fallback`, `onLoad`, `onError`) it accepts any other `<span>` attribute:
+`className` and `style` are merged with the component's own, and `data-*`,
+`aria-*` and event handlers go to the root. `id`, `children`, `onLoad` and
+`onError` are not forwarded to the span.
 
 It resolves the id through `useEmojiStyle` and drives the animation through
 `useEmojiAnimation`. It renders a `<span>` of `size` pixels containing one
 `<img>` of the sprite sheet, with `loading="lazy"`, `decoding="async"`, the
 sprite `src` and, for emojis with an HD sheet, a width-based `srcSet` (see
-[Manifest](#manifest)). `size` is rounded; anything but a finite positive number
-falls back to 100. No `<style>` element is injected: everything per-emoji is an
-inline style on the image.
+[Manifest](#manifest)). A numeric `size` is rounded and anything but a finite
+positive number falls back to 100; see [String size](#string-size). No `<style>`
+element is injected: everything per-emoji is an inline style on the image.
 
 `useEmojiStyle` returns one of four states:
 
 - `loading`: the manifest is pending. `Emoji` renders an empty `aria-hidden`
   placeholder `<span>` of the final size, so the layout does not shift.
 - `ready`: the manifest entry. `Emoji` renders the image.
-- `missing`: the id is unknown. `Emoji` renders `null`.
+- `missing`: the id is unknown. `Emoji` renders `fallback` when it is a node and
+  `null` otherwise. It warns once per id in development and never calls
+  `onError`.
 - `error`: the manifest failed to load. `Emoji` renders `fallback` when it is a
   node and `null` otherwise, and calls `onError` once with no event.
 
 `alt` defaults to the manifest description; an empty string also sets
 `aria-hidden` on the container so the emoji is decorative.
+
+### String size
+
+`size` is `number | string`. A number is pixels, rounded, with the 100 default
+for invalid values. A string is any CSS length (`2rem`, `var(--size)`), used
+as-is for the root's `width` and `height`; the image then gets no `sizes` and
+the fallback glyph is `calc(<size> * 0.75)`. Consumer `style` is spread after
+the sizing styles, so its `width` and `height` win.
 
 ### Fallback
 
@@ -90,7 +103,17 @@ is set inline by `useEmojiAnimation`:
 `usePrefersReducedMotion` wraps the `prefers-reduced-motion: reduce` media query
 with `useSyncExternalStore` (and a `false` server snapshot). While it is true,
 `autoPlay` is ignored, the animation name is `none` and the emoji rests on the
-poster frame. Hover and focus still play it.
+poster frame. Hover and focus still play it. The poster frame also shows while
+autoplay is held by the gate below.
+
+### Controlled playback
+
+`playing` is a three-state control. `undefined` keeps the behaviour above.
+`true` plays `animationIterations` runs and overrides `autoPlay` and reduced
+motion, still waiting for the image and a visible tab. `false` pauses on the
+current frame. A finished run is not restarted by toggling. `onPlaybackEnd`
+fires once when a finite run ends and never for `'infinite'` or when the emoji
+unmounts mid-run.
 
 ### Playback gating
 
@@ -106,15 +129,20 @@ animation while the tab is hidden and resumes it when the tab comes back.
   `IntersectionObserver` created on first use for all emojis. Where
   `IntersectionObserver` does not exist, an emoji is reported visible so
   playback is never blocked.
-- `document.hidden` is read with `useSyncExternalStore` and the
-  `visibilitychange` event, with a `false` server snapshot.
+- `document.hidden` is read with `useSyncExternalStore` and one shared
+  `visibilitychange` listener, with a `false` server snapshot. The
+  `prefers-reduced-motion` media query works the same way: a module-level
+  listener per signal, attached by `createSharedSubscription` when the first
+  emoji subscribes and removed when the last unmounts, instead of one listener
+  per emoji.
 - Once the initial run has finished the gate no longer applies; `playOnHover`
   replays are driven by hover and focus.
 
-Changing the emoji `id` resets the load, visibility and initial-run state, so
-the new emoji plays its initial run. `animationIterations` is normalized:
-`Infinity` means `'infinite'`, and `NaN` or a negative value means `0`, which
-disables autoplay.
+Changing the sprite source (`id` or `skinTone`) resets the load, visibility and
+initial-run state, so the new emoji plays its initial run. A sprite that failed
+is retried when its source changes and when the browser comes back online.
+`animationIterations` is normalized: `Infinity` means `'infinite'`, and `NaN` or
+a negative value means `0`, which disables autoplay.
 
 ## Manifest
 
@@ -126,6 +154,23 @@ never at import time. Components subscribe with `useSyncExternalStore`
 runtime needs (`id`, `description`, `etag`, `diverse`, `animation`, `hd` and
 `unicode`); the full `manifest.json` stays on the site for the emoji lists. The
 categories are flattened into a record keyed by emoji id.
+
+The v1 manifest is compact: an entry is
+`{ id, description, etag, unicode?, animation: { framesCount, fps?, firstFrame? }, diverse?: true, hd?: true }`,
+and a field at its default is omitted (`fps` 24, `firstFrame` 1, `diverse` and
+`hd` false). The store restores the defaults when it parses the response, so the
+rest of the runtime sees full entries. The fetch gives up after 15 seconds
+(`AbortSignal.timeout`), which counts as an `error` and is retried like one. An
+unknown `skinTone` value resolves to the default sheet.
+
+### HD cap
+
+An emoji gets an HD sheet only when it has at most 81 frames (`HD_MAX_FRAMES` in
+`catalog.ts`): 81 frames of 200 px is 16,200 px, under Chromium's 16,384 px
+texture limit. `validate.ts` rejects an HD sheet taller than 16,384 px. Emojis
+above the cap, ten at the time of writing, use the standard sheet only and have
+no `hd` flag. See
+[ADR 0011](adr/0011-compact-slim-manifest-and-hd-frame-cap.md).
 
 The store has four statuses:
 
@@ -160,12 +205,26 @@ also gets `sizes="<size>px"`, so the browser picks the sheet by the rendered
 width and the device pixel ratio. Tests intercept the manifest request with MSW
 (`src/test/`), and the shapes live in `utils/types.ts`.
 
+## Lookup
+
+`animated-fluent-emojis/lookup` (`src/lookup/index.ts`, built to
+`dist/lookup.js`) has no React dependency. It calls `loadEmojiManifest` from the
+same store as `Emoji`, so the manifest is fetched once and shared through a Vite
+chunk. It exports `findEmojiByUnicode`, `extractEmojis` (grapheme segmentation
+with `Intl.Segmenter`, so ZWJ sequences stay whole) and `searchEmojis`
+(case-insensitive description match, 20 results by default). The catalog is
+indexed by normalised unicode, once per manifest, and the functions never
+reject: they resolve to `undefined` or `[]` when the manifest cannot be loaded.
+It has its own `size-limit` entry.
+
 ## Emoji ids
 
 `EmojiId` is generated, not written by hand: `bun run assets:lists` renders
 `utils/emoji-id.generated.ts` next to the `docs/EMOJI_LIST_*.md` files from the
 built manifest. The `id` prop is typed `EmojiId | (string & {})`, an open union,
 so ids added by an asset site refresh compile before the types are regenerated.
+The same generator emits `DiverseEmojiId`, the ids that have skin tones, which
+types `skinTone` for those ids.
 
 ## Asset site
 
@@ -258,6 +317,15 @@ comments on, a `sync-assets failing` issue through the `report-failure` job. To
 undo a bad deployment, see
 [how to roll back the asset site](how-to/roll-back-the-asset-site.md).
 
+### Sync inputs and triggers
+
+`sync-assets.yml` detects a `/v1/version.json` that is missing, lacks the `v1`
+layout or carries another pipeline version, and builds in that case even when
+Teams and the official repository are unchanged. Manual dispatch has two inputs
+that replace the old `force`: `rebuild` forces a build, `bypass_guards` skips
+the Teams discovery and removal guards. The first sync after 0.5 converts every
+sprite again, because the live site has no `/v1/` files to seed from.
+
 ## CSS
 
 `Emoji.module.css` holds the `emoji-play` keyframe and the hover rules. With
@@ -269,7 +337,10 @@ the import.
 
 ## Build output
 
-Vite 8 library mode builds one ES module (`dist/animated-fluent-emojis.js`) with
-`react` and `react-dom` externalized, plus type declarations. The bundle starts
-with a `"use client";` banner so it works from Next.js server components. See
+Vite 8 library mode builds two ES modules, `dist/animated-fluent-emojis.js` and
+`dist/lookup.js`, plus a shared chunk with the manifest store, with `react` and
+`react-dom` externalized, and type declarations. `size-limit` measures each
+entry file (brotli): 2.5 kB for the component bundle, 780 B for lookup and 170 B
+for the stylesheet. The shared chunk is not counted. The bundle starts with a
+`"use client";` banner so it works from Next.js server components. See
 [ADR 0003](adr/0003-esm-only-and-vite-8.md).
