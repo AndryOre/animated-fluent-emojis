@@ -72,30 +72,6 @@ jobs:
             sudo apt-get install -y --no-install-recommends ffmpeg
           fi
 
-      - name: Read the pipeline version
-        id: pipeline
-        if: steps.detect.outputs.changed == 'true'
-        run: |
-          pipeline_version="$(grep --only-matching --perl-regexp 'PIPELINE_VERSION = \K\d+' scripts/assets/catalog.ts)"
-          if [[ -z "${pipeline_version}" ]]; then
-            echo "Could not read PIPELINE_VERSION from scripts/assets/catalog.ts" >&2
-            exit 1
-          fi
-          echo "version=${pipeline_version}" >> "${GITHUB_OUTPUT}"
-
-      - name: Restore the asset cache
-        if: steps.detect.outputs.changed == 'true'
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/assets
-          key:
-            assets-${{ steps.pipeline.outputs.version }}-${{
-            steps.detect.outputs.mit_sha }}-${{ steps.detect.outputs.teams_hash
-            }}
-          restore-keys: |
-            assets-${{ steps.pipeline.outputs.version }}-${{ steps.detect.outputs.mit_sha }}-
-            assets-${{ steps.pipeline.outputs.version }}-
-
       - name: Build assets
         if: steps.detect.outputs.changed == 'true'
         env:

@@ -239,20 +239,10 @@ describe('sync-assets.yml sync job', () => {
     expect(Number(job?.['timeout-minutes'])).toBeGreaterThanOrEqual(90)
   })
 
-  test('persists .cache/assets with a keyed, prefix-restored actions/cache', () => {
-    const cacheIndex = steps.findIndex((step) =>
-      step.uses?.startsWith('actions/cache@'),
+  test('does not restore a cache in the job that deploys', () => {
+    expect(steps.some((step) => step.uses?.startsWith('actions/cache@'))).toBe(
+      false,
     )
-    const cache = steps[cacheIndex]
-    expect(cache?.with?.path).toBe('.cache/assets')
-    const key = String(cache?.with?.key)
-    expect(key).toContain('steps.detect.outputs.teams_hash')
-    expect(key).toContain('steps.detect.outputs.mit_sha')
-    expect(key).toContain('steps.pipeline.outputs.version')
-    expect(String(cache?.with?.['restore-keys'])).toContain('assets-')
-    const buildIndex = steps.findIndex((step) => step.name === 'Build assets')
-    expect(cacheIndex).toBeGreaterThan(-1)
-    expect(cacheIndex).toBeLessThan(buildIndex)
   })
 })
 
