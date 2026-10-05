@@ -1,7 +1,11 @@
 import { useEffect, type ReactElement } from 'react'
 
 import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js'
-import { generateEmojiStyle, type EmojiProps } from '../utils/index.js'
+import {
+  generateEmojiStyle,
+  getSpriteUrl,
+  type EmojiProps,
+} from '../utils/index.js'
 import styles from './Emoji.module.css'
 
 /**
@@ -12,6 +16,7 @@ import styles from './Emoji.module.css'
  * @param props.playOnHover - Whether to play the animation on hover.
  * @param props.animationIterations - How many times to play the animation, or 'infinite'.
  * @param props.autoPlay - Whether to automatically play the animation on mount.
+ * @param props.skinTone - The skin tone, for emojis that support it.
  * @returns The rendered Emoji component or null if the emoji is not found.
  */
 export const Emoji = ({
@@ -20,8 +25,9 @@ export const Emoji = ({
   playOnHover = false,
   animationIterations = 2,
   autoPlay = true,
+  skinTone = 'default',
 }: EmojiProps): ReactElement | null => {
-  const { emoji, categoryFolder } = useEmojiStyle(id)
+  const { emoji } = useEmojiStyle(id)
   const {
     isInitialAnimationComplete,
     animationStyle,
@@ -83,7 +89,7 @@ export const Emoji = ({
         ref={imageRef}
         alt={emoji.description}
         draggable="false"
-        src={`https://cdn.animated-fluent-emojis.com/sprites/${categoryFolder}/${id}.png`}
+        src={getSpriteUrl(emoji, skinTone)}
         style={animationStyle}
         className={styles.emojiImage}
       />

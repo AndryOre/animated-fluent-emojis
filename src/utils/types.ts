@@ -63,6 +63,12 @@ export interface EmojiManifest extends Emoticon {
 }
 
 /**
+ * Skin tones an emoji can be rendered with.
+ */
+export type SkinTone =
+  'default' | 'light' | 'medium-light' | 'medium' | 'medium-dark' | 'dark'
+
+/**
  * Represents the properties for the Emoji component.
  */
 export interface EmojiProps {
@@ -76,4 +82,6 @@ export interface EmojiProps {
   animationIterations?: number | 'infinite'
   /** Whether to automatically play the animation on mount. Default is true. */
   autoPlay?: boolean
+  /** The skin tone, for emojis that support it. Default is 'default'. */
+  skinTone?: SkinTone
 }

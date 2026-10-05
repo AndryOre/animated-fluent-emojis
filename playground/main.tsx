@@ -12,9 +12,9 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <main style={{ display: 'flex', gap: 24, padding: 24 }}>
-      <Emoji id="grinning-face" size={96} />
-      <Emoji id="red-heart" size={96} playOnHover />
-      <Emoji id="rocket" size={96} animationIterations="infinite" />
+      <Emoji id="1f603_grinningfacewithbigeyes" size={96} />
+      <Emoji id="1f44b_wavinghand" size={96} playOnHover skinTone="medium" />
+      <Emoji id="launch" size={96} animationIterations="infinite" />
     </main>
   </StrictMode>,
 )
