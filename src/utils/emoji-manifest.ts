@@ -248,14 +248,14 @@ export function getSpriteUrl(
  * Builds the `srcSet` of an emoji's sprite sheet.
  * @param emoji - The emoji manifest entry.
  * @param skinTone - The requested skin tone; ignored when the emoji has no variants.
- * @returns The standard sheet at 1x and the HD sheet at 2x, or undefined when the emoji has no HD sheet.
+ * @returns The standard sheet as `100w` and the HD sheet as `200w`, or undefined when the emoji has no HD sheet.
  */
 export function getSpriteSourceSet(
   emoji: EmojiManifest,
   skinTone: SkinTone = 'default',
 ): string | undefined {
   return emoji.hd
-    ? `${buildSpriteUrl(emoji, skinTone, '')} 1x, ${buildSpriteUrl(emoji, skinTone, '@2x')} 2x`
+    ? `${buildSpriteUrl(emoji, skinTone, '')} 100w, ${buildSpriteUrl(emoji, skinTone, '@2x')} 200w`
     : undefined
 }
 

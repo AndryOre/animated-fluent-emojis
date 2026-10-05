@@ -8,11 +8,18 @@ import {
 } from '../utils/index.js'
 import styles from './Emoji.module.css'
 
+const DEFAULT_SIZE = 100
+
+const normalizeSize = (size: number): number =>
+  Number.isFinite(size) && Math.round(size) > 0
+    ? Math.round(size)
+    : DEFAULT_SIZE
+
 /**
  * Emoji component for displaying animated emojis.
  * @param props - The properties for the Emoji component.
  * @param props.id - The unique identifier of the emoji.
- * @param props.size - The size of the emoji in pixels.
+ * @param props.size - The size of the emoji in pixels. Fractions are rounded; anything but a finite positive number falls back to 100.
  * @param props.playOnHover - Whether to play the animation on hover.
  * @param props.animationIterations - How many times to play the animation, or 'infinite'.
  * @param props.autoPlay - Whether to automatically play the animation on mount.
@@ -22,13 +29,14 @@ import styles from './Emoji.module.css'
  */
 export const Emoji = ({
   id,
-  size = 100,
+  size: requestedSize = DEFAULT_SIZE,
   playOnHover = false,
   animationIterations = 2,
   autoPlay = true,
   skinTone = 'default',
   alt,
 }: EmojiProps): ReactElement | null => {
+  const size = normalizeSize(requestedSize)
   const { status, emoji } = useEmojiStyle(id)
   const { isInitialAnimationComplete, animationStyle, imageRef } =
     useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
@@ -64,6 +72,7 @@ export const Emoji = ({
         draggable="false"
         src={getSpriteUrl(emoji, skinTone)}
         srcSet={getSpriteSourceSet(emoji, skinTone)}
+        sizes={`${String(size)}px`}
         style={animationStyle}
         className={styles.emojiImage}
       />

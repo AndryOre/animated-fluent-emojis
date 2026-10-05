@@ -152,7 +152,7 @@ test('a custom asset site serves the manifest and the sprite sheets', async () =
   )
 })
 
-test('getSpriteSourceSet pairs the sheet with its @2x sheet for hd emojis only', async () => {
+test('getSpriteSourceSet describes the sheet and its @2x sheet by width for hd emojis only', async () => {
   serveFixtureManifest()
   const { loadEmojiManifest, getSpriteSourceSet } = await importFreshModule()
   const manifest = await loadEmojiManifest()
@@ -162,10 +162,10 @@ test('getSpriteSourceSet pairs the sheet with its @2x sheet for hd emojis only',
 
   const base = 'https://animated-fluent-emojis.pages.dev/sprites/Smilies'
   expect(getSpriteSourceSet(wave, 'medium-light')).toBe(
-    `${base}/waving-hand_s3.png?v=etag-wave 1x, ${base}/waving-hand_s3@2x.png?v=etag-wave 2x`,
+    `${base}/waving-hand_s3.png?v=etag-wave 100w, ${base}/waving-hand_s3@2x.png?v=etag-wave 200w`,
   )
   expect(getSpriteSourceSet(wave)).toBe(
-    `${base}/waving-hand.png?v=etag-wave 1x, ${base}/waving-hand@2x.png?v=etag-wave 2x`,
+    `${base}/waving-hand.png?v=etag-wave 100w, ${base}/waving-hand@2x.png?v=etag-wave 200w`,
   )
   expect(getSpriteSourceSet(cat)).toBeUndefined()
 })

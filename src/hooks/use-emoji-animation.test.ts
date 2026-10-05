@@ -29,10 +29,17 @@ test('derives timing and a percentage poster offset from the manifest entry', as
     animationDuration: '2s',
     animationTimingFunction: 'steps(40)',
     animationIterationCount: 3,
-    animationPlayState: 'running',
     transform: 'translateY(-2.5%)',
   })
   expect(result.current.animationStyle.animationName).toBeUndefined()
+})
+
+test('holds autoplay paused until the image has loaded and is on screen', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 'infinite', true, 64),
+  )
+
+  expect(result.current.animationStyle.animationPlayState).toBe('paused')
 })
 
 test('disables the animation when autoPlay is off', async () => {
