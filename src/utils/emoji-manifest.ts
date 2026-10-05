@@ -50,29 +50,6 @@ export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> =
   generateEmojiManifest()
 
 /**
- * Builds the CSS keyframes that step through an emoji's sprite frames.
- * @param id - Key of the emoji in the CDN manifest.
- * @param size - Rendered edge length of the emoji, in pixels.
- * @returns A promise that resolves to the generated CSS string.
- * @throws {Error} If the emoji is not found.
- */
-export async function generateEmojiStyle(
-  id: string,
-  size: number,
-): Promise<string> {
-  const manifest = await emojiManifestPromise
-  const emoji = manifest[id]
-  if (!emoji) throw new Error(`Emoji with id "${id}" not found`)
-
-  return `
-    @keyframes emoji-${id}-${String(size)} {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-${String(emoji.animation.framesCount * size)}px); }
-    }
-  `
-}
-
-/**
  * Builds the URL of an emoji's sprite sheet.
  * @param emoji - The emoji manifest entry.
  * @param skinTone - The requested skin tone; ignored when the emoji has no variants.
