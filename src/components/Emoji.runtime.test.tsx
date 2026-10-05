@@ -118,7 +118,7 @@ test('does not play when only a distant ancestor has focus', async () => {
   const image = wrapper.querySelector('img')
   if (!image) throw new Error('image not rendered')
 
-  if (!(wrapper instanceof HTMLElement)) throw new Error('wrapper missing')
+  if (!(wrapper instanceof HTMLElement)) throw new TypeError('wrapper missing')
   wrapper.focus()
   expect(document.activeElement).toBe(wrapper)
   await new Promise((resolve) => {

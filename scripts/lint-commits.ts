@@ -34,6 +34,10 @@ export function resolveCommitlintBase(): string {
   )
 }
 
+function exitCodeOf(code: number | null): number {
+  return typeof code === 'number' ? code : 1
+}
+
 async function main(): Promise<void> {
   const base = resolveCommitlintBase()
   const head = runGit(['rev-parse', 'HEAD'])
@@ -48,7 +52,7 @@ async function main(): Promise<void> {
   process.exitCode = await new Promise<number>((resolve, reject) => {
     child.on('error', reject)
     child.on('close', (code) => {
-      resolve(code ?? 1)
+      resolve(exitCodeOf(code))
     })
   })
 }

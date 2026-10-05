@@ -169,6 +169,10 @@ export async function ensureLycheeBinary(version: string): Promise<string> {
   return binaryPath
 }
 
+function exitCodeOf(code: number | null): number {
+  return typeof code === 'number' ? code : 1
+}
+
 async function main(): Promise<void> {
   const binaryPath = await ensureLycheeBinary(LYCHEE_VERSION)
   const child = spawn(binaryPath, [...LYCHEE_ARGS, ...process.argv.slice(2)], {
@@ -177,7 +181,7 @@ async function main(): Promise<void> {
   process.exitCode = await new Promise<number>((resolve, reject) => {
     child.on('error', reject)
     child.on('close', (code) => {
-      resolve(code ?? 1)
+      resolve(exitCodeOf(code))
     })
   })
 }

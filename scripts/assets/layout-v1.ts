@@ -291,7 +291,7 @@ export async function validateV1Layout(
   const expectedPaths = new Set(
     v1Tasks.flatMap((task) =>
       task.hdOutputPath === undefined
-        ? [task.outputPath]
+        ? task.outputPath
         : [task.outputPath, task.hdOutputPath],
     ),
   )
