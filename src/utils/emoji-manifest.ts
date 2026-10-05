@@ -126,7 +126,7 @@ async function fetchManifest(): Promise<CompactManifest> {
  */
 async function generateEmojiManifest(): Promise<ManifestRecord> {
   const rawManifest = await fetchManifest()
-  const manifest: ManifestRecord = {}
+  const manifest: ManifestRecord = Object.create(null) as ManifestRecord
   for (const category of rawManifest.categories) {
     for (const emoticon of category.emoticons) {
       manifest[emoticon.id] = {
@@ -164,7 +164,7 @@ function retryWhenOnline(): void {
 /**
  * Runs one manifest load and publishes its outcome unless it was superseded.
  * @param generation - The store generation the load belongs to.
- * @returns The snapshot this load produced; never rejects.
+ * @returns The snapshot this load produced, or the current load's when superseded; never rejects.
  */
 async function runManifestLoad(generation: number): Promise<ManifestSnapshot> {
   let outcome: ManifestSnapshot
@@ -177,7 +177,7 @@ async function runManifestLoad(generation: number): Promise<ManifestSnapshot> {
       console.error('Error fetching emoji data:', error)
     }
   }
-  if (generation !== state.generation) return outcome
+  if (generation !== state.generation) return startManifestLoad()
   state.pending = null
   publish(outcome)
   if (outcome.status === 'error') retryWhenOnline()

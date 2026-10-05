@@ -169,3 +169,62 @@ test('preloadEmojis warms the sprite sheets of the given ids once', async () => 
     'https://animated-fluent-emojis.pages.dev/v1/sprites/Smilies/waving-hand_s6.etag-wave.png',
   ])
 })
+
+test('preloadEmojis ignores ids inherited from Object.prototype', async () => {
+  serveFixtureManifest()
+  const requestedSources: string[] = []
+  class FakeImage {
+    srcset = ''
+    set src(value: string) {
+      requestedSources.push(value)
+    }
+  }
+  vi.stubGlobal('Image', FakeImage)
+  const { preloadEmojis } = await importFreshModule()
+
+  await preloadEmojis(['toString', '__proto__', 'constructor'])
+
+  expect(requestedSources).toEqual([])
+})
+
+test('awaiters of a superseded load receive the current site outcome', async () => {
+  const otherManifestUrl = 'https://other.example.com/v1/manifest.slim.json'
+  const otherManifest = {
+    ...FIXTURE_MANIFEST,
+    categories: [
+      {
+        title: 'Other',
+        emoticons: [{ id: 'other-only', etag: 'etag-other' }],
+      },
+    ],
+  }
+  server.use(
+    http.get(MANIFEST_URL, async () => {
+      await delay(50)
+      return HttpResponse.json(FIXTURE_MANIFEST)
+    }),
+    http.get(otherManifestUrl, () => HttpResponse.json(otherManifest)),
+  )
+  const requestedSources: string[] = []
+  class FakeImage {
+    srcset = ''
+    set src(value: string) {
+      requestedSources.push(value)
+    }
+  }
+  vi.stubGlobal('Image', FakeImage)
+  silence('warn')
+  const { configureEmojis, loadEmojiManifest, preloadEmojis } =
+    await importFreshModule()
+
+  const oldLoad = loadEmojiManifest()
+  const oldPreload = preloadEmojis(['cat', 'other-only'])
+  configureEmojis({ assetSiteUrl: 'https://other.example.com' })
+  const manifest = await oldLoad
+  await oldPreload
+
+  expect(Object.keys(manifest)).toEqual(['other-only'])
+  expect(requestedSources).toEqual([
+    'https://other.example.com/v1/sprites/Other/other-only.etag-other.png',
+  ])
+})
