@@ -25,19 +25,15 @@ const DEFAULT_FRAME_RATE = 24
 function tryParseFrameRate(rate: string | undefined): number | undefined {
   if (rate === undefined) return undefined
   const [numerator, denominator] = rate.split('/').map(Number)
-  const isUsable =
-    numerator !== undefined &&
-    denominator !== undefined &&
-    denominator !== 0 &&
-    Number.isFinite(numerator) &&
-    Number.isFinite(denominator)
-  return isUsable ? Math.max(1, Math.round(numerator / denominator)) : undefined
+  if (numerator === undefined || denominator === undefined) return undefined
+  const frameRate = numerator / denominator
+  return Number.isFinite(frameRate) && frameRate > 0 ? frameRate : undefined
 }
 
 /**
  * Parses an ffprobe frame rate such as `143/6` into frames per second.
  * @param rate The ratio string reported by ffprobe.
- * @returns The rate rounded to a whole number of frames per second.
+ * @returns The exact, possibly fractional, frames per second.
  */
 export function parseFrameRate(rate: string): number {
   const parsed = tryParseFrameRate(rate)
@@ -50,7 +46,7 @@ export function parseFrameRate(rate: string): number {
  * rate, then the base rate, then 24 fps.
  * @param averageRate The `avg_frame_rate` value, possibly `0/0`.
  * @param baseRate The `r_frame_rate` value, possibly missing or `0/0`.
- * @returns A whole number of frames per second, never throwing.
+ * @returns The exact, possibly fractional, frames per second, never throwing.
  */
 export function resolveFrameRate(
   averageRate: string | undefined,

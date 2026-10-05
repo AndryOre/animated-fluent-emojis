@@ -15,14 +15,19 @@ const hasFfmpeg =
   spawnSync('ffmpeg', ['-version']).status === 0 &&
   spawnSync('ffprobe', ['-version']).status === 0
 
-test('parseFrameRate rounds ffprobe ratios', () => {
-  expect(parseFrameRate('143/6')).toBe(24)
+test('parseFrameRate keeps the exact fractional rate', () => {
+  expect(parseFrameRate('143/6')).toBeCloseTo(23.8333, 4)
   expect(parseFrameRate('10/1')).toBe(10)
 })
 
 test('parseFrameRate rejects invalid ratios', () => {
   expect(() => parseFrameRate('0/0')).toThrow('Invalid frame rate')
   expect(() => parseFrameRate('abc')).toThrow('Invalid frame rate')
+})
+
+test('resolveFrameRate keeps fractional rates and ignores non-positive ones', () => {
+  expect(resolveFrameRate('143/6', '30/1')).toBeCloseTo(23.8333, 4)
+  expect(resolveFrameRate('0/1', '30/1')).toBe(30)
 })
 
 test('resolveFrameRate prefers the average rate', () => {
