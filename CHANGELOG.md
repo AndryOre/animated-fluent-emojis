@@ -36,6 +36,29 @@ and this project adheres to
 - The release workflow publishes prereleases under their own dist tag.
 - The sync smoke test waits for the deployed `builtAt` and retries its fetches.
 
+- **Behavior change (lookup):** when several catalog entries share a glyph,
+  `findEmojiByUnicode` and `extractEmojis` return the canonical emoji (the id
+  prefixed with its code points, otherwise a reviewed override, otherwise the
+  first in catalog order) instead of the last entry indexed, so `❤` no longer
+  resolves to a variant. A skin tone falls back to an entry sharing the glyph
+  that has tones.
+- **Behavior change (lookup):** ZWJ sequences match without the variation
+  selector (minimally qualified), and a fractional `searchEmojis` `limit` is
+  rounded down.
+- Invalid numeric string sizes such as `"-5"` fall back to 100, like numeric
+  sizes; `".5"` is 0.5px and `"2rem"` stays a CSS length.
+- `preloadEmojis` sets `sizes` next to `srcset` for HD sheets, and the manifest
+  load times out after 15 seconds without `AbortSignal.timeout` (Safari before
+  16).
+- `skippedIds` lists only real failures. An HD frame count mismatch ships the
+  emoji without HD instead of keeping the site stale, so scheduled syncs no
+  longer rebuild forever; `assets:verify-live` retries its fetch.
+- The sync workflow runs its smoke checks on every run, pins Wrangler, times out
+  after 90 minutes, and its changelog job only looks at `[Unreleased]`.
+- Prereleases are published as GitHub prereleases, never "Latest", and numeric
+  prereleases publish under the `next` dist tag.
+- `engines.bun` is removed from the published package.
+
 ### Changed
 
 - Renovate manages dependency updates; `@types/node` is held below 25 and the
