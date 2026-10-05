@@ -116,5 +116,5 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   prettierConfig,
-  globalIgnores(['dist/**', 'coverage/**']),
+  globalIgnores(['dist/**', 'coverage/**', '.claude/worktrees/**']),
 ])
