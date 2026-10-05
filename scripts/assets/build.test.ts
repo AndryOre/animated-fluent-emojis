@@ -217,6 +217,30 @@ test('skips an official emoji whose sprite fails and reports it', async () => {
   expect(Object.keys(state)).toHaveLength(7)
 })
 
+test('fails the build when a pinned official emoji fails', async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const previousManifest = createTeamsManifest()
+  previousManifest.categories[0]?.emoticons.push({
+    id: '1f3c1_chequeredflag',
+    description: 'Chequered flag',
+    shortcuts: [],
+    unicode: '🏁',
+    etag: 'old',
+    diverse: false,
+    animation: { fps: 24, framesCount: 40, firstFrame: 1 },
+    keywords: [],
+    origin: 'official',
+  })
+
+  await expect(
+    buildAssets({
+      ...baseOptions(fakeFetch),
+      previousManifest,
+      convert: () => Promise.reject(new Error('bad apng')),
+    }),
+  ).rejects.toThrow('1f3c1_chequeredflag')
+})
+
 test('fails the build when a Teams sprite fails', async () => {
   const missingUrl = `GET ${buildSpriteUrl('1f603_grinningfacewithbigeyes', '')}`
   const routes = Object.fromEntries(

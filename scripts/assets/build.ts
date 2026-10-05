@@ -251,6 +251,24 @@ async function settleSprite(
   }
 }
 
+function assertNoPinnedSkipped(
+  skippedById: ReadonlyMap<string, SkippedEmoji>,
+  previousManifest: Manifest | undefined,
+): void {
+  const pinnedSkipped = (previousManifest?.categories ?? [])
+    .flatMap((category) => category.emoticons)
+    .filter(
+      (emoticon) =>
+        emoticon.origin === 'official' && skippedById.has(emoticon.id),
+    )
+    .map((emoticon) => emoticon.id)
+  if (pinnedSkipped.length > 0) {
+    throw new Error(
+      `Pinned official emojis failed to build and would be dropped: ${pinnedSkipped.join(', ')}`,
+    )
+  }
+}
+
 function collectSkipped(
   outcomes: readonly SpriteOutcome[],
 ): Map<string, SkippedEmoji> {
@@ -344,6 +362,7 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
   if (teamsFailure?.status === 'failed') throw teamsFailure.error
 
   const skippedById = collectSkipped(outcomes)
+  assertNoPinnedSkipped(skippedById, options.previousManifest)
   const skipped = skippedById.values().toArray()
   await reportSkipped(
     skipped,
