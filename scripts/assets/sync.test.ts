@@ -1,7 +1,15 @@
 import { expect, test } from 'vitest'
 
+import type { Manifest } from '../../src/utils/types.js'
 import type { PublishedVersion } from './build.js'
-import { fetchPublishedJson, formatErrorChain, needsRebuild } from './sync.js'
+import { PIPELINE_VERSION } from './catalog.js'
+import {
+  createPlanGuard,
+  fetchPublishedJson,
+  formatErrorChain,
+  isV1LayoutStale,
+  needsRebuild,
+} from './sync.js'
 import { createFakeFetch } from './test-support.js'
 
 const published: PublishedVersion = {
@@ -9,6 +17,8 @@ const published: PublishedVersion = {
   teamsLastModified: '2025-10-16T22:08:15.000Z',
   mitSha: 'b'.repeat(40),
   builtAt: '2026-10-05T00:00:00.000Z',
+  pipelineVersion: PIPELINE_VERSION,
+  layouts: ['v1'],
 }
 const missingHost = () =>
   Promise.reject(new Error('fetch failed', { cause: { code: 'ENOTFOUND' } }))
@@ -18,21 +28,70 @@ const offline = () => Promise.reject(new Error('socket hang up'))
 const latest = { teamsHash: published.teamsHash, mitSha: published.mitSha }
 
 test('does not rebuild when nothing changed', () => {
-  expect(needsRebuild(published, latest, false)).toBe(false)
+  expect(needsRebuild(published, published, latest, false)).toBe(false)
 })
 
 test('rebuilds on a new Teams hash or official commit', () => {
   expect(
-    needsRebuild(published, { ...latest, teamsHash: 'c'.repeat(32) }, false),
+    needsRebuild(
+      published,
+      published,
+      { ...latest, teamsHash: 'c'.repeat(32) },
+      false,
+    ),
   ).toBe(true)
   expect(
-    needsRebuild(published, { ...latest, mitSha: 'd'.repeat(40) }, false),
+    needsRebuild(
+      published,
+      published,
+      { ...latest, mitSha: 'd'.repeat(40) },
+      false,
+    ),
   ).toBe(true)
 })
 
-test('rebuilds on the first run and when forced', () => {
-  expect(needsRebuild(undefined, latest, false)).toBe(true)
-  expect(needsRebuild(published, latest, true)).toBe(true)
+test('rebuilds on the first run and when rebuild is requested', () => {
+  expect(needsRebuild(undefined, undefined, latest, false)).toBe(true)
+  expect(needsRebuild(published, published, latest, true)).toBe(true)
+})
+
+test('rebuilds when the v1 marker is a 404, lacks v1 or has another pipeline version', () => {
+  expect(needsRebuild(published, undefined, latest, false)).toBe(true)
+  expect(
+    needsRebuild(published, { ...published, layouts: [] }, latest, false),
+  ).toBe(true)
+  expect(
+    needsRebuild(
+      published,
+      { ...published, pipelineVersion: PIPELINE_VERSION + 1 },
+      latest,
+      false,
+    ),
+  ).toBe(true)
+  expect(isV1LayoutStale(published)).toBe(false)
+})
+
+const manifestOf = (count: number): Manifest =>
+  ({
+    categories: [
+      {
+        id: 'c',
+        name: 'C',
+        emoticons: Array.from({ length: count }, (_, index) => ({
+          id: `e${String(index)}`,
+          etag: 'x',
+        })),
+      },
+    ],
+  }) as unknown as Manifest
+
+test('the plan guard refuses a catalog that removes more than 5% and can be bypassed', () => {
+  const previous = manifestOf(100)
+  expect(createPlanGuard(undefined, false)).toBeUndefined()
+  const guard = createPlanGuard(previous, false)
+  expect(() => guard?.(manifestOf(94))).toThrow('would be removed')
+  expect(() => guard?.(manifestOf(95))).not.toThrow()
+  expect(() => createPlanGuard(previous, true)?.(manifestOf(10))).not.toThrow()
 })
 
 test('fetchPublishedJson returns the parsed JSON of a published file', async () => {

@@ -9,7 +9,7 @@ import {
 } from 'node:fs/promises'
 import { availableParallelism, tmpdir } from 'node:os'
 import path from 'node:path'
-import { afterEach, beforeEach, expect, test } from 'vitest'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import type { Manifest } from '../../src/utils/types.js'
 import {
@@ -23,7 +23,7 @@ import {
   readState,
   type BuildOptions,
 } from './build.js'
-import { hashHdEtag } from './catalog.js'
+import { hashHdEtag, PIPELINE_VERSION } from './catalog.js'
 import { buildLiveSpriteUrl } from './seed.js'
 import { toSlimManifest } from './slim-manifest.js'
 import type { ConvertedSprite } from './sprites.js'
@@ -181,6 +181,8 @@ test('builds the manifest, sprites, version marker, headers and license', async 
     teamsLastModified: '2025-10-16T22:08:15.000Z',
     mitSha: SHA,
     builtAt: '2026-10-05T00:00:00.000Z',
+    pipelineVersion: PIPELINE_VERSION,
+    layouts: ['v1'],
   })
   const slim = JSON.parse(
     await readFile(path.join(out, 'manifest.slim.json'), 'utf8'),
@@ -200,6 +202,30 @@ test('builds the manifest, sprites, version marker, headers and license', async 
       'utf8',
     ),
   ).toBe('MIT License')
+})
+
+test('calls onPlanned with the planned catalog before any conversion', async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const convert = vi.fn(createConvert())
+  const planned: string[] = []
+
+  await expect(
+    buildAssets({
+      ...baseOptions(fakeFetch),
+      convert,
+      onPlanned: (manifest) => {
+        planned.push(
+          ...manifest.categories.flatMap((category) =>
+            category.emoticons.map((emoticon) => emoticon.id),
+          ),
+        )
+        throw new Error('stop')
+      },
+    }),
+  ).rejects.toThrow('stop')
+
+  expect(planned).toContain('1f44b_wavinghand')
+  expect(convert).not.toHaveBeenCalled()
 })
 
 test('reuses cached sprites by etag on the next build', async () => {

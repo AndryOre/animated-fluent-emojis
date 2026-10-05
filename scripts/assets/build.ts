@@ -16,6 +16,7 @@ import {
   hashEtag,
   hashHdEtag,
   HD_MAX_FRAMES,
+  PIPELINE_VERSION,
   type HdSkippedEmoji,
   type SpriteTask,
 } from './catalog.js'
@@ -96,6 +97,8 @@ export interface PublishedVersion {
   readonly teamsLastModified: string
   readonly mitSha: string
   readonly builtAt: string
+  readonly pipelineVersion: number
+  readonly layouts: readonly string[]
 }
 
 type ConvertSprite = (
@@ -166,6 +169,7 @@ export interface BuildOptions {
   readonly convert?: ConvertSprite
   readonly now?: () => Date
   readonly stepSummaryPath?: string
+  readonly onPlanned?: (planned: Manifest) => void
 }
 
 /**
@@ -791,6 +795,7 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     mitIndex.emojis,
     options.previousManifest,
   )
+  options.onPlanned?.(catalog.manifest)
   const limitedTasks = limitCatalog(catalog.tasks, options.limit)
 
   const state = await readState(options.cacheDirectory)
@@ -918,6 +923,8 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     teamsLastModified: options.teamsVersion.lastModified,
     mitSha: mitIndex.commitSha,
     builtAt: (options.now ?? (() => new Date()))().toISOString(),
+    pipelineVersion: PIPELINE_VERSION,
+    layouts: [V1_DIRECTORY],
   }
   await writeFile(
     path.join(options.outputDirectory, 'manifest.json'),

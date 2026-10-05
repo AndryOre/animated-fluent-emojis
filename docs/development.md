@@ -63,7 +63,13 @@ Every PR runs the full `ci.yml` pipeline, docs-only changes included:
 detects new emoji versions, rebuilds and deploys the asset site to Cloudflare
 Pages, smoke tests the published manifest and a sprite, and opens a pull request
 with the regenerated emoji lists. A failed run opens or updates a single
-`sync-assets failing` issue. Setup:
+`sync-assets failing` issue. It also publishes the `/v1/` layout whenever
+`/v1/version.json` is missing, lacks the `v1` layout or carries another pipeline
+version. Manual dispatch takes two inputs: `rebuild` forces a build even when
+nothing changed, and `bypass_guards` skips the Teams discovery guard and the
+catalog removal guard (more than 5% removed, checked on the planned catalog
+before any conversion). The file-count guard is never bypassed. The v1 smoke
+test always runs. Setup:
 [`how-to/set-up-asset-hosting.md`](how-to/set-up-asset-hosting.md); recovery:
 [`how-to/roll-back-the-asset-site.md`](how-to/roll-back-the-asset-site.md).
 
