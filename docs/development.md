@@ -115,9 +115,19 @@ no documented exemption. Rationale: [ADR 0004](adr/0004-vitest-browser-mode.md).
 
 ## Packaging
 
-The package is ESM-only with an `exports` map for the entry and `style.css`.
-`bun run lint:package` validates it. Rationale:
-[ADR 0003](adr/0003-esm-only-and-vite-8.md).
+The package is ESM-only with an `exports` map for the entry, `./lookup` and
+`style.css`. Both JavaScript entries import a shared manifest chunk that stays
+out of `exports` and ships through `files: ["dist"]`. A Rolldown
+`advancedChunks` group in `vite.config.ts` names it `chunks/manifest-[hash].js`,
+so the `size-limit` globs always match it. `bun run lint:package` validates the
+package. Rationale: [ADR 0003](adr/0003-esm-only-and-vite-8.md).
+
+## Dependency updates
+
+Renovate (`renovate.json5`) opens the update pull requests, on Mondays before
+12:00 UTC, and tracks them in the Dependency Dashboard issue. `@types/node` is
+held below 25 to match the Node 24 runtime. A custom manager also pins the `npm`
+version that the workflows install with `npm install -g npm@<version>`.
 
 ## Playground
 

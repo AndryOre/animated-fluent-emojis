@@ -31,11 +31,13 @@ subcommand.
 
 ## After the rollback
 
-- The weekly sync only redeploys when it detects new versions. Rolling back does
-  not change that state, so the next run may redeploy the bad build. Fix the
-  cause first, or leave the project pinned until you have.
-- Run **Sync Assets** manually with `force` to rebuild and redeploy once the fix
-  is merged.
+- The rolled-back site serves an older `version.json`, so the next detect sees a
+  Teams hash or repository commit that no longer matches upstream and rebuilds.
+  The next weekly run will therefore redeploy the bad build unless the cause is
+  fixed first. To keep the project pinned until then, disable the
+  `sync-assets.yml` workflow.
+- Once the fix is merged, run **Sync Assets** manually with `rebuild` to build
+  and deploy right away, or re-enable the workflow and wait for the schedule.
 - Close the `sync-assets failing` issue when a run goes green.
 
 See [`set-up-asset-hosting.md`](set-up-asset-hosting.md) for the project and its

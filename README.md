@@ -147,8 +147,9 @@ and the emoji after hydration.
 Any other `<span>` attribute (`data-*`, `aria-*`, `title`, event handlers) is
 passed to the root. A numeric `size` is rounded; anything but a finite positive
 number falls back to 100. A string `size` is passed to CSS as-is, so
-`size="2rem"` or `size="var(--emoji-size)"` work; a `style` with `width` or
-`height` wins over `size`.
+`size="2rem"` or `size="var(--emoji-size)"` work. A numeric string such as
+`"48"` is treated as the number 48, and the image gets `sizes="auto"` for other
+strings; a `style` with `width` or `height` wins over `size`.
 
 `skinTone` is one of `'default'`, `'light'`, `'medium-light'`, `'medium'`,
 `'medium-dark'` or `'dark'`. It only applies to emojis marked `diverse`; for any
@@ -211,8 +212,8 @@ or when the emoji unmounts mid-run.
 
 Sprite sheets are loaded with `loading="lazy"` and `decoding="async"`. Emojis
 that have an HD sprite sheet (200px frames) also get a width-based `srcSet`
-(`100w` and `200w`) with `sizes` set to the rendered size, so the browser picks
-the `@2x` sheet on high-density displays.
+(`100w` and `200w`) with `sizes` set to the rendered size (`auto` for a string
+`size`), so the browser picks the `@2x` sheet on high-density displays.
 
 ### Preloading
 
@@ -262,7 +263,8 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
   modifier to `skinTone`; mixed tones resolve to the base emoji. Symbols such as
   `©` or `™` need the emoji variation selector (U+FE0F) to match.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
-  sequences whole, with its offset and length.
+  sequences whole, with its offset and length. Without `Intl.Segmenter` it falls
+  back to a code point grouper, and neither function ever rejects.
 - `searchEmojis(query, { limit })` matches descriptions, ignoring case; `limit`
   defaults to 20; a `limit` that is not a positive number means no limit, except
   `0`, which returns nothing.
