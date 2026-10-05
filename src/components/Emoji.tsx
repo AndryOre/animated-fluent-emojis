@@ -24,7 +24,7 @@ const DEFAULT_SIZE = 100
 
 const warnedMissingIds = new Set<string>()
 
-const NUMERIC_STRING = /^\d+(?:\.\d+)?$/
+const NUMERIC_STRING = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/
 
 const subscribeToOnline = createSharedSubscription((notify) => {
   globalThis.addEventListener('online', notify)
@@ -37,7 +37,9 @@ const normalizeSize = (size: number | string): number | string => {
   if (typeof size === 'string') {
     const trimmed = size.trim()
     if (trimmed === '') return DEFAULT_SIZE
-    return NUMERIC_STRING.test(trimmed) ? normalizeSize(Number(trimmed)) : size
+    if (!NUMERIC_STRING.test(trimmed)) return size
+    const parsed = Number(trimmed)
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_SIZE
   }
   return Number.isFinite(size) && Math.round(size) > 0
     ? Math.round(size)
@@ -237,7 +239,7 @@ type EmojiComponentType = (<Id extends string = string>(
  * after the sizing styles and wins over them.
  * @param props - The properties for the Emoji component.
  * @param props.id - The unique identifier of the emoji.
- * @param props.size - The size of the emoji. A number is in pixels: fractions are rounded and anything but a finite positive number falls back to 100. A string is any CSS length, such as `2rem` or `var(--size)`, passed to CSS as-is.
+ * @param props.size - The size of the emoji. A number is in pixels: fractions are rounded and anything but a finite positive number falls back to 100. A string is any CSS length, such as `2rem` or `var(--size)`, passed to CSS as-is. A numeric string is read as pixels without rounding; a non-positive one falls back to 100.
  * @param props.playOnHover - Whether to play the animation on hover.
  * @param props.animationIterations - How many times to play the animation, or 'infinite'.
  * @param props.autoPlay - Whether to automatically play the animation on mount.
