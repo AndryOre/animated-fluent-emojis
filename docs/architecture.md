@@ -110,10 +110,10 @@ autoplay is held by the gate below.
 
 `playing` is a three-state control. `undefined` keeps the behaviour above.
 `true` plays `animationIterations` runs and overrides `autoPlay` and reduced
-motion, still waiting for the image and a visible tab. `false` pauses on the
-current frame. A finished run is not restarted by toggling. `onPlaybackEnd`
-fires once when a finite run ends and never for `'infinite'` or when the emoji
-unmounts mid-run.
+motion, still waiting for the image, the viewport and a visible tab. `false`
+pauses on the current frame. A finished run is not restarted by toggling.
+`onPlaybackEnd` fires once when a finite run ends and never for `'infinite'` or
+when the emoji unmounts mid-run.
 
 ### Playback gating
 

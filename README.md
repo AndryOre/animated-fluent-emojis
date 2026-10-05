@@ -171,10 +171,9 @@ an explicit user action.
 
 ### Fallback
 
-If the sprite sheet fails to load, or the `id` is unknown, `Emoji` shows the
-fallback glyph: the emoji's native Unicode character, labelled with `alt`. Pass
-`fallback` to render your own node instead, or `fallback={null}` to render
-nothing:
+If the sprite sheet fails to load, `Emoji` shows the fallback glyph: the emoji's
+native Unicode character, labelled with `alt`. Pass `fallback` to render your
+own node instead, or `fallback={null}` to render nothing:
 
 ```jsx
 <Emoji id="1f44b_wavinghand" fallback={<span>👋</span>} />
@@ -198,11 +197,11 @@ emoji's initial run again. `animationIterations` of `0`, a negative number or
 is held, the emoji shows its poster frame.
 
 Use `playing` to drive playback yourself. `true` plays `animationIterations`
-runs, overriding `autoPlay` and reduced motion (still waiting for the image and
-a visible tab); `false` pauses on the current frame. A finished run is not
-restarted by toggling, so remount with a new `key` to replay. `onPlaybackEnd`
-runs once when a finite run ends; it never runs for `'infinite'` or when the
-emoji unmounts mid-run.
+runs, overriding `autoPlay` and reduced motion (still waiting for the image, the
+viewport and a visible tab); `false` pauses on the current frame. A finished run
+is not restarted by toggling, so remount with a new `key` to replay.
+`onPlaybackEnd` runs once when a finite run ends; it never runs for `'infinite'`
+or when the emoji unmounts mid-run.
 
 ```jsx
 <Emoji id="1f389_partypopper" playing={isOpen} onPlaybackEnd={handleDone} />
