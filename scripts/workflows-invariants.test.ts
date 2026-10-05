@@ -273,6 +273,12 @@ describe('release.yml job split', () => {
     expect(usesSetupBun).toBe(false)
   })
 
+  test('publish passes the tarball to npm as an explicit relative path', () => {
+    expect(publishScript).toMatch(
+      /tarball=\$\(ls \.\/release-artifact\/\*\.tgz\)/,
+    )
+  })
+
   test('publish pins npm to 11.5.1 or newer and never uses latest', () => {
     const match = /npm install -g npm@(\d+)\.(\d+)\.(\d+)/.exec(publishScript)
     expect(match).not.toBeNull()
