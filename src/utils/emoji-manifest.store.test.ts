@@ -228,3 +228,58 @@ test('awaiters of a superseded load receive the current site outcome', async () 
     'https://other.example.com/v1/sprites/Other/other-only.etag-other.png',
   ])
 })
+
+test('preloadEmojis assigns sizes before srcset on the warm-up image', async () => {
+  serveFixtureManifest()
+  const assignments: string[] = []
+  const sizesSeen: string[] = []
+  class FakeImage {
+    set sizes(value: string) {
+      assignments.push('sizes')
+      sizesSeen.push(value)
+    }
+    set srcset(_value: string) {
+      assignments.push('srcset')
+    }
+    set src(_value: string) {
+      assignments.push('src')
+    }
+  }
+  vi.stubGlobal('Image', FakeImage)
+  const { preloadEmojis } = await importFreshModule()
+
+  await preloadEmojis(['waving-hand'])
+
+  expect(sizesSeen).toEqual(['100px'])
+  expect(assignments).toEqual(['sizes', 'srcset', 'src'])
+})
+
+test('without AbortSignal.timeout the manifest still loads and the timer is cleared', async () => {
+  serveFixtureManifest()
+  vi.stubGlobal('AbortSignal', {})
+  const clearSpy = vi.spyOn(globalThis, 'clearTimeout')
+  const { getManifestSnapshot, startManifestLoad } = await importFreshModule()
+
+  await startManifestLoad()
+
+  expect(getManifestSnapshot().status).toBe('ready')
+  expect(clearSpy).toHaveBeenCalled()
+})
+
+test('without AbortSignal.timeout a stalled request still aborts after the timeout', async () => {
+  server.use(http.get(MANIFEST_URL, async () => delay('infinite')))
+  vi.stubGlobal('AbortSignal', {})
+  const timeoutSpy = vi.spyOn(globalThis, 'setTimeout').mockImplementation(((
+    handler: () => void,
+  ) => {
+    globalThis.queueMicrotask(handler)
+    return 0
+  }) as never)
+  silence('error')
+  const { getManifestSnapshot, startManifestLoad } = await importFreshModule()
+
+  await startManifestLoad()
+
+  expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 15_000)
+  expect(getManifestSnapshot().status).toBe('error')
+})

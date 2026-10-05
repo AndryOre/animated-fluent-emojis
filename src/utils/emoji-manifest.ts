@@ -3,6 +3,10 @@ import type { CompactManifest, EmojiManifest, SkinTone } from './types.js'
 
 const DEFAULT_ASSET_SITE_URL = 'https://animated-fluent-emojis.pages.dev'
 
+const MANIFEST_TIMEOUT_MS = 15_000
+const DEFAULT_EMOJI_SIZE = 100
+const noop = (): undefined => undefined
+
 type ManifestRecord = Record<string, EmojiManifest>
 
 export type ManifestSnapshot =
@@ -105,19 +109,55 @@ const SKIN_TONE_SUFFIXES: Readonly<Partial<Record<SkinTone, string>>> = {
 }
 
 /**
+ * Creates an abort signal that fires after a delay. Uses `AbortSignal.timeout`
+ * when available and otherwise an `AbortController` with a timer, which
+ * Safari before 16 needs.
+ * @param milliseconds - Delay before the signal aborts.
+ * @returns The signal and a function that cancels the fallback timer.
+ */
+function createTimeoutSignal(milliseconds: number): {
+  signal: AbortSignal
+  clear: () => void
+} {
+  if (typeof AbortSignal.timeout === 'function') {
+    return { signal: AbortSignal.timeout(milliseconds), clear: noop }
+  }
+  const controller = new AbortController()
+  const timer = setTimeout(() => {
+    controller.abort(
+      new DOMException('The operation timed out.', 'TimeoutError'),
+    )
+  }, milliseconds)
+  return {
+    signal: controller.signal,
+    clear: () => {
+      clearTimeout(timer)
+    },
+  }
+}
+
+/**
  * Fetches the compact slim manifest from the asset site, giving up after 15 seconds.
  * @returns A promise that resolves to the raw manifest data.
  */
 async function fetchManifest(): Promise<CompactManifest> {
-  const response = await fetch(`${state.assetSiteUrl}/v1/manifest.slim.json`, {
-    signal: AbortSignal.timeout(15_000),
-  })
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch the emoji manifest (${String(response.status)})`,
+  const { signal, clear } = createTimeoutSignal(MANIFEST_TIMEOUT_MS)
+  try {
+    const response = await fetch(
+      `${state.assetSiteUrl}/v1/manifest.slim.json`,
+      {
+        signal,
+      },
     )
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch the emoji manifest (${String(response.status)})`,
+      )
+    }
+    return (await response.json()) as CompactManifest
+  } finally {
+    clear()
   }
-  return (await response.json()) as CompactManifest
 }
 
 /**
@@ -277,7 +317,10 @@ export async function preloadEmojis(
     state.warmedSources.add(source)
     const image = new Image()
     const sourceSet = getSpriteSourceSet(emoji, options.skinTone)
-    if (sourceSet) image.srcset = sourceSet
+    if (sourceSet) {
+      image.sizes = `${String(DEFAULT_EMOJI_SIZE)}px`
+      image.srcset = sourceSet
+    }
     image.src = source
   }
 }
