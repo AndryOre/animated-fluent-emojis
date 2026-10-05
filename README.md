@@ -258,12 +258,14 @@ await extractEmojis('Hi 👋 there') // [{ id, text, index, length }]
 await searchEmojis('party', { limit: 5 }) // [{ id }]
 ```
 
-- `findEmojiByUnicode(text)` resolves one emoji, tolerating the variation
-  selector and mapping skin tone modifiers to `skinTone`.
+- `findEmojiByUnicode(text)` resolves one emoji and maps a single skin tone
+  modifier to `skinTone`; mixed tones resolve to the base emoji. Symbols such as
+  `©` or `™` need the emoji variation selector (U+FE0F) to match.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
   sequences whole, with its offset and length.
 - `searchEmojis(query, { limit })` matches descriptions, ignoring case; `limit`
-  defaults to 20.
+  defaults to 20; a `limit` that is not a positive number means no limit, except
+  `0`, which returns nothing.
 
 ### Types
 

@@ -133,3 +133,150 @@ test('the lookup module does not import React', () => {
   expect(source).not.toMatch(/from\s+['"]react/)
   expect(source).not.toContain('use client')
 })
+
+const TEXT_SYMBOL_MANIFEST = {
+  categories: [
+    {
+      id: 'symbols',
+      title: 'Symbols',
+      description: 'Symbols',
+      emoticons: [
+        {
+          id: 'copyright',
+          description: 'Copyright',
+          etag: 'e1',
+          unicode: '©️',
+          animation: { framesCount: 10 },
+        },
+        {
+          id: 'trade-mark',
+          description: 'Trade mark',
+          etag: 'e2',
+          unicode: '™️',
+          animation: { framesCount: 10 },
+        },
+        {
+          id: 'keycap-1',
+          description: 'Keycap 1',
+          etag: 'e3',
+          unicode: '1️⃣',
+          animation: { framesCount: 10 },
+        },
+        {
+          id: 'grinning-face',
+          description: 'Grinning face',
+          etag: 'e4',
+          unicode: '\u{1F600}',
+          animation: { framesCount: 10 },
+        },
+        {
+          id: 'waving-hand',
+          description: 'Waving hand',
+          etag: 'e5',
+          unicode: '\u{1F44B}',
+          animation: { framesCount: 10 },
+          diverse: true,
+        },
+        {
+          id: 'people-holding-hands',
+          description: 'People holding hands',
+          etag: 'e6',
+          unicode: '\u{1F9D1}‍\u{1F91D}‍\u{1F9D1}',
+          animation: { framesCount: 10 },
+          diverse: true,
+        },
+        {
+          id: 'family',
+          description: 'Family',
+          etag: 'e7',
+          unicode: '\u{1F468}‍\u{1F469}‍\u{1F467}',
+          animation: { framesCount: 10 },
+        },
+      ],
+    },
+  ],
+}
+
+const serveSymbolManifest = () => {
+  server.use(
+    http.get(MANIFEST_URL, () => HttpResponse.json(TEXT_SYMBOL_MANIFEST)),
+  )
+}
+
+test('text presentation bases require VS16 while emoji presentation bases do not', async () => {
+  serveSymbolManifest()
+  const { extractEmojis, findEmojiByUnicode } = await importFresh()
+
+  expect(await extractEmojis('© 2024 Acme™')).toEqual([])
+  expect(await extractEmojis('©️')).toEqual([
+    { id: 'copyright', text: '©️', index: 0, length: 2 },
+  ])
+  expect(await findEmojiByUnicode('™')).toBeUndefined()
+  expect(await findEmojiByUnicode('™︎')).toBeUndefined()
+  expect(await findEmojiByUnicode('™️')).toEqual({ id: 'trade-mark' })
+  expect(await findEmojiByUnicode('\u{1F600}')).toEqual({ id: 'grinning-face' })
+  expect(await findEmojiByUnicode('\u{1F600}️')).toEqual({
+    id: 'grinning-face',
+  })
+})
+
+test('keycap sequences resolve whole', async () => {
+  serveSymbolManifest()
+  const { extractEmojis } = await importFresh()
+
+  expect(await extractEmojis('a 1️⃣')).toEqual([
+    { id: 'keycap-1', text: '1️⃣', index: 2, length: 3 },
+  ])
+  expect(await extractEmojis('1⃣')).toEqual([])
+})
+
+test('two different skin tones resolve to the base id, one tone is kept', async () => {
+  serveSymbolManifest()
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(
+    await findEmojiByUnicode('\u{1F9D1}\u{1F3FB}‍\u{1F91D}‍\u{1F9D1}\u{1F3FF}'),
+  ).toEqual({ id: 'people-holding-hands' })
+  expect(
+    await findEmojiByUnicode('\u{1F9D1}\u{1F3FB}‍\u{1F91D}‍\u{1F9D1}\u{1F3FB}'),
+  ).toEqual({ id: 'people-holding-hands', skinTone: 'light' })
+})
+
+test('extractEmojis works without Intl.Segmenter', async () => {
+  serveSymbolManifest()
+  vi.stubGlobal('Intl', { ...Intl, Segmenter: undefined })
+  const { extractEmojis } = await importFresh()
+
+  const found = await extractEmojis(
+    'hi \u{1F44B}\u{1F3FD} \u{1F468}‍\u{1F469}‍\u{1F467} 1️⃣',
+  )
+  vi.unstubAllGlobals()
+
+  expect(found).toEqual([
+    {
+      id: 'waving-hand',
+      skinTone: 'medium',
+      text: '\u{1F44B}\u{1F3FD}',
+      index: 3,
+      length: 4,
+    },
+    {
+      id: 'family',
+      text: '\u{1F468}‍\u{1F469}‍\u{1F467}',
+      index: 8,
+      length: 8,
+    },
+    { id: 'keycap-1', text: '1️⃣', index: 17, length: 3 },
+  ])
+})
+
+test('searchEmojis treats a non finite positive limit as unlimited and 0 as empty', async () => {
+  serveSymbolManifest()
+  const { searchEmojis } = await importFresh()
+
+  expect(await searchEmojis('a', { limit: 0 })).toEqual([])
+  expect(await searchEmojis('a', { limit: NaN })).toHaveLength(6)
+  expect(await searchEmojis('a', { limit: -3 })).toHaveLength(6)
+  expect(await searchEmojis('a', { limit: Infinity })).toHaveLength(6)
+  expect(await searchEmojis('a', { limit: 2 })).toHaveLength(2)
+})
