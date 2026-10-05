@@ -25,6 +25,8 @@ An index of every document in this repository.
   trusted publisher setup.
 - [`how-to/set-up-asset-hosting.md`](how-to/set-up-asset-hosting.md): creating
   the Cloudflare Pages project and the secrets behind the asset site.
+- [`how-to/roll-back-the-asset-site.md`](how-to/roll-back-the-asset-site.md):
+  restoring an earlier asset site deployment.
 
 ## Architecture decision records
 

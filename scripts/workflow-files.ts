@@ -9,14 +9,19 @@ const WORKFLOWS_DIRECTORY = path.join(
 )
 
 export interface WorkflowStep {
+  readonly name?: string
+  readonly if?: string
   readonly uses?: string
   readonly run?: string
   readonly with?: Record<string, unknown>
 }
 
 interface WorkflowJob {
+  readonly if?: string
+  readonly needs?: unknown
   readonly 'timeout-minutes'?: unknown
   readonly uses?: string
+  readonly permissions?: unknown
   readonly steps?: readonly WorkflowStep[]
 }
 

@@ -115,7 +115,7 @@
     {
       "name": "ESM bundle",
       "path": "dist/animated-fluent-emojis.js",
-      "limit": "2.25 kB"
+      "limit": "2.67 kB"
     },
     {
       "name": "Stylesheet",

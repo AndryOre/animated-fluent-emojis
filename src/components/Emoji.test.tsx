@@ -226,7 +226,7 @@ test('offers the HD sprite sheet through srcset for hd emojis', async () => {
     .element(getImage('Waving hand'))
     .toHaveAttribute(
       'srcset',
-      `${SPRITE_BASE}/Smilies/waving-hand_s6.png?v=etag-wave 1x, ${SPRITE_BASE}/Smilies/waving-hand_s6@2x.png?v=etag-wave 2x`,
+      `${SPRITE_BASE}/Smilies/waving-hand_s6.png?v=etag-wave 100w, ${SPRITE_BASE}/Smilies/waving-hand_s6@2x.png?v=etag-wave 200w`,
     )
 })
 

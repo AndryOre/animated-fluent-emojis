@@ -3,11 +3,13 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type RefObject,
 } from 'react'
 
 import type { EmojiManifest } from '../utils/index.js'
+import { observeVisibility } from '../utils/visibility-observer.js'
 import { usePrefersReducedMotion } from './use-prefers-reduced-motion.js'
 
 const normalizeIterations = (
@@ -16,6 +18,16 @@ const normalizeIterations = (
   if (value === 'infinite' || value === Infinity) return 'infinite'
   return Number.isNaN(value) || value < 0 ? 0 : value
 }
+
+const subscribeToDocumentVisibility = (onChange: () => void) => {
+  document.addEventListener('visibilitychange', onChange)
+  return () => {
+    document.removeEventListener('visibilitychange', onChange)
+  }
+}
+
+const getDocumentHidden = () => document.hidden
+const getServerDocumentHidden = () => false
 
 export interface UseEmojiAnimationResult {
   isInitialAnimationComplete: boolean
@@ -29,6 +41,8 @@ export interface UseEmojiAnimationResult {
  * @param playOnHover - Whether to play the animation on hover.
  * @param animationIterations - The number of animation iterations.
  * @param autoPlayRequested - Whether to autoplay the animation. Ignored while the user prefers reduced motion.
+ * Autoplay, including looping, runs only once the image has loaded, while the
+ * emoji is on screen and while the document is visible.
  * @param size - The size of the emoji in pixels.
  * @returns Animation state, inline style and the image element ref.
  */
@@ -45,10 +59,19 @@ export const useEmojiAnimation = (
     autoPlayRequested && !prefersReducedMotion && iterationCount !== 0
   const emojiId = emoji?.id
   const [trackedEmojiId, setTrackedEmojiId] = useState(emojiId)
+  const [hasImageLoaded, setHasImageLoaded] = useState(false)
+  const [isOnScreen, setIsOnScreen] = useState(false)
+  const isDocumentHidden = useSyncExternalStore(
+    subscribeToDocumentVisibility,
+    getDocumentHidden,
+    getServerDocumentHidden,
+  )
   const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
   if (trackedEmojiId !== emojiId) {
     setTrackedEmojiId(emojiId)
     setHasInitialRunFinished(false)
+    setHasImageLoaded(false)
+    setIsOnScreen(false)
   }
   const isInitialAnimationComplete = hasInitialRunFinished || !autoPlay
   const imageRef = useRef<HTMLImageElement>(null)
@@ -61,9 +84,20 @@ export const useEmojiAnimation = (
       setHasInitialRunFinished(true)
     }
 
+    const handleLoad = () => {
+      setHasImageLoaded(true)
+    }
+
     imgElement.addEventListener('animationend', handleAnimationEnd)
+    imgElement.addEventListener('load', handleLoad)
+    const stopObserving = observeVisibility(imgElement, (isVisible) => {
+      setIsOnScreen(isVisible)
+      if (imgElement.complete && imgElement.naturalWidth > 0) handleLoad()
+    })
     return () => {
       imgElement.removeEventListener('animationend', handleAnimationEnd)
+      imgElement.removeEventListener('load', handleLoad)
+      stopObserving()
     }
   }, [emojiId])
 
@@ -72,6 +106,8 @@ export const useEmojiAnimation = (
 
     const { framesCount, fps, firstFrame } = emoji.animation
     const isIdle = !playOnHover && isInitialAnimationComplete
+    const canAutoplay = hasImageLoaded && isOnScreen && !isDocumentHidden
+    const isAutoplayHeld = !(isInitialAnimationComplete || canAutoplay)
 
     return {
       width: size,
@@ -80,10 +116,19 @@ export const useEmojiAnimation = (
       animationTimingFunction: `steps(${String(framesCount)})`,
       animationIterationCount:
         isInitialAnimationComplete && playOnHover ? 'infinite' : iterationCount,
-      animationPlayState: isIdle ? 'paused' : 'running',
+      animationPlayState: isIdle || isAutoplayHeld ? 'paused' : 'running',
       transform: `translateY(${String((-(firstFrame - 1) / framesCount) * 100)}%)`,
     }
-  }, [emoji, size, isInitialAnimationComplete, playOnHover, iterationCount])
+  }, [
+    emoji,
+    size,
+    isInitialAnimationComplete,
+    playOnHover,
+    iterationCount,
+    hasImageLoaded,
+    isOnScreen,
+    isDocumentHidden,
+  ])
 
   return {
     isInitialAnimationComplete,
