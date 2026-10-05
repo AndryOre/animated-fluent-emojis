@@ -67,7 +67,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TEAMS_HASH: ${{ steps.detect.outputs.teams_hash }}
-        run: bun run assets:build --teams-hash "${TEAMS_HASH}"
+          FORCE: ${{ inputs.force }}
+        run: |
+          args=(--teams-hash "${TEAMS_HASH}")
+          if [[ "${FORCE}" == "true" ]]; then
+            args+=(--force)
+          fi
+          bun run assets:build "${args[@]}"
 
       - name: Deploy to Cloudflare Pages
         if: steps.detect.outputs.changed == 'true'

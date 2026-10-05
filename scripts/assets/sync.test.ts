@@ -58,7 +58,7 @@ test('fetchPublishedJson treats only HTTP 404 as unpublished', async () => {
 
 test('fetchPublishedJson fails on DNS errors instead of treating them as unpublished', async () => {
   await expect(
-    fetchPublishedJson(missingHost, 'https://nope.test', 'version.json'),
+    fetchPublishedJson(missingHost, 'https://nope.test', 'version.json', 1),
   ).rejects.toThrow('fetch failed')
 })
 
@@ -67,13 +67,13 @@ test('fetchPublishedJson fails on HTTP 500', async () => {
     'GET https://site.test/version.json': { status: 500 },
   })
   await expect(
-    fetchPublishedJson(fetch, 'https://site.test', 'version.json'),
+    fetchPublishedJson(fetch, 'https://site.test', 'version.json', 1),
   ).rejects.toThrow('HTTP 500')
 })
 
 test('fetchPublishedJson surfaces network failures', async () => {
   await expect(
-    fetchPublishedJson(offline, 'https://site.test', 'version.json'),
+    fetchPublishedJson(offline, 'https://site.test', 'version.json', 1),
   ).rejects.toThrow('socket hang up')
 })
 
@@ -98,4 +98,21 @@ test('formatErrorChain prints the message, cause chain and stack', () => {
   expect(output).toContain('Caused by: Error: inner')
   expect(output).toContain('Caused by: {"code":"ENOTFOUND"}')
   expect(output).toContain('at ')
+})
+
+test('fetchPublishedJson retries a transient failure through the shared helper', async () => {
+  let calls = 0
+  const flaky = () => {
+    calls += 1
+    return Promise.resolve(
+      calls === 1
+        ? new Response('x', { status: 503, headers: { 'retry-after': '0' } })
+        : Response.json(published),
+    )
+  }
+
+  await expect(
+    fetchPublishedJson(flaky, 'https://site.test', 'version.json'),
+  ).resolves.toEqual(published)
+  expect(calls).toBe(2)
 })

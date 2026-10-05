@@ -194,3 +194,23 @@ test('loads the image lazily and decodes it asynchronously', async () => {
   await expect.element(image).toHaveAttribute('loading', 'lazy')
   await expect.element(image).toHaveAttribute('decoding', 'async')
 })
+
+test('shares one media query list across instances', async () => {
+  const spy = vi.spyOn(globalThis, 'matchMedia')
+  try {
+    await render(
+      <>
+        <Emoji id="cat" />
+        <Emoji id="cat" />
+        <Emoji id="cat" />
+      </>,
+    )
+    await expect.element(getImage('Cat').first()).toBeVisible()
+    const reducedMotionCalls = spy.mock.calls.filter(
+      ([query]) => query === '(prefers-reduced-motion: reduce)',
+    )
+    expect(reducedMotionCalls.length).toBeLessThanOrEqual(1)
+  } finally {
+    spy.mockRestore()
+  }
+})

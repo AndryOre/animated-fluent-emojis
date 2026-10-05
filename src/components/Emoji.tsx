@@ -18,7 +18,7 @@ import styles from './Emoji.module.css'
  * @param props.autoPlay - Whether to automatically play the animation on mount.
  * @param props.skinTone - The skin tone, for emojis that support it.
  * @param props.alt - Accessible text, defaults to the emoji description. An empty string marks the emoji as decorative.
- * @returns The emoji, an empty placeholder of the final size while the manifest loads, or null if the emoji is not found.
+ * @returns The emoji, an empty placeholder of the final size while the manifest loads, or null if the emoji is not found or the manifest failed to load.
  */
 export const Emoji = ({
   id,

@@ -199,9 +199,7 @@ test('switches to hover-only playback after the requested iterations', async () 
   const container = image.element().parentElement
   expect(container?.className).not.toContain('animateOnHover')
 
-  image.element().dispatchEvent(new Event('animationiteration'))
-  expect(container?.className).not.toContain('animateOnHover')
-  image.element().dispatchEvent(new Event('animationiteration'))
+  image.element().dispatchEvent(new Event('animationend'))
 
   await expect.poll(() => container?.className).toContain('animateOnHover')
   await expect
@@ -249,4 +247,61 @@ test('renders nothing for an unknown id', async () => {
     setTimeout(resolve, 50)
   })
   expect(container.getHTML()).toBe('')
+})
+
+test('autoplays the new emoji when the id changes after the run finished', async () => {
+  const { rerender } = await render(
+    <Emoji id="grinning-face" size={80} animationIterations={1} />,
+  )
+
+  const first = getImage('Grinning face')
+  await expect.element(first).toBeVisible()
+  await expect
+    .poll(() => first.element().getAnimations().length, { timeout: 5000 })
+    .toBe(0)
+
+  await rerender(<Emoji id="cat" size={80} animationIterations={1} />)
+
+  const second = getImage('Cat')
+  await expect.element(second).toBeVisible()
+  await expect.poll(() => second.element().getAnimations().length).toBe(1)
+})
+
+test('loops when animationIterations is Infinity', async () => {
+  await render(<Emoji id="cat" animationIterations={Infinity} />)
+
+  const image = getImage('Cat')
+  await expect.element(image).toBeVisible()
+  expect(image.element().style.animationIterationCount).toBe('infinite')
+})
+
+test.each([-1, NaN, 0])(
+  'does not autoplay when animationIterations is %s',
+  async (animationIterations) => {
+    await render(
+      <Emoji id="cat" playOnHover animationIterations={animationIterations} />,
+    )
+
+    const image = getImage('Cat')
+    await expect.element(image).toBeVisible()
+    expect(image.element().style.animationIterationCount).toBe('infinite')
+    await userEvent.unhover(image)
+    await expect.poll(() => image.element().getAnimations().length).toBe(0)
+  },
+)
+
+test('plays nothing extra when the iteration count is raised after the run', async () => {
+  const { rerender } = await render(
+    <Emoji id="grinning-face" size={80} animationIterations={1} />,
+  )
+
+  const image = getImage('Grinning face')
+  await expect.element(image).toBeVisible()
+  await expect
+    .poll(() => image.element().getAnimations().length, { timeout: 5000 })
+    .toBe(0)
+
+  await rerender(<Emoji id="grinning-face" size={80} animationIterations={5} />)
+  await expectStill(image)
+  expect(image.element().getAnimations()).toHaveLength(0)
 })

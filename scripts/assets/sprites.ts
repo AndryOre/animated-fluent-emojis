@@ -63,75 +63,119 @@ export function resolveFrameRate(
   )
 }
 
+const PNG_SIGNATURE_LENGTH = 8
+
 /**
- * Converts an animated PNG into a vertical sprite sheet, the layout the
- * `Emoji` component steps through.
+ * Reads the animation frame count from the `acTL` chunk of an animated PNG,
+ * without decoding any frame.
  * @param animatedPng The bytes of the animated PNG.
- * @param frameSize The width and height of each frame in pixels, 100 by
- * default; 200 builds the `@2x` sheet.
- * @returns The palette-optimized sprite sheet and its frame count and fps.
+ * @returns The number of frames declared by the `acTL` chunk.
+ */
+export function readApngFrameCount(animatedPng: Buffer): number {
+  let offset = PNG_SIGNATURE_LENGTH
+  while (offset + 8 <= animatedPng.length) {
+    const chunkLength = animatedPng.readUInt32BE(offset)
+    const chunkType = animatedPng.toString('latin1', offset + 4, offset + 8)
+    if (chunkType === 'acTL' && chunkLength >= 8) {
+      const framesCount = animatedPng.readUInt32BE(offset + 8)
+      if (framesCount < 1) break
+      return framesCount
+    }
+    if (chunkType === 'IDAT') break
+    offset += 12 + chunkLength
+  }
+  throw new Error('Animated PNG has no valid acTL frame count')
+}
+
+function buildFilterGraph(
+  frameSizes: readonly number[],
+  framesCount: number,
+): string {
+  const branches = frameSizes.map(
+    (frameSize, index) =>
+      `[branch${String(index)}]scale=${String(frameSize)}:${String(frameSize)}:flags=lanczos,tile=1x${String(framesCount)}[sheet${String(index)}]`,
+  )
+  const labels = frameSizes.map((_, index) => `[branch${String(index)}]`)
+  return [
+    `[0:v]split=${String(frameSizes.length)}${labels.join('')}`,
+    ...branches,
+  ].join(';')
+}
+
+/**
+ * Converts an animated PNG into vertical sprite sheets, the layout the
+ * `Emoji` component steps through. Every requested size comes from a single
+ * ffmpeg decode.
+ * @param animatedPng The bytes of the animated PNG.
+ * @param frameSizes The width and height of each frame in pixels, one sheet per
+ * entry; 100 by default, 200 builds the `@2x` sheet.
+ * @returns The palette-optimized sprite sheets, in the order of `frameSizes`.
  */
 export async function convertAnimatedPng(
   animatedPng: Buffer,
-  frameSize: number = SPRITE_SIZE,
-): Promise<ConvertedSprite> {
-  if (!Number.isSafeInteger(frameSize) || frameSize < 1) {
-    throw new Error(`Invalid sprite frame size ${String(frameSize)}`)
+  frameSizes: readonly number[] = [SPRITE_SIZE],
+): Promise<ConvertedSprite[]> {
+  if (frameSizes.length === 0) throw new Error('No sprite frame sizes given')
+  for (const frameSize of frameSizes) {
+    if (!Number.isSafeInteger(frameSize) || frameSize < 1) {
+      throw new Error(`Invalid sprite frame size ${String(frameSize)}`)
+    }
   }
+  const framesCount = readApngFrameCount(animatedPng)
   const workingDirectory = await mkdtemp(path.join(tmpdir(), 'emoji-sprite-'))
   try {
     const inputPath = path.join(workingDirectory, 'input.png')
-    const outputPath = path.join(workingDirectory, 'sprite.png')
     await writeFile(inputPath, animatedPng)
 
     const probe = await execFileAsync('ffprobe', [
       '-v',
       'error',
-      '-count_frames',
       '-select_streams',
       'v:0',
       '-show_entries',
-      'stream=nb_read_frames,avg_frame_rate,r_frame_rate',
+      'stream=avg_frame_rate,r_frame_rate',
       '-of',
       'json',
       inputPath,
     ])
     const stream = (
       JSON.parse(probe.stdout) as {
-        streams: {
-          nb_read_frames: string
-          avg_frame_rate?: string
-          r_frame_rate?: string
-        }[]
+        streams: { avg_frame_rate?: string; r_frame_rate?: string }[]
       }
     ).streams[0]
-    const framesCount = Number(stream?.nb_read_frames)
-    if (!stream || !Number.isSafeInteger(framesCount) || framesCount < 1) {
-      throw new Error('ffprobe did not report a frame count')
-    }
+    if (!stream) throw new Error('ffprobe did not report a video stream')
+    const fps = resolveFrameRate(stream.avg_frame_rate, stream.r_frame_rate)
 
+    const outputPaths = frameSizes.map((_, index) =>
+      path.join(workingDirectory, `sprite-${String(index)}.png`),
+    )
     await execFileAsync('ffmpeg', [
       '-v',
       'error',
       '-y',
       '-i',
       inputPath,
-      '-vf',
-      `scale=${String(frameSize)}:${String(frameSize)}:flags=lanczos,tile=1x${String(framesCount)}`,
-      '-frames:v',
-      '1',
-      '-update',
-      '1',
-      outputPath,
+      '-filter_complex',
+      buildFilterGraph(frameSizes, framesCount),
+      ...outputPaths.flatMap((outputPath, index) => [
+        '-map',
+        `[sheet${String(index)}]`,
+        '-frames:v',
+        '1',
+        '-update',
+        '1',
+        outputPath,
+      ]),
     ])
-    const png = await sharp(await readFile(outputPath))
-      .png({ palette: true, quality: 90, effort: 10 })
-      .toBuffer()
-    return {
-      png,
-      framesCount,
-      fps: resolveFrameRate(stream.avg_frame_rate, stream.r_frame_rate),
-    }
+    return await Promise.all(
+      outputPaths.map(async (outputPath) => ({
+        png: await sharp(await readFile(outputPath))
+          .png({ palette: true, quality: 90, effort: 10 })
+          .toBuffer(),
+        framesCount,
+        fps,
+      })),
+    )
   } finally {
     await rm(workingDirectory, { recursive: true, force: true })
   }

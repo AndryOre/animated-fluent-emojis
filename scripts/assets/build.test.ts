@@ -1,5 +1,5 @@
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { availableParallelism, tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, expect, test } from 'vitest'
 
@@ -9,7 +9,9 @@ import {
   applyHd,
   buildAssets,
   diffManifests,
+  DOWNLOAD_CONCURRENCY,
   fileExists,
+  getConversionConcurrency,
   readState,
   type BuildOptions,
 } from './build.js'
@@ -36,14 +38,18 @@ const hdSheet = (framesCount: number): Promise<Buffer> =>
 
 const createConvert =
   (hdFramesCount = 40) =>
-  async (_png: Buffer, frameSize = 100): Promise<ConvertedSprite> =>
-    frameSize === 200
-      ? {
-          png: await hdSheet(hdFramesCount),
-          framesCount: hdFramesCount,
-          fps: 24,
-        }
-      : { png: FLAG_PNG, framesCount: 40, fps: 24 }
+  (_png: Buffer, frameSizes: readonly number[]): Promise<ConvertedSprite[]> =>
+    Promise.all(
+      frameSizes.map(async (frameSize): Promise<ConvertedSprite> =>
+        frameSize === 200
+          ? {
+              png: await hdSheet(hdFramesCount),
+              framesCount: hdFramesCount,
+              fps: 24,
+            }
+          : { png: FLAG_PNG, framesCount: 40, fps: 24 },
+      ),
+    )
 
 const context = { workDirectory: '' }
 
@@ -332,11 +338,13 @@ test('writes nothing when the catalog fails validation', async () => {
   const options = {
     ...baseOptions(fakeFetch),
     convert: () =>
-      Promise.resolve({
-        png: Buffer.from('converted'),
-        framesCount: 0,
-        fps: 0,
-      }),
+      Promise.resolve([
+        {
+          png: Buffer.from('converted'),
+          framesCount: 0,
+          fps: 0,
+        },
+      ]),
   }
 
   await expect(buildAssets(options)).rejects.toThrow(
@@ -520,9 +528,9 @@ test('changes the etag with the HD source and reuses HD sheets otherwise', async
   const countingConvert = createConvert(72)
   const second = await buildAssets({
     ...baseOptions(smileyFetch()),
-    convert: (png, frameSize) => {
-      if (frameSize === 200) hdConversions += 1
-      return countingConvert(png, frameSize)
+    convert: (png, frameSizes) => {
+      if (frameSizes.includes(200)) hdConversions += 1
+      return countingConvert(png, frameSizes)
     },
   })
   const changedRoutes = withOfficialSmiley(spriteRoutes(), 'smiley-sha-2')
@@ -551,4 +559,30 @@ test('applyHd flags only the given emojis and swaps their etag', () => {
     etag: 'hd-etag',
   })
   expect(findEmoticon(manifest, SMILEY_ID)?.hd).toBeUndefined()
+})
+
+const FLAG_APNG_URL = `https://media.githubusercontent.com/media/microsoft/fluentui-emoji-animated/${SHA}/assets/Chequered%20flag/animated/chequered_flag_animated.png`
+
+test('fetches an official source once and decodes it once for both sheets', async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const conversions: (readonly number[])[] = []
+
+  const result = await buildAssets({
+    ...baseOptions(fakeFetch),
+    convert: (png, frameSizes) => {
+      conversions.push(frameSizes)
+      return createConvert(40)(png, frameSizes)
+    },
+  })
+
+  expect(findEmoticon(result.manifest, '1f3c1_chequeredflag')?.hd).toBe(true)
+  expect(
+    fakeFetch.requests.filter((key) => key.endsWith(FLAG_APNG_URL)),
+  ).toHaveLength(1)
+  expect(conversions).toEqual([[100, 200]])
+})
+
+test('limits conversions independently from downloads', () => {
+  expect(DOWNLOAD_CONCURRENCY).toBe(24)
+  expect(getConversionConcurrency()).toBe(availableParallelism())
 })
