@@ -6,7 +6,7 @@ const SOURCE_ROOT = path.resolve(import.meta.dirname, '..')
 
 const EXEMPTIONS: Readonly<Record<string, string>> = {
   'index.ts':
-    'Public barrel that only re-exports Emoji, covered by Emoji.test.tsx.',
+    'Public barrel that only re-exports Emoji, configureEmojis and the public types, covered by Emoji.test.tsx.',
   'hooks/use-prefers-reduced-motion.ts':
     'Covered through Emoji.runtime.test.tsx with emulated reduced motion.',
   'hooks/index.ts': 'Barrel re-exporting hooks that have their own tests.',

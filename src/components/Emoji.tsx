@@ -1,7 +1,11 @@
 import { type ReactElement } from 'react'
 
 import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js'
-import { getSpriteUrl, type EmojiProps } from '../utils/index.js'
+import {
+  getSpriteSourceSet,
+  getSpriteUrl,
+  type EmojiProps,
+} from '../utils/index.js'
 import styles from './Emoji.module.css'
 
 /**
@@ -59,6 +63,7 @@ export const Emoji = ({
         decoding="async"
         draggable="false"
         src={getSpriteUrl(emoji, skinTone)}
+        srcSet={getSpriteSourceSet(emoji, skinTone)}
         style={animationStyle}
         className={styles.emojiImage}
       />
