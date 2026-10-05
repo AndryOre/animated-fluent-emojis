@@ -108,3 +108,56 @@ describe('sync-assets.yml build step', () => {
     expect(script).not.toContain('${{')
   })
 })
+
+describe('sync-assets.yml failure report job', () => {
+  const workflow = readWorkflow('sync-assets.yml')
+  const job = workflow.jobs?.['report-failure']
+
+  test('runs only on failure and depends on every other job', () => {
+    expect(job?.if).toBe('failure()')
+    expect(job?.needs).toEqual(['sync', 'emoji-lists'])
+  })
+
+  test('has only issues: write permission', () => {
+    expect(job?.permissions).toEqual({ issues: 'write' })
+  })
+
+  test('is the only job granted issues: write', () => {
+    const writers = Object.entries(workflow.jobs ?? {})
+      .filter(([, other]) =>
+        JSON.stringify(other.permissions ?? {}).includes('issues'),
+      )
+      .map(([name]) => name)
+    expect(writers).toEqual(['report-failure'])
+  })
+
+  test('does not interpolate expressions into the script', () => {
+    const script = job?.steps?.map((step) => step.run ?? '').join('\n') ?? ''
+    expect(script).toContain('gh issue')
+    expect(script).not.toContain('${{')
+  })
+})
+
+describe('sync-assets.yml smoke steps', () => {
+  const steps = collectSteps(readWorkflow('sync-assets.yml'))
+  const legacy = steps.find(
+    (step) => step.name === 'Smoke test the legacy layout',
+  )
+  const v1 = steps.find((step) => step.name === 'Smoke test the v1 layout')
+
+  test('checks the legacy manifest and a legacy sprite', () => {
+    expect(legacy?.run).toContain('/manifest.slim.json')
+    expect(legacy?.run).toContain('/sprites/')
+  })
+
+  test('guards the v1 checks behind the smoke_v1 input', () => {
+    expect(v1?.if).toContain('inputs.smoke_v1')
+    expect(v1?.run).toContain('/v1/manifest.slim.json')
+    expect(v1?.run).toContain('/v1/sprites/')
+  })
+
+  test('does not interpolate expressions into the scripts', () => {
+    expect(legacy?.run).not.toContain('${{')
+    expect(v1?.run).not.toContain('${{')
+  })
+})
