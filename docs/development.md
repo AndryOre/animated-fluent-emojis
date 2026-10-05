@@ -7,8 +7,8 @@ bun install
 bunx playwright install chromium
 ```
 
-Bun `>=1.4.2` is required (see `engines` in `package.json`). Husky installs the
-git hooks on `bun install` through the `prepare` script.
+Bun `1.4.2` is required (see `packageManager` in `package.json`). Husky installs
+the git hooks on `bun install` through the `prepare` script.
 
 ## Scripts
 
