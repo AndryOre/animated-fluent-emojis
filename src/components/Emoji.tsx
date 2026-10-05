@@ -45,8 +45,16 @@ const EmojiComponent = (
 ): ReactElement | null => {
   const size = normalizeSize(requestedSize)
   const { status, emoji } = useEmojiStyle(id)
+  const spriteSource = emoji ? getSpriteUrl(emoji, skinTone) : undefined
   const { isInitialAnimationComplete, animationStyle, imageRef } =
-    useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
+    useEmojiAnimation(
+      emoji,
+      playOnHover,
+      animationIterations,
+      autoPlay,
+      size,
+      spriteSource,
+    )
   const [failedSource, setFailedSource] = useState<string | null>(null)
   const onErrorRef = useRef(onError)
   useEffect(() => {

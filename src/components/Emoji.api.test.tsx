@@ -113,3 +113,19 @@ test('className, style, data attributes and ref reach the root span', async () =
   expect(root.style.margin).toBe('3px')
   expect(root.style.width).toBe('32px')
 })
+
+test('a new image after a failure starts playing once loaded and visible', async () => {
+  const { container, rerender } = await render(
+    <Emoji id="waving-hand" skinTone="dark" />,
+  )
+  await failImage(container)
+  await expect.poll(() => container.querySelector('img')).toBeNull()
+
+  await rerender(<Emoji id="waving-hand" skinTone="light" />)
+  const image = await waitForImage(container)
+  image.dispatchEvent(new Event('load'))
+
+  await expect
+    .poll(() => image.style.animationPlayState, { timeout: 5000 })
+    .toBe('running')
+})
