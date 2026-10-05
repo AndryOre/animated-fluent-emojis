@@ -301,8 +301,22 @@ test('plays nothing extra when the iteration count is raised after the run', asy
   await expect
     .poll(() => image.element().getAnimations().length, { timeout: 5000 })
     .toBe(0)
+  await expect.element(image).toHaveStyle({ animationName: 'none' })
 
   await rerender(<Emoji id="grinning-face" size={80} animationIterations={5} />)
   await expectStill(image)
   expect(image.element().getAnimations()).toHaveLength(0)
+})
+
+test.each([
+  ['-5', '100px'],
+  ['0', '100px'],
+  ['', '100px'],
+  ['.5', '0.5px'],
+])('treats the string size %j as %s', async (size, expected) => {
+  const { container } = await render(<Emoji id="waving-hand" size={size} />)
+
+  await expect.element(getImage('Waving hand')).toBeVisible()
+  const box = container.firstElementChild
+  expect(box && getComputedStyle(box).width).toBe(expected)
 })
