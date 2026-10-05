@@ -13,6 +13,7 @@ export default defineConfig({
         'src/test/**',
         'src/**/*.d.ts',
         'src/utils/types.ts',
+        'src/utils/emoji-id.generated.ts',
       ],
       reporter: ['text', 'lcov'],
       thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },

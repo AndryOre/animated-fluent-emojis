@@ -11,6 +11,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'utils/index.ts':
     'Barrel re-exporting utils, covered by emoji-manifest.test.ts.',
   'utils/types.ts': 'Type-only module with no runtime behavior to test.',
+  'utils/emoji-id.generated.ts':
+    'Generated type-only union, produced and tested by scripts/assets.',
 }
 
 const exemptedFiles = new Set(Object.keys(EXEMPTIONS))

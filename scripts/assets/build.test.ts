@@ -153,9 +153,18 @@ test('builds the manifest, sprites, version marker, headers and license', async 
     mitSha: SHA,
     builtAt: '2026-10-05T00:00:00.000Z',
   })
-  expect(await readFile(path.join(out, '_headers'), 'utf8')).toContain(
-    'immutable',
-  )
+  const slim = JSON.parse(
+    await readFile(path.join(out, 'manifest.slim.json'), 'utf8'),
+  ) as typeof result.manifest
+  expect(
+    slim.categories.flatMap((category) =>
+      category.emoticons.map((emoticon) => emoticon.id),
+    ),
+  ).toEqual(ids)
+  expect(slim.categories[0]?.emoticons[0]).not.toHaveProperty('keywords')
+  const headers = await readFile(path.join(out, '_headers'), 'utf8')
+  expect(headers).toContain('immutable')
+  expect(headers).toContain('/manifest.slim.json\n  Cache-Control')
   expect(
     await readFile(
       path.join(out, 'LICENSE-fluentui-emoji-animated.txt'),

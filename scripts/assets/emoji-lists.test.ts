@@ -3,7 +3,8 @@ import { expect, test } from 'vitest'
 
 import {
   buildCategoryFileName,
-  formatMarkdown,
+  formatSource,
+  renderEmojiIdModule,
   renderEmojiLists,
 } from './emoji-lists.js'
 import { createTeamsManifest } from './test-support.js'
@@ -43,13 +44,22 @@ test('escapes pipes and collapses whitespace in cells', () => {
   expect(smilies).toContain(String.raw`a \| b c`)
 })
 
-test('formatMarkdown aligns the table with the repository Prettier config', async () => {
+test('formatSource aligns the table with the repository Prettier config', async () => {
   const source = '| A | B |\n| - | - |\n| longer cell | x |\n'
 
-  const formatted = await formatMarkdown(
+  const formatted = await formatSource(
     source,
     path.resolve(import.meta.dirname, '../../docs/EMOJI_LIST_Test.md'),
   )
 
   expect(formatted).toContain('| A           | B   |')
+})
+
+test('renders the EmojiId union with one literal per id', () => {
+  const source = renderEmojiIdModule(createTeamsManifest())
+
+  expect(source).toContain('export type EmojiId =')
+  expect(source).toContain('  | "1f603_grinningfacewithbigeyes"')
+  expect(source).toContain('  | "1f44b_wavinghand"')
+  expect(source.match(/^ {2}\| "/gm)).toHaveLength(2)
 })
