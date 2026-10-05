@@ -18,7 +18,7 @@ import {
   assertFileCountWithinLimit,
   assertRemovalsWithinLimit,
 } from './guards.js'
-import { fetchOkOrMissing, type FetchLike } from './http.js'
+import { fetchOk, fetchOkOrMissing, type FetchLike } from './http.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { V1_DIRECTORY } from './layout-v1.js'
 import { diffManifests } from './manifest-ops.js'
@@ -83,12 +83,9 @@ export async function verifyLive(
   baseUrl: string,
 ): Promise<void> {
   const url = `${baseUrl}/${V1_DIRECTORY}/version.json`
-  const response = await fetchImplementation(url, {
+  const response = await fetchOk(fetchImplementation, url, {
     headers: { 'cache-control': 'no-cache' },
   })
-  if (response.status !== 200) {
-    throw new Error(`${url} answered ${String(response.status)}, expected 200`)
-  }
   const version = (await response.json()) as PublishedVersion
   if (!version.layouts.includes(V1_DIRECTORY)) {
     throw new Error(`${url} does not list the ${V1_DIRECTORY} layout`)

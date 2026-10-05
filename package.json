@@ -123,7 +123,7 @@
         "dist/animated-fluent-emojis.js",
         "dist/chunks/manifest-*.js"
       ],
-      "limit": "3.9 kB"
+      "limit": "4 kB"
     },
     {
       "name": "Lookup bundle",
@@ -131,7 +131,7 @@
         "dist/lookup.js",
         "dist/chunks/manifest-*.js"
       ],
-      "limit": "2.3 kB"
+      "limit": "2.8 kB"
     },
     {
       "name": "Stylesheet",

@@ -148,13 +148,18 @@ export function withoutHdSource(task: SpriteTask): SpriteTask {
 function describeHdProblem(
   emojiOutcomes: readonly HdOutcome[],
   standardFrames: number,
-): string | undefined {
+): Omit<HdSkippedEmoji, 'id'> | undefined {
   for (const outcome of emojiOutcomes) {
     if ('error' in outcome) {
-      return `${outcome.task.hdOutputPath ?? ''}: ${outcome.error.message}`
+      return {
+        reason: `${outcome.task.hdOutputPath ?? ''}: ${outcome.error.message}`,
+        transient: true,
+      }
     }
     if (outcome.framesCount !== standardFrames) {
-      return `${outcome.task.hdOutputPath ?? ''} has ${String(outcome.framesCount)} frames, standard sheet has ${String(standardFrames)}`
+      return {
+        reason: `${outcome.task.hdOutputPath ?? ''} has ${String(outcome.framesCount)} frames, standard sheet has ${String(standardFrames)}`,
+      }
     }
   }
   return undefined
@@ -200,10 +205,13 @@ export async function buildHdSheets(
     const emoticon = emoticonById.get(id)
     const problem =
       emoticon === undefined
-        ? 'emoji is not in the manifest'
+        ? { reason: 'emoji is not in the manifest' }
         : describeHdProblem(emojiOutcomes, emoticon.animation.framesCount)
     if (problem !== undefined || emoticon === undefined) {
-      skipped.push({ id, reason: problem ?? 'emoji is not in the manifest' })
+      skipped.push({
+        id,
+        ...(problem ?? { reason: 'emoji is not in the manifest' }),
+      })
       continue
     }
     hdEtagById.set(

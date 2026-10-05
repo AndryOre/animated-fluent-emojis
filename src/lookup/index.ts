@@ -32,12 +32,30 @@ export interface SearchEmojisOptions {
 }
 
 type ManifestRecord = Record<string, EmojiManifest>
+type NonEmptyGroup = [EmojiManifest, ...EmojiManifest[]]
 
 const DEFAULT_SEARCH_LIMIT = 20
 const VARIATION_SELECTOR_16 = /\u{FE0F}/gu
 const SKIN_TONE_MODIFIERS = /[\u{1F3FB}-\u{1F3FF}]/gu
 const EMOJI_CLUSTER =
   /[\u{1F1E6}-\u{1F1FF}]{2}|.(?:[\u{FE0E}\u{FE0F}\u{20E3}\u{1F3FB}-\u{1F3FF}\u{E0020}-\u{E007F}]|\u{200D}.)*/gsu
+
+const ZERO_WIDTH_JOINER = '\u{200D}'
+const CODE_POINT_PREFIX = /^[\da-f]+(?:_[\da-f]+)*_/
+
+/**
+ * Glyphs whose first entry in catalog order is the wrong emoji, mapped to the
+ * id that should represent them. Applied only when the id is in the manifest.
+ */
+const CANONICAL_OVERRIDES: Readonly<Record<string, string>> = {
+  '\u{267B}': 'recycle',
+  '\u{26BD}': 'soccerball',
+  '\u{1F44F}': 'clap',
+  '\u{1F64C}': 'handsinair',
+  '\u{1F428}': 'koala',
+  '\u{1F436}': 'smiledog',
+  '\u{1FABD}': 'wing',
+}
 
 const TONES: readonly SkinTone[] = [
   'light',
@@ -47,7 +65,12 @@ const TONES: readonly SkinTone[] = [
   'dark',
 ]
 
-const indexCache = new WeakMap<ManifestRecord, Map<string, EmojiManifest>>()
+interface UnicodeIndex {
+  readonly canonical: Map<string, EmojiManifest>
+  readonly diverse: Map<string, EmojiManifest>
+}
+
+const indexCache = new WeakMap<ManifestRecord, UnicodeIndex>()
 
 /**
  * Removes the variation selector so text and catalog glyphs share one key.
@@ -71,17 +94,62 @@ function hasVariationSelectorAfterBase(text: string | undefined): boolean {
 }
 
 /**
- * Indexes the catalog by its unicode without VS16, once per manifest.
+ * Picks the emoji that represents a glyph shared by several entries: an id
+ * prefixed with the glyph's code points, then a known override present in the
+ * manifest, then the first entry in catalog order.
+ * @param glyph - The VS16-free glyph.
+ * @param group - Every entry sharing the glyph, in catalog order.
  * @param manifest - The loaded manifest.
- * @returns A map from VS16-free unicode to the manifest entry.
+ * @returns The canonical entry.
  */
-function indexByUnicode(manifest: ManifestRecord): Map<string, EmojiManifest> {
+function pickCanonicalEmoji(
+  glyph: string,
+  group: NonEmptyGroup,
+  manifest: ManifestRecord,
+): EmojiManifest {
+  if (group.length === 1) return group[0]
+  const prefix = Array.from(
+    glyph,
+    (character) => character.codePointAt(0)?.toString(16) ?? '',
+  ).join('_')
+  const prefixed = group.find(
+    (emoji) =>
+      CODE_POINT_PREFIX.test(emoji.id) && emoji.id.startsWith(`${prefix}_`),
+  )
+  if (prefixed) return prefixed
+  const overrideId = CANONICAL_OVERRIDES[glyph]
+  const override = overrideId ? manifest[overrideId] : undefined
+  return override && group.includes(override) ? override : group[0]
+}
+
+/**
+ * Indexes the catalog by its unicode without VS16, once per manifest. The
+ * canonical map answers bare glyphs; the diverse map answers glyphs with a skin
+ * tone, preferring the canonical entry when it has tones and otherwise the
+ * first entry of the group that does.
+ * @param manifest - The loaded manifest.
+ * @returns Maps from VS16-free unicode to the canonical and the diverse entry.
+ */
+function indexByUnicode(manifest: ManifestRecord): UnicodeIndex {
   const cached = indexCache.get(manifest)
   if (cached) return cached
-  const index = new Map<string, EmojiManifest>()
+  const groups = new Map<string, NonEmptyGroup>()
   for (const emoji of Object.values(manifest)) {
-    if (emoji.unicode) index.set(stripVariationSelector(emoji.unicode), emoji)
+    if (!emoji.unicode) continue
+    const key = stripVariationSelector(emoji.unicode)
+    const group = groups.get(key)
+    if (group) group.push(emoji)
+    else groups.set(key, [emoji])
   }
+  const canonical = new Map<string, EmojiManifest>()
+  const diverse = new Map<string, EmojiManifest>()
+  for (const [key, group] of groups) {
+    const picked = pickCanonicalEmoji(key, group, manifest)
+    canonical.set(key, picked)
+    const toned = picked.diverse ? picked : group.find((emoji) => emoji.diverse)
+    if (toned) diverse.set(key, toned)
+  }
+  const index = { canonical, diverse }
   indexCache.set(manifest, index)
   return index
 }
@@ -99,16 +167,17 @@ function resolveEmoji(
 ): EmojiMatch | undefined {
   const index = indexByUnicode(manifest)
   const plain = stripVariationSelector(text)
-  const direct = index.get(plain)
+  const direct = index.canonical.get(plain)
   if (direct) {
-    return hasVariationSelectorAfterBase(direct.unicode) &&
+    return !direct.unicode?.includes(ZERO_WIDTH_JOINER) &&
+      hasVariationSelectorAfterBase(direct.unicode) &&
       !hasVariationSelectorAfterBase(text)
       ? undefined
       : { id: direct.id }
   }
   const modifiers = plain.match(SKIN_TONE_MODIFIERS)
-  const base = index.get(plain.replaceAll(SKIN_TONE_MODIFIERS, ''))
-  if (!modifiers || !base?.diverse) return undefined
+  const base = index.diverse.get(plain.replaceAll(SKIN_TONE_MODIFIERS, ''))
+  if (!modifiers || !base) return undefined
   return new Set(modifiers).size > 1
     ? { id: base.id }
     : {
@@ -197,7 +266,7 @@ export async function searchEmojis(
   if (!manifest || needle === '') return []
   const requested = options.limit ?? DEFAULT_SEARCH_LIMIT
   if (requested === 0) return []
-  const limit = requested > 0 ? requested : Infinity
+  const limit = requested > 0 ? Math.floor(requested) : Infinity
   const results: EmojiMatch[] = []
   for (const emoji of Object.values(manifest)) {
     if (results.length >= limit) break

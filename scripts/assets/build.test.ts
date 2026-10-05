@@ -25,6 +25,7 @@ import { applyAnimations, applyHd, diffManifests } from './manifest-ops.js'
 import { buildLiveSpriteUrl } from './seed.js'
 import { toSlimManifest } from './slim-manifest.js'
 import type { ConvertedSprite } from './sprites.js'
+import { needsRebuild } from './sync.js'
 import { buildManifestUrl, buildSpriteUrl } from './teams.js'
 import {
   createFakeFetch,
@@ -574,11 +575,55 @@ test('skips HD and logs it when the frame count differs from the standard sheet'
   expect(
     result.hdSkipped.find((entry) => entry.id === SMILEY_ID)?.reason,
   ).toContain('70 frames')
+  expect(result.version.skippedIds).toBeUndefined()
+  expect(
+    needsRebuild(
+      result.version,
+      result.version,
+      {
+        teamsHash: result.version.teamsHash,
+        mitSha: result.version.mitSha,
+      },
+      false,
+    ),
+  ).toBe(false)
   await expect(
     stat(
       path.join(options.outputDirectory, `sprites/Smilies/${SMILEY_ID}@2x.png`),
     ),
   ).rejects.toThrow()
+})
+
+test('records an HD conversion error in skippedIds and keeps the site stale', async () => {
+  const fakeFetch = createFakeFetch(withOfficialSmiley(spriteRoutes()))
+  const options = baseOptions(fakeFetch)
+  const standardConvert = createConvert(72)
+
+  const result = await buildAssets({
+    ...options,
+    convert: (png, frameSizes) => {
+      return frameSizes.includes(200)
+        ? Promise.reject(new Error('boom'))
+        : standardConvert(png, frameSizes)
+    },
+  })
+
+  expect(findEmoticon(result.manifest, SMILEY_ID)?.hd).toBeUndefined()
+  expect(
+    result.hdSkipped.find((entry) => entry.id === SMILEY_ID)?.reason,
+  ).toContain('boom')
+  expect(result.version.skippedIds).toContain(SMILEY_ID)
+  expect(
+    needsRebuild(
+      result.version,
+      result.version,
+      {
+        teamsHash: result.version.teamsHash,
+        mitSha: result.version.mitSha,
+      },
+      false,
+    ),
+  ).toBe(true)
 })
 
 test('changes the etag with the HD source and reuses HD sheets otherwise', async () => {

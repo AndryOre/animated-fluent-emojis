@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 
 import type { Manifest } from '../../src/utils/types.js'
 import { PIPELINE_VERSION } from './catalog.js'
@@ -208,6 +208,29 @@ test('verify-live passes for a current v1 marker', async () => {
     [liveVersionKey]: { body: published },
   })
   await expect(verifyLive(fetch, liveUrl)).resolves.toBeUndefined()
+})
+
+test('verify-live retries a 503 and then passes', async () => {
+  vi.useFakeTimers()
+  try {
+    const responses = [
+      new Response('x', { status: 503 }),
+      Response.json(published),
+    ]
+    const fetch = vi.fn(() => Promise.resolve(responses.shift() as Response))
+    const result = verifyLive(fetch, liveUrl)
+    await vi.runAllTimersAsync()
+    await expect(result).resolves.toBeUndefined()
+    expect(fetch).toHaveBeenCalledTimes(2)
+  } finally {
+    vi.useRealTimers()
+  }
+})
+
+test('verify-live does not retry a 404', async () => {
+  const fetch = vi.fn(() => Promise.resolve(new Response('x', { status: 404 })))
+  await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('404')
+  expect(fetch).toHaveBeenCalledTimes(1)
 })
 
 test('verify-live fails on a 404', async () => {
