@@ -31,6 +31,16 @@ An index of every document in this repository.
 - [`how-to/roll-back-the-asset-site.md`](how-to/roll-back-the-asset-site.md):
   restoring an earlier asset site deployment.
 
+## How-to guides
+
+- [`how-to/README.md`](how-to/README.md): index of the how-to guides.
+- [`how-to/self-host-the-assets.md`](how-to/self-host-the-assets.md): serving
+  the asset site from your own origin, with the CSP.
+- [`how-to/use-with-nextjs.md`](how-to/use-with-nextjs.md): the client boundary,
+  stylesheet and preloading in Next.js.
+- [`how-to/preload-for-a-picker.md`](how-to/preload-for-a-picker.md): warming
+  the manifest and sprite sheets for an emoji picker.
+
 ## Architecture decision records
 
 - [`adr/README.md`](adr/README.md): ADR index and status table.
