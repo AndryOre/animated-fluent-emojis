@@ -39,14 +39,6 @@ export function needsRebuild(
   )
 }
 
-function isMissingHost(error: unknown): boolean {
-  const code = (error as { code?: unknown } | null)?.code
-  const causeCode = (
-    (error as Error | null)?.cause as { code?: unknown } | undefined
-  )?.code
-  return code === 'ENOTFOUND' || causeCode === 'ENOTFOUND'
-}
-
 /**
  * Reads a JSON file from the published site.
  * @param fetchImplementation The fetch function to use.
@@ -60,23 +52,52 @@ export async function fetchPublishedJson<Value>(
   fileName: string,
 ): Promise<Value | undefined> {
   const url = `${baseUrl}/${fileName}`
-  let response: Response
-  try {
-    response = await fetchImplementation(url, {
-      headers: { 'cache-control': 'no-cache' },
-    })
-  } catch (error: unknown) {
-    if (!isMissingHost(error)) throw error
-    console.warn(
-      `warning: ${baseUrl} does not exist yet, treating it as unpublished`,
-    )
-    return undefined
-  }
+  const response = await fetchImplementation(url, {
+    headers: { 'cache-control': 'no-cache' },
+  })
   if (response.status === 404) return undefined
   if (!response.ok) {
     throw new Error(`HTTP ${String(response.status)} for ${url}`)
   }
-  return (await response.json()) as Value
+  try {
+    return (await response.json()) as Value
+  } catch (error: unknown) {
+    throw new Error(`Could not parse the JSON published at ${url}`, {
+      cause: error,
+    })
+  }
+}
+
+/**
+ * Renders an error with its full `cause` chain and stack for the CLI.
+ * @param error The thrown value.
+ * @returns A multi-line description.
+ */
+export function formatErrorChain(error: unknown): string {
+  const lines: string[] = []
+  let current: unknown = error
+  let depth = 0
+  while (current !== undefined && depth < 10) {
+    const prefix = depth === 0 ? '' : 'Caused by: '
+    if (current instanceof Error) {
+      lines.push(`${prefix}${current.stack ?? current.message}`)
+      if (current instanceof AggregateError) {
+        for (const inner of current.errors as unknown[]) {
+          lines.push(
+            `  - ${formatErrorChain(inner).replaceAll('\n', '\n    ')}`,
+          )
+        }
+      }
+      current = current.cause
+    } else {
+      lines.push(
+        `${prefix}${typeof current === 'string' ? current : JSON.stringify(current)}`,
+      )
+      current = undefined
+    }
+    depth += 1
+  }
+  return lines.join('\n')
 }
 
 function buildGithubHeaders(): Record<string, string> {
@@ -244,7 +265,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   try {
     await main()
   } catch (error: unknown) {
-    console.error(error instanceof Error ? error.message : error)
+    console.error(formatErrorChain(error))
     process.exitCode = 1
   }
 }

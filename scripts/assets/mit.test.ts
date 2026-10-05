@@ -86,3 +86,20 @@ test('loadMitIndex rejects a truncated tree', async () => {
 
   await expect(loadMitIndex(fetch)).rejects.toThrow('truncated')
 })
+
+test('loadMitIndex names the emoji whose metadata is invalid', async () => {
+  const { fetch } = createFakeFetch({
+    [`GET ${API}/commits/main`]: { body: { sha: SHA } },
+    [`GET ${API}/git/trees/${SHA}?recursive=1`]: {
+      body: { truncated: false, tree: TREE },
+    },
+    [`GET https://raw.githubusercontent.com/microsoft/fluentui-emoji-animated/${SHA}/assets/Middle%20finger/metadata.json`]:
+      metadata('1f595', 'middle finger'),
+    [`GET https://raw.githubusercontent.com/microsoft/fluentui-emoji-animated/${SHA}/assets/Thumbs%20up/metadata.json`]:
+      { body: { cldr: 'thumbs up' } },
+  })
+
+  await expect(loadMitIndex(fetch)).rejects.toThrow(
+    'Invalid metadata for official emoji at assets/Thumbs up/metadata.json',
+  )
+})
