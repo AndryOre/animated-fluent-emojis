@@ -5,6 +5,8 @@ An index of every document in this repository.
 ## Core
 
 - [`README.md`](../README.md): user-facing portal with install and usage.
+- [`usage.md`](usage.md): the full API: props, playback, fallback, preloading,
+  asset site, lookup and types.
 - [`CHANGELOG.md`](../CHANGELOG.md): release notes, newest first.
 - [`CONTRIBUTING.md`](../CONTRIBUTING.md): contribution setup, branch and commit
   format, merging and CI.
