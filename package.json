@@ -118,13 +118,19 @@
   "size-limit": [
     {
       "name": "ESM bundle",
-      "path": "dist/animated-fluent-emojis.js",
-      "limit": "2.5 kB"
+      "path": [
+        "dist/animated-fluent-emojis.js",
+        "dist/emoji-manifest-*.js"
+      ],
+      "limit": "3.9 kB"
     },
     {
       "name": "Lookup bundle",
-      "path": "dist/lookup.js",
-      "limit": "780 B"
+      "path": [
+        "dist/lookup.js",
+        "dist/emoji-manifest-*.js"
+      ],
+      "limit": "2.2 kB"
     },
     {
       "name": "Stylesheet",
