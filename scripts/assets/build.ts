@@ -20,6 +20,7 @@ import {
 } from './mit.js'
 import { convertAnimatedPng, type ConvertedSprite } from './sprites.js'
 import { fetchTeamsManifest, type TeamsVersion } from './teams.js'
+import { validateCatalog } from './validate.js'
 
 const DOWNLOAD_CONCURRENCY = 8
 
@@ -379,6 +380,12 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     },
     animationsById,
   )
+
+  await validateCatalog({
+    manifest,
+    tasks,
+    cacheDirectory: options.cacheDirectory,
+  })
 
   await rm(options.outputDirectory, { recursive: true, force: true })
   for (const task of tasks) {
