@@ -58,3 +58,24 @@ test('loops forever once the initial animation is skipped for hover playback', a
   })
   expect(result.current.animationStyle.animationName).toBeUndefined()
 })
+
+test.each([
+  [Infinity, 'infinite'],
+  [-1, 0],
+  [NaN, 0],
+] as const)('normalizes %s iterations to %s', async (input, expected) => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, input, true, 64),
+  )
+
+  expect(result.current.animationStyle.animationIterationCount).toBe(expected)
+})
+
+test('switches to hover-only playback when iterations resolve to 0', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, true, 0, true, 64),
+  )
+
+  expect(result.current.isInitialAnimationComplete).toBe(true)
+  expect(result.current.animationStyle.animationIterationCount).toBe('infinite')
+})
