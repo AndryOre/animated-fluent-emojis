@@ -25,6 +25,7 @@ const createManifest = (
     framesCount?: number
     firstFrame?: number
     diverse?: boolean
+    hd?: boolean
     id?: string
     category?: string
   } = {},
@@ -47,6 +48,7 @@ const createManifest = (
             firstFrame: overrides.firstFrame ?? 1,
           },
           keywords: [],
+          ...(overrides.hd && { hd: true }),
         },
       ],
     },
@@ -203,14 +205,45 @@ test('validates HD sheets against 200px frames', async () => {
     'sprites/Cat/e1@2x.png',
     await createSpritePng(40, { frameSize: 100 }),
   )
-  await expect(run(createManifest(), hdTasks)).rejects.toThrow(
+  await expect(run(createManifest({ hd: true }), hdTasks)).rejects.toThrow(
     'e1@2x.png is 100px wide, expected 200px',
   )
   await writeFileInCache(
     'sprites/Cat/e1@2x.png',
     await createSpritePng(40, { frameSize: 200 }),
   )
-  await expect(run(createManifest(), hdTasks)).resolves.toBeUndefined()
+  await expect(
+    run(createManifest({ hd: true }), hdTasks),
+  ).resolves.toBeUndefined()
+})
+
+test('rejects an HD sheet with a different frame count than the standard one', async () => {
+  const tasks = createTasks([''])
+  const hdTasks = tasks.map((task) => ({
+    ...task,
+    hdOutputPath: 'sprites/Cat/e1@2x.png',
+  }))
+  await writeSprites(tasks)
+  await writeFileInCache(
+    'sprites/Cat/e1@2x.png',
+    await createSpritePng(39, { frameSize: 200 }),
+  )
+  await expect(run(createManifest({ hd: true }), hdTasks)).rejects.toThrow(
+    'e1@2x.png is 7800px tall, expected 8000px (40 frames)',
+  )
+})
+
+test('rejects an hd flag without HD sheets for every tone, and HD sheets without the flag', async () => {
+  const tasks = createTasks(TONES)
+  const partial = tasks.map((task, index) =>
+    index === 0 ? { ...task, hdOutputPath: 'sprites/Cat/e1@2x.png' } : task,
+  )
+  await expect(
+    run(createManifest({ hd: true, diverse: true }), partial),
+  ).rejects.toThrow('flagged hd but not every tone has an HD sprite')
+  await expect(run(createManifest({ diverse: true }), partial)).rejects.toThrow(
+    'has HD sprites but is not flagged hd',
+  )
 })
 
 test('rejects category and id values that are not URL-safe', async () => {

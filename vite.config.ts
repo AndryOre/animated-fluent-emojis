@@ -15,6 +15,7 @@ export default defineConfig({
     },
     rolldownOptions: {
       external: ['react', 'react-dom', /^react\//, /^react-dom\//],
+      output: { banner: '"use client";' },
     },
     sourcemap: true,
     emptyOutDir: true,

@@ -14,7 +14,7 @@ import styles from './Emoji.module.css'
  * @param props.autoPlay - Whether to automatically play the animation on mount.
  * @param props.skinTone - The skin tone, for emojis that support it.
  * @param props.alt - Accessible text, defaults to the emoji description. An empty string marks the emoji as decorative.
- * @returns The rendered Emoji component or null if the emoji is not found.
+ * @returns The emoji, an empty placeholder of the final size while the manifest loads, or null if the emoji is not found.
  */
 export const Emoji = ({
   id,
@@ -25,19 +25,23 @@ export const Emoji = ({
   skinTone = 'default',
   alt,
 }: EmojiProps): ReactElement | null => {
-  const { emoji } = useEmojiStyle(id)
+  const { status, emoji } = useEmojiStyle(id)
   const { isInitialAnimationComplete, animationStyle, imageRef } =
     useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
-
-  if (!emoji) {
-    return null
-  }
 
   const containerStyle = {
     width: `${String(size)}px`,
     height: `${String(size)}px`,
     display: 'inline-block',
     overflow: 'hidden',
+  }
+
+  if (status === 'loading') {
+    return <span aria-hidden="true" style={containerStyle} />
+  }
+
+  if (!emoji) {
+    return null
   }
   const containerClassName =
     isInitialAnimationComplete && playOnHover ? styles.animateOnHover : ''

@@ -1,9 +1,25 @@
-import type { EmojiManifest, Manifest, SkinTone } from './types.js'
+import type { EmojiManifest, SkinTone, SlimManifest } from './types.js'
+
+const DEFAULT_ASSET_SITE_URL = 'https://animated-fluent-emojis.pages.dev'
+
+const state: {
+  assetSiteUrl: string
+  manifestPromise: Promise<Record<string, EmojiManifest>> | null
+} = { assetSiteUrl: DEFAULT_ASSET_SITE_URL, manifestPromise: null }
 
 /**
- * Origin that serves the manifest and the sprite sheets.
+ * Configures where the manifest and the sprite sheets are served from.
+ * The manifest is fetched once on first use, so call this before the first
+ * `Emoji` renders: changing the asset site afterwards does not refetch the
+ * manifest, it only changes the sprite sheet URLs built from then on.
+ * @param options - The configuration to apply.
+ * @param options.assetSiteUrl - Origin of the asset site, without or with a trailing slash. Defaults to the published asset site.
  */
-export const CDN_BASE_URL = 'https://animated-fluent-emojis.pages.dev'
+export function configureEmojis(options: { assetSiteUrl?: string }): void {
+  let url = options.assetSiteUrl ?? DEFAULT_ASSET_SITE_URL
+  while (url.endsWith('/')) url = url.slice(0, -1)
+  state.assetSiteUrl = url
+}
 
 const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
   default: '',
@@ -15,17 +31,17 @@ const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
 }
 
 /**
- * Fetches the emoji manifest from the CDN.
+ * Fetches the slim emoji manifest from the asset site.
  * @returns A promise that resolves to the raw manifest data.
  */
-async function fetchManifest(): Promise<Manifest> {
-  const response = await fetch(`${CDN_BASE_URL}/manifest.json`)
+async function fetchManifest(): Promise<SlimManifest> {
+  const response = await fetch(`${state.assetSiteUrl}/manifest.slim.json`)
   if (!response.ok) {
     throw new Error(
       `Failed to fetch the emoji manifest (${String(response.status)})`,
     )
   }
-  return (await response.json()) as Manifest
+  return (await response.json()) as SlimManifest
 }
 
 /**
@@ -44,10 +60,27 @@ async function generateEmojiManifest(): Promise<Record<string, EmojiManifest>> {
 }
 
 /**
- * A promise that resolves to the processed emoji manifest.
+ * Generates the manifest and drops the memoized promise if that fails.
+ * @returns A promise that resolves to the manifest keyed by emoji id.
  */
-export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> =
-  generateEmojiManifest()
+async function loadAndClearOnFailure(): Promise<Record<string, EmojiManifest>> {
+  try {
+    return await generateEmojiManifest()
+  } catch (error) {
+    state.manifestPromise = null
+    throw error
+  }
+}
+
+/**
+ * Loads the emoji manifest on first use and memoizes the result. A failed load
+ * clears the cache so the next caller retries. Nothing is fetched at import.
+ * @returns A promise that resolves to the manifest keyed by emoji id.
+ */
+export function loadEmojiManifest(): Promise<Record<string, EmojiManifest>> {
+  state.manifestPromise ??= loadAndClearOnFailure()
+  return state.manifestPromise
+}
 
 /**
  * Builds the URL of an emoji's sprite sheet.
@@ -60,5 +93,5 @@ export function getSpriteUrl(
   skinTone: SkinTone = 'default',
 ): string {
   const suffix = emoji.diverse ? SKIN_TONE_SUFFIXES[skinTone] : ''
-  return `${CDN_BASE_URL}/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${suffix}.png?v=${encodeURIComponent(emoji.etag)}`
+  return `${state.assetSiteUrl}/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${suffix}.png?v=${encodeURIComponent(emoji.etag)}`
 }

@@ -1,12 +1,12 @@
-import type { Manifest } from '../utils/index.js'
+import type { SlimManifest } from '../utils/index.js'
 
 export const MANIFEST_URL =
-  'https://animated-fluent-emojis.pages.dev/manifest.json'
+  'https://animated-fluent-emojis.pages.dev/manifest.slim.json'
 
 export const SPRITE_URL_PATTERN =
   'https://animated-fluent-emojis.pages.dev/sprites/*'
 
-export const FIXTURE_MANIFEST: Manifest = {
+export const FIXTURE_MANIFEST: SlimManifest = {
   categories: [
     {
       id: 'smilies',
@@ -16,22 +16,16 @@ export const FIXTURE_MANIFEST: Manifest = {
         {
           id: 'grinning-face',
           description: 'Grinning face',
-          shortcuts: [':D'],
-          unicode: '1f600',
           etag: 'etag-grin',
           diverse: false,
           animation: { fps: 20, framesCount: 40, firstFrame: 2 },
-          keywords: ['grin'],
         },
         {
           id: 'waving-hand',
           description: 'Waving hand',
-          shortcuts: [],
-          unicode: '1f44b',
           etag: 'etag-wave',
           diverse: true,
           animation: { fps: 24, framesCount: 21, firstFrame: 1 },
-          keywords: ['wave'],
         },
       ],
     },
@@ -43,12 +37,9 @@ export const FIXTURE_MANIFEST: Manifest = {
         {
           id: 'cat',
           description: 'Cat',
-          shortcuts: [],
-          unicode: '1f431',
           etag: 'etag-cat',
           diverse: false,
           animation: { fps: 10, framesCount: 20, firstFrame: 1 },
-          keywords: ['cat'],
         },
       ],
     },
