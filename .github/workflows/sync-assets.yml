@@ -120,7 +120,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          if git diff --quiet -- docs; then
+          if [[ -z "$(git status --porcelain -- docs)" ]]; then
             echo "Emoji lists are up to date."
             exit 0
           fi
@@ -135,7 +135,8 @@ jobs:
           git push --force \
             "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" \
             "${branch}"
-          if ! gh pr view "${branch}" > /dev/null 2>&1; then
+          open_pull_requests="$(gh pr list --head "${branch}" --state open --json number --jq length)"
+          if [[ "${open_pull_requests}" == "0" ]]; then
             gh pr create \
               --base main \
               --head "${branch}" \
