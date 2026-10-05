@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-05
+
+### Fixed
+
+- The release workflow passed the tarball to `npm publish` without a leading
+  `./`, so npm read it as a GitHub shorthand and the 0.5.0 publish failed. 0.5.0
+  was never published to npm; 0.5.1 carries the same changes plus this fix.
+
 ## [0.5.0] - 2026-10-05
 
 ### Added
@@ -237,7 +245,9 @@ and this project adheres to
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.0...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.1...HEAD
+[0.5.1]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.0...v0.5.1
 [0.5.0]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...v0.5.0
 [0.4.0]:
