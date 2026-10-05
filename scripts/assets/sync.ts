@@ -213,7 +213,7 @@ async function runBuild(options: {
     limit: options.limit,
     previousManifest,
   })
-  if (previousManifest && result.diff) {
+  if (previousManifest && result.diff && options.limit === undefined) {
     assertRemovalsWithinLimit(previousManifest, result.diff, options.force)
   }
   await assertFileCountWithinLimit(options.outputDirectory)

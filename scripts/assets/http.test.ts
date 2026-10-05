@@ -154,6 +154,25 @@ describe('fetchOk timeout', () => {
     expect(response.status).toBe(200)
     expect(calls).toBe(2)
   })
+
+  it('retries when the body read fails after the headers arrived', async () => {
+    vi.useRealTimers()
+    let calls = 0
+    const fetch: FetchLike = () => {
+      calls += 1
+      if (calls > 1) return Promise.resolve(new Response('body'))
+      const stalled = new Response('x')
+      vi.spyOn(stalled, 'arrayBuffer').mockRejectedValue(
+        new Error('body timed out'),
+      )
+      return Promise.resolve(stalled)
+    }
+
+    const response = await fetchOk(fetch, 'https://x.test/a', undefined, 2, 20)
+
+    expect(await response.text()).toBe('body')
+    expect(calls).toBe(2)
+  })
 })
 
 describe('fetchOkOrMissing', () => {

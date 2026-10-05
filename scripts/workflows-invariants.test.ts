@@ -93,3 +93,18 @@ describe('sync-assets.yml docs pull request step', () => {
     expect(script).not.toContain('${{')
   })
 })
+
+describe('sync-assets.yml build step', () => {
+  const steps = collectSteps(readWorkflow('sync-assets.yml'))
+  const script =
+    steps.find((step) => step.run?.includes('assets:build'))?.run ?? ''
+
+  test('forwards the force input to the build', () => {
+    expect(script).toContain('--force')
+    expect(script).toContain('FORCE')
+  })
+
+  test('does not interpolate expressions into the script', () => {
+    expect(script).not.toContain('${{')
+  })
+})

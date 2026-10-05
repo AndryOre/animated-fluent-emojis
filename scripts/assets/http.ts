@@ -44,7 +44,14 @@ async function fetchWithRetries(
         ...init,
         signal: init?.signal ?? AbortSignal.timeout(timeoutMs),
       })
-      if (response.ok) return response
+      if (response.ok) {
+        const body = await response.arrayBuffer()
+        return new Response(body.byteLength > 0 ? body : null, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers,
+        })
+      }
       if (acceptNotFound && response.status === 404) return undefined
       lastError = new Error(`HTTP ${String(response.status)} for ${url}`)
       if (!isRetryableStatus(response.status)) break
