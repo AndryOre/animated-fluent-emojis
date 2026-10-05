@@ -39,7 +39,7 @@ and this project adheres to
 - **Behavior change (lookup):** when several catalog entries share a glyph,
   `findEmojiByUnicode` and `extractEmojis` return the canonical emoji (the id
   prefixed with its code points, otherwise a reviewed override, otherwise the
-  first in catalog order) instead of the last entry indexed, so `❤` no longer
+  first in catalog order) instead of the last entry indexed, so `❤️` no longer
   resolves to a variant. A skin tone falls back to an entry sharing the glyph
   that has tones.
 - **Behavior change (lookup):** ZWJ sequences match without the variation

@@ -271,7 +271,7 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
 - When several catalog entries share a glyph, lookup returns the canonical
   emoji: the official id prefixed with the glyph's code points, otherwise a
   reviewed override, otherwise the first entry in catalog order. For example,
-  `❤` resolves to the heart rather than a variant that reuses the glyph. With a
+  `❤️` resolves to the heart rather than a variant that reuses the glyph. With a
   skin tone, it falls back to a sibling entry that has tones.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
   sequences whole, with its offset and length. Without `Intl.Segmenter` it falls
