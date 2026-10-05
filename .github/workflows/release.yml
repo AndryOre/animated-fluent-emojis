@@ -37,16 +37,6 @@ jobs:
             exit 1
           fi
 
-      - name: Check the v1 layout is live
-        run: |
-          url="https://animated-fluent-emojis.pages.dev/v1/version.json"
-          status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-            --retry 5 --retry-all-errors --max-time 30 "${url}")
-          if [[ "${status}" != "200" ]]; then
-            echo "${url} returned ${status}, expected 200"
-            exit 1
-          fi
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
@@ -59,6 +49,9 @@ jobs:
 
       - name: Install dependencies
         run: bun ci
+
+      - name: Check the live v1 layout matches this pipeline
+        run: bun run assets:verify-live
 
       - name: Check
         run: bun run check
@@ -131,10 +124,15 @@ jobs:
           tarball=$(ls ./release-artifact/*.tgz)
           name=$(tar -xOf "${tarball}" package/package.json | jq -r .name)
           version=$(tar -xOf "${tarball}" package/package.json | jq -r .version)
+          dist_tag=latest
+          if [[ "${version}" == *-* ]]; then
+            prerelease="${version#*-}"
+            dist_tag="${prerelease%%.*}"
+          fi
           if npm view "${name}@${version}" version > /dev/null 2>&1; then
             echo "${name}@${version} is already published, skipping npm publish"
           else
-            npm publish "${tarball}"
+            npm publish "${tarball}" --tag "${dist_tag}"
           fi
 
       - name: Create GitHub Release

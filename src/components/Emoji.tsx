@@ -17,14 +17,28 @@ import {
   type EmojiProps,
 } from '../utils/index.js'
 import { isDevelopment } from '../utils/is-development.js'
+import { createSharedSubscription } from '../utils/shared-subscription.js'
 import styles from './Emoji.module.css'
 
 const DEFAULT_SIZE = 100
 
 const warnedMissingIds = new Set<string>()
 
+const NUMERIC_STRING = /^\d+(?:\.\d+)?$/
+
+const subscribeToOnline = createSharedSubscription((notify) => {
+  globalThis.addEventListener('online', notify)
+  return () => {
+    globalThis.removeEventListener('online', notify)
+  }
+})
+
 const normalizeSize = (size: number | string): number | string => {
-  if (typeof size === 'string') return size
+  if (typeof size === 'string') {
+    const trimmed = size.trim()
+    if (trimmed === '') return DEFAULT_SIZE
+    return NUMERIC_STRING.test(trimmed) ? normalizeSize(Number(trimmed)) : size
+  }
   return Number.isFinite(size) && Math.round(size) > 0
     ? Math.round(size)
     : DEFAULT_SIZE
@@ -70,13 +84,18 @@ const EmojiComponent = (
     )
   const onErrorRef = useRef(onError)
   const hasReportedErrorRef = useRef(false)
+  const hasObservedOwnAttemptRef = useRef(false)
   useEffect(() => {
     onErrorRef.current = onError
   })
   useEffect(() => {
+    if (status === 'loading') hasObservedOwnAttemptRef.current = true
     if (status !== 'error') {
       hasReportedErrorRef.current = false
-    } else if (!hasReportedErrorRef.current) {
+    } else if (
+      hasObservedOwnAttemptRef.current &&
+      !hasReportedErrorRef.current
+    ) {
       hasReportedErrorRef.current = true
       onErrorRef.current?.()
     }
@@ -92,9 +111,9 @@ const EmojiComponent = (
     const retry = () => {
       setFailedSource(null)
     }
-    globalThis.addEventListener('online', retry)
+    const unsubscribe = subscribeToOnline(retry)
     return () => {
-      globalThis.removeEventListener('online', retry)
+      unsubscribe()
       retry()
     }
   }, [spriteSource])
@@ -188,7 +207,7 @@ const EmojiComponent = (
         draggable="false"
         src={source}
         srcSet={getSpriteSourceSet(emoji, skinTone)}
-        sizes={typeof size === 'number' ? cssSize : undefined}
+        sizes={typeof size === 'number' ? cssSize : 'auto'}
         style={animationStyle}
         className={styles.emojiImage}
         onLoad={onLoad}
