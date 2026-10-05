@@ -6,6 +6,10 @@ import { promisify } from 'node:util'
 import sharp from 'sharp'
 
 const execFileAsync = promisify(execFile)
+
+/**
+ * The frame size, in pixels, of the standard sprite sheets.
+ */
 const SPRITE_SIZE = 100
 
 /**
@@ -60,14 +64,20 @@ export function resolveFrameRate(
 }
 
 /**
- * Converts an animated PNG into a vertical 100px sprite sheet, the layout the
+ * Converts an animated PNG into a vertical sprite sheet, the layout the
  * `Emoji` component steps through.
  * @param animatedPng The bytes of the animated PNG.
+ * @param frameSize The width and height of each frame in pixels, 100 by
+ * default; 200 builds the `@2x` sheet.
  * @returns The palette-optimized sprite sheet and its frame count and fps.
  */
 export async function convertAnimatedPng(
   animatedPng: Buffer,
+  frameSize: number = SPRITE_SIZE,
 ): Promise<ConvertedSprite> {
+  if (!Number.isSafeInteger(frameSize) || frameSize < 1) {
+    throw new Error(`Invalid sprite frame size ${String(frameSize)}`)
+  }
   const workingDirectory = await mkdtemp(path.join(tmpdir(), 'emoji-sprite-'))
   try {
     const inputPath = path.join(workingDirectory, 'input.png')
@@ -107,7 +117,7 @@ export async function convertAnimatedPng(
       '-i',
       inputPath,
       '-vf',
-      `scale=${String(SPRITE_SIZE)}:${String(SPRITE_SIZE)}:flags=lanczos,tile=1x${String(framesCount)}`,
+      `scale=${String(frameSize)}:${String(frameSize)}:flags=lanczos,tile=1x${String(framesCount)}`,
       '-frames:v',
       '1',
       '-update',
