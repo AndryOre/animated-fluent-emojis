@@ -1,24 +1,21 @@
-import { expect, test, vi } from 'vitest'
+import { expect, test } from 'vitest'
 import { renderHook } from 'vitest-browser-react'
 
 import { useEmojiStyle } from './use-emoji-style.js'
 
-test('resolves the manifest entry and category folder for a known id', async () => {
+test('resolves the manifest entry for a known id', async () => {
   const { result } = await renderHook(() => useEmojiStyle('cat'))
 
   await expect.poll(() => result.current.emoji?.id).toBe('cat')
-  expect(result.current.categoryFolder).toBe('Animals')
+  expect(Object.keys(result.current)).toEqual(['emoji'])
 })
 
-test('returns a null emoji and empty folder for an unknown id', async () => {
-  const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {
-    return
-  })
+test('returns a null emoji for an unknown id', async () => {
   const { result } = await renderHook(() => useEmojiStyle('does-not-exist'))
+  const { result: known } = await renderHook(() => useEmojiStyle('cat'))
 
-  await expect.poll(() => consoleError.mock.calls.length).toBeGreaterThan(0)
-  expect(result.current).toEqual({ emoji: null, categoryFolder: '' })
-  consoleError.mockRestore()
+  await expect.poll(() => known.current.emoji?.id).toBe('cat')
+  expect(result.current).toEqual({ emoji: null })
 })
 
 test('follows the id when it changes', async () => {
@@ -30,5 +27,4 @@ test('follows the id when it changes', async () => {
   await rerender()
 
   await expect.poll(() => result.current.emoji?.id).toBe('grinning-face')
-  expect(result.current.categoryFolder).toBe('Smilies')
 })

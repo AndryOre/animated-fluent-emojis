@@ -42,11 +42,10 @@ test('fetches the manifest only once across lookups', async () => {
       return HttpResponse.json(FIXTURE_MANIFEST)
     }),
   )
-  const { getCategoryFolder, generateEmojiStyle } = await importFreshModule()
+  const { generateEmojiStyle } = await importFreshModule()
 
-  await getCategoryFolder('cat')
   await generateEmojiStyle('cat', 10)
-  await getCategoryFolder('grinning-face')
+  await generateEmojiStyle('grinning-face', 10)
 
   expect(requestCount).toBe(1)
 })
@@ -58,22 +57,6 @@ test('rejects when the CDN responds with an HTTP error', async () => {
   const { emojiManifestPromise } = await importFreshModule()
 
   await expect(emojiManifestPromise).rejects.toThrow()
-})
-
-test('getCategoryFolder returns the category title', async () => {
-  serveFixtureManifest()
-  const { getCategoryFolder } = await importFreshModule()
-
-  await expect(getCategoryFolder('grinning-face')).resolves.toBe('Smilies')
-})
-
-test('getCategoryFolder throws for an unknown id', async () => {
-  serveFixtureManifest()
-  const { getCategoryFolder } = await importFreshModule()
-
-  await expect(getCategoryFolder('nope')).rejects.toThrow(
-    'Emoji with id "nope" not found',
-  )
 })
 
 test('generateEmojiStyle builds keyframes spanning every frame', async () => {
