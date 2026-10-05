@@ -73,3 +73,23 @@ describe.each(listWorkflowFiles())('%s', (fileName) => {
     }
   })
 })
+
+describe('sync-assets.yml docs pull request step', () => {
+  const steps = collectSteps(readWorkflow('sync-assets.yml'))
+  const script =
+    steps.find((step) => step.run?.includes('gh pr create'))?.run ?? ''
+
+  test('reuses only an open pull request', () => {
+    expect(script).toMatch(/gh pr list[^\n]*--state open/)
+    expect(script).not.toContain('gh pr view')
+  })
+
+  test('counts untracked docs files as changes', () => {
+    expect(script).toContain('git status --porcelain -- docs')
+    expect(script).not.toContain('git diff --quiet')
+  })
+
+  test('does not interpolate expressions into the script', () => {
+    expect(script).not.toContain('${{')
+  })
+})
