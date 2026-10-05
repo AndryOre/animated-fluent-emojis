@@ -44,6 +44,16 @@ test('an unknown id without a fallback renders nothing', async () => {
   expect(container.getHTML()).toBe('')
 })
 
+test.each(['constructor', '__proto__', 'toString', 'hasOwnProperty'])(
+  'the inherited object key %s resolves to missing without throwing',
+  async (id) => {
+    vi.spyOn(console, 'warn').mockImplementation(() => 0 as never)
+    const { container } = await render(<Emoji id={id} fallback="?" />)
+
+    await expect.poll(() => container.textContent).toBe('?')
+  },
+)
+
 test('a skin tone change makes autoplay wait for the new sheet', async () => {
   const { container, rerender } = await render(
     <Emoji id="waving-hand" skinTone="dark" animationIterations="infinite" />,

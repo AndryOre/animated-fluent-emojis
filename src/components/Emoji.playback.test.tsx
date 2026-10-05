@@ -1,5 +1,5 @@
 /// <reference types="@vitest/browser-playwright" />
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { page } from 'vitest/browser'
 
@@ -69,6 +69,61 @@ test('pauses a looping emoji while the document is hidden', async () => {
 
   setDocumentHidden(false)
   await expect.poll(() => getPlayState(image)).toBe('running')
+})
+
+test('a started run pauses on its frame while the document is hidden and finishes once', async () => {
+  const onPlaybackEnd = vi.fn()
+  await render(
+    <Emoji id="cat" animationIterations={2} onPlaybackEnd={onPlaybackEnd} />,
+  )
+
+  const image = getImage('Cat')
+  await expect.poll(() => getPlayState(image)).toBe('running')
+
+  setDocumentHidden(true)
+  await expect.poll(() => getPlayState(image)).toBe('paused')
+  expect(image.element().style.animationName).not.toBe('none')
+  expect(image.element().getAnimations()).toHaveLength(1)
+
+  setDocumentHidden(false)
+  await expect.poll(() => getPlayState(image)).toBe('running')
+  await expect
+    .poll(() => onPlaybackEnd.mock.calls.length, { timeout: 5000 })
+    .toBe(1)
+  await new Promise((resolve) => {
+    setTimeout(resolve, 100)
+  })
+  expect(onPlaybackEnd).toHaveBeenCalledTimes(1)
+})
+
+test('a started run pauses on its frame when it leaves the viewport and finishes once', async () => {
+  const onPlaybackEnd = vi.fn()
+  await render(
+    <div data-testid="scroller" style={{ height: 100, overflow: 'auto' }}>
+      <Emoji
+        id="cat"
+        size={50}
+        animationIterations={2}
+        onPlaybackEnd={onPlaybackEnd}
+      />
+      <div style={{ height: 2000 }} />
+    </div>,
+  )
+
+  const image = getImage('Cat')
+  await expect.poll(() => getPlayState(image)).toBe('running')
+
+  const scroller = page.getByTestId('scroller').element()
+  scroller.scrollTop = 2000
+  await expect.poll(() => getPlayState(image)).toBe('paused')
+  expect(image.element().style.animationName).not.toBe('none')
+  expect(image.element().getAnimations()).toHaveLength(1)
+
+  scroller.scrollTop = 0
+  await expect.poll(() => getPlayState(image)).toBe('running')
+  await expect
+    .poll(() => onPlaybackEnd.mock.calls.length, { timeout: 5000 })
+    .toBe(1)
 })
 
 test('describes the sheets by width and sizes the image at 24px', async () => {

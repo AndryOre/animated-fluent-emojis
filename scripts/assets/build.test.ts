@@ -193,6 +193,7 @@ test('builds the manifest, sprites, version marker, headers and license', async 
   expect(slim.categories[0]?.emoticons[0]).not.toHaveProperty('keywords')
   const headers = await readFile(path.join(out, '_headers'), 'utf8')
   expect(headers).toContain('immutable')
+  expect(headers.split('\n\n', 1)[0]).not.toContain('immutable')
   expect(headers).toContain('/manifest.slim.json\n  Cache-Control')
   expect(
     await readFile(
@@ -251,6 +252,7 @@ test('limits the build to the first emojis', async () => {
   const result = await buildAssets({ ...baseOptions(fakeFetch), limit: 1 })
 
   expect(result.spriteCount).toBe(1)
+  expect(result.version.limited).toBe(true)
   expect(
     result.manifest.categories.flatMap((category) => category.emoticons),
   ).toHaveLength(1)
@@ -272,6 +274,8 @@ test('skips an official emoji whose sprite fails and reports it', async () => {
 
   expect(result.skipped).toHaveLength(1)
   expect(result.skipped[0]?.id).toBe('1f3c1_chequeredflag')
+  expect(result.version.skippedIds).toEqual(['1f3c1_chequeredflag'])
+  expect(result.version.limited).toBeUndefined()
   expect(result.spriteCount).toBe(7)
   const ids = result.manifest.categories.flatMap((category) =>
     category.emoticons.map((emoticon) => emoticon.id),
@@ -647,7 +651,7 @@ test('limits conversions independently from downloads', () => {
 })
 
 const LEGACY_HEADERS = `/sprites/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=86400
   Access-Control-Allow-Origin: *
 
 /manifest.json

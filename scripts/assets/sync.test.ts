@@ -9,6 +9,8 @@ import {
   formatErrorChain,
   isV1LayoutStale,
   needsRebuild,
+  parseLimit,
+  verifyLive,
 } from './sync.js'
 import { createFakeFetch } from './test-support.js'
 
@@ -174,4 +176,64 @@ test('fetchPublishedJson retries a transient failure through the shared helper',
     fetchPublishedJson(flaky, 'https://site.test', 'version.json'),
   ).resolves.toEqual(published)
   expect(calls).toBe(2)
+})
+
+test('rebuilds when the published catalog lists skipped emojis', () => {
+  const withSkipped = { ...published, skippedIds: ['1f3c1_chequeredflag'] }
+  expect(needsRebuild(withSkipped, withSkipped, latest, false)).toBe(true)
+  expect(needsRebuild(published, withSkipped, latest, false)).toBe(true)
+  const emptySkipped = { ...published, skippedIds: [] }
+  expect(needsRebuild(emptySkipped, emptySkipped, latest, false)).toBe(false)
+})
+
+test('never treats a limited build as current', () => {
+  const limited = { ...published, limited: true as const }
+  expect(needsRebuild(limited, limited, latest, false)).toBe(true)
+  expect(needsRebuild(published, limited, latest, false)).toBe(true)
+})
+
+test('parses --limit and rejects anything but a positive whole number', () => {
+  expect(parseLimit(undefined)).toBeUndefined()
+  expect(parseLimit('5')).toBe(5)
+  for (const bad of ['abc', '0', '-3', '1.5', '', '1e3']) {
+    expect(() => parseLimit(bad)).toThrow('Invalid --limit')
+  }
+})
+
+const liveUrl = 'https://site.example'
+const liveVersionKey = `GET ${liveUrl}/v1/version.json`
+
+test('verify-live passes for a current v1 marker', async () => {
+  const { fetch } = createFakeFetch({
+    [liveVersionKey]: { body: published },
+  })
+  await expect(verifyLive(fetch, liveUrl)).resolves.toBeUndefined()
+})
+
+test('verify-live fails on a 404', async () => {
+  const { fetch } = createFakeFetch({})
+  await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('404')
+})
+
+test('verify-live fails when v1 is not listed', async () => {
+  const { fetch } = createFakeFetch({
+    [liveVersionKey]: { body: { ...published, layouts: [] } },
+  })
+  await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('layout')
+})
+
+test('verify-live fails on a limited build', async () => {
+  const { fetch } = createFakeFetch({
+    [liveVersionKey]: { body: { ...published, limited: true } },
+  })
+  await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('--limit')
+})
+
+test('verify-live fails on another pipeline version', async () => {
+  const { fetch } = createFakeFetch({
+    [liveVersionKey]: {
+      body: { ...published, pipelineVersion: PIPELINE_VERSION + 1 },
+    },
+  })
+  await expect(verifyLive(fetch, liveUrl)).rejects.toThrow('pipelineVersion')
 })

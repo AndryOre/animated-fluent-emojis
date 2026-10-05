@@ -34,21 +34,23 @@ export interface SearchEmojisOptions {
 type ManifestRecord = Record<string, EmojiManifest>
 
 const DEFAULT_SEARCH_LIMIT = 20
-const VARIATION_SELECTOR_16 = /️/g
+const VARIATION_SELECTOR_16 = /\u{FE0F}/gu
 const SKIN_TONE_MODIFIERS = /[\u{1F3FB}-\u{1F3FF}]/gu
+const EMOJI_CLUSTER =
+  /[\u{1F1E6}-\u{1F1FF}]{2}|.(?:[\u{FE0E}\u{FE0F}\u{20E3}\u{1F3FB}-\u{1F3FF}\u{E0020}-\u{E007F}]|\u{200D}.)*/gsu
 
-const TONE_BY_MODIFIER: Readonly<Record<string, SkinTone>> = {
-  '\u{1F3FB}': 'light',
-  '\u{1F3FC}': 'medium-light',
-  '\u{1F3FD}': 'medium',
-  '\u{1F3FE}': 'medium-dark',
-  '\u{1F3FF}': 'dark',
-}
+const TONES: readonly SkinTone[] = [
+  'light',
+  'medium-light',
+  'medium',
+  'medium-dark',
+  'dark',
+]
 
 const indexCache = new WeakMap<ManifestRecord, Map<string, EmojiManifest>>()
 
 /**
- * Removes the variation selector so text and catalog glyphs compare equal.
+ * Removes the variation selector so text and catalog glyphs share one key.
  * @param text - One emoji, optionally with VS16 or skin tone modifiers.
  * @returns The text without VS16.
  */
@@ -57,9 +59,21 @@ function stripVariationSelector(text: string): string {
 }
 
 /**
- * Indexes the catalog by its normalised unicode, once per manifest.
+ * Tells whether VS16 directly follows the first code point, which marks a
+ * text-presentation base such as a copyright sign.
+ * @param text - An emoji, if known.
+ * @returns Whether the second code point is VS16.
+ */
+function hasVariationSelectorAfterBase(text: string | undefined): boolean {
+  const base = text?.codePointAt(0)
+  if (base === undefined) return false
+  return text?.codePointAt(base > 0xff_ff ? 2 : 1) === 0xfe_0f
+}
+
+/**
+ * Indexes the catalog by its unicode without VS16, once per manifest.
  * @param manifest - The loaded manifest.
- * @returns A map from normalised unicode to the manifest entry.
+ * @returns A map from VS16-free unicode to the manifest entry.
  */
 function indexByUnicode(manifest: ManifestRecord): Map<string, EmojiManifest> {
   const cached = indexCache.get(manifest)
@@ -73,7 +87,8 @@ function indexByUnicode(manifest: ManifestRecord): Map<string, EmojiManifest> {
 }
 
 /**
- * Resolves one emoji text against an already loaded catalog.
+ * Resolves one emoji text against an already loaded catalog. Emoji-presentation
+ * bases match with or without VS16; text-presentation bases require it.
  * @param manifest - The loaded manifest.
  * @param text - A single emoji, with optional VS16 and skin tone modifiers.
  * @returns The match, or undefined when the text is not a catalog emoji.
@@ -83,15 +98,44 @@ function resolveEmoji(
   text: string,
 ): EmojiMatch | undefined {
   const index = indexByUnicode(manifest)
-  const normalized = stripVariationSelector(text)
-  const direct = index.get(normalized)
-  if (direct) return { id: direct.id }
-  const modifier = normalized.match(SKIN_TONE_MODIFIERS)?.[0]
-  if (!modifier) return undefined
-  const base = index.get(normalized.replaceAll(SKIN_TONE_MODIFIERS, ''))
-  return base?.diverse
-    ? { id: base.id, skinTone: TONE_BY_MODIFIER[modifier] }
-    : undefined
+  const plain = stripVariationSelector(text)
+  const direct = index.get(plain)
+  if (direct) {
+    return hasVariationSelectorAfterBase(direct.unicode) &&
+      !hasVariationSelectorAfterBase(text)
+      ? undefined
+      : { id: direct.id }
+  }
+  const modifiers = plain.match(SKIN_TONE_MODIFIERS)
+  const base = index.get(plain.replaceAll(SKIN_TONE_MODIFIERS, ''))
+  if (!modifiers || !base?.diverse) return undefined
+  return new Set(modifiers).size > 1
+    ? { id: base.id }
+    : {
+        id: base.id,
+        skinTone: TONES[(modifiers[0].codePointAt(0) ?? 0) - 0x1_f3_fb],
+      }
+}
+
+/**
+ * Splits text into graphemes, falling back to a code point grouper that keeps
+ * ZWJ sequences, variation selectors, skin tones, keycaps and flags together
+ * when the runtime has no `Intl.Segmenter`.
+ * @param text - Free text.
+ * @returns The segments with their UTF-16 offsets.
+ */
+function segmentText(text: string): { segment: string; index: number }[] {
+  if (typeof Intl.Segmenter === 'function') {
+    return [
+      ...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(
+        text,
+      ),
+    ]
+  }
+  return Array.from(text.matchAll(EMOJI_CLUSTER), (match) => ({
+    segment: match[0],
+    index: match.index,
+  }))
 }
 
 /**
@@ -128,9 +172,8 @@ export async function findEmojiByUnicode(
 export async function extractEmojis(text: string): Promise<ExtractedEmoji[]> {
   const manifest = await loadManifestOrUndefined()
   if (!manifest) return []
-  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' })
   const found: ExtractedEmoji[] = []
-  for (const { segment, index } of segmenter.segment(text)) {
+  for (const { segment, index } of segmentText(text)) {
     const match = resolveEmoji(manifest, segment)
     if (match) {
       found.push({ ...match, text: segment, index, length: segment.length })
@@ -142,7 +185,7 @@ export async function extractEmojis(text: string): Promise<ExtractedEmoji[]> {
 /**
  * Searches the catalog by description, ignoring case.
  * @param query - The text to look for inside descriptions.
- * @param options - Optional result limit.
+ * @param options - Optional result limit; a value that is not a positive number means no limit, except 0, which returns nothing.
  * @returns Matching emojis, at most `limit`; empty when the manifest failed to load.
  */
 export async function searchEmojis(
@@ -152,7 +195,9 @@ export async function searchEmojis(
   const manifest = await loadManifestOrUndefined()
   const needle = query.trim().toLowerCase()
   if (!manifest || needle === '') return []
-  const limit = options.limit ?? DEFAULT_SEARCH_LIMIT
+  const requested = options.limit ?? DEFAULT_SEARCH_LIMIT
+  if (requested === 0) return []
+  const limit = requested > 0 ? requested : Infinity
   const results: EmojiMatch[] = []
   for (const emoji of Object.values(manifest)) {
     if (results.length >= limit) break

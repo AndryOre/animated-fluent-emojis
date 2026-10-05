@@ -68,6 +68,7 @@
     "lint:commits": "bun scripts/lint-commits.ts",
     "assets:detect": "bun scripts/assets/sync.ts detect",
     "assets:build": "bun scripts/assets/sync.ts build",
+    "assets:verify-live": "bun scripts/assets/sync.ts verify-live",
     "assets:lists": "bun scripts/assets/sync.ts lists",
     "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },
@@ -130,7 +131,7 @@
         "dist/lookup.js",
         "dist/emoji-manifest-*.js"
       ],
-      "limit": "2.2 kB"
+      "limit": "2.3 kB"
     },
     {
       "name": "Stylesheet",
