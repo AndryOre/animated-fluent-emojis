@@ -3,7 +3,7 @@
   "version": "0.5.2",
   "description": "Microsoft's animated Fluent emojis as one component. They play on load or hover, rest under reduced motion and hold their space while they load.",
   "author": "Andry Orellana",
-  "license": "ISC",
+  "license": "MIT",
   "private": false,
   "sideEffects": [
     "**/*.css"

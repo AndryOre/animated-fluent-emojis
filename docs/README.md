@@ -43,6 +43,7 @@ An index of every document in this repository.
 - [`adr/0010-versioned-asset-layout-and-live-seeding.md`](adr/0010-versioned-asset-layout-and-live-seeding.md)
 - [`adr/0011-compact-slim-manifest-and-hd-frame-cap.md`](adr/0011-compact-slim-manifest-and-hd-frame-cap.md)
 - [`adr/0012-brand-kit-in-docs-brand.md`](adr/0012-brand-kit-in-docs-brand.md)
+- [`adr/0013-relicense-to-mit.md`](adr/0013-relicense-to-mit.md)
 
 ## Brand
 

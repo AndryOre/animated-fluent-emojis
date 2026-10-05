@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Changed
 
+- Relicensed the code from ISC to MIT, see
+  [ADR 0013](docs/adr/0013-relicense-to-mit.md). Versions up to 0.5.2 stay ISC.
 - The package description, keywords and README intro describe what the component
   does today. The "Exclusive Feature" callout is removed.
 - Added a brand kit in `docs/brand/` and the `bun run brand:export` script that

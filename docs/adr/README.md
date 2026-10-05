@@ -25,3 +25,4 @@ column.
 | 0010   | [Versioned asset layout and live seeding](0010-versioned-asset-layout-and-live-seeding.md)                     | Accepted | 0011                     |
 | 0011   | [Compact slim manifest, HD frame cap and layout-aware sync](0011-compact-slim-manifest-and-hd-frame-cap.md)    | Accepted | -                        |
 | 0012   | [Brand kit lives in docs/brand](0012-brand-kit-in-docs-brand.md)                                               | Accepted | -                        |
+| 0013   | [Relicense to MIT](0013-relicense-to-mit.md)                                                                   | Accepted | -                        |
