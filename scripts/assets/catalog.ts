@@ -266,10 +266,27 @@ export function buildCatalog(
     categories: teams.categories.map((category) => ({
       ...category,
       emoticons: [
-        ...category.emoticons,
+        ...category.emoticons.map((emoticon) => clampPosterFrame(emoticon)),
         ...(additionsByCategory.get(category.title) ?? []),
       ],
     })),
   }
   return { manifest, tasks, mitEmojiIds }
+}
+
+/**
+ * Keeps an emoticon's poster frame inside its sprite sheet. Teams ships a few
+ * single-frame emojis whose `firstFrame` points past the only frame, which
+ * would render as an empty box at rest.
+ * @param emoticon The emoticon as published by Teams.
+ * @returns The emoticon with `firstFrame` clamped to `[1, framesCount]`, or the
+ * same emoticon when `framesCount` is not yet known or already valid.
+ */
+function clampPosterFrame(emoticon: Emoticon): Emoticon {
+  const { framesCount, firstFrame } = emoticon.animation
+  if (framesCount < 1 || firstFrame <= framesCount) return emoticon
+  return {
+    ...emoticon,
+    animation: { ...emoticon.animation, firstFrame: framesCount },
+  }
 }

@@ -188,6 +188,27 @@ test('marks added official emojis with origin official', () => {
   ).toBe('official')
 })
 
+test('clamps a Teams poster frame that points past the last frame', () => {
+  const teams = createTeamsManifest()
+  teams.categories[1]?.emoticons.push({
+    id: 'lips_teams',
+    description: 'Lips',
+    shortcuts: [],
+    unicode: '👄',
+    etag: 'v1',
+    diverse: false,
+    animation: { fps: 24, framesCount: 1, firstFrame: 36 },
+    keywords: [],
+  })
+
+  const catalog = buildCatalog(teams, [], undefined)
+
+  const lips = allEmoticons(catalog).find(
+    (emoticon) => emoticon.id === 'lips_teams',
+  )
+  expect(lips?.animation.firstFrame).toBe(1)
+})
+
 test('keeps a pinned official id when Teams now has the emoji', () => {
   const teams = createTeamsManifest()
   teams.categories[1]?.emoticons.push({
