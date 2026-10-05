@@ -94,7 +94,7 @@ test('getSpriteUrl maps every skin tone for diverse emojis only', async () => {
   expect(getSpriteUrl(cat, 'dark')).toContain('/cat.png?')
 })
 
-test('importing the package makes no request', async () => {
+test('importing the manifest module makes no request', async () => {
   let requestCount = 0
   server.use(
     http.get(MANIFEST_URL, () => {
@@ -103,7 +103,7 @@ test('importing the package makes no request', async () => {
     }),
   )
 
-  await import('../index.js')
+  await importFreshModule()
   await new Promise((resolve) => {
     setTimeout(resolve, 20)
   })
