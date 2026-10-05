@@ -90,6 +90,23 @@ test('a failed sprite is retried when the browser goes online', async () => {
   await expect.poll(() => container.querySelector('img')).not.toBeNull()
 })
 
+test('the image mounted by an online retry still reports its animation end', async () => {
+  const { container } = await render(<Emoji id="cat" animationIterations={1} />)
+  const failedImage = await waitForImage(container)
+  failedImage.dispatchEvent(new Event('error'))
+  await expect.poll(() => container.querySelector('img')).toBeNull()
+
+  globalThis.dispatchEvent(new Event('online'))
+  const retriedImage = await waitForImage(container)
+
+  await expect
+    .poll(() => retriedImage.style.animationName, { timeout: 5000 })
+    .toBe('')
+  await expect
+    .poll(() => retriedImage.style.animationName, { timeout: 8000 })
+    .toBe('none')
+})
+
 test('a failed sprite is retried when the source changes and returns', async () => {
   const { container, rerender } = await render(
     <Emoji id="waving-hand" skinTone="dark" />,

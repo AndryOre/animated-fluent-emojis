@@ -49,6 +49,7 @@ const EmojiComponent = (
   const size = normalizeSize(requestedSize)
   const { status, emoji } = useEmojiStyle(id)
   const spriteSource = emoji ? getSpriteUrl(emoji, skinTone) : undefined
+  const [failedSource, setFailedSource] = useState<string | null>(null)
   const { isInitialAnimationComplete, animationStyle, imageRef } =
     useEmojiAnimation(
       emoji,
@@ -57,8 +58,8 @@ const EmojiComponent = (
       autoPlay,
       size,
       spriteSource,
+      failedSource !== null && failedSource === spriteSource,
     )
-  const [failedSource, setFailedSource] = useState<string | null>(null)
   const onErrorRef = useRef(onError)
   const hasReportedErrorRef = useRef(false)
   useEffect(() => {
