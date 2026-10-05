@@ -275,10 +275,10 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
   sequences match even when the variation selector is missing (minimally
   qualified).
 - When several catalog entries share a glyph, lookup returns the canonical
-  emoji: the Microsoft-published id prefixed with the glyph's code points,
-  otherwise a reviewed override, otherwise the first entry in catalog order. For
-  example, `❤️` resolves to the heart rather than a variant that reuses the
-  glyph. With a skin tone, it falls back to a sibling entry that has tones.
+  emoji: the official id prefixed with the glyph's code points, otherwise a
+  reviewed override, otherwise the first entry in catalog order. For example,
+  `❤️` resolves to the heart rather than a variant that reuses the glyph. With a
+  skin tone, it falls back to a sibling entry that has tones.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
   sequences whole, with its offset and length. Without `Intl.Segmenter` it falls
   back to a code point grouper, and neither function ever rejects.
@@ -392,7 +392,7 @@ refreshed automatically. Most emojis come from the animated Fluent emoji set
 that Microsoft Teams publishes; the rest come from Microsoft's MIT-licensed
 [fluentui-emoji-animated][Microsoft Fluent Emojis Animated] repository. The
 sprites remain Microsoft's assets: this package's ISC license covers the code
-only. The MIT notice for the upstream repository is published at
+only. The MIT notice for the official repository is published at
 `/LICENSE-fluentui-emoji-animated.txt` on the asset site.
 
 ## Acknowledgements
