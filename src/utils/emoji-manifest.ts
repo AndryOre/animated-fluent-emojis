@@ -16,10 +16,9 @@ const state: {
  * @param options.assetSiteUrl - Origin of the asset site, without or with a trailing slash. Defaults to the published asset site.
  */
 export function configureEmojis(options: { assetSiteUrl?: string }): void {
-  state.assetSiteUrl = (options.assetSiteUrl ?? DEFAULT_ASSET_SITE_URL).replace(
-    /\/+$/,
-    '',
-  )
+  let url = options.assetSiteUrl ?? DEFAULT_ASSET_SITE_URL
+  while (url.endsWith('/')) url = url.slice(0, -1)
+  state.assetSiteUrl = url
 }
 
 const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
