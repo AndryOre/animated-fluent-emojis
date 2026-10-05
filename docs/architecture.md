@@ -41,9 +41,10 @@ Both are re-exported from `src/hooks/index.ts`.
 
 `utils/emoji-manifest.ts` fetches `manifest.json` from
 `https://animated-fluent-emojis.pages.dev` once, flattens its categories into a
-record keyed by emoji id, and exposes `generateEmojiStyle(id, size)`, which
-builds the sprite-stepping `@keyframes` for one emoji, and
-`getSpriteUrl(emoji, skinTone)`, which builds the versioned sprite URL. The
+record keyed by emoji id, and exposes `getSpriteUrl(emoji, skinTone)`, which
+builds the versioned sprite URL. The sprite-stepping `@keyframes` is a single
+static percentage keyframe in `Emoji.module.css`; the component sets
+`steps(framesCount)`, the duration and the poster-frame offset inline. The
 request happens at module load, so tests intercept it with MSW (`src/test/`),
 and the shapes live in `utils/types.ts`.
 

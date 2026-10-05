@@ -12,8 +12,6 @@ import type { EmojiManifest } from '../utils/index.js'
 export interface UseEmojiAnimationResult {
   isInitialAnimationComplete: boolean
   animationStyle: CSSProperties
-  handleMouseEnter: () => void
-  handleMouseLeave: () => void
   imageRef: RefObject<HTMLImageElement | null>
 }
 
@@ -24,7 +22,7 @@ export interface UseEmojiAnimationResult {
  * @param animationIterations - The number of animation iterations.
  * @param autoPlay - Whether to autoplay the animation.
  * @param size - The size of the emoji in pixels.
- * @returns Animation state, style, mouse handlers and the image element ref.
+ * @returns Animation state, inline style and the image element ref.
  */
 export const useEmojiAnimation = (
   emoji: EmojiManifest | null,
@@ -35,7 +33,6 @@ export const useEmojiAnimation = (
 ): UseEmojiAnimationResult => {
   const [isInitialAnimationComplete, setIsInitialAnimationComplete] =
     useState(!autoPlay)
-  const [isHovered, setIsHovered] = useState(false)
   const animationCountRef = useRef(0)
   const imageRef = useRef<HTMLImageElement>(null)
 
@@ -79,42 +76,23 @@ export const useEmojiAnimation = (
     }
   }, [emoji, animationIterations, isInitialAnimationComplete])
 
-  useEffect(() => {
-    if (!playOnHover || !isInitialAnimationComplete || !emoji) return
-
-    const imgElement = imageRef.current
-    if (!imgElement) return
-
-    if (isHovered) {
-      imgElement.style.animationPlayState = 'running'
-    } else {
-      imgElement.style.animationPlayState = 'paused'
-      imgElement.style.transform = `translateY(-${String(
-        (emoji.animation.firstFrame - 1) * size,
-      )}px)`
-    }
-  }, [isHovered, playOnHover, isInitialAnimationComplete, emoji, size])
-
   const animationStyle = useMemo<CSSProperties>(() => {
     if (!emoji) return {}
 
+    const { framesCount, fps, firstFrame } = emoji.animation
+    const isIdle = !autoPlay && !playOnHover
+
     return {
       width: size,
-      animationName: `emoji-${emoji.id}-${String(size)}`,
-      animationDuration: `${String(
-        emoji.animation.framesCount / emoji.animation.fps,
-      )}s`,
-      animationTimingFunction: `steps(${String(emoji.animation.framesCount)})`,
+      ...(isIdle && { animationName: 'none' }),
+      animationDuration: `${String(framesCount / fps)}s`,
+      animationTimingFunction: `steps(${String(framesCount)})`,
       animationIterationCount:
         isInitialAnimationComplete && playOnHover
           ? 'infinite'
           : animationIterations,
-      animationPlayState:
-        (autoPlay && !isInitialAnimationComplete) ||
-        (isInitialAnimationComplete && playOnHover && isHovered)
-          ? 'running'
-          : 'paused',
-      transform: `translateY(-${String((emoji.animation.firstFrame - 1) * size)}px)`,
+      animationPlayState: isIdle ? 'paused' : 'running',
+      transform: `translateY(${String((-(firstFrame - 1) / framesCount) * 100)}%)`,
     }
   }, [
     emoji,
@@ -123,21 +101,11 @@ export const useEmojiAnimation = (
     playOnHover,
     animationIterations,
     autoPlay,
-    isHovered,
   ])
-
-  const handleMouseEnter = () => {
-    setIsHovered(true)
-  }
-  const handleMouseLeave = () => {
-    setIsHovered(false)
-  }
 
   return {
     isInitialAnimationComplete,
     animationStyle,
-    handleMouseEnter,
-    handleMouseLeave,
     imageRef,
   }
 }

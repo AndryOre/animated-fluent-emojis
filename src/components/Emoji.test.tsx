@@ -6,6 +6,17 @@ import { Emoji } from './Emoji.js'
 
 const SPRITE_BASE = 'https://animated-fluent-emojis.pages.dev/sprites'
 
+const getTransform = (image: ReturnType<typeof getImage>) =>
+  getComputedStyle(image.element()).transform
+
+const expectStill = async (image: ReturnType<typeof getImage>) => {
+  const initial = getTransform(image)
+  await new Promise((resolve) => {
+    setTimeout(resolve, 150)
+  })
+  expect(getTransform(image)).toBe(initial)
+}
+
 const getImage = (name: string) => page.getByRole('img', { name })
 
 test('renders the sprite for the given id', async () => {
@@ -90,25 +101,94 @@ test('runs the animation on mount by default', async () => {
     .toHaveStyle({ animationPlayState: 'running' })
 })
 
-test('stays paused when autoPlay is false', async () => {
+test('stays still on the poster frame when autoPlay is false', async () => {
   await render(<Emoji id="cat" autoPlay={false} />)
 
+  const image = getImage('Cat')
   await expect
-    .element(getImage('Cat'))
-    .toHaveStyle({ animationPlayState: 'paused' })
+    .element(image)
+    .toHaveStyle({ animationPlayState: 'paused', animationName: 'none' })
+  await expectStill(image)
 })
 
-test('plays only while hovered with playOnHover', async () => {
+test('moves the image through its frames after mount', async () => {
+  await render(<Emoji id="cat" animationIterations="infinite" />)
+
+  const image = getImage('Cat')
+  await expect.element(image).toBeVisible()
+  const initial = getTransform(image)
+  await expect.poll(() => getTransform(image)).not.toBe(initial)
+})
+
+test('keeps animating one instance when another with the same id and size unmounts', async () => {
+  const first = await render(
+    <Emoji id="cat" size={32} animationIterations="infinite" />,
+  )
+  const second = await render(
+    <Emoji id="cat" size={32} animationIterations="infinite" />,
+  )
+  await first.unmount()
+
+  const image = getImage('Cat')
+  await expect.element(image).toBeVisible()
+  const initial = getTransform(image)
+  await expect.poll(() => getTransform(image)).not.toBe(initial)
+  await second.unmount()
+})
+
+test('rests on the poster frame for emojis whose first frame is not 1', async () => {
+  await render(<Emoji id="grinning-face" size={80} autoPlay={false} />)
+
+  const image = getImage('Grinning face')
+  await expect.element(image).toBeVisible()
+  await expect
+    .poll(() => new DOMMatrix(getTransform(image)).m42)
+    .toBeCloseTo(-2, 5)
+})
+
+test('ends on the poster frame after the requested iterations', async () => {
+  await render(<Emoji id="grinning-face" size={80} animationIterations={1} />)
+
+  const image = getImage('Grinning face')
+  await expect.element(image).toBeVisible()
+  await expect
+    .poll(() => image.element().getAnimations().length, { timeout: 5000 })
+    .toBe(0)
+  expect(new DOMMatrix(getTransform(image)).m42).toBeCloseTo(-2, 5)
+})
+
+test('replays on hover after the initial run with playOnHover', async () => {
+  await render(<Emoji id="cat" size={50} playOnHover animationIterations={1} />)
+
+  const image = getImage('Cat')
+  await expect.element(image).toBeVisible()
+  await userEvent.unhover(image)
+  await expect
+    .poll(() => image.element().getAnimations().length, { timeout: 5000 })
+    .toBe(0)
+  await expectStill(image)
+
+  await userEvent.hover(image)
+  await expect.poll(() => image.element().getAnimations().length).toBe(1)
+  const initial = getTransform(image)
+  await expect.poll(() => getTransform(image)).not.toBe(initial)
+
+  await userEvent.unhover(image)
+  await expect.poll(() => image.element().getAnimations().length).toBe(0)
+})
+
+test('plays only while hovered with playOnHover and no autoPlay', async () => {
   await render(<Emoji id="cat" autoPlay={false} playOnHover />)
 
   const image = getImage('Cat')
-  await expect.element(image).toHaveStyle({ animationPlayState: 'paused' })
+  await expect.element(image).toBeVisible()
+  expect(image.element().getAnimations()).toHaveLength(0)
 
   await userEvent.hover(image)
-  await expect.element(image).toHaveStyle({ animationPlayState: 'running' })
+  await expect.poll(() => image.element().getAnimations().length).toBe(1)
 
   await userEvent.unhover(image)
-  await expect.element(image).toHaveStyle({ animationPlayState: 'paused' })
+  await expect.poll(() => image.element().getAnimations().length).toBe(0)
 })
 
 test('switches to hover-only playback after the requested iterations', async () => {
@@ -141,23 +221,13 @@ test('switches to hover-only playback when the animation ends', async () => {
     .toContain('animateOnHover')
 })
 
-test('registers the keyframes for the emoji and removes them on unmount', async () => {
-  const { unmount } = await render(<Emoji id="cat" size={32} />)
-
-  await expect
-    .poll(() =>
-      document
-        .querySelector('#emoji-style-cat-32')
-        ?.textContent.includes('@keyframes emoji-cat-32'),
-    )
-    .toBe(true)
-
-  await unmount()
-  expect(document.querySelector('#emoji-style-cat-32')).toBeNull()
-})
-
 test('renders nothing for an unknown id', async () => {
   const { container } = await render(<Emoji id="does-not-exist" />)
+  const { emojiManifestPromise } = await import('../utils/index.js')
+  await emojiManifestPromise
 
-  await expect.poll(() => container.getHTML()).toBe('')
+  await new Promise((resolve) => {
+    setTimeout(resolve, 50)
+  })
+  expect(container.getHTML()).toBe('')
 })
