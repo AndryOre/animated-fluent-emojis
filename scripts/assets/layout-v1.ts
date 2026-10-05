@@ -3,6 +3,11 @@ import path from 'node:path'
 
 import type { Manifest } from '../../src/utils/types.js'
 import type { SpriteTask } from './catalog.js'
+import {
+  HD_FRAME_SIZE,
+  indexEmoticons,
+  SPRITE_FRAME_SIZE,
+} from './constants.js'
 import { findSpriteSheetProblem, validateCatalog } from './validate.js'
 
 /**
@@ -142,15 +147,9 @@ function toV1Tasks(
   tasks: readonly SpriteTask[],
   manifest: Manifest,
 ): SpriteTask[] {
-  const etagById = new Map(
-    manifest.categories.flatMap((category) =>
-      category.emoticons.map(
-        (emoticon) => [emoticon.id, emoticon.etag] as const,
-      ),
-    ),
-  )
+  const emoticonById = indexEmoticons(manifest)
   return tasks.map((task) => {
-    const etag = etagById.get(task.id) ?? task.etag
+    const etag = emoticonById.get(task.id)?.etag ?? task.etag
     return {
       ...task,
       outputPath: buildV1SpritePath(task.outputPath, etag),
@@ -263,7 +262,7 @@ async function findRetainedProblems(
     retained.map(async (sprite) => {
       const problem = await findSpriteSheetProblem(
         path.join(outputDirectory, sprite.v1Path),
-        sprite.hd ? 200 : 100,
+        sprite.hd ? HD_FRAME_SIZE : SPRITE_FRAME_SIZE,
         sprite.framesCount,
       )
       return problem === undefined

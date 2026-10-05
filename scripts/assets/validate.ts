@@ -4,10 +4,12 @@ import sharp from 'sharp'
 
 import type { Manifest } from '../../src/utils/types.js'
 import { MAX_TEXTURE_HEIGHT, type SpriteTask } from './catalog.js'
-
-const REQUIRED_TONE_SUFFIXES = ['_s2', '_s3', '_s4', '_s5', '_s6'] as const
-const STANDARD_FRAME_SIZE = 100
-const HD_FRAME_SIZE = 200
+import {
+  HD_FRAME_SIZE,
+  indexEmoticons,
+  SPRITE_FRAME_SIZE,
+  TONE_SUFFIXES,
+} from './constants.js'
 
 /**
  * Inputs for {@link validateCatalog}.
@@ -140,7 +142,7 @@ function findToneProblems(
         ? []
         : [`${emoticon.id}: missing base sprite task`]
       const missingTones = emoticon.diverse
-        ? REQUIRED_TONE_SUFFIXES.filter((suffix) => !present.has(suffix)).map(
+        ? TONE_SUFFIXES.filter((suffix) => !present.has(suffix)).map(
             (suffix) => `${emoticon.id}: missing tone sprite ${suffix}`,
           )
         : []
@@ -154,7 +156,7 @@ function listSpriteFiles(tasks: readonly ValidatedTask[]): SpriteFile[] {
     {
       task,
       relativePath: task.outputPath,
-      frameSize: STANDARD_FRAME_SIZE,
+      frameSize: SPRITE_FRAME_SIZE,
     },
     ...(task.hdOutputPath
       ? [
@@ -207,13 +209,7 @@ async function findDimensionProblems(
   manifest: Manifest,
   cacheDirectory: string,
 ): Promise<{ problems: string[]; frameCounts: Map<SpriteFile, number> }> {
-  const framesById = new Map(
-    manifest.categories.flatMap((category) =>
-      category.emoticons.map(
-        (emoticon) => [emoticon.id, emoticon.animation.framesCount] as const,
-      ),
-    ),
-  )
+  const emoticonById = indexEmoticons(manifest)
   const frameCounts = new Map<SpriteFile, number>()
   const problems: string[] = []
   const decoded = await Promise.all(
@@ -243,7 +239,7 @@ async function findDimensionProblems(
       )
     }
     frameCounts.set(file, height / file.frameSize)
-    const expectedFrames = framesById.get(file.task.id)
+    const expectedFrames = emoticonById.get(file.task.id)?.animation.framesCount
     if (
       expectedFrames !== undefined &&
       Number.isSafeInteger(expectedFrames) &&
@@ -263,7 +259,7 @@ function findToneFrameCountProblems(
 ): string[] {
   const countsById = new Map<string, Set<number>>()
   for (const [file, count] of frameCounts) {
-    if (file.task.source !== 'mit' || file.frameSize !== STANDARD_FRAME_SIZE) {
+    if (file.task.source !== 'mit' || file.frameSize !== SPRITE_FRAME_SIZE) {
       continue
     }
     const counts = countsById.get(file.task.id) ?? new Set<number>()

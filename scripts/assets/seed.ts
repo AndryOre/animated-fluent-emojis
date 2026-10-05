@@ -1,22 +1,35 @@
+import path from 'node:path'
+
 import type { Manifest } from '../../src/utils/types.js'
+import {
+  DOWNLOAD_CONCURRENCY,
+  fileExists,
+  writeBytes,
+  type BuildContext,
+} from './build-context.js'
 import {
   buildHdOutputPath,
   buildOutputPath,
   hashHdEtag,
+  HD_MAX_FRAMES,
   type SpriteTask,
 } from './catalog.js'
-import { fetchOkOrMissing, type FetchLike } from './http.js'
-import { buildV1SpritePath } from './layout-v1.js'
+import {
+  HD_FRAME_SIZE,
+  indexEmoticons,
+  SPRITE_FRAME_SIZE,
+  TONE_SUFFIXES,
+} from './constants.js'
+import { appendStepSummary } from './guards.js'
+import { getHdEtag, withoutHdSource } from './hd.js'
+import { fetchOkOrMissing, mapWithConcurrency, type FetchLike } from './http.js'
+import { buildV1SpritePath, type RetainedSprite } from './layout-v1.js'
 import { findSpriteSheetProblem } from './validate.js'
-
-const STANDARD_FRAME_SIZE = 100
-const HD_FRAME_SIZE = 200
-const TONE_SUFFIXES = ['_s2', '_s3', '_s4', '_s5', '_s6'] as const
 
 /**
  * What the previously published manifest says about one emoji.
  */
-export interface PreviousEmoji {
+interface PreviousEmoji {
   readonly id: string
   readonly categoryTitle: string
   readonly etag: string
@@ -29,7 +42,7 @@ export interface PreviousEmoji {
 /**
  * A sprite sheet downloaded from the live site and checked.
  */
-export interface LiveSprite {
+interface LiveSprite {
   readonly legacyPath: string
   readonly v1Path: string
   readonly bytes: Buffer
@@ -61,7 +74,7 @@ export function buildLiveSpriteUrl(liveUrl: string, v1Path: string): string {
  * @param manifest The previous manifest, if any.
  * @returns What is known about each previously published emoji.
  */
-export function indexPreviousEmojis(
+function indexPreviousEmojis(
   manifest: Manifest | undefined,
 ): Map<string, PreviousEmoji> {
   const entries = (manifest?.categories ?? []).flatMap((category) =>
@@ -87,7 +100,7 @@ export function indexPreviousEmojis(
  * @param emojiTasks Every sprite task of the emoji.
  * @returns The HD-aware etag when every tone has an HD source, else the base.
  */
-export function expectEmojiEtag(
+function expectEmojiEtag(
   baseEtag: string,
   emojiTasks: readonly SpriteTask[],
 ): string {
@@ -122,7 +135,7 @@ async function downloadLiveSprite(
     const bytes = Buffer.from(await response.arrayBuffer())
     const problem = await findSpriteSheetProblem(
       bytes,
-      file.hd ? HD_FRAME_SIZE : STANDARD_FRAME_SIZE,
+      file.hd ? HD_FRAME_SIZE : SPRITE_FRAME_SIZE,
       previous.framesCount,
     )
     if (problem !== undefined) {
@@ -162,7 +175,7 @@ async function downloadAll(
  * @param previous The emoji as the previous manifest described it.
  * @returns Every standard sheet, plus every HD sheet when it was published.
  */
-export function listPreviousFiles(previous: PreviousEmoji): SpriteFileRef[] {
+function listPreviousFiles(previous: PreviousEmoji): SpriteFileRef[] {
   const suffixes = previous.diverse ? ['', ...TONE_SUFFIXES] : ['']
   return suffixes.flatMap((suffix) => [
     {
@@ -194,7 +207,7 @@ export function listPreviousFiles(previous: PreviousEmoji): SpriteFileRef[] {
  * @param previous The emoji as the previous manifest described it.
  * @returns The checked sheets, or undefined to build from source.
  */
-export function seedFromLive(
+function seedFromLive(
   fetchImplementation: FetchLike,
   liveUrl: string,
   emojiTasks: readonly SpriteTask[],
@@ -217,7 +230,7 @@ export function seedFromLive(
  * @param previous The emoji as the previous manifest described it.
  * @returns The checked sheets, or undefined when any is missing or invalid.
  */
-export function retainFromLive(
+function retainFromLive(
   fetchImplementation: FetchLike,
   liveUrl: string,
   previous: PreviousEmoji,
@@ -228,4 +241,195 @@ export function retainFromLive(
     listPreviousFiles(previous),
     previous,
   )
+}
+
+async function seedEmoji(
+  emojiTasks: readonly SpriteTask[],
+  previous: PreviousEmoji,
+  context: BuildContext,
+  liveUrl: string,
+): Promise<boolean> {
+  const { options, state } = context
+  const sprites = await seedFromLive(
+    options.fetchImplementation,
+    liveUrl,
+    emojiTasks,
+    previous,
+  )
+  if (!sprites) return false
+  const animation = { fps: previous.fps, framesCount: previous.framesCount }
+  const taskByPath = new Map(
+    emojiTasks.flatMap((task) => [
+      [task.outputPath, task] as const,
+      ...(task.hdOutputPath === undefined
+        ? []
+        : [[task.hdOutputPath, task] as const]),
+    ]),
+  )
+  for (const sprite of sprites) {
+    const task = taskByPath.get(sprite.legacyPath)
+    if (!task) continue
+    await writeBytes(
+      path.join(options.cacheDirectory, sprite.legacyPath),
+      sprite.bytes,
+    )
+    state[sprite.legacyPath] = {
+      etag: sprite.hd ? getHdEtag(task) : task.etag,
+      animation,
+    }
+  }
+  return true
+}
+
+async function isEmojiCached(
+  emojiTasks: readonly SpriteTask[],
+  context: BuildContext,
+): Promise<boolean> {
+  const { options, state } = context
+  const checks = await Promise.all(
+    emojiTasks.map(async (task) => {
+      const cached = state[task.outputPath]
+      return (
+        cached?.etag === task.etag &&
+        (await fileExists(path.join(options.cacheDirectory, task.outputPath)))
+      )
+    }),
+  )
+  return checks.every(Boolean)
+}
+
+/**
+ * Seeds the cache from the live site for every emoji whose planned etag equals
+ * the published one, so unchanged emoji are not downloaded or converted again.
+ * @param tasks The planned sprite tasks.
+ * @param catalogManifest The planned manifest.
+ * @param context The build context.
+ * @returns How many emoji were seeded.
+ */
+export async function seedUnchangedEmojis(
+  tasks: readonly SpriteTask[],
+  catalogManifest: Manifest,
+  context: BuildContext,
+): Promise<number> {
+  const { liveUrl, previousManifest } = context.options
+  if (liveUrl === undefined || previousManifest === undefined) return 0
+  const previousById = indexPreviousEmojis(previousManifest)
+  const baseEtagById = indexEmoticons(catalogManifest)
+  const candidates = Map.groupBy(tasks, (task) => task.id)
+    .entries()
+    .map(([id, emojiTasks]): [string, readonly SpriteTask[]] => [
+      id,
+      (previousById.get(id)?.framesCount ?? 0) > HD_MAX_FRAMES
+        ? emojiTasks.map((task) => withoutHdSource(task))
+        : emojiTasks,
+    ])
+    .filter(([id, emojiTasks]) => {
+      const previous = previousById.get(id)
+      const baseEtag = baseEtagById.get(id)?.etag
+      return (
+        previous !== undefined &&
+        baseEtag !== undefined &&
+        previous.etag === expectEmojiEtag(baseEtag, emojiTasks) &&
+        previous.hd === emojiTasks.every((task) => task.hdOutputPath)
+      )
+    })
+    .toArray()
+  const seeded = await mapWithConcurrency(
+    candidates,
+    DOWNLOAD_CONCURRENCY,
+    async ([id, emojiTasks]) => {
+      const previous = previousById.get(id)
+      const cached = await isEmojiCached(emojiTasks, context)
+      return previous && !cached
+        ? seedEmoji(emojiTasks, previous, context, liveUrl)
+        : false
+    },
+  )
+  return seeded.filter(Boolean).length
+}
+
+/**
+ * Copies the previous generation of changed and removed emoji from the live
+ * site into the output, so clients on the old manifest keep working.
+ * @param input Everything retention needs.
+ * @param input.options The build options.
+ * @param input.manifest The new manifest.
+ * @param input.emojiIds The ids generated in this run.
+ * @param input.fileBudget How many more files the output may hold.
+ * @returns The retained sheets and how many emoji were retained.
+ */
+export async function retainPreviousGeneration(input: {
+  options: BuildContext['options']
+  manifest: Manifest
+  emojiIds: ReadonlySet<string>
+  fileBudget: number
+}): Promise<{ retained: RetainedSprite[]; emojiCount: number }> {
+  const { options, manifest, emojiIds, fileBudget } = input
+  if (options.liveUrl === undefined || options.previousManifest === undefined) {
+    return { retained: [], emojiCount: 0 }
+  }
+  const liveUrl = options.liveUrl
+  const previousById = indexPreviousEmojis(options.previousManifest)
+  const currentIds = new Set(indexEmoticons(manifest).keys())
+  const changed = indexEmoticons(manifest)
+    .values()
+    .filter((emoticon) => emojiIds.has(emoticon.id))
+    .flatMap((emoticon) => {
+      const previous = previousById.get(emoticon.id)
+      return previous && previous.etag !== emoticon.etag ? [previous] : []
+    })
+    .toArray()
+    .toSorted((left, right) => left.id.localeCompare(right.id))
+  const removed =
+    options.limit === undefined
+      ? previousById
+          .values()
+          .filter((previous) => !currentIds.has(previous.id))
+          .toArray()
+          .toSorted((left, right) => left.id.localeCompare(right.id))
+      : []
+  let remaining = fileBudget
+  const affordable: PreviousEmoji[] = []
+  let truncated = 0
+  for (const previous of [...changed, ...removed]) {
+    const fileCount = listPreviousFiles(previous).length
+    if (fileCount > remaining) {
+      truncated += 1
+      continue
+    }
+    remaining -= fileCount
+    affordable.push(previous)
+  }
+  if (truncated > 0) {
+    appendStepSummary(
+      'Previous generation retention truncated',
+      [
+        `${String(truncated)} changed or removed emoji(s) were not retained: the file budget was exhausted`,
+      ],
+      options.stepSummaryPath,
+    )
+  }
+  const downloaded = await mapWithConcurrency(
+    affordable,
+    DOWNLOAD_CONCURRENCY,
+    (previous) =>
+      retainFromLive(options.fetchImplementation, liveUrl, previous),
+  )
+  const kept = downloaded.filter(
+    (sprites): sprites is LiveSprite[] => sprites !== undefined,
+  )
+  for (const sprite of kept.flat()) {
+    await writeBytes(
+      path.join(options.outputDirectory, sprite.v1Path),
+      sprite.bytes,
+    )
+  }
+  return {
+    retained: kept.flat().map(({ v1Path, hd, framesCount }) => ({
+      v1Path,
+      hd,
+      framesCount,
+    })),
+    emojiCount: kept.length,
+  }
 }

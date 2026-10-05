@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 
 import type { Manifest } from '../../src/utils/types.js'
-import type { PublishedVersion } from './build.js'
 import { PIPELINE_VERSION } from './catalog.js'
+import type { PublishedVersion } from './site-writer.js'
 import {
   createPlanGuard,
   fetchPublishedJson,
