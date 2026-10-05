@@ -55,6 +55,10 @@ site keeps the current generation and the one before it. _Avoid_: Release, build
 description query) to catalog emojis without rendering them. _Avoid_: Search
 API, finder, resolver
 
+**Skipped emoji**: An emoji the sync failed to build. It is left out of the
+catalog, recorded in `version.json`, and the next sync rebuilds it. _Avoid_:
+Dropped emoji, missing emoji
+
 **Pipeline version**: The version of the build rules; a change republishes every
 sprite even when no upstream source changed. _Avoid_: Build version, schema
 version
