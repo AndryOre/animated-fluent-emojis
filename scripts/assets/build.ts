@@ -166,22 +166,40 @@ export function applyAnimations(
   }
 }
 
-async function fileExists(filePath: string): Promise<boolean> {
+function isMissingFileError(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException | null)?.code === 'ENOENT'
+}
+
+/**
+ * Checks whether a regular file exists. Only a missing file counts as absent;
+ * any other filesystem error propagates.
+ * @param filePath The file to check.
+ * @returns Whether the file exists.
+ */
+export async function fileExists(filePath: string): Promise<boolean> {
   try {
     const stats = await stat(filePath)
     return stats.isFile()
-  } catch {
-    return false
+  } catch (error: unknown) {
+    if (isMissingFileError(error)) return false
+    throw error
   }
 }
 
-async function readState(cacheDirectory: string): Promise<StateFile> {
+/**
+ * Reads the sprite state file. Only a missing file yields an empty state; any
+ * other read or parse error propagates.
+ * @param cacheDirectory The cache directory holding `state.json`.
+ * @returns The stored state, or an empty state on first run.
+ */
+export async function readState(cacheDirectory: string): Promise<StateFile> {
   try {
     return JSON.parse(
       await readFile(path.join(cacheDirectory, 'state.json'), 'utf8'),
     ) as StateFile
-  } catch {
-    return {}
+  } catch (error: unknown) {
+    if (isMissingFileError(error)) return {}
+    throw error
   }
 }
 
@@ -356,10 +374,19 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     JSON.stringify(state),
   )
 
-  const teamsFailure = outcomes.find(
-    (outcome) => outcome.status === 'failed' && outcome.task.source === 'teams',
+  const teamsFailures = outcomes.flatMap((outcome) =>
+    outcome.status === 'failed' && outcome.task.source === 'teams'
+      ? [outcome]
+      : [],
   )
-  if (teamsFailure?.status === 'failed') throw teamsFailure.error
+  if (teamsFailures.length > 0) {
+    throw new AggregateError(
+      teamsFailures.map((outcome) => outcome.error),
+      `${String(teamsFailures.length)} Teams sprite download(s) failed:\n${teamsFailures
+        .map((outcome) => `- ${outcome.task.id}: ${outcome.error.message}`)
+        .join('\n')}`,
+    )
+  }
 
   const skippedById = collectSkipped(outcomes)
   assertNoPinnedSkipped(skippedById, options.previousManifest)
