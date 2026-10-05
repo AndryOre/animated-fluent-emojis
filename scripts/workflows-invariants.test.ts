@@ -223,3 +223,89 @@ describe('sync-assets.yml failure resolution job', () => {
     expect(script).not.toContain('${{')
   })
 })
+
+describe('release.yml job split', () => {
+  const workflow = readWorkflow('release.yml')
+  const verify = workflow.jobs?.verify
+  const publish = workflow.jobs?.publish
+  const publishScript =
+    publish?.steps?.map((step) => step.run ?? '').join('\n') ?? ''
+  const verifyScript =
+    verify?.steps?.map((step) => step.run ?? '').join('\n') ?? ''
+
+  test('id-token: write appears only in the publish job', () => {
+    const writers = Object.entries(workflow.jobs ?? {})
+      .filter(([, job]) =>
+        JSON.stringify(job.permissions ?? {}).includes('id-token'),
+      )
+      .map(([name]) => name)
+    expect(writers).toEqual(['publish'])
+    expect(publish?.permissions).toEqual({
+      contents: 'write',
+      'id-token': 'write',
+    })
+  })
+
+  test('verify is read-only and runs the full quality gate', () => {
+    expect(verify?.permissions).toEqual({ contents: 'read' })
+    for (const command of [
+      'bun ci',
+      'bun run check',
+      'bun run test',
+      'bun run build',
+    ]) {
+      expect(verifyScript).toContain(command)
+    }
+  })
+
+  test('publish needs verify and runs no dependency install', () => {
+    expect(publish?.needs).toBe('verify')
+    const withoutPinnedNpm = publishScript.replaceAll(
+      /npm install -g npm@\d+\.\d+\.\d+/g,
+      '',
+    )
+    expect(withoutPinnedNpm).not.toMatch(
+      /\b(bun (ci|install|add|x)|bunx|npm (ci|install|i)|npx|pnpm|yarn)\b/,
+    )
+    const usesSetupBun = publish?.steps?.some((step) =>
+      step.uses?.includes('setup-bun'),
+    )
+    expect(usesSetupBun).toBe(false)
+  })
+
+  test('publish pins npm to 11.5.1 or newer and never uses latest', () => {
+    const match = /npm install -g npm@(\d+)\.(\d+)\.(\d+)/.exec(publishScript)
+    expect(match).not.toBeNull()
+    const [major = 0, minor = 0, patch = 0] = (match ?? []).slice(1).map(Number)
+    const atLeast =
+      major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)))
+    expect(atLeast).toBe(true)
+    expect(JSON.stringify(workflow)).not.toContain('npm@latest')
+  })
+
+  test('verify gates on the v1 layout returning 200', () => {
+    expect(verifyScript).toContain(
+      'https://animated-fluent-emojis.pages.dev/v1/version.json',
+    )
+    expect(verifyScript).toContain('%{http_code}')
+    expect(verifyScript).toContain('"200"')
+  })
+
+  test('verify checks the tag, main ancestry and non-empty notes', () => {
+    expect(verifyScript).toContain('package.json')
+    expect(verifyScript).toContain('merge-base --is-ancestor')
+    expect(verifyScript).toContain('release-notes.md')
+  })
+
+  test('publish is idempotent for npm and the GitHub Release', () => {
+    expect(publishScript).toMatch(/npm view [^\n]*version/)
+    expect(publishScript).toContain('npm publish')
+    expect(publishScript).toContain('gh release view')
+    expect(publishScript).toContain('gh release create')
+  })
+
+  test('does not interpolate expressions into the scripts', () => {
+    expect(verifyScript).not.toContain('${{')
+    expect(publishScript).not.toContain('${{')
+  })
+})
