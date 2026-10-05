@@ -1,5 +1,5 @@
 import type { Manifest } from '../../src/utils/types.js'
-import { fetchOk, type FetchLike } from './http.js'
+import { fetchOk, fetchOkOrMissing, type FetchLike } from './http.js'
 
 const TEAMS_STATIC_ORIGIN = 'https://statics.teams.cdn.office.net'
 const PERSONAL_EXPRESSIONS = `${TEAMS_STATIC_ORIGIN}/evergreen-assets/personal-expressions`
@@ -25,6 +25,7 @@ export interface TeamsDiscovery {
   readonly version: TeamsVersion
   readonly candidates: readonly TeamsVersion[]
   readonly warnings: readonly string[]
+  readonly advertisedSourcesFailed: boolean
 }
 
 /**
@@ -81,10 +82,12 @@ export async function probeVersion(
   fetchImplementation: FetchLike,
   hash: string,
 ): Promise<TeamsVersion | undefined> {
-  const response = await fetchImplementation(buildManifestUrl(hash), {
-    method: 'HEAD',
-  })
-  if (!response.ok) return undefined
+  const response = await fetchOkOrMissing(
+    fetchImplementation,
+    buildManifestUrl(hash),
+    { method: 'HEAD' },
+  )
+  if (!response) return undefined
   const parsed = Date.parse(response.headers.get('last-modified') ?? '')
   return Number.isNaN(parsed)
     ? undefined
@@ -146,7 +149,8 @@ async function collectEcsHashes(
  * @param options Discovery inputs.
  * @param options.fetchImplementation The fetch function to use.
  * @param options.knownHashes Hashes that are always probed (pinned or published).
- * @returns The newest version, every probed candidate and any warnings.
+ * @returns The newest version, every probed candidate, any warnings and
+ * whether both advertised sources failed to yield a hash.
  */
 export async function discoverTeamsVersion(options: {
   fetchImplementation: FetchLike
@@ -154,10 +158,16 @@ export async function discoverTeamsVersion(options: {
 }): Promise<TeamsDiscovery> {
   const { fetchImplementation, knownHashes } = options
   const warnings: string[] = []
-  const advertised = [
-    ...(await collectBundleHashes(fetchImplementation, warnings)),
-    ...(await collectEcsHashes(fetchImplementation, warnings)),
-  ]
+  const bundleHashes = await collectBundleHashes(fetchImplementation, warnings)
+  const ecsHashes = await collectEcsHashes(fetchImplementation, warnings)
+  const advertised = [...bundleHashes, ...ecsHashes]
+  const advertisedSourcesFailed =
+    bundleHashes.length === 0 && ecsHashes.length === 0
+  if (advertisedSourcesFailed) {
+    warnings.push(
+      'Neither the Teams web client nor ECS advertised a metadata hash',
+    )
+  }
   const hashes = [...new Set([...knownHashes, ...advertised])].filter((hash) =>
     HASH_PATTERN.test(hash),
   )
@@ -178,7 +188,7 @@ export async function discoverTeamsVersion(options: {
       Date.parse(second.lastModified) - Date.parse(first.lastModified),
   )[0]
   if (!newest) throw new Error('No Teams manifest version could be resolved')
-  return { version: newest, candidates, warnings }
+  return { version: newest, candidates, warnings, advertisedSourcesFailed }
 }
 
 /**

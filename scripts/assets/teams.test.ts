@@ -119,3 +119,32 @@ test('discoverTeamsVersion throws when no version resolves', async () => {
     }),
   ).rejects.toThrow('No Teams manifest version could be resolved')
 })
+
+test('discoverTeamsVersion flags when no advertised source yields a hash', async () => {
+  const { fetch } = createFakeFetch({
+    ...headRoute(OLD_HASH, 'Wed, 03 May 2023 17:03:38 GMT'),
+    'GET https://teams.microsoft.com/v2/': { status: 403 },
+  })
+
+  const discovery = await discoverTeamsVersion({
+    fetchImplementation: fetch,
+    knownHashes: [OLD_HASH],
+  })
+
+  expect(discovery.advertisedSourcesFailed).toBe(true)
+})
+
+test('discoverTeamsVersion does not flag when one source works', async () => {
+  const { fetch } = createFakeFetch({
+    ...headRoute(OLD_HASH, 'Wed, 03 May 2023 17:03:38 GMT'),
+    'GET https://config.teams.microsoft.com/config/v1/MicrosoftTeams/0_0.0.0.0?environment=prod&audienceGroup=general&teamsRing=general':
+      { body: { emoticonAssetVersion: OLD_HASH } },
+  })
+
+  const discovery = await discoverTeamsVersion({
+    fetchImplementation: fetch,
+    knownHashes: [],
+  })
+
+  expect(discovery.advertisedSourcesFailed).toBe(false)
+})
