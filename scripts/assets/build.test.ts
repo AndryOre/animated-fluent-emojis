@@ -3,14 +3,18 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, expect, test } from 'vitest'
 
+import type { Manifest } from '../../src/utils/types.js'
 import {
   applyAnimations,
+  applyHd,
   buildAssets,
   diffManifests,
   fileExists,
   readState,
   type BuildOptions,
 } from './build.js'
+import { hashHdEtag } from './catalog.js'
+import type { ConvertedSprite } from './sprites.js'
 import { buildManifestUrl, buildSpriteUrl } from './teams.js'
 import {
   createFakeFetch,
@@ -26,6 +30,20 @@ const RAW = `https://raw.githubusercontent.com/microsoft/fluentui-emoji-animated
 const SMILEY_PNG = await createSpritePng(72)
 const WAVE_PNG = await createSpritePng(21)
 const FLAG_PNG = await createSpritePng(40)
+
+const hdSheet = (framesCount: number): Promise<Buffer> =>
+  createSpritePng(framesCount, { frameSize: 200 })
+
+const createConvert =
+  (hdFramesCount = 40) =>
+  async (_png: Buffer, frameSize = 100): Promise<ConvertedSprite> =>
+    frameSize === 200
+      ? {
+          png: await hdSheet(hdFramesCount),
+          framesCount: hdFramesCount,
+          fps: 24,
+        }
+      : { png: FLAG_PNG, framesCount: 40, fps: 24 }
 
 const context = { workDirectory: '' }
 
@@ -98,12 +116,7 @@ const baseOptions = (
   teamsVersion: { hash: HASH, lastModified: '2025-10-16T22:08:15.000Z' },
   outputDirectory: path.join(context.workDirectory, 'out'),
   cacheDirectory: path.join(context.workDirectory, 'cache'),
-  convert: () =>
-    Promise.resolve({
-      png: FLAG_PNG,
-      framesCount: 40,
-      fps: 24,
-    }),
+  convert: createConvert(),
   now: () => new Date('2026-10-05T00:00:00.000Z'),
 })
 
@@ -370,4 +383,172 @@ test('applyAnimations only touches emojis with converted animations', () => {
     framesCount: 72,
     firstFrame: 1,
   })
+})
+
+const OFFICIAL_SMILEY_DIRECTORY = 'assets/Grinning face with big eyes'
+const ENCODED_SMILEY_DIRECTORY = OFFICIAL_SMILEY_DIRECTORY.replaceAll(
+  ' ',
+  '%20',
+)
+
+const withOfficialSmiley = (
+  routes: ReturnType<typeof spriteRoutes>,
+  blobSha = 'smiley-sha',
+) => {
+  const treeKey = `GET ${API}/git/trees/${SHA}?recursive=1`
+  const tree = routes[treeKey]?.body as { tree: object[] }
+  tree.tree.push(
+    {
+      path: `${OFFICIAL_SMILEY_DIRECTORY}/metadata.json`,
+      type: 'blob',
+      sha: 'm2',
+    },
+    {
+      path: `${OFFICIAL_SMILEY_DIRECTORY}/animated/smiley_animated.png`,
+      type: 'blob',
+      sha: blobSha,
+    },
+  )
+  routes[`GET ${RAW}/${ENCODED_SMILEY_DIRECTORY}/metadata.json`] = {
+    body: {
+      cldr: 'grinning face with big eyes',
+      glyph: '😃',
+      group: 'Smileys & Emotion',
+      keywords: ['grinning'],
+      unicode: '1f603',
+    },
+  }
+  routes[
+    `GET https://media.githubusercontent.com/media/microsoft/fluentui-emoji-animated/${SHA}/${ENCODED_SMILEY_DIRECTORY}/animated/smiley_animated.png`
+  ] = { body: 'smiley-apng' }
+  return routes
+}
+
+interface HdEmoticon {
+  id: string
+  etag: string
+  hd?: boolean
+}
+
+const findEmoticon = (manifest: Manifest, id: string): HdEmoticon | undefined =>
+  manifest.categories
+    .flatMap((category) => category.emoticons as HdEmoticon[])
+    .find((emoticon) => emoticon.id === id)
+
+const SMILEY_ID = '1f603_grinningfacewithbigeyes'
+
+test('publishes HD sheets for Teams emojis that match an official one', async () => {
+  const fakeFetch = createFakeFetch(withOfficialSmiley(spriteRoutes()))
+  const options = baseOptions(fakeFetch)
+
+  const result = await buildAssets({ ...options, convert: createConvert(72) })
+
+  const smiley = findEmoticon(result.manifest, SMILEY_ID)
+  expect(smiley?.hd).toBe(true)
+  expect(smiley?.etag).toBe(
+    hashHdEtag('v11', [{ toneSuffix: '', blobSha: 'smiley-sha' }]),
+  )
+  expect(
+    await readFile(
+      path.join(options.outputDirectory, `sprites/Smilies/${SMILEY_ID}@2x.png`),
+    ),
+  ).toEqual(await hdSheet(72))
+  const wave = findEmoticon(result.manifest, '1f44b_wavinghand')
+  expect(wave?.hd).toBeUndefined()
+  expect(wave?.etag).toBe('v5')
+  await expect(
+    stat(
+      path.join(
+        options.outputDirectory,
+        'sprites/Hand gestures/1f44b_wavinghand@2x.png',
+      ),
+    ),
+  ).rejects.toThrow()
+  expect(result.hdCount).toBe(1)
+  const slim = JSON.parse(
+    await readFile(
+      path.join(options.outputDirectory, 'manifest.slim.json'),
+      'utf8',
+    ),
+  ) as Manifest
+  expect(findEmoticon(slim, SMILEY_ID)?.hd).toBe(true)
+  expect(findEmoticon(slim, '1f44b_wavinghand')?.hd).toBeUndefined()
+})
+
+test('publishes HD for an official-only emoji whose HD frame count matches', async () => {
+  const options = baseOptions(createFakeFetch(spriteRoutes()))
+
+  const result = await buildAssets(options)
+
+  expect(findEmoticon(result.manifest, '1f3c1_chequeredflag')?.hd).toBe(true)
+  await expect(
+    stat(
+      path.join(
+        options.outputDirectory,
+        'sprites/Symbols/1f3c1_chequeredflag@2x.png',
+      ),
+    ),
+  ).resolves.toBeDefined()
+})
+
+test('skips HD and logs it when the frame count differs from the standard sheet', async () => {
+  const fakeFetch = createFakeFetch(withOfficialSmiley(spriteRoutes()))
+  const options = baseOptions(fakeFetch)
+
+  const result = await buildAssets({ ...options, convert: createConvert(70) })
+
+  const smiley = findEmoticon(result.manifest, SMILEY_ID)
+  expect(smiley?.hd).toBeUndefined()
+  expect(smiley?.etag).toBe('v11')
+  expect(
+    result.hdSkipped.find((entry) => entry.id === SMILEY_ID)?.reason,
+  ).toContain('70 frames')
+  await expect(
+    stat(
+      path.join(options.outputDirectory, `sprites/Smilies/${SMILEY_ID}@2x.png`),
+    ),
+  ).rejects.toThrow()
+})
+
+test('changes the etag with the HD source and reuses HD sheets otherwise', async () => {
+  const smileyFetch = () => createFakeFetch(withOfficialSmiley(spriteRoutes()))
+  const first = await buildAssets({
+    ...baseOptions(smileyFetch()),
+    convert: createConvert(72),
+  })
+  let hdConversions = 0
+  const countingConvert = createConvert(72)
+  const second = await buildAssets({
+    ...baseOptions(smileyFetch()),
+    convert: (png, frameSize) => {
+      if (frameSize === 200) hdConversions += 1
+      return countingConvert(png, frameSize)
+    },
+  })
+  const changedRoutes = withOfficialSmiley(spriteRoutes(), 'smiley-sha-2')
+  const changed = await buildAssets({
+    ...baseOptions(createFakeFetch(changedRoutes)),
+    convert: createConvert(72),
+  })
+
+  expect(hdConversions).toBe(0)
+  expect(findEmoticon(second.manifest, SMILEY_ID)?.etag).toBe(
+    findEmoticon(first.manifest, SMILEY_ID)?.etag,
+  )
+  expect(findEmoticon(changed.manifest, SMILEY_ID)?.etag).not.toBe(
+    findEmoticon(first.manifest, SMILEY_ID)?.etag,
+  )
+})
+
+test('applyHd flags only the given emojis and swaps their etag', () => {
+  const manifest = applyHd(
+    createTeamsManifest(),
+    new Map([['1f44b_wavinghand', 'hd-etag']]),
+  )
+
+  expect(findEmoticon(manifest, '1f44b_wavinghand')).toMatchObject({
+    hd: true,
+    etag: 'hd-etag',
+  })
+  expect(findEmoticon(manifest, SMILEY_ID)?.hd).toBeUndefined()
 })

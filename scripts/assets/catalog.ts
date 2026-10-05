@@ -47,6 +47,18 @@ export interface SpriteTask {
   readonly sourceUrl?: string
   readonly mitPath?: string
   readonly outputPath: string
+  readonly hdOutputPath?: string
+  readonly hdMitPath?: string
+  readonly hdBlobSha?: string
+}
+
+/**
+ * An emoji that has an official HD source for some tones but not all, so it
+ * is published without HD sheets.
+ */
+export interface HdSkippedEmoji {
+  readonly id: string
+  readonly reason: string
 }
 
 /**
@@ -56,6 +68,7 @@ export interface Catalog {
   readonly manifest: Manifest
   readonly tasks: readonly SpriteTask[]
   readonly mitEmojiIds: ReadonlySet<string>
+  readonly hdSkipped: readonly HdSkippedEmoji[]
 }
 
 /**
@@ -71,6 +84,42 @@ export function buildOutputPath(
   toneSuffix: string,
 ): string {
   return `sprites/${category}/${id}${toneSuffix}.png`
+}
+
+/**
+ * Builds the published path of an HD sprite, next to the standard one.
+ * @param category The category folder.
+ * @param id The emoji id.
+ * @param toneSuffix The skin tone suffix.
+ * @returns A path like `sprites/Smilies/1f603_grinningfacewithbigeyes@2x.png`.
+ */
+export function buildHdOutputPath(
+  category: string,
+  id: string,
+  toneSuffix: string,
+): string {
+  return `sprites/${category}/${id}${toneSuffix}@2x.png`
+}
+
+/**
+ * Derives the etag of an emoji that is published with HD sheets. It is the
+ * `?v=` of both the 1x and the 2x URL, so it changes with the HD sources too.
+ * @param baseEtag The etag the emoji has without HD.
+ * @param hdSources The official source SHA of every tone's HD sheet.
+ * @returns A short hex etag that changes with the base etag or any HD source.
+ */
+export function hashHdEtag(
+  baseEtag: string,
+  hdSources: readonly { toneSuffix: string; blobSha: string }[],
+): string {
+  return hashEtag([
+    `base:${baseEtag}`,
+    ...hdSources
+      .toSorted((left, right) =>
+        left.toneSuffix.localeCompare(right.toneSuffix),
+      )
+      .map((source) => `hd:${source.toneSuffix}:${source.blobSha}`),
+  ])
 }
 
 /**
@@ -222,6 +271,14 @@ export function buildCatalog(
       pinnedIdByCodepoints.has(emoji.codepoints),
   )
   const tasks = buildTeamsTasks(teams)
+  const codepointsById = new Map(
+    teams.categories.flatMap((category) =>
+      category.emoticons.map(
+        (emoticon) =>
+          [emoticon.id, glyphToCodepoints(emoticon.unicode)] as const,
+      ),
+    ),
+  )
   const additionsByCategory = new Map<string, Emoticon[]>()
   const mitEmojiIds = new Set<string>()
 
@@ -232,6 +289,7 @@ export function buildCatalog(
       (usedIds.has(baseId) ? `${baseId}_mit` : baseId)
     usedIds.add(id)
     mitEmojiIds.add(id)
+    codepointsById.set(id, emoji.codepoints)
     const category = resolveCategory(emoji)
     const etag = hashEtag(
       emoji.sprites.map((sprite) => `${sprite.toneSuffix}:${sprite.blobSha}`),
@@ -271,7 +329,57 @@ export function buildCatalog(
       ],
     })),
   }
-  return { manifest, tasks, mitEmojiIds }
+  const hd = planHdTasks(tasks, codepointsById, mitEmojis)
+  return {
+    manifest,
+    tasks: hd.tasks,
+    mitEmojiIds,
+    hdSkipped: hd.skipped,
+  }
+}
+
+function planHdTasks(
+  tasks: readonly SpriteTask[],
+  codepointsById: ReadonlyMap<string, string>,
+  mitEmojis: readonly MitEmoji[],
+): { tasks: SpriteTask[]; skipped: HdSkippedEmoji[] } {
+  const officialByCodepoints = new Map(
+    mitEmojis.map((emoji) => [emoji.codepoints, emoji] as const),
+  )
+  const tasksById = Map.groupBy(tasks, (task) => task.id)
+  const skipped: HdSkippedEmoji[] = []
+  const planned = [...tasksById].flatMap(([id, emojiTasks]) => {
+    const codepoints = codepointsById.get(id)
+    const official =
+      codepoints === undefined
+        ? undefined
+        : officialByCodepoints.get(codepoints)
+    if (!official) return emojiTasks
+    const sourceByTone = new Map(
+      official.sprites.map((sprite) => [sprite.toneSuffix, sprite] as const),
+    )
+    const missingTones = emojiTasks
+      .filter((task) => !sourceByTone.has(task.toneSuffix))
+      .map((task) => task.toneSuffix || 'default')
+    if (missingTones.length > 0) {
+      skipped.push({
+        id,
+        reason: `official source has no HD sprite for ${missingTones.join(', ')}`,
+      })
+      return emojiTasks
+    }
+    return emojiTasks.map((task): SpriteTask => {
+      const source = sourceByTone.get(task.toneSuffix)
+      if (!source) return task
+      return {
+        ...task,
+        hdOutputPath: buildHdOutputPath(task.category, id, task.toneSuffix),
+        hdMitPath: source.path,
+        hdBlobSha: source.blobSha,
+      }
+    })
+  })
+  return { tasks: planned, skipped }
 }
 
 /**
