@@ -27,7 +27,7 @@ jobs:
   sync:
     name: Detect, build and deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     outputs:
       changed: ${{ steps.detect.outputs.changed }}
     steps:
@@ -72,6 +72,30 @@ jobs:
             sudo apt-get install -y --no-install-recommends ffmpeg
           fi
 
+      - name: Read the pipeline version
+        id: pipeline
+        if: steps.detect.outputs.changed == 'true'
+        run: |
+          pipeline_version="$(grep --only-matching --perl-regexp 'PIPELINE_VERSION = \K\d+' scripts/assets/catalog.ts)"
+          if [[ -z "${pipeline_version}" ]]; then
+            echo "Could not read PIPELINE_VERSION from scripts/assets/catalog.ts" >&2
+            exit 1
+          fi
+          echo "version=${pipeline_version}" >> "${GITHUB_OUTPUT}"
+
+      - name: Restore the asset cache
+        if: steps.detect.outputs.changed == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/assets
+          key:
+            assets-${{ steps.pipeline.outputs.version }}-${{
+            steps.detect.outputs.mit_sha }}-${{ steps.detect.outputs.teams_hash
+            }}
+          restore-keys: |
+            assets-${{ steps.pipeline.outputs.version }}-${{ steps.detect.outputs.mit_sha }}-
+            assets-${{ steps.pipeline.outputs.version }}-
+
       - name: Build assets
         if: steps.detect.outputs.changed == 'true'
         env:
@@ -91,12 +115,13 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: 4.147.0
           command:
             pages deploy dist-assets --project-name=animated-fluent-emojis
             --branch=main
 
       - name: Smoke test the legacy layout
-        if: steps.detect.outputs.changed == 'true'
+        if: success()
         env:
           SITE_URL: https://animated-fluent-emojis.pages.dev
         run: |
@@ -108,24 +133,27 @@ jobs:
           rm manifest.slim.json
 
       - name: Smoke test the v1 layout
-        if: steps.detect.outputs.changed == 'true'
+        if: success()
         env:
           SITE_URL: https://animated-fluent-emojis.pages.dev
         run: |
-          expected_built_at="$(jq --raw-output '.builtAt' dist-assets/v1/version.json)"
+          expected_built_at=""
+          if [[ -f dist-assets/v1/version.json ]]; then
+            expected_built_at="$(jq --raw-output '.builtAt' dist-assets/v1/version.json)"
+          fi
           published_built_at=""
           for attempt in $(seq 1 12); do
             curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
               --header 'cache-control: no-cache' \
               "${SITE_URL}/v1/version.json" --output version.json
             published_built_at="$(jq --raw-output '.builtAt' version.json)"
-            if [[ "${published_built_at}" == "${expected_built_at}" ]]; then
+            if [[ -z "${expected_built_at}" || "${published_built_at}" == "${expected_built_at}" ]]; then
               break
             fi
             echo "Attempt ${attempt}: published v1 builtAt ${published_built_at}, waiting for ${expected_built_at}" >&2
             sleep 10
           done
-          if [[ "${published_built_at}" != "${expected_built_at}" ]]; then
+          if [[ -n "${expected_built_at}" && "${published_built_at}" != "${expected_built_at}" ]]; then
             echo "Published v1 builtAt ${published_built_at} does not match the build ${expected_built_at}" >&2
             exit 1
           fi
@@ -189,8 +217,17 @@ jobs:
           git checkout -B "${branch}"
           if [[ -n "$(git status --porcelain -- src/utils/emoji-id.generated.ts)" ]]; then
             entry="- Updated the \`EmojiId\` union from the published emoji catalog."
-            if ! grep --fixed-strings --quiet "${entry}" CHANGELOG.md; then
-              awk -v entry="${entry}" '{ print } /^## \[Unreleased\]/ && !done { print ""; print entry; done = 1 }' CHANGELOG.md > CHANGELOG.md.tmp
+            unreleased="$(awk '/^## \[Unreleased\]/ { inside = 1; next } /^## \[/ { inside = 0 } inside { print }' CHANGELOG.md)"
+            if ! grep --fixed-strings --quiet -- "${entry}" <<< "${unreleased}"; then
+              awk -v entry="${entry}" '
+                pending { print; print entry; pending = 0; done = 1; next }
+                /^## \[Unreleased\]/ { print; in_unreleased = 1; next }
+                in_unreleased && !done && (/^## \[/ || /^\[[^]]+\]: /) {
+                  print "### Changed"; print ""; print entry; print ""; done = 1; in_unreleased = 0
+                }
+                in_unreleased && !done && /^### Changed/ { print; pending = 1; next }
+                { print }
+              ' CHANGELOG.md > CHANGELOG.md.tmp
               mv CHANGELOG.md.tmp CHANGELOG.md
             fi
           fi

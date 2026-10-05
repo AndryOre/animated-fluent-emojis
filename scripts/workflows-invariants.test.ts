@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 
 import {
@@ -133,6 +134,15 @@ describe('sync-assets.yml failure report job', () => {
     expect(job?.permissions).toEqual({ issues: 'write' })
   })
 
+  test('depends on the sync job that holds the smoke steps', () => {
+    const sync = readWorkflow('sync-assets.yml').jobs?.sync
+    const smokeSteps = (sync?.steps ?? []).filter((step) =>
+      step.name?.startsWith('Smoke test'),
+    )
+    expect(smokeSteps.length).toBeGreaterThanOrEqual(2)
+    expect(job?.needs).toContain('sync')
+  })
+
   test('is, with resolve-failure, the only job granted issues: write', () => {
     const writers = Object.entries(workflow.jobs ?? {})
       .filter(([, other]) =>
@@ -197,6 +207,55 @@ describe('sync-assets.yml smoke steps', () => {
   })
 })
 
+describe('sync-assets.yml sync job', () => {
+  const workflow = readWorkflow('sync-assets.yml')
+  const job = workflow.jobs?.sync
+  const steps = job?.steps ?? []
+
+  test('runs the smoke steps whenever detect succeeded, even if unchanged', () => {
+    for (const name of [
+      'Smoke test the legacy layout',
+      'Smoke test the v1 layout',
+    ]) {
+      const step = steps.find((candidate) => candidate.name === name)
+      expect(step, name).toBeDefined()
+      expect(step?.if ?? '', name).not.toContain('changed')
+    }
+  })
+
+  test('the v1 smoke only compares builtAt when a local build exists', () => {
+    const v1 = steps.find((step) => step.name === 'Smoke test the v1 layout')
+    expect(v1?.run).toContain('-f dist-assets/v1/version.json')
+  })
+
+  test('pins an exact wrangler version', () => {
+    const deploy = steps.find((step) =>
+      step.uses?.startsWith('cloudflare/wrangler-action@'),
+    )
+    expect(String(deploy?.with?.wranglerVersion)).toMatch(/^\d+\.\d+\.\d+$/)
+  })
+
+  test('allows at least 90 minutes for a full rebuild', () => {
+    expect(Number(job?.['timeout-minutes'])).toBeGreaterThanOrEqual(90)
+  })
+
+  test('persists .cache/assets with a keyed, prefix-restored actions/cache', () => {
+    const cacheIndex = steps.findIndex((step) =>
+      step.uses?.startsWith('actions/cache@'),
+    )
+    const cache = steps[cacheIndex]
+    expect(cache?.with?.path).toBe('.cache/assets')
+    const key = String(cache?.with?.key)
+    expect(key).toContain('steps.detect.outputs.teams_hash')
+    expect(key).toContain('steps.detect.outputs.mit_sha')
+    expect(key).toContain('steps.pipeline.outputs.version')
+    expect(String(cache?.with?.['restore-keys'])).toContain('assets-')
+    const buildIndex = steps.findIndex((step) => step.name === 'Build assets')
+    expect(cacheIndex).toBeGreaterThan(-1)
+    expect(cacheIndex).toBeLessThan(buildIndex)
+  })
+})
+
 describe('sync-assets.yml emoji-lists job', () => {
   const job = readWorkflow('sync-assets.yml').jobs?.['emoji-lists']
 
@@ -220,6 +279,17 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(runs).toContain('src/utils/emoji-id.generated.ts')
     expect(runs).toContain(String.raw`## \[Unreleased\]`)
     expect(runs).toContain('git add CHANGELOG.md')
+  })
+
+  test('checks duplicates only inside the Unreleased section', () => {
+    expect(runs).toContain('unreleased="$(awk')
+    expect(runs).toContain('-- "${entry}" <<< "${unreleased}"')
+    expect(runs).not.toContain('"${entry}" CHANGELOG.md')
+  })
+
+  test('inserts the entry under ### Changed, creating it when missing', () => {
+    expect(runs).toContain('/^### Changed/')
+    expect(runs).toContain('print "### Changed"')
   })
 })
 
@@ -323,6 +393,16 @@ describe('release.yml job split', () => {
     expect(publishScript).toContain('${version#*-}')
   })
 
+  test('maps a numeric prerelease to the next dist-tag', () => {
+    expect(publishScript).toContain('=~ ^[0-9]+$')
+    expect(publishScript).toContain('dist_tag=next')
+  })
+
+  test('marks prerelease tags as prereleases that are never latest', () => {
+    expect(publishScript).toContain('--prerelease --latest=false')
+    expect(publishScript).toContain('"${GITHUB_REF_NAME}" == *-*')
+  })
+
   test('verify checks the tag, main ancestry and non-empty notes', () => {
     expect(verifyScript).toContain('package.json')
     expect(verifyScript).toContain('merge-base --is-ancestor')
@@ -349,5 +429,17 @@ describe('ci.yml eslint cache', () => {
 
   test('keys the cache on the local eslint rules too', () => {
     expect(String(cacheStep?.with?.key)).toContain('eslint-rules/**')
+  })
+})
+
+describe('renovate.json5 custom managers', () => {
+  const config = readFileSync(
+    new URL('../renovate.json5', import.meta.url),
+    'utf8',
+  )
+
+  test('tracks the wrangler-action wranglerVersion pin', () => {
+    expect(config).toContain('wranglerVersion: (?<currentValue>')
+    expect(config).toContain("depNameTemplate: 'wrangler'")
   })
 })

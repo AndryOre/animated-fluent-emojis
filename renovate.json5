@@ -42,6 +42,13 @@
       datasourceTemplate: 'npm',
       depNameTemplate: 'npm',
     },
+    {
+      customType: 'regex',
+      managerFilePatterns: ['/^\\.github/workflows/.+\\.ya?ml$/'],
+      matchStrings: ['wranglerVersion: (?<currentValue>\\d+\\.\\d+\\.\\d+)'],
+      datasourceTemplate: 'npm',
+      depNameTemplate: 'wrangler',
+    },
   ],
 
   packageRules: [

@@ -128,6 +128,9 @@ jobs:
           if [[ "${version}" == *-* ]]; then
             prerelease="${version#*-}"
             dist_tag="${prerelease%%.*}"
+            if [[ "${dist_tag}" =~ ^[0-9]+$ ]]; then
+              dist_tag=next
+            fi
           fi
           if npm view "${name}@${version}" version > /dev/null 2>&1; then
             echo "${name}@${version} is already published, skipping npm publish"
@@ -142,9 +145,14 @@ jobs:
           if gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" > /dev/null 2>&1; then
             echo "Release ${GITHUB_REF_NAME} already exists, skipping"
           else
+            release_flags=()
+            if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+              release_flags+=(--prerelease --latest=false)
+            fi
             gh release create "${GITHUB_REF_NAME}" \
               --repo "${GITHUB_REPOSITORY}" \
               --verify-tag \
               --title "${GITHUB_REF_NAME}" \
-              --notes-file release-artifact/release-notes.md
+              --notes-file release-artifact/release-notes.md \
+              "${release_flags[@]}"
           fi
