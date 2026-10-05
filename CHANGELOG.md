@@ -8,6 +8,64 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `className` and `style` on `Emoji`, merged with the component's own, and any
+  other `<span>` attribute (`data-*`, `aria-*`, event handlers), passed to the
+  root span.
+- `ref` on `Emoji`, forwarded to the root span, on React 18 and 19.
+- `fallback` prop: a node rendered when the sprite sheet or the manifest fails
+  to load. `fallback={null}` renders nothing.
+- `onLoad` and `onError` props. `onError` also runs, without an event, when the
+  manifest fails to load.
+- `preloadEmojis(ids?, { skinTone })` starts the manifest load before the first
+  render and warms the sprite sheets of the given ids.
+- The slim manifest carries `unicode` for every emoji, used as the fallback
+  glyph.
+- The asset site publishes asset layout version `v1`: `/v1/manifest.slim.json`,
+  `/v1/version.json` and etag-named sprite sheets under `/v1/sprites/`, with
+  immutable caching. The legacy layout is still published for 0.4.x.
+- The asset site keeps the previous sprite generation for one more sync, so a
+  manifest cached just before a sync still resolves.
+- Sync guards: the sync fails when Teams discovery fails on both advertised
+  sources, when more than 5% of the catalog would be removed (both bypassed by
+  `force`), and always above 19,000 output files. A post-deploy smoke test, a
+  `sync-assets failing` issue and a
+  [rollback how-to](docs/how-to/roll-back-the-asset-site.md) back them up.
+
+### Changed
+
+- **Behavior change:** when a sprite sheet fails to load, `Emoji` now shows the
+  fallback glyph, the emoji's Unicode character, instead of nothing. Pass
+  `fallback={null}` to restore the previous behavior.
+- The runtime reads `/v1/manifest.slim.json` and etag-named sprite sheets
+  instead of the unversioned paths and the `?v=<etag>` query.
+- `srcSet` is width-based (`100w`, `200w`) with `sizes` set to the rendered
+  size.
+- Autoplay waits until the image has loaded, the emoji is on screen (one shared
+  `IntersectionObserver`) and the tab is visible; hidden tabs pause playback.
+- `size` is rounded, and anything but a finite positive number falls back
+  to 100. `animationIterations` is normalized: `Infinity` is `'infinite'`, and
+  `NaN` or a negative value disables autoplay.
+- The asset build downloads unchanged sprite sheets from the live site instead
+  of converting them again, decodes each official source once, and fetches with
+  retries, backoff and a 60 second timeout.
+
+### Fixed
+
+- Changing the `id` of a mounted `Emoji` resets its animation state, so the new
+  emoji plays its initial run.
+- A manifest that failed to load is retried on the next mount, on
+  `preloadEmojis` and when the browser comes back online, instead of only on the
+  next render.
+
+### Migration
+
+- If you relied on an empty box when a sprite sheet fails, pass
+  `fallback={null}`.
+- If you mirror the asset site, publish the `v1` layout; see
+  [ADR 0010](docs/adr/0010-versioned-asset-layout-and-live-seeding.md).
+
 ## [0.4.0] - 2026-10-05
 
 ### Added
