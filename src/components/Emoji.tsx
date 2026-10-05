@@ -16,9 +16,12 @@ import {
   getSpriteUrl,
   type EmojiProps,
 } from '../utils/index.js'
+import { isDevelopment } from '../utils/is-development.js'
 import styles from './Emoji.module.css'
 
 const DEFAULT_SIZE = 100
+
+const warnedMissingIds = new Set<string>()
 
 const normalizeSize = (size: number): number =>
   Number.isFinite(size) && Math.round(size) > 0
@@ -46,6 +49,7 @@ const EmojiComponent = (
   const size = normalizeSize(requestedSize)
   const { status, emoji } = useEmojiStyle(id)
   const spriteSource = emoji ? getSpriteUrl(emoji, skinTone) : undefined
+  const [failedSource, setFailedSource] = useState<string | null>(null)
   const { isInitialAnimationComplete, animationStyle, imageRef } =
     useEmojiAnimation(
       emoji,
@@ -54,15 +58,38 @@ const EmojiComponent = (
       autoPlay,
       size,
       spriteSource,
+      failedSource !== null && failedSource === spriteSource,
     )
-  const [failedSource, setFailedSource] = useState<string | null>(null)
   const onErrorRef = useRef(onError)
+  const hasReportedErrorRef = useRef(false)
   useEffect(() => {
     onErrorRef.current = onError
   })
   useEffect(() => {
-    if (status === 'error') onErrorRef.current?.()
+    if (status !== 'error') {
+      hasReportedErrorRef.current = false
+    } else if (!hasReportedErrorRef.current) {
+      hasReportedErrorRef.current = true
+      onErrorRef.current?.()
+    }
   }, [status])
+  useEffect(() => {
+    if (status !== 'missing' || !isDevelopment() || warnedMissingIds.has(id)) {
+      return
+    }
+    warnedMissingIds.add(id)
+    console.warn(`Unknown emoji id "${id}".`)
+  }, [status, id])
+  useEffect(() => {
+    const retry = () => {
+      setFailedSource(null)
+    }
+    globalThis.addEventListener('online', retry)
+    return () => {
+      globalThis.removeEventListener('online', retry)
+      retry()
+    }
+  }, [spriteSource])
 
   const containerStyle = {
     ...style,
@@ -104,7 +131,9 @@ const EmojiComponent = (
   }
 
   if (!emoji) {
-    return null
+    return fallback === undefined || fallback === null
+      ? null
+      : renderFallback(fallback)
   }
 
   const source = getSpriteUrl(emoji, skinTone)
@@ -171,11 +200,11 @@ const EmojiComponent = (
  * @param props.autoPlay - Whether to automatically play the animation on mount.
  * @param props.skinTone - The skin tone, for emojis that support it.
  * @param props.alt - Accessible text, defaults to the emoji description. An empty string marks the emoji as decorative.
- * @param props.fallback - Rendered when the image or the manifest fails. Defaults to the emoji's Unicode glyph when known; `null` renders nothing.
+ * @param props.fallback - Rendered when the image or the manifest fails, or the id is unknown. Defaults to the emoji's Unicode glyph when known; `null` renders nothing.
  * @param props.onLoad - Called when the image loads.
  * @param props.onError - Called when the image fails, and without an event when the manifest fails.
  * @param ref - Forwarded to the root span.
- * @returns The emoji, an empty placeholder of the final size while the manifest loads, or null if the emoji is not found or the manifest failed to load.
+ * @returns The emoji, an empty placeholder of the final size while the manifest loads, or null if the manifest failed to load or the emoji is not found, unless a fallback is given.
  */
 // eslint-disable-next-line @eslint-react/no-forward-ref -- React 18 is a supported peer, where ref is not a prop
 export const Emoji: ForwardRefExoticComponent<

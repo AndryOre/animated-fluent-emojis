@@ -5,12 +5,14 @@ on:
     - cron: '17 6 * * 1'
   workflow_dispatch:
     inputs:
-      force:
+      rebuild:
         description: Rebuild and redeploy even when nothing changed
         type: boolean
         default: false
-      smoke_v1:
-        description: Also smoke test the v1 layout (enable once it is published)
+      bypass_guards:
+        description:
+          Skip the Teams discovery and catalog removal guards (the file-count
+          guard always runs)
         type: boolean
         default: false
 
@@ -50,11 +52,15 @@ jobs:
         id: detect
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FORCE: ${{ inputs.force }}
+          REBUILD: ${{ inputs.rebuild }}
+          BYPASS_GUARDS: ${{ inputs.bypass_guards }}
         run: |
           args=()
-          if [[ "${FORCE}" == "true" ]]; then
-            args+=(--force)
+          if [[ "${REBUILD}" == "true" ]]; then
+            args+=(--rebuild)
+          fi
+          if [[ "${BYPASS_GUARDS}" == "true" ]]; then
+            args+=(--bypass-guards)
           fi
           bun run assets:detect "${args[@]}"
 
@@ -71,11 +77,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TEAMS_HASH: ${{ steps.detect.outputs.teams_hash }}
-          FORCE: ${{ inputs.force }}
+          BYPASS_GUARDS: ${{ inputs.bypass_guards }}
         run: |
           args=(--teams-hash "${TEAMS_HASH}")
-          if [[ "${FORCE}" == "true" ]]; then
-            args+=(--force)
+          if [[ "${BYPASS_GUARDS}" == "true" ]]; then
+            args+=(--bypass-guards)
           fi
           bun run assets:build "${args[@]}"
 
@@ -102,16 +108,28 @@ jobs:
           rm manifest.slim.json
 
       - name: Smoke test the v1 layout
-        if: steps.detect.outputs.changed == 'true' && inputs.smoke_v1
+        if: steps.detect.outputs.changed == 'true'
         env:
           SITE_URL: https://animated-fluent-emojis.pages.dev
         run: |
+          expected_built_at="$(jq --raw-output '.builtAt' dist-assets/v1/version.json)"
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
+            --header 'cache-control: no-cache' \
+            "${SITE_URL}/v1/version.json" --output version.json
+          published_built_at="$(jq --raw-output '.builtAt' version.json)"
+          if [[ "${published_built_at}" != "${expected_built_at}" ]]; then
+            echo "Published v1 builtAt ${published_built_at} does not match the build ${expected_built_at}" >&2
+            exit 1
+          fi
           curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
             "${SITE_URL}/v1/manifest.slim.json" --output manifest.slim.json
           sprite_path="$(jq --raw-output '.categories[0] as $category | $category.emoticons[0] as $emoticon | "\($category.title | @uri)/\($emoticon.id).\($emoticon.etag)"' manifest.slim.json)"
-          curl --fail --silent --show-error --location --head \
+          hd_sprite_path="$(jq --raw-output '[.categories[] as $category | $category.emoticons[] | select(.hd) | {title: $category.title, id, etag}][0] | "\(.title | @uri)/\(.id).\(.etag)"' manifest.slim.json)"
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors --head \
             "${SITE_URL}/v1/sprites/${sprite_path}.png" > /dev/null
-          rm manifest.slim.json
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors --head \
+            "${SITE_URL}/v1/sprites/${hd_sprite_path}@2x.png" > /dev/null
+          rm manifest.slim.json version.json
 
   emoji-lists:
     name: Refresh emoji lists

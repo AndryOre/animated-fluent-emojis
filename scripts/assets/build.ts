@@ -15,6 +15,8 @@ import {
   buildCatalog,
   hashEtag,
   hashHdEtag,
+  HD_MAX_FRAMES,
+  PIPELINE_VERSION,
   type HdSkippedEmoji,
   type SpriteTask,
 } from './catalog.js'
@@ -95,6 +97,8 @@ export interface PublishedVersion {
   readonly teamsLastModified: string
   readonly mitSha: string
   readonly builtAt: string
+  readonly pipelineVersion: number
+  readonly layouts: readonly string[]
 }
 
 type ConvertSprite = (
@@ -165,6 +169,7 @@ export interface BuildOptions {
   readonly convert?: ConvertSprite
   readonly now?: () => Date
   readonly stepSummaryPath?: string
+  readonly onPlanned?: (planned: Manifest) => void
 }
 
 /**
@@ -475,7 +480,12 @@ async function buildHdSheets(
     ),
   )
   const emojiTasksById = Map.groupBy(
-    tasks.filter((task) => task.hdOutputPath !== undefined),
+    tasks.filter(
+      (task) =>
+        task.hdOutputPath !== undefined &&
+        (emoticonById.get(task.id)?.animation.framesCount ?? 0) <=
+          HD_MAX_FRAMES,
+    ),
     (task) => task.id,
   )
   const outcomes = await mapWithConcurrency(
@@ -513,6 +523,24 @@ async function buildHdSheets(
     ),
     hdEtagById,
     skipped,
+  }
+}
+
+/**
+ * Drops the HD source of a task, for an emoji whose frame count is above the HD cap.
+ * @param task The planned sprite task.
+ * @returns The task without HD fields.
+ */
+function withoutHdSource(task: SpriteTask): SpriteTask {
+  return {
+    source: task.source,
+    id: task.id,
+    category: task.category,
+    toneSuffix: task.toneSuffix,
+    etag: task.etag,
+    outputPath: task.outputPath,
+    ...(task.sourceUrl !== undefined && { sourceUrl: task.sourceUrl }),
+    ...(task.mitPath !== undefined && { mitPath: task.mitPath }),
   }
 }
 
@@ -588,6 +616,12 @@ async function seedUnchangedEmojis(
   )
   const candidates = Map.groupBy(tasks, (task) => task.id)
     .entries()
+    .map(([id, emojiTasks]): [string, readonly SpriteTask[]] => [
+      id,
+      (previousById.get(id)?.framesCount ?? 0) > HD_MAX_FRAMES
+        ? emojiTasks.map((task) => withoutHdSource(task))
+        : emojiTasks,
+    ])
     .filter(([id, emojiTasks]) => {
       const previous = previousById.get(id)
       const baseEtag = baseEtagById.get(id)
@@ -785,6 +819,7 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     mitIndex.emojis,
     options.previousManifest,
   )
+  options.onPlanned?.(catalog.manifest)
   const limitedTasks = limitCatalog(catalog.tasks, options.limit)
 
   const state = await readState(options.cacheDirectory)
@@ -912,6 +947,8 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     teamsLastModified: options.teamsVersion.lastModified,
     mitSha: mitIndex.commitSha,
     builtAt: (options.now ?? (() => new Date()))().toISOString(),
+    pipelineVersion: PIPELINE_VERSION,
+    layouts: [V1_DIRECTORY],
   }
   await writeFile(
     path.join(options.outputDirectory, 'manifest.json'),

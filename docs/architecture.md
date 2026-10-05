@@ -237,17 +237,17 @@ it.
 
 - Teams discovery: when neither the web client bundle nor ECS advertises a
   metadata hash, the sync fails instead of silently using the newest pinned
-  hash. Bypassed by `force`.
-- Removals: more than 5% of the previous catalog removed fails the sync.
-  Bypassed by `force`.
+  hash. Bypassed by `bypass_guards`.
+- Removals: more than 5% of the previous catalog removed fails the sync, checked
+  on the planned catalog before any conversion. Bypassed by `bypass_guards`.
 - File count: more than 19,000 files in the output fails the sync, under the
-  20,000 Pages limit. Never bypassed, `force` or not.
+  20,000 Pages limit. Never bypassed, `bypass_guards` or not.
 
 After the deploy, the workflow smoke-tests the legacy layout by fetching the
-manifest and one sprite from the live site (the v1 smoke test runs when the
-`smoke_v1` input is set). A failing run opens, or comments on, a
-`sync-assets failing` issue through the `report-failure` job. To undo a bad
-deployment, see
+manifest and one sprite from the live site, and the v1 layout by checking its
+`builtAt`, one standard and one `@2x` sprite (always). A failing run opens, or
+comments on, a `sync-assets failing` issue through the `report-failure` job. To
+undo a bad deployment, see
 [how to roll back the asset site](how-to/roll-back-the-asset-site.md).
 
 ## CSS

@@ -45,6 +45,7 @@ export interface UseEmojiAnimationResult {
  * emoji is on screen and while the document is visible.
  * @param size - The size of the emoji in pixels.
  * @param spriteSource - The current sprite URL. A change re-attaches the listeners to the new image element.
+ * @param hasSpriteFailed - Whether the current sprite failed and its image element is unmounted. Leaving that state re-attaches the listeners to the new element.
  * @returns Animation state, inline style and the image element ref.
  */
 export const useEmojiAnimation = (
@@ -54,13 +55,14 @@ export const useEmojiAnimation = (
   autoPlayRequested: boolean,
   size: number,
   spriteSource?: string,
+  hasSpriteFailed = false,
 ): UseEmojiAnimationResult => {
   const prefersReducedMotion = usePrefersReducedMotion()
   const iterationCount = normalizeIterations(animationIterations)
   const autoPlay =
     autoPlayRequested && !prefersReducedMotion && iterationCount !== 0
   const emojiId = emoji?.id
-  const [trackedEmojiId, setTrackedEmojiId] = useState(emojiId)
+  const [trackedSource, setTrackedSource] = useState(spriteSource)
   const [hasImageLoaded, setHasImageLoaded] = useState(false)
   const [isOnScreen, setIsOnScreen] = useState(false)
   const isDocumentHidden = useSyncExternalStore(
@@ -69,8 +71,8 @@ export const useEmojiAnimation = (
     getServerDocumentHidden,
   )
   const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
-  if (trackedEmojiId !== emojiId) {
-    setTrackedEmojiId(emojiId)
+  if (trackedSource !== spriteSource) {
+    setTrackedSource(spriteSource)
     setHasInitialRunFinished(false)
     setHasImageLoaded(false)
     setIsOnScreen(false)
@@ -101,7 +103,7 @@ export const useEmojiAnimation = (
       imgElement.removeEventListener('load', handleLoad)
       stopObserving()
     }
-  }, [emojiId, spriteSource])
+  }, [emojiId, spriteSource, hasSpriteFailed])
 
   const animationStyle = useMemo<CSSProperties>(() => {
     if (!emoji) return {}
@@ -113,7 +115,7 @@ export const useEmojiAnimation = (
 
     return {
       width: size,
-      ...(isIdle && { animationName: 'none' }),
+      ...((isIdle || isAutoplayHeld) && { animationName: 'none' }),
       animationDuration: `${String(framesCount / fps)}s`,
       animationTimingFunction: `steps(${String(framesCount)})`,
       animationIterationCount:

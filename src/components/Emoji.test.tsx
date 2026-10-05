@@ -296,6 +296,9 @@ test('plays nothing extra when the iteration count is raised after the run', asy
   await expect.element(image).toBeVisible()
   await expect
     .poll(() => image.element().getAnimations().length, { timeout: 5000 })
+    .toBe(1)
+  await expect
+    .poll(() => image.element().getAnimations().length, { timeout: 5000 })
     .toBe(0)
 
   await rerender(<Emoji id="grinning-face" size={80} animationIterations={5} />)

@@ -35,7 +35,7 @@ const removed = (count: number) => ({
   removed: Array.from({ length: count }, (_, index) => `e${String(index)}`),
 })
 
-test('fails when both discovery sources failed, unless forced', () => {
+test('fails when both discovery sources failed, unless guards are bypassed', () => {
   expect(() => {
     assertDiscoveryHealthy({ advertisedSourcesFailed: true }, false)
   }).toThrow('Teams discovery failed')
@@ -47,7 +47,7 @@ test('fails when both discovery sources failed, unless forced', () => {
   }).not.toThrow()
 })
 
-test('fails when removals exceed 5% of the previous catalog, unless forced', () => {
+test('fails when removals exceed 5% of the previous catalog, unless guards are bypassed', () => {
   const previous = manifestWithCount(100)
   expect(() => {
     assertRemovalsWithinLimit(previous, removed(5), false)
@@ -60,7 +60,7 @@ test('fails when removals exceed 5% of the previous catalog, unless forced', () 
   }).not.toThrow()
 })
 
-test('the file cap fails over the limit and takes no force option', async () => {
+test('the file cap fails over the limit and is not bypassable', async () => {
   const directory = await mkdtemp(path.join(tmpdir(), 'guards-'))
   await Promise.all(
     ['a', 'b', 'c'].map((name) => writeFile(path.join(directory, name), name)),

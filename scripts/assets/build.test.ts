@@ -9,7 +9,7 @@ import {
 } from 'node:fs/promises'
 import { availableParallelism, tmpdir } from 'node:os'
 import path from 'node:path'
-import { afterEach, beforeEach, expect, test } from 'vitest'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import type { Manifest } from '../../src/utils/types.js'
 import {
@@ -23,7 +23,7 @@ import {
   readState,
   type BuildOptions,
 } from './build.js'
-import { hashHdEtag } from './catalog.js'
+import { hashHdEtag, PIPELINE_VERSION } from './catalog.js'
 import { buildLiveSpriteUrl } from './seed.js'
 import { toSlimManifest } from './slim-manifest.js'
 import type { ConvertedSprite } from './sprites.js'
@@ -181,6 +181,8 @@ test('builds the manifest, sprites, version marker, headers and license', async 
     teamsLastModified: '2025-10-16T22:08:15.000Z',
     mitSha: SHA,
     builtAt: '2026-10-05T00:00:00.000Z',
+    pipelineVersion: PIPELINE_VERSION,
+    layouts: ['v1'],
   })
   const slim = JSON.parse(
     await readFile(path.join(out, 'manifest.slim.json'), 'utf8'),
@@ -200,6 +202,30 @@ test('builds the manifest, sprites, version marker, headers and license', async 
       'utf8',
     ),
   ).toBe('MIT License')
+})
+
+test('calls onPlanned with the planned catalog before any conversion', async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const convert = vi.fn(createConvert())
+  const planned: string[] = []
+
+  await expect(
+    buildAssets({
+      ...baseOptions(fakeFetch),
+      convert,
+      onPlanned: (manifest) => {
+        planned.push(
+          ...manifest.categories.flatMap((category) =>
+            category.emoticons.map((emoticon) => emoticon.id),
+          ),
+        )
+        throw new Error('stop')
+      },
+    }),
+  ).rejects.toThrow('stop')
+
+  expect(planned).toContain('1f44b_wavinghand')
+  expect(convert).not.toHaveBeenCalled()
 })
 
 test('reuses cached sprites by etag on the next build', async () => {
@@ -491,6 +517,31 @@ test('publishes HD sheets for Teams emojis that match an official one', async ()
   ) as Manifest
   expect(findEmoticon(slim, SMILEY_ID)?.hd).toBe(true)
   expect(findEmoticon(slim, '1f44b_wavinghand')?.hd).toBeUndefined()
+})
+
+test('plans no HD sheet for an emoji above the HD frame cap', async () => {
+  const routes = withOfficialSmiley(spriteRoutes())
+  routes[`GET ${buildSpriteUrl(SMILEY_ID, '')}`] = {
+    body: await createSpritePng(121),
+  }
+  const teamsManifest = createTeamsManifest()
+  const teamsSmiley = teamsManifest.categories[0]?.emoticons[0]
+  if (teamsSmiley) teamsSmiley.animation.framesCount = 121
+  routes[`GET ${buildManifestUrl(HASH)}`] = { body: teamsManifest }
+  const options = baseOptions(createFakeFetch(routes))
+
+  const result = await buildAssets({ ...options, convert: createConvert(121) })
+
+  const smiley = findEmoticon(result.manifest, SMILEY_ID)
+  expect(smiley?.hd).toBeUndefined()
+  expect(
+    result.manifest.categories[0]?.emoticons[0]?.animation.framesCount,
+  ).toBe(121)
+  await expect(
+    stat(
+      path.join(options.outputDirectory, `sprites/Smilies/${SMILEY_ID}@2x.png`),
+    ),
+  ).rejects.toThrow()
 })
 
 test('publishes HD for an official-only emoji whose HD frame count matches', async () => {
@@ -791,6 +842,48 @@ test('seeds an unchanged emoji from the live site without touching the source', 
   expect(
     await listV1Sprites(path.join(context.workDirectory, 'out-next')),
   ).toEqual(await listV1Sprites(path.join(context.workDirectory, 'out')))
+})
+
+test('seeds an emoji above the HD frame cap from the live site', async () => {
+  const routes = withOfficialSmiley(spriteRoutes())
+  routes[`GET ${buildSpriteUrl(SMILEY_ID, '')}`] = {
+    body: await createSpritePng(121),
+  }
+  const teamsManifest = createTeamsManifest()
+  const teamsSmiley = teamsManifest.categories[0]?.emoticons[0]
+  if (teamsSmiley) teamsSmiley.animation.framesCount = 121
+  routes[`GET ${buildManifestUrl(HASH)}`] = { body: teamsManifest }
+  const convertAboveCap = (
+    _png: Buffer,
+    frameSizes: readonly number[],
+  ): Promise<ConvertedSprite[]> =>
+    Promise.all(
+      frameSizes.map(async (frameSize): Promise<ConvertedSprite> => ({
+        png: await createSpritePng(121, { frameSize }),
+        framesCount: 121,
+        fps: 24,
+      })),
+    )
+  const first = await buildAssets({
+    ...baseOptions(createFakeFetch(routes)),
+    convert: convertAboveCap,
+  })
+  const liveRoutes = await buildLiveRoutes(
+    path.join(context.workDirectory, 'out'),
+  )
+  const fakeFetch = createFakeFetch({
+    ...withoutSourceSprites(routes),
+    ...liveRoutes,
+  })
+
+  const result = await buildAssets({
+    ...seedOptions(fakeFetch, first.manifest),
+    convert: () => Promise.reject(new Error('must not convert')),
+  })
+
+  expect(findEmoticon(result.manifest, SMILEY_ID)?.hd).toBeUndefined()
+  expect(result.seeded).toBe(3)
+  expect(result.skipped).toEqual([])
 })
 
 test('keeps the previous etag file of a changed emoji next to the new one', async () => {

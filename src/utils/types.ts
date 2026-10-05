@@ -40,15 +40,36 @@ interface SlimEmoticon {
 }
 
 /**
- * The slim manifest the runtime fetches: no shortcuts or keywords.
+ * An emoticon as published in the compact v1 slim manifest. Omitted fields
+ * mean `fps` 24, `firstFrame` 1, `diverse` false and `hd` false.
  */
-export interface SlimManifest {
+interface CompactEmoticon {
+  /** Unique identifier for the emoticon. */
+  id: string
+  /** Human-readable description of the emoticon. */
+  description: string
+  /** Entity tag for caching purposes. */
+  etag: string
+  /** The emoji as a Unicode string, used as the fallback glyph. */
+  unicode?: string
+  /** Animation properties; `fps` and `firstFrame` are omitted at their defaults. */
+  animation: Partial<Animation> & Pick<Animation, 'framesCount'>
+  /** Present and true when the emoticon has skin tone variants. */
+  diverse?: true
+  /** Present and true when the asset site serves an HD sprite sheet. */
+  hd?: true
+}
+
+/**
+ * The compact v1 slim manifest as fetched, before defaults are restored.
+ */
+export interface CompactManifest {
   /** The emoji categories. */
   categories: {
     id: string
     title: string
     description: string
-    emoticons: SlimEmoticon[]
+    emoticons: CompactEmoticon[]
   }[]
 }
 
