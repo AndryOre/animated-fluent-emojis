@@ -11,7 +11,7 @@ src/
     Emoji.tsx           the component
     Emoji.module.css    animation and hover styles (CSS modules)
   hooks/
-    use-emoji-style.ts      resolves an id to its manifest entry and category
+    use-emoji-style.ts      resolves an id to its manifest entry
     use-emoji-animation.ts  animation state, hover handlers, image ref
   utils/
     emoji-manifest.ts   fetches and indexes the CDN manifest, builds styles
@@ -30,7 +30,7 @@ animated image. It returns `null` when the id is not in the manifest.
 
 ## Hooks
 
-- `useEmojiStyle(id)` returns the manifest entry and its category folder.
+- `useEmojiStyle(id)` returns `{ emoji }`, the manifest entry or null.
 - `useEmojiAnimation(...)` tracks whether the initial animation finished, builds
   the inline animation style, and exposes mouse handlers and the image ref used
   for play-on-hover.

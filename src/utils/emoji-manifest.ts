@@ -50,19 +50,6 @@ export const emojiManifestPromise: Promise<Record<string, EmojiManifest>> =
   generateEmojiManifest()
 
 /**
- * Gets the category folder for a given emoji id.
- * @param id - Key of the emoji in the CDN manifest.
- * @returns A promise that resolves to the category folder name.
- * @throws {Error} If the emoji is not found.
- */
-export async function getCategoryFolder(id: string): Promise<string> {
-  const manifest = await emojiManifestPromise
-  const emoji = manifest[id]
-  if (!emoji) throw new Error(`Emoji with id "${id}" not found`)
-  return emoji.category
-}
-
-/**
  * Builds the CSS keyframes that step through an emoji's sprite frames.
  * @param id - Key of the emoji in the CDN manifest.
  * @param size - Rendered edge length of the emoji, in pixels.
