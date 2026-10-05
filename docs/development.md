@@ -61,8 +61,11 @@ Every PR runs the full `ci.yml` pipeline, docs-only changes included:
 
 `sync-assets.yml` runs weekly (and on demand) outside the PR pipeline: it
 detects new emoji versions, rebuilds and deploys the asset site to Cloudflare
-Pages, and opens a pull request with the regenerated emoji lists. Setup:
-[`how-to/set-up-asset-hosting.md`](how-to/set-up-asset-hosting.md).
+Pages, smoke tests the published manifest and a sprite, and opens a pull request
+with the regenerated emoji lists. A failed run opens or updates a single
+`sync-assets failing` issue. Setup:
+[`how-to/set-up-asset-hosting.md`](how-to/set-up-asset-hosting.md); recovery:
+[`how-to/roll-back-the-asset-site.md`](how-to/roll-back-the-asset-site.md).
 
 Other workflows: `lint-docs.yml` (offline link and anchor check with lychee),
 `lint-workflows.yml` (workflow linting), `lint-pr.yml` (PR title), `labels.yml`
