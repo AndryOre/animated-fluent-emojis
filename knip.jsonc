@@ -1,5 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["src/index.ts"],
+  "ignoreBinaries": ["ffmpeg", "ffprobe"],
   "ignore": ["playground/**", "eslint-rules/*.d.mts", "coverage/**"],
 }

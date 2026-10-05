@@ -29,3 +29,7 @@ dist-ssr
 .eslintcache
 
 coverage
+
+# Generated asset site
+dist-assets
+.cache
