@@ -18,7 +18,8 @@ column.
 | 0003   | [ESM-only and Vite 8](0003-esm-only-and-vite-8.md)                                                             | Accepted | -                        |
 | 0004   | [Vitest Browser Mode](0004-vitest-browser-mode.md)                                                             | Accepted | 0008                     |
 | 0005   | [npm trusted publishing](0005-npm-trusted-publishing.md)                                                       | Accepted | -                        |
-| 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md)                                       | Accepted | 0007, 0009               |
+| 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md)                                       | Accepted | 0007, 0009, 0010         |
 | 0007   | [Pinned official emoji ids](0007-pinned-official-emoji-ids.md)                                                 | Accepted | -                        |
-| 0008   | [Static sprite keyframes and a lazy slim manifest](0008-static-keyframes-and-lazy-slim-manifest.md)            | Accepted | -                        |
+| 0008   | [Static sprite keyframes and a lazy slim manifest](0008-static-keyframes-and-lazy-slim-manifest.md)            | Accepted | 0010                     |
 | 0009   | [HD sprite sheets, content-hashed etags and strict validation](0009-hd-sprite-sheets-and-strict-validation.md) | Accepted | -                        |
+| 0010   | [Versioned asset layout and live seeding](0010-versioned-asset-layout-and-live-seeding.md)                     | Accepted | -                        |
