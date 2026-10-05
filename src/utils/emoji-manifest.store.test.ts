@@ -1,3 +1,4 @@
+import { delay } from 'msw'
 import { http, HttpResponse } from 'msw/http'
 import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, expect, test, vi } from 'vitest'
@@ -71,6 +72,29 @@ test('a failed load logs once, publishes error and retries on the next start', a
   await Promise.all([startManifestLoad(), startManifestLoad()])
   expect(getManifestSnapshot().status).toBe('error')
   expect(errorSpy).toHaveBeenCalledTimes(1)
+
+  await startManifestLoad()
+  expect(getManifestSnapshot().status).toBe('ready')
+})
+
+test('a hung manifest request times out into error and the next start retries', async () => {
+  let requestCount = 0
+  server.use(
+    http.get(MANIFEST_URL, async () => {
+      requestCount += 1
+      if (requestCount === 1) await delay('infinite')
+      return HttpResponse.json(FIXTURE_MANIFEST)
+    }),
+  )
+  const timeoutSpy = vi
+    .spyOn(AbortSignal, 'timeout')
+    .mockReturnValueOnce(AbortSignal.timeout(50))
+  silence('error')
+  const { getManifestSnapshot, startManifestLoad } = await importFreshModule()
+
+  await startManifestLoad()
+  expect(timeoutSpy).toHaveBeenCalledWith(15_000)
+  expect(getManifestSnapshot().status).toBe('error')
 
   await startManifestLoad()
   expect(getManifestSnapshot().status).toBe('ready')
