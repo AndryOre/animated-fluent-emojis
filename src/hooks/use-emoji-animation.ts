@@ -19,6 +19,11 @@ const normalizeIterations = (
   return Number.isNaN(value) || value < 0 ? 0 : value
 }
 
+export interface EmojiPlaybackControls {
+  playing?: boolean
+  onPlaybackEnd?: () => void
+}
+
 export interface UseEmojiAnimationResult {
   isInitialAnimationComplete: boolean
   animationStyle: CSSProperties
@@ -33,9 +38,10 @@ export interface UseEmojiAnimationResult {
  * @param autoPlayRequested - Whether to autoplay the animation. Ignored while the user prefers reduced motion.
  * Autoplay, including looping, runs only once the image has loaded, while the
  * emoji is on screen and while the document is visible.
- * @param size - The size of the emoji in pixels.
+ * @param size - The width of the image: a number of pixels or any CSS length.
  * @param spriteSource - The current sprite URL. A change re-attaches the listeners to the new image element.
  * @param hasSpriteFailed - Whether the current sprite failed and its image element is unmounted. Leaving that state re-attaches the listeners to the new element.
+ * @param controls - Playback controls. `playing` overrides `autoPlay` and reduced motion (`true` runs the iterations, `false` holds the current frame); `onPlaybackEnd` is called once when a finite run ends.
  * @returns Animation state, inline style and the image element ref.
  */
 export const useEmojiAnimation = (
@@ -43,20 +49,25 @@ export const useEmojiAnimation = (
   playOnHover: boolean,
   animationIterations: number | 'infinite',
   autoPlayRequested: boolean,
-  size: number,
+  size: number | string,
   spriteSource?: string,
   hasSpriteFailed = false,
+  controls: EmojiPlaybackControls = {},
 ): UseEmojiAnimationResult => {
   const prefersReducedMotion = usePrefersReducedMotion()
   const iterationCount = normalizeIterations(animationIterations)
+  const { playing, onPlaybackEnd } = controls
   const autoPlay =
-    autoPlayRequested && !prefersReducedMotion && iterationCount !== 0
+    iterationCount !== 0 &&
+    (playing !== undefined || (autoPlayRequested && !prefersReducedMotion))
   const emojiId = emoji?.id
   const [trackedSource, setTrackedSource] = useState(spriteSource)
   const [hasImageLoaded, setHasImageLoaded] = useState(false)
   const [isOnScreen, setIsOnScreen] = useState(false)
   const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
+  const [hasRunStarted, setHasRunStarted] = useState(false)
   if (trackedSource !== spriteSource) {
+    setHasRunStarted(false)
     setTrackedSource(spriteSource)
     setHasInitialRunFinished(false)
     setHasImageLoaded(false)
@@ -65,13 +76,30 @@ export const useEmojiAnimation = (
   const isInitialAnimationComplete = hasInitialRunFinished || !autoPlay
   const isDocumentHidden = useDocumentHidden(!isInitialAnimationComplete)
   const imageRef = useRef<HTMLImageElement>(null)
+  const latestRef = useRef({ onPlaybackEnd, isFiniteRun: false })
+  useEffect(() => {
+    latestRef.current = {
+      onPlaybackEnd,
+      isFiniteRun: autoPlay && iterationCount !== 'infinite',
+    }
+  })
+  const canAutoplay = hasImageLoaded && isOnScreen && !isDocumentHidden
+  const isRunBlocked =
+    !(isInitialAnimationComplete || canAutoplay) || playing === false
+  if (!isRunBlocked && !isInitialAnimationComplete && !hasRunStarted) {
+    setHasRunStarted(true)
+  }
 
   useEffect(() => {
     const imgElement = imageRef.current
     if (emojiId === undefined || !imgElement) return
 
+    let hasReportedEnd = false
     const handleAnimationEnd = () => {
       setHasInitialRunFinished(true)
+      if (hasReportedEnd || !latestRef.current.isFiniteRun) return
+      hasReportedEnd = true
+      latestRef.current.onPlaybackEnd?.()
     }
 
     const handleLoad = () => {
@@ -96,17 +124,18 @@ export const useEmojiAnimation = (
 
     const { framesCount, fps, firstFrame } = emoji.animation
     const isIdle = !playOnHover && isInitialAnimationComplete
-    const canAutoplay = hasImageLoaded && isOnScreen && !isDocumentHidden
-    const isAutoplayHeld = !(isInitialAnimationComplete || canAutoplay)
+    const holdsFrame = playing === false && hasRunStarted
 
     return {
       width: size,
-      ...((isIdle || isAutoplayHeld) && { animationName: 'none' }),
+      ...((isIdle || (isRunBlocked && !holdsFrame)) && {
+        animationName: 'none',
+      }),
       animationDuration: `${String(framesCount / fps)}s`,
       animationTimingFunction: `steps(${String(framesCount)})`,
       animationIterationCount:
         isInitialAnimationComplete && playOnHover ? 'infinite' : iterationCount,
-      animationPlayState: isIdle || isAutoplayHeld ? 'paused' : 'running',
+      animationPlayState: isIdle || isRunBlocked ? 'paused' : 'running',
       transform: `translateY(${String((-(firstFrame - 1) / framesCount) * 100)}%)`,
     }
   }, [
@@ -115,9 +144,9 @@ export const useEmojiAnimation = (
     isInitialAnimationComplete,
     playOnHover,
     iterationCount,
-    hasImageLoaded,
-    isOnScreen,
-    isDocumentHidden,
+    isRunBlocked,
+    playing,
+    hasRunStarted,
   ])
 
   return {

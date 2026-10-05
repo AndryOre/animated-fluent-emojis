@@ -148,14 +148,18 @@ interface EmojiBaseProps extends Omit<
 > {
   /** The unique identifier of the emoji. Known ids autocomplete; any string compiles. */
   id: EmojiId | (string & {})
-  /** The size of the emoji in pixels. Default is 100. */
-  size?: number
+  /** The size of the emoji: a number of pixels (default 100) or any CSS length such as `2rem` or `var(--size)`. */
+  size?: number | string
   /** Whether to play the animation on hover. Default is false. */
   playOnHover?: boolean
   /** The number of times to play the animation, or 'infinite'. Default is 2. */
   animationIterations?: number | 'infinite'
   /** Whether to automatically play the animation on mount. Default is true. */
   autoPlay?: boolean
+  /** Controls playback. `true` plays `animationIterations` runs, overriding `autoPlay` and reduced motion; `false` pauses on the current frame; left undefined, `autoPlay` applies. Remount with a new `key` to restart a finished run. */
+  playing?: boolean
+  /** Called once when a finite run of `animationIterations` ends, never for `'infinite'` and not when the run is cancelled by unmount. */
+  onPlaybackEnd?: () => void
   /** Accessible text. Defaults to the emoji description; an empty string marks the emoji as decorative. */
   alt?: string
   /** Rendered when the image fails or the manifest fails to load. Defaults to the emoji's Unicode glyph when known; `null` renders nothing. */

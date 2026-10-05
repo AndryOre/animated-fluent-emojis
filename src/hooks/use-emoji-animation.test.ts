@@ -90,3 +90,42 @@ test('switches to hover-only playback when iterations resolve to 0', async () =>
   expect(result.current.isInitialAnimationComplete).toBe(true)
   expect(result.current.animationStyle.animationIterationCount).toBe('infinite')
 })
+
+test('playing overrides a disabled autoPlay', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 2, false, 64, undefined, false, {
+      playing: true,
+    }),
+  )
+
+  expect(result.current.isInitialAnimationComplete).toBe(false)
+})
+
+test('playing false keeps the run pending and paused', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 2, true, 64, undefined, false, {
+      playing: false,
+    }),
+  )
+
+  expect(result.current.isInitialAnimationComplete).toBe(false)
+  expect(result.current.animationStyle.animationPlayState).toBe('paused')
+})
+
+test('a zero iteration count never starts a run even when playing', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 0, true, 64, undefined, false, {
+      playing: true,
+    }),
+  )
+
+  expect(result.current.isInitialAnimationComplete).toBe(true)
+})
+
+test('accepts a percentage width for CSS length sizes', async () => {
+  const { result } = await renderHook(() =>
+    useEmojiAnimation(emoji, false, 2, true, '100%'),
+  )
+
+  expect(result.current.animationStyle.width).toBe('100%')
+})

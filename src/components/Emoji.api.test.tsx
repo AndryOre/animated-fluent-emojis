@@ -111,7 +111,8 @@ test('className, style, data attributes and ref reach the root span', async () =
   expect(root.classList.contains('mine')).toBe(true)
   expect(root.dataset.testid).toBe('root')
   expect(root.style.margin).toBe('3px')
-  expect(root.style.width).toBe('32px')
+  expect(root.style.width).toBe('999px')
+  expect(root.style.height).toBe('32px')
 })
 
 test('a new image after a failure starts playing once loaded and visible', async () => {

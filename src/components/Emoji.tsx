@@ -23,10 +23,15 @@ const DEFAULT_SIZE = 100
 
 const warnedMissingIds = new Set<string>()
 
-const normalizeSize = (size: number): number =>
-  Number.isFinite(size) && Math.round(size) > 0
+const normalizeSize = (size: number | string): number | string => {
+  if (typeof size === 'string') return size
+  return Number.isFinite(size) && Math.round(size) > 0
     ? Math.round(size)
     : DEFAULT_SIZE
+}
+
+const toCssLength = (size: number | string): string =>
+  typeof size === 'number' ? `${String(size)}px` : size
 
 const EmojiComponent = (
   {
@@ -35,6 +40,8 @@ const EmojiComponent = (
     playOnHover = false,
     animationIterations = 2,
     autoPlay = true,
+    playing,
+    onPlaybackEnd,
     skinTone = 'default',
     alt,
     fallback,
@@ -56,9 +63,10 @@ const EmojiComponent = (
       playOnHover,
       animationIterations,
       autoPlay,
-      size,
+      typeof size === 'number' ? size : '100%',
       spriteSource,
       failedSource !== null && failedSource === spriteSource,
+      { playing, onPlaybackEnd },
     )
   const onErrorRef = useRef(onError)
   const hasReportedErrorRef = useRef(false)
@@ -91,12 +99,13 @@ const EmojiComponent = (
     }
   }, [spriteSource])
 
+  const cssSize = toCssLength(size)
   const containerStyle = {
-    ...style,
-    width: `${String(size)}px`,
-    height: `${String(size)}px`,
+    width: cssSize,
+    height: cssSize,
     display: 'inline-block',
     overflow: 'hidden',
+    ...style,
   }
 
   if (status === 'loading') {
@@ -146,8 +155,11 @@ const EmojiComponent = (
         role="img"
         aria-label={alt ?? emoji.description}
         style={{
-          fontSize: `${String(size * 0.75)}px`,
-          lineHeight: `${String(size)}px`,
+          fontSize:
+            typeof size === 'number'
+              ? `${String(size * 0.75)}px`
+              : `calc(${size} * 0.75)`,
+          lineHeight: cssSize,
         }}
       >
         {emoji.unicode}
@@ -176,7 +188,7 @@ const EmojiComponent = (
         draggable="false"
         src={source}
         srcSet={getSpriteSourceSet(emoji, skinTone)}
-        sizes={`${String(size)}px`}
+        sizes={typeof size === 'number' ? cssSize : undefined}
         style={animationStyle}
         className={styles.emojiImage}
         onLoad={onLoad}
@@ -202,13 +214,16 @@ type EmojiComponentType = (<Id extends string = string>(
 
 /**
  * Emoji component for displaying animated emojis. Other props, including
- * `className`, `style` and `data-*`, are passed to the root span.
+ * `className`, `style` and `data-*`, are passed to the root span; `style` is applied
+ * after the sizing styles and wins over them.
  * @param props - The properties for the Emoji component.
  * @param props.id - The unique identifier of the emoji.
- * @param props.size - The size of the emoji in pixels. Fractions are rounded; anything but a finite positive number falls back to 100.
+ * @param props.size - The size of the emoji. A number is in pixels: fractions are rounded and anything but a finite positive number falls back to 100. A string is any CSS length, such as `2rem` or `var(--size)`, passed to CSS as-is.
  * @param props.playOnHover - Whether to play the animation on hover.
  * @param props.animationIterations - How many times to play the animation, or 'infinite'.
  * @param props.autoPlay - Whether to automatically play the animation on mount.
+ * @param props.playing - Controls playback. Left undefined, `autoPlay` and reduced motion apply as usual. `true` plays `animationIterations` runs, overriding both, once the image has loaded and while the document is visible; `false` pauses on the current frame. A finished run is not restarted by toggling; remount the emoji with a new `key` to play it again.
+ * @param props.onPlaybackEnd - Called once when a finite run of `animationIterations` ends. Never called for `'infinite'` or when the emoji unmounts mid-run.
  * @param props.skinTone - The skin tone, for emojis that support it.
  * @param props.alt - Accessible text, defaults to the emoji description. An empty string marks the emoji as decorative.
  * @param props.fallback - Rendered when the image or the manifest fails, or the id is unknown. Defaults to the emoji's Unicode glyph when known; `null` renders nothing.
