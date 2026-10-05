@@ -103,7 +103,7 @@ jobs:
           curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
             "${SITE_URL}/manifest.slim.json" --output manifest.slim.json
           sprite_path="$(jq --raw-output '.categories[0] as $category | "\($category.title | @uri)/\($category.emoticons[0].id)"' manifest.slim.json)"
-          curl --fail --silent --show-error --location --head \
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors --head \
             "${SITE_URL}/sprites/${sprite_path}.png" > /dev/null
           rm manifest.slim.json
 
@@ -113,10 +113,18 @@ jobs:
           SITE_URL: https://animated-fluent-emojis.pages.dev
         run: |
           expected_built_at="$(jq --raw-output '.builtAt' dist-assets/v1/version.json)"
-          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
-            --header 'cache-control: no-cache' \
-            "${SITE_URL}/v1/version.json" --output version.json
-          published_built_at="$(jq --raw-output '.builtAt' version.json)"
+          published_built_at=""
+          for attempt in $(seq 1 12); do
+            curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
+              --header 'cache-control: no-cache' \
+              "${SITE_URL}/v1/version.json" --output version.json
+            published_built_at="$(jq --raw-output '.builtAt' version.json)"
+            if [[ "${published_built_at}" == "${expected_built_at}" ]]; then
+              break
+            fi
+            echo "Attempt ${attempt}: published v1 builtAt ${published_built_at}, waiting for ${expected_built_at}" >&2
+            sleep 10
+          done
           if [[ "${published_built_at}" != "${expected_built_at}" ]]; then
             echo "Published v1 builtAt ${published_built_at} does not match the build ${expected_built_at}" >&2
             exit 1
@@ -136,7 +144,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: sync
-    if: needs.sync.outputs.changed == 'true'
     permissions:
       contents: write
       pull-requests: write

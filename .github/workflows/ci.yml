@@ -46,7 +46,7 @@ jobs:
           path: .eslintcache
           key:
             ${{ runner.os }}-eslintcache-${{ hashFiles('bun.lock',
-            'eslint.config.mjs') }}
+            'eslint.config.mjs', 'eslint-rules/**') }}
           restore-keys: ${{ runner.os }}-eslintcache-
 
       - name: Check formatting
