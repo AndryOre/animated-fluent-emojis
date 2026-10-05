@@ -21,5 +21,6 @@ column.
 | 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md)                                       | Accepted | 0007, 0009, 0010         |
 | 0007   | [Pinned official emoji ids](0007-pinned-official-emoji-ids.md)                                                 | Accepted | -                        |
 | 0008   | [Static sprite keyframes and a lazy slim manifest](0008-static-keyframes-and-lazy-slim-manifest.md)            | Accepted | 0010                     |
-| 0009   | [HD sprite sheets, content-hashed etags and strict validation](0009-hd-sprite-sheets-and-strict-validation.md) | Accepted | -                        |
-| 0010   | [Versioned asset layout and live seeding](0010-versioned-asset-layout-and-live-seeding.md)                     | Accepted | -                        |
+| 0009   | [HD sprite sheets, content-hashed etags and strict validation](0009-hd-sprite-sheets-and-strict-validation.md) | Accepted | 0011                     |
+| 0010   | [Versioned asset layout and live seeding](0010-versioned-asset-layout-and-live-seeding.md)                     | Accepted | 0011                     |
+| 0011   | [Compact slim manifest, HD frame cap and layout-aware sync](0011-compact-slim-manifest-and-hd-frame-cap.md)    | Accepted | -                        |
