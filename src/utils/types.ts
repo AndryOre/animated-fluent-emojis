@@ -1,3 +1,5 @@
+import type { EmojiId } from './emoji-id.generated.js'
+
 /**
  * Represents the animation properties of an emoji.
  */
@@ -105,8 +107,8 @@ export type SkinTone =
  * Represents the properties for the Emoji component.
  */
 export interface EmojiProps {
-  /** The unique identifier of the emoji. */
-  id: string
+  /** The unique identifier of the emoji. Known ids autocomplete; any string compiles. */
+  id: EmojiId | (string & {})
   /** The size of the emoji in pixels. Default is 100. */
   size?: number
   /** Whether to play the animation on hover. Default is false. */

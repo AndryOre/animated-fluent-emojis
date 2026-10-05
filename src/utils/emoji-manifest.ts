@@ -83,6 +83,22 @@ export function loadEmojiManifest(): Promise<Record<string, EmojiManifest>> {
 }
 
 /**
+ * Builds a sprite sheet URL.
+ * @param emoji - The emoji manifest entry.
+ * @param skinTone - The requested skin tone.
+ * @param resolutionSuffix - Filename suffix placed before the extension, e.g. `@2x`.
+ * @returns The sprite sheet URL, versioned by the emoji's etag.
+ */
+function buildSpriteUrl(
+  emoji: EmojiManifest,
+  skinTone: SkinTone,
+  resolutionSuffix: string,
+): string {
+  const toneSuffix = emoji.diverse ? SKIN_TONE_SUFFIXES[skinTone] : ''
+  return `${state.assetSiteUrl}/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${toneSuffix}${resolutionSuffix}.png?v=${encodeURIComponent(emoji.etag)}`
+}
+
+/**
  * Builds the URL of an emoji's sprite sheet.
  * @param emoji - The emoji manifest entry.
  * @param skinTone - The requested skin tone; ignored when the emoji has no variants.
@@ -92,6 +108,20 @@ export function getSpriteUrl(
   emoji: EmojiManifest,
   skinTone: SkinTone = 'default',
 ): string {
-  const suffix = emoji.diverse ? SKIN_TONE_SUFFIXES[skinTone] : ''
-  return `${state.assetSiteUrl}/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${suffix}.png?v=${encodeURIComponent(emoji.etag)}`
+  return buildSpriteUrl(emoji, skinTone, '')
+}
+
+/**
+ * Builds the `srcSet` of an emoji's sprite sheet.
+ * @param emoji - The emoji manifest entry.
+ * @param skinTone - The requested skin tone; ignored when the emoji has no variants.
+ * @returns The standard sheet at 1x and the HD sheet at 2x, or undefined when the emoji has no HD sheet.
+ */
+export function getSpriteSourceSet(
+  emoji: EmojiManifest,
+  skinTone: SkinTone = 'default',
+): string | undefined {
+  return emoji.hd
+    ? `${buildSpriteUrl(emoji, skinTone, '')} 1x, ${buildSpriteUrl(emoji, skinTone, '@2x')} 2x`
+    : undefined
 }

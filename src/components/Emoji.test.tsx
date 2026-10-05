@@ -221,6 +221,25 @@ test('switches to hover-only playback when the animation ends', async () => {
     .toContain('animateOnHover')
 })
 
+test('offers the HD sprite sheet through srcset for hd emojis', async () => {
+  await render(<Emoji id="waving-hand" skinTone="dark" />)
+
+  await expect
+    .element(getImage('Waving hand'))
+    .toHaveAttribute(
+      'srcset',
+      `${SPRITE_BASE}/Smilies/waving-hand_s6.png?v=etag-wave 1x, ${SPRITE_BASE}/Smilies/waving-hand_s6@2x.png?v=etag-wave 2x`,
+    )
+})
+
+test('sets no srcset for emojis without an hd sheet', async () => {
+  await render(<Emoji id="cat" />)
+
+  const image = getImage('Cat')
+  await expect.element(image).toBeVisible()
+  expect(image.element().hasAttribute('srcset')).toBe(false)
+})
+
 test('renders nothing for an unknown id', async () => {
   const { container } = await render(<Emoji id="does-not-exist" />)
   const { loadEmojiManifest } = await import('../utils/index.js')

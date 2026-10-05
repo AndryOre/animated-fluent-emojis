@@ -26,6 +26,7 @@ export const FIXTURE_MANIFEST: SlimManifest = {
           etag: 'etag-wave',
           diverse: true,
           animation: { fps: 24, framesCount: 21, firstFrame: 1 },
+          hd: true,
         },
       ],
     },
