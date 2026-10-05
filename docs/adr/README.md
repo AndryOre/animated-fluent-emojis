@@ -11,11 +11,12 @@ To add one, copy the next number, write the file, and add a row below. Never
 rewrite an accepted ADR; supersede or amend it with a new one and fill the last
 column.
 
-| Number | Title                                                                    | Status   | Superseded or amended by |
-| ------ | ------------------------------------------------------------------------ | -------- | ------------------------ |
-| 0001   | [Public repo security posture](0001-public-repo-security-posture.md)     | Accepted | -                        |
-| 0002   | [TSDoc-only code comments](0002-tsdoc-only-code-comments.md)             | Accepted | -                        |
-| 0003   | [ESM-only and Vite 8](0003-esm-only-and-vite-8.md)                       | Accepted | -                        |
-| 0004   | [Vitest Browser Mode](0004-vitest-browser-mode.md)                       | Accepted | -                        |
-| 0005   | [npm trusted publishing](0005-npm-trusted-publishing.md)                 | Accepted | -                        |
-| 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md) | Accepted | -                        |
+| Number | Title                                                                    | Status   | Superseded or amended by                  |
+| ------ | ------------------------------------------------------------------------ | -------- | ----------------------------------------- |
+| 0001   | [Public repo security posture](0001-public-repo-security-posture.md)     | Accepted | -                                         |
+| 0002   | [TSDoc-only code comments](0002-tsdoc-only-code-comments.md)             | Accepted | -                                         |
+| 0003   | [ESM-only and Vite 8](0003-esm-only-and-vite-8.md)                       | Accepted | -                                         |
+| 0004   | [Vitest Browser Mode](0004-vitest-browser-mode.md)                       | Accepted | -                                         |
+| 0005   | [npm trusted publishing](0005-npm-trusted-publishing.md)                 | Accepted | -                                         |
+| 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md) | Accepted | [0007](0007-pinned-official-emoji-ids.md) |
+| 0007   | [Pinned official emoji ids](0007-pinned-official-emoji-ids.md)           | Accepted | -                                         |
