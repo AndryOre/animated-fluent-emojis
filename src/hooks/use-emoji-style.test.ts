@@ -7,15 +7,16 @@ test('resolves the manifest entry for a known id', async () => {
   const { result } = await renderHook(() => useEmojiStyle('cat'))
 
   await expect.poll(() => result.current.emoji?.id).toBe('cat')
-  expect(Object.keys(result.current)).toEqual(['emoji'])
+  expect(result.current.status).toBe('ready')
 })
 
-test('returns a null emoji for an unknown id', async () => {
+test('reports a missing status for an unknown id', async () => {
   const { result } = await renderHook(() => useEmojiStyle('does-not-exist'))
   const { result: known } = await renderHook(() => useEmojiStyle('cat'))
 
   await expect.poll(() => known.current.emoji?.id).toBe('cat')
-  expect(result.current).toEqual({ emoji: null })
+  await expect.poll(() => result.current.status).toBe('missing')
+  expect(result.current.emoji).toBeNull()
 })
 
 test('follows the id when it changes', async () => {
