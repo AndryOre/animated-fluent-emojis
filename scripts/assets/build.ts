@@ -307,6 +307,12 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
   const hdSkipped = [...catalog.hdSkipped, ...hd.skipped]
   reportSkipped('Emojis without HD', 'Skipped HD for', hdSkipped, summaryPath)
   const manifest = applyHd(animatedManifest, hd.hdEtagById)
+  const skippedIds = [
+    ...new Set([
+      ...skipped.map((entry) => entry.id),
+      ...hd.skipped.map((entry) => entry.id),
+    ]),
+  ].toSorted((a, b) => a.localeCompare(b))
 
   await validateCatalog({
     manifest,
@@ -333,6 +339,8 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     builtAt: (options.now ?? (() => new Date()))().toISOString(),
     pipelineVersion: PIPELINE_VERSION,
     layouts: [V1_DIRECTORY],
+    ...(skippedIds.length > 0 && { skippedIds }),
+    ...(options.limit !== undefined && { limited: true as const }),
   }
   await writeSiteFiles({
     manifest,
