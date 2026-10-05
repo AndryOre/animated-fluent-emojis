@@ -733,9 +733,12 @@ const buildLiveRoutes = async (
 
 const hasOldEtag = (file: string): boolean => file.includes('.old1.')
 
+const isSourceHostRequest = (request: string): boolean =>
+  new URL(request.slice(request.indexOf(' ') + 1)).hostname ===
+  'media.githubusercontent.com'
+
 const isSourceSpriteRequest = (request: string): boolean =>
-  request.includes('100_anim_f') ||
-  request.includes('media.githubusercontent.com')
+  request.includes('100_anim_f') || isSourceHostRequest(request)
 
 const withoutSourceSprites = (routes: ReturnType<typeof spriteRoutes>) =>
   Object.fromEntries(
@@ -891,8 +894,6 @@ test('rebuilds an emoji from the source when its live file is corrupt', async ()
   expect(result.seeded).toBe(2)
   expect(result.downloaded).toBe(1)
   expect(
-    fakeFetch.requests.some((request) =>
-      request.includes('media.githubusercontent.com'),
-    ),
+    fakeFetch.requests.some((request) => isSourceHostRequest(request)),
   ).toBe(true)
 })
