@@ -1,4 +1,4 @@
-import type { SlimManifest } from '../utils/index.js'
+import type { CompactManifest } from '../utils/index.js'
 
 export const MANIFEST_URL =
   'https://animated-fluent-emojis.pages.dev/v1/manifest.slim.json'
@@ -6,7 +6,7 @@ export const MANIFEST_URL =
 export const SPRITE_URL_PATTERN =
   'https://animated-fluent-emojis.pages.dev/v1/sprites/*'
 
-export const FIXTURE_MANIFEST: SlimManifest = {
+export const FIXTURE_MANIFEST: CompactManifest = {
   categories: [
     {
       id: 'smilies',
@@ -18,16 +18,15 @@ export const FIXTURE_MANIFEST: SlimManifest = {
           description: 'Grinning face',
           etag: 'etag-grin',
           unicode: '😀',
-          diverse: false,
-          animation: { fps: 20, framesCount: 40, firstFrame: 2 },
+          animation: { framesCount: 40, fps: 20, firstFrame: 2 },
         },
         {
           id: 'waving-hand',
           description: 'Waving hand',
           etag: 'etag-wave',
           unicode: '👋',
+          animation: { framesCount: 21 },
           diverse: true,
-          animation: { fps: 24, framesCount: 21, firstFrame: 1 },
           hd: true,
         },
       ],
@@ -42,8 +41,7 @@ export const FIXTURE_MANIFEST: SlimManifest = {
           description: 'Cat',
           etag: 'etag-cat',
           unicode: '🐱',
-          diverse: false,
-          animation: { fps: 10, framesCount: 20, firstFrame: 1 },
+          animation: { framesCount: 20, fps: 10 },
         },
       ],
     },

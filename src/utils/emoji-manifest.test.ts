@@ -3,6 +3,7 @@ import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, expect, test, vi } from 'vitest'
 
 import { FIXTURE_MANIFEST, MANIFEST_URL } from '../test/manifest-fixture.js'
+import type { SkinTone } from './types.js'
 
 const server = setupServer()
 
@@ -22,6 +23,38 @@ const importFreshModule = async () => import('./emoji-manifest.js')
 const serveFixtureManifest = () => {
   server.use(http.get(MANIFEST_URL, () => HttpResponse.json(FIXTURE_MANIFEST)))
 }
+
+test('the compact manifest is normalized to full entries with restored defaults', async () => {
+  serveFixtureManifest()
+  const { loadEmojiManifest } = await importFreshModule()
+  const manifest = await loadEmojiManifest()
+
+  expect(manifest['waving-hand']).toEqual({
+    id: 'waving-hand',
+    description: 'Waving hand',
+    etag: 'etag-wave',
+    unicode: '👋',
+    animation: { framesCount: 21, fps: 24, firstFrame: 1 },
+    diverse: true,
+    hd: true,
+    category: 'Smilies',
+  })
+  expect(manifest.cat).toMatchObject({
+    diverse: false,
+    hd: false,
+    animation: { framesCount: 20, fps: 10, firstFrame: 1 },
+  })
+})
+
+test('an unknown skin tone from a plain-JS caller maps to the default tone', async () => {
+  serveFixtureManifest()
+  const { loadEmojiManifest, getSpriteUrl } = await importFreshModule()
+  const manifest = await loadEmojiManifest()
+  const wave = manifest['waving-hand']
+  if (!wave) throw new Error('fixture changed')
+
+  expect(getSpriteUrl(wave, 'purple' as SkinTone)).toBe(getSpriteUrl(wave))
+})
 
 test('flattens the manifest and tags each emoji with its category', async () => {
   serveFixtureManifest()

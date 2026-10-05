@@ -1,15 +1,19 @@
 import { expect, test } from 'vitest'
 import { renderHook } from 'vitest-browser-react'
 
-import { FIXTURE_MANIFEST } from '../test/manifest-fixture.js'
 import type { EmojiManifest } from '../utils/index.js'
 import { useEmojiAnimation } from './use-emoji-animation.js'
 
-const [firstCategory] = FIXTURE_MANIFEST.categories
-const [firstEmoticon] = firstCategory?.emoticons ?? []
-if (!firstEmoticon) throw new Error('Fixture manifest is empty')
-
-const emoji: EmojiManifest = { ...firstEmoticon, category: 'Smilies' }
+const emoji: EmojiManifest = {
+  id: 'grinning-face',
+  description: 'Grinning face',
+  etag: 'etag-grin',
+  unicode: '😀',
+  diverse: false,
+  hd: false,
+  animation: { fps: 20, framesCount: 40, firstFrame: 2 },
+  category: 'Smilies',
+}
 
 test('returns an empty style while the emoji is not loaded', async () => {
   const { result } = await renderHook(() =>

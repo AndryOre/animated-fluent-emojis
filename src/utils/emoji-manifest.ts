@@ -1,4 +1,4 @@
-import type { EmojiManifest, SkinTone, SlimManifest } from './types.js'
+import type { CompactManifest, EmojiManifest, SkinTone } from './types.js'
 
 declare const process: { env: { NODE_ENV?: string } }
 
@@ -108,7 +108,7 @@ export function configureEmojis(options: { assetSiteUrl?: string }): void {
   if (listeners.size > 0) void startManifestLoad()
 }
 
-const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
+const SKIN_TONE_SUFFIXES: Readonly<Partial<Record<SkinTone, string>>> = {
   default: '',
   light: '_s2',
   'medium-light': '_s3',
@@ -118,21 +118,23 @@ const SKIN_TONE_SUFFIXES: Readonly<Record<SkinTone, string>> = {
 }
 
 /**
- * Fetches the slim emoji manifest from the asset site.
+ * Fetches the compact slim manifest from the asset site, giving up after 15 seconds.
  * @returns A promise that resolves to the raw manifest data.
  */
-async function fetchManifest(): Promise<SlimManifest> {
-  const response = await fetch(`${state.assetSiteUrl}/v1/manifest.slim.json`)
+async function fetchManifest(): Promise<CompactManifest> {
+  const response = await fetch(`${state.assetSiteUrl}/v1/manifest.slim.json`, {
+    signal: AbortSignal.timeout(15_000),
+  })
   if (!response.ok) {
     throw new Error(
       `Failed to fetch the emoji manifest (${String(response.status)})`,
     )
   }
-  return (await response.json()) as SlimManifest
+  return (await response.json()) as CompactManifest
 }
 
 /**
- * Generates the emoji manifest from the raw manifest data.
+ * Generates the emoji manifest, restoring the defaults the compact manifest omits.
  * @returns A promise that resolves to the processed emoji manifest.
  */
 async function generateEmojiManifest(): Promise<ManifestRecord> {
@@ -140,7 +142,13 @@ async function generateEmojiManifest(): Promise<ManifestRecord> {
   const manifest: ManifestRecord = {}
   for (const category of rawManifest.categories) {
     for (const emoticon of category.emoticons) {
-      manifest[emoticon.id] = { ...emoticon, category: category.title }
+      manifest[emoticon.id] = {
+        ...emoticon,
+        diverse: emoticon.diverse ?? false,
+        hd: emoticon.hd ?? false,
+        animation: { fps: 24, firstFrame: 1, ...emoticon.animation },
+        category: category.title,
+      }
     }
   }
   return manifest
@@ -227,7 +235,7 @@ function buildSpriteUrl(
   skinTone: SkinTone,
   resolutionSuffix: string,
 ): string {
-  const toneSuffix = emoji.diverse ? SKIN_TONE_SUFFIXES[skinTone] : ''
+  const toneSuffix = emoji.diverse ? (SKIN_TONE_SUFFIXES[skinTone] ?? '') : ''
   return `${state.assetSiteUrl}/v1/sprites/${encodeURIComponent(emoji.category)}/${emoji.id}${toneSuffix}.${emoji.etag}${resolutionSuffix}.png`
 }
 
