@@ -1,62 +1,68 @@
 # Hand gestures
 
-| ID                            | Unicode | Description                   | Keywords                                                                           |
-| ----------------------------- | ------- | ----------------------------- | ---------------------------------------------------------------------------------- |
-| 1f44b_wavinghand              | 👋      | Waving hand                   | waving, hand, wave                                                                 |
-| 1f91a_raisedbackofhand        | 🤚      | Raised back of hand           | raised back of hand                                                                |
-| 1f590_handwithfingerssplayed  | 🖐️      | Hand with fingers splayed     | hand with fingers splayed                                                          |
-| 270b_raisedhand               | ✋      | Raised hand                   | raised hand                                                                        |
-| vulcansalute                  | 🖖      | Vulcan salute                 | spock, hand, go forth and prosper, star trek, geeky, nerdy, vulcan, vulcan salute  |
-| rightwardshand                | 🫱      | Rightwards hand               | rightwards hand                                                                    |
-| leftwardshand                 | 🫲      | Leftwards hand                | leftwards hand                                                                     |
-| palmdownhand                  | 🫳      | Palm down hand                | palm down hand                                                                     |
-| palmuphand                    | 🫴      | Palm up hand                  | palm up hand                                                                       |
-| ok                            | 👌      | OK                            | ok, okay                                                                           |
-| pinchedfingers                | 🤌      | Pinched fingers               | pinched, fingers                                                                   |
-| 1f90f_pinchinghand            | 🤏      | Pinching hand                 | pinching hand                                                                      |
-| victory                       | ✌️      | Victory sign                  | peace, victory, celebrate, sign, hand, hand gesture, hand sign                     |
-| crossedfingers                | 🤞      | Crossed fingers               | crossed, fingers                                                                   |
-| 1f91f_loveyougesture          | 🤟      | Love you gesture              | love you gesture                                                                   |
-| 1f918_signofthehorns          | 🤘      | Sign of the horns             | sign of the horns                                                                  |
-| 1f919_callmehand              | 🤙      | Call me hand                  | call me hand                                                                       |
-| pointleftindex                | 👈      | Backhand Index Pointing Left  | index, index point, pointing, hand, direction, left, point, finger, hand, gesture  |
-| pointrightindex               | 👉      | Backhand Index Pointing Right | index, index point, pointing, hand, direction, right, point, finger, hand, gesture |
-| 1f446_backhandindexpointingup | 👆      | Back hand index pointing up   | back hand index pointing up                                                        |
-| pointdownindex                | 👇      | Backhand Index Pointing Down  | index, index point, pointing, hand, direction, down, point, finger, hand, gesture  |
-| pointupindex                  | ☝️      | Index Pointing Up             | index, index point, pointing, hand, direction, up, point, finger, hand, gesture    |
-| poke                          | ☝️      | Poke                          | point, you, finger, poke, hand                                                     |
-| yes                           | 👍      | Yes                           | thumbs up, thumb, hand gesture, signal, hand, yes                                  |
-| no                            | 👎      | No                            | no, thumbs down, thumb, hand gesture, signal, hand                                 |
-| raisedfist                    | ✊      | Raised fist                   | raised, fist                                                                       |
-| 1f44a_oncomingfist            | 👊      | On coming fist                | on coming fist                                                                     |
-| 1f91b_leftfacingfist          | 🤛      | Left facing fist              | left facing fist                                                                   |
-| 1f91c_rightfacingfist         | 🤜      | Right facing fist             | right facing fist                                                                  |
-| clappinghands                 | 👏      | Clapping hands                | hands, clap                                                                        |
-| handsinair                    | 🙌      | Hands celebrating             | happy, celebrate                                                                   |
-| hearthands                    | 🫶      | Heart hands                   | valentines, love, heart, hands, i love you, together, complete, two become one     |
-| 1f450_openhands               | 👐      | Open hands                    | open hands                                                                         |
-| 1f932_palmsuptogether         | 🤲      | Palms up together             | palms up together                                                                  |
-| handshake                     | 🤝      | Handshake                     | greetings                                                                          |
-| praying                       | 🙏      | Praying                       |                                                                                    |
-| 270d_writinghand              | ✍️      | Writing hand                  | writing hand                                                                       |
-| 1f485_nailpolish              | 💅      | Nail polish                   | nail polish                                                                        |
-| selfiehand                    | 🤳      | Selfie                        | selfie, hand, vain                                                                 |
-| muscle                        | 💪      | Muscle                        | arm, strong, bicep, flex, muscle                                                   |
-| 1f9be_mechanicalarm           | 🦾      | Mechanical arm                | mechanical arm                                                                     |
-| 1f9bf_mechanicalleg           | 🦿      | Mechanical leg                | mechanical leg                                                                     |
-| 1f9b5_leg                     | 🦵      | Leg                           | leg                                                                                |
-| 1f9b6_foot                    | 🦶      | Foot                          | foot                                                                               |
-| 1f442_ear                     | 👂      | Ear                           | ear                                                                                |
-| 1f9bb_earwithhearingaid       | 🦻      | Ear with hearing aid          | ear with hearing aid                                                               |
-| 1f443_nose                    | 👃      | Nose                          | nose                                                                               |
-| 1f9e0_brain                   | 🧠      | Brain                         | brain                                                                              |
-| anatomicalheart               | 🫀      | Anatomical Heart              | anatomicalheart                                                                    |
-| lungs                         | 🫁      | Lungs                         | lungs                                                                              |
-| 1f9b7_tooth                   | 🦷      | Tooth                         | tooth                                                                              |
-| 1f9b4_bone                    | 🦴      | Bone                          | bone                                                                               |
-| 1f440_eyes                    | 👀      | Eyes                          | eyes                                                                               |
-| 1f441_eye                     | 👁️      | Eye                           | eye                                                                                |
-| 1f445_tongue                  | 👅      | Tongue                        | tongue                                                                             |
-| 1f444_mouth                   | 👄      | Mouth                         | mouth                                                                              |
-| dropthemic                    | 🎤      | Drop the mic                  | drop the mic, out of here, me out, obama, it’s over, the end, microphone, hand     |
-| fistbump                      | 🤜🤛    | Fist bump                     |                                                                                    |
+| ID                            | Unicode   | Description                   | Keywords                                                                                                                                             |
+| ----------------------------- | --------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1f44b_wavinghand              | 👋        | Waving hand                   | bye, cya, g2g, greetings, gtg, hand, happy, hello, hey, hi, later, outtie, ttfn, ttyl, wave, waving, yo, you                                         |
+| 1f91a_raisedbackofhand        | 🤚        | Raised back of hand           | back, backhand, five, hand, high, raised                                                                                                             |
+| 1f590_handwithfingerssplayed  | 🖐️        | Hand with fingers splayed     | hand with fingers splayed                                                                                                                            |
+| 270b_raisedhand               | ✋        | Raised hand                   | 5, five, hand, high, raised, stop                                                                                                                    |
+| vulcansalute                  | 🖖        | Vulcan salute                 | Vulcan, finger, forth, geeky, go, hand, hands, live, long, nerdy, prosper, salute, spock, star, trek, vulcan, vulcansalute                           |
+| rightwardshand                | 🫱        | Rightwards hand               | hand, handshake, hold, reach, right, rightward, rightwards, shake                                                                                    |
+| leftwardshand                 | 🫲        | Leftwards hand                | hand, handshake, hold, left, leftward, leftwards, reach, shake                                                                                       |
+| palmdownhand                  | 🫳        | Palm down hand                | dismiss, down, drop, dropped, hand, palm, pick, shoo, up                                                                                             |
+| palmuphand                    | 🫴        | Palm up hand                  | beckon, catch, come, hand, hold, know, lift, me, offer, palm, tell                                                                                   |
+| pushright                     | 🫸        | Push right                    | block, five, halt, hand, high, hold, pause, push, pushing, refuse, right, rightward, rightwards, slap, stop, wait                                    |
+| pushleft                      | 🫷        | Push left                     | block, five, halt, hand, high, hold, left, leftward, leftwards, pause, push, pushing, refuse, slap, stop, wait                                       |
+| ok                            | 👌        | OK                            | OK, awesome, bet, done, dope, fleek, fosho, good, got, gotcha, hand, legit, looks, ok, okay, pinch, rad, sure, sweet, three                          |
+| pinchedfingers                | 🤌        | Pinched fingers               | chefs, fingers, gesture, hand, hold, huh, interrogation, kiss, patience, pinched, relax, sarcastic, ugh, what, zip                                   |
+| 1f90f_pinchinghand            | 🤏        | Pinching hand                 | amount, bit, fingers, hand, little, pinching, pinching hand, small, sort                                                                             |
+| victory                       | ✌️        | Victory sign                  | peace, victory, celebrate, sign, hand, gesture, peaceout, two                                                                                        |
+| crossedfingers                | 🤞        | Crossed fingers               | cross, crossed, finger, fingers, hand, luck, touchwood                                                                                               |
+| fingerheart                   | 🫰        | Finger heart                  | <3, crossed, expensive, finger, hand, heart, index, love, money, snap, thumb                                                                         |
+| 1f91f_loveyougesture          | 🤟        | Love you gesture              | ILY, fingers, gesture, hand, love, love-you, rock, three, you                                                                                        |
+| 1f918_signofthehorns          | 🤘        | Sign of the horns             | finger, hand, horns, rock-on, sign, sign of the horns                                                                                                |
+| 1f919_callmehand              | 🤙        | Call me hand                  | Shaka, call, hand, hang, loose, me, shaka                                                                                                            |
+| pointleftindex                | 👈        | Backhand Index Pointing Left  | backhand, direction, finger, gesture, hand, index, index point, left, point, pointing                                                                |
+| pointrightindex               | 👉        | Backhand index pointing right | backhand, direction, finger, gesture, gun, hand, index, point, pointing, right                                                                       |
+| 1f446_backhandindexpointingup | 👆        | Backhand index pointing up    | backhand, direction, down, finger, gesture, hand, index, point, pointing, up                                                                         |
+| pointdownindex                | 👇        | Backhand index pointing down  | backhand, direction, down, finger, gesture, hand, index, point, pointing                                                                             |
+| pointupindex                  | ☝️        | Index pointing up             | finger, hand, index, point, pointing, this, up, direction, gesture                                                                                   |
+| poke                          | 🫵        | Poke                          | at, finger, hand, index, point, pointing, poke, viewer, you                                                                                          |
+| yes                           | 👍        | Yes                           | +1, good, hand, hand gesture, like, signal, thumb, thumbs up, up, yes                                                                                |
+| no                            | 👎        | No                            | -1, bad, disagree, dislike, down, gesture, good, hand, no, nope, signal, thumb, thumbs                                                               |
+| raisedfist                    | ✊        | Raised fist                   | clenched, fist, hand, punch, raised, solidarity, strong, together                                                                                    |
+| 1f44a_oncomingfist            | 👊        | Oncoming fist                 | absolutely, agree, boom, bro, bruh, bump, clenched, correct, fist, fistbump, hand, knuckle, oncoming, pound, punch, rock, ttyl                       |
+| 1f91b_leftfacingfist          | 🤛        | Left facing fist              | facing, fist, fistbump, left, left-facing, leftwards                                                                                                 |
+| 1f91c_rightfacingfist         | 🤜        | Right facing fist             | facing, fist, fistbump, right, right-facing, rightwards                                                                                              |
+| clappinghands                 | 👏        | Clapping hands                | applause, approval, awesome, bravo, clap, congrats, congratulations, excited, good, goodjob, great, hand, hands, homie, job, nice, prayed, well, yay |
+| handsinair                    | 🙌        | Hands celebrating             | celebrate, celebration, gesture, hand, hands, happy, hooray, praise, raised, raising                                                                 |
+| hearthands                    | 🫶        | Heart hands                   | <3, become, care, complete, hands, heart, i, love, one, together, two, valentines, you                                                               |
+| 1f450_openhands               | 👐        | Open hands                    | hand, hands, hug, jazz, open, swerve                                                                                                                 |
+| 1f932_palmsuptogether         | 🤲        | Palms up together             | catch, cupped, dua, give, hands, palms, pray, prayer, together, up, wish                                                                             |
+| handshake                     | 🤝        | Handshake                     | agreement, deal, greetings, hand, handshake, meeting, shake                                                                                          |
+| praying                       | 🙏        | Folded hands                  | appreciate, ask, beg, blessed, bow, care, cmon, five, folded, gesture, hand, high, namaste, please, pray, thanks, thx                                |
+| 270d_writinghand              | ✍️        | Writing hand                  | writing hand                                                                                                                                         |
+| 1f485_nailpolish              | 💅        | Nail polish                   | bored, care, cosmetics, done, makeup, manicure, nail, polish, whatever                                                                               |
+| selfiehand                    | 🤳        | Selfie                        | camera, hand, phone, selfie, vain                                                                                                                    |
+| muscle                        | 💪        | Muscle                        | arm, beast, bench, bicep, biceps, bodybuilder, bro, curls, flex, gains, got, gym, jacked, muscle, press, ripped, strong, this, weightlift, you       |
+| 1f9be_mechanicalarm           | 🦾        | Mechanical arm                | accessibility, arm, mechanical, prosthetic, robo                                                                                                     |
+| 1f9bf_mechanicalleg           | 🦿        | Mechanical leg                | accessibility, leg, mechanical, prosthetic                                                                                                           |
+| 1f9b5_leg                     | 🦵        | Leg                           | bent, foot, kick, knee, leg, limb                                                                                                                    |
+| 1f9b6_foot                    | 🦶        | Foot                          | ankle, feet, foot, kick, stomp                                                                                                                       |
+| 1f442_ear                     | 👂        | Ear                           | body, ear, ears, hear, hearing, listen, listening, sound                                                                                             |
+| 1f9bb_earwithhearingaid       | 🦻        | Ear with hearing aid          | accessibility, aid, ear, ear with hearing aid, hard, hearing                                                                                         |
+| 1f443_nose                    | 👃        | Nose                          | body, nose, noses, nosey, odor, smell, smells                                                                                                        |
+| 1f9e0_brain                   | 🧠        | Brain                         | brain, brainpower, intelligent, smart                                                                                                                |
+| anatomicalheart               | 🫀        | Anatomical heart              | anatomical, beat, cardiology, heart, heartbeat, organ, pulse, real, red                                                                              |
+| lungs                         | 🫁        | Lungs                         | breath, breathe, exhalation, inhalation, lung, lungs, organ, respiration                                                                             |
+| 1f9b7_tooth                   | 🦷        | Tooth                         | dental, dentist, molar, oral, pearly, teeth, tooth, white                                                                                            |
+| 1f9b4_bone                    | 🦴        | Bone                          | bone, bones, dog, skeleton, wishbone                                                                                                                 |
+| 1f440_eyes                    | 👀        | Eyes                          | body, eye, eyes, face, googly, look, looking, omg, peep, see, seeing, watch                                                                          |
+| 1f441_eye                     | 👁️        | Eye                           | eye, looking, look, watch, see                                                                                                                       |
+| 1f445_tongue                  | 👅        | Tongue                        | body, lick, slurp, tasty, tongue, yumm                                                                                                               |
+| 1f444_mouth                   | 👄        | Mouth                         | beauty, body, kiss, kissing, lips, lipstick, mouth                                                                                                   |
+| bitinglip                     | 🫦        | Biting lip                    | anxious, bite, biting, fear, flirt, flirting, kiss, lip, lipstick, nervous, sexy, uncomfortable, worried, worry                                      |
+| dropthemic                    | 🎤        | Drop the mic                  | drop, end, hand, karaoke, mic, microphone, music, out, over, sing, sound, speaker                                                                    |
+| fistbump                      | 🤜🤛      | Fist bump                     | fist, bump, teamwork, absolutely, agree, boom, bro, bruh, clenched, correct, hand, knuckle, pound, punch, rock, ttyl                                 |
+| support                       | (support) | Support                       | support, heart, care                                                                                                                                 |
+| 1f595_middlefinger            | 🖕        | Middle finger                 | finger, hand, middle finger                                                                                                                          |
