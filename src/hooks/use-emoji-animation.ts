@@ -60,7 +60,7 @@ export const useEmojiAnimation = (
   const autoPlay =
     autoPlayRequested && !prefersReducedMotion && iterationCount !== 0
   const emojiId = emoji?.id
-  const [trackedEmojiId, setTrackedEmojiId] = useState(emojiId)
+  const [trackedSource, setTrackedSource] = useState(spriteSource)
   const [hasImageLoaded, setHasImageLoaded] = useState(false)
   const [isOnScreen, setIsOnScreen] = useState(false)
   const isDocumentHidden = useSyncExternalStore(
@@ -69,8 +69,8 @@ export const useEmojiAnimation = (
     getServerDocumentHidden,
   )
   const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
-  if (trackedEmojiId !== emojiId) {
-    setTrackedEmojiId(emojiId)
+  if (trackedSource !== spriteSource) {
+    setTrackedSource(spriteSource)
     setHasInitialRunFinished(false)
     setHasImageLoaded(false)
     setIsOnScreen(false)
@@ -113,7 +113,7 @@ export const useEmojiAnimation = (
 
     return {
       width: size,
-      ...(isIdle && { animationName: 'none' }),
+      ...((isIdle || isAutoplayHeld) && { animationName: 'none' }),
       animationDuration: `${String(framesCount / fps)}s`,
       animationTimingFunction: `steps(${String(framesCount)})`,
       animationIterationCount:
