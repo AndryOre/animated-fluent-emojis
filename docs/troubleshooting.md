@@ -7,7 +7,7 @@ the full API see the [usage guide](usage.md).
 - [Nothing renders, or only the fallback shows](#nothing-renders-or-only-the-fallback-shows)
 - [The manifest is blocked by CSP or the browser is offline](#the-manifest-is-blocked-by-csp-or-the-browser-is-offline)
 - [Next.js reports an error for configureEmojis or Emoji](#nextjs-reports-an-error-for-configureemojis-or-emoji)
-- [ERR_REQUIRE_ESM or a require error](#err_require_esm-or-a-require-error)
+- [ERR_PACKAGE_PATH_NOT_EXPORTED or a require error](#err_package_path_not_exported-or-a-require-error)
 - [Tests that render Emoji fail or never animate in jsdom](#tests-that-render-emoji-fail-or-never-animate-in-jsdom)
 - [bun run test fails because Chromium is missing](#bun-run-test-fails-because-chromium-is-missing)
 - [See also](#see-also)
@@ -19,10 +19,11 @@ it does not react to `playOnHover` either.
 
 **Cause:** The `emoji-play` keyframe and the hover rules live in
 `src/components/Emoji.module.css`, which ships as the separate `style.css`
-export. The component sets the animation inline (`animationName`, duration and
-`steps()` timing in `useEmojiAnimation`), but the keyframe it names is only
-defined by that stylesheet. Without it the sprite sheet stays on its first
-frame. See [CSS](architecture.md#css).
+export. The `emoji-play` animation name and its keyframe both come from the
+`.emojiImage` class in that stylesheet. The inline style from
+`useEmojiAnimation` only sets the duration, the `steps()` timing and the pause
+state, so without the stylesheet nothing names an animation and the sprite sheet
+stays on its first frame. See [CSS](architecture.md#css).
 
 Other cases look the same and are not bugs:
 
@@ -111,15 +112,18 @@ with `"use client"`, and import `style.css` once in the root layout. See
 [Next.js and server components](../README.md#nextjs-and-server-components) and
 the [usage guide](usage.md).
 
-## ERR_REQUIRE_ESM or a require error
+## ERR_PACKAGE_PATH_NOT_EXPORTED or a require error
 
-**Symptom:** `ERR_REQUIRE_ESM`, `Cannot find module`, or an error about a
-missing `require` condition when loading the package from CommonJS.
+**Symptom:** `ERR_PACKAGE_PATH_NOT_EXPORTED` ("No "exports" main defined"),
+`Cannot find module`, or `ERR_REQUIRE_ESM` when loading the package from
+CommonJS.
 
 **Cause:** The package is ESM only. `package.json` sets `"type": "module"` and
 an `exports` map with `types` and `import` conditions, and no `require`
-condition or `main` field. A `require('animated-fluent-emojis')` call has
-nothing to resolve to. See [ADR 0003](adr/0003-esm-only-and-vite-8.md).
+condition or `main` field. A `require('animated-fluent-emojis')` call fails
+while Node resolves the exports map, before it checks whether the file is ESM,
+so `ERR_PACKAGE_PATH_NOT_EXPORTED` is the usual error and `ERR_REQUIRE_ESM`
+appears only in some tools. See [ADR 0003](adr/0003-esm-only-and-vite-8.md).
 
 **Fix:** Use `import` syntax, from an ESM file or a bundler. Every maintained
 React toolchain (Vite, Next.js, Remix, modern webpack) already does. In a
