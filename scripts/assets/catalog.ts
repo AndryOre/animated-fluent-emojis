@@ -2,12 +2,9 @@ import { createHash } from 'node:crypto'
 
 import type { Manifest } from '../../src/utils/types.js'
 import { glyphToCodepoints } from './codepoints.js'
+import { indexEmoticons, TONE_SUFFIXES, type Emoticon } from './constants.js'
 import type { MitEmoji } from './mit.js'
 import { buildSpriteUrl } from './teams.js'
-
-type Emoticon = Manifest['categories'][number]['emoticons'][number]
-
-const TEAMS_TONE_SUFFIXES = ['_s2', '_s3', '_s4', '_s5', '_s6'] as const
 
 const CATEGORY_BY_MIT_GROUP: Readonly<Record<string, string>> = {
   'Smileys & Emotion': 'Smilies',
@@ -179,7 +176,7 @@ function dedupeKeepingLast(manifest: Manifest): Manifest {
 function buildTeamsTasks(manifest: Manifest): SpriteTask[] {
   return manifest.categories.flatMap((category) =>
     category.emoticons.flatMap((emoticon) => {
-      const suffixes = emoticon.diverse ? ['', ...TEAMS_TONE_SUFFIXES] : ['']
+      const suffixes = emoticon.diverse ? ['', ...TONE_SUFFIXES] : ['']
       return suffixes.map((toneSuffix): SpriteTask => ({
         source: 'teams',
         id: emoticon.id,
@@ -272,12 +269,12 @@ export function buildCatalog(
   )
   const tasks = buildTeamsTasks(teams)
   const codepointsById = new Map(
-    teams.categories.flatMap((category) =>
-      category.emoticons.map(
+    indexEmoticons(teams)
+      .values()
+      .map(
         (emoticon) =>
           [emoticon.id, glyphToCodepoints(emoticon.unicode)] as const,
       ),
-    ),
   )
   const additionsByCategory = new Map<string, Emoticon[]>()
   const mitEmojiIds = new Set<string>()
