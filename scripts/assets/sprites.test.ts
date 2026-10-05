@@ -45,35 +45,55 @@ test('resolveFrameRate falls back to 24 when no rate is usable', () => {
   expect(resolveFrameRate('abc', '')).toBe(24)
 })
 
+async function convertTestAnimation(frameSize?: number) {
+  const directory = await mkdtemp(path.join(tmpdir(), 'sprite-test-'))
+  try {
+    const apngPath = path.join(directory, 'input.png')
+    execFileSync('ffmpeg', [
+      '-v',
+      'error',
+      '-f',
+      'lavfi',
+      '-i',
+      'testsrc=size=256x256:rate=10:duration=0.5',
+      '-plays',
+      '0',
+      '-f',
+      'apng',
+      apngPath,
+    ])
+    const sprite = await convertAnimatedPng(await readFile(apngPath), frameSize)
+    return { sprite, metadata: await sharp(sprite.png).metadata() }
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+}
+
 test.skipIf(!hasFfmpeg)(
   'convertAnimatedPng stacks every frame into a 100px wide sprite',
   async () => {
-    const directory = await mkdtemp(path.join(tmpdir(), 'sprite-test-'))
-    try {
-      const apngPath = path.join(directory, 'input.png')
-      execFileSync('ffmpeg', [
-        '-v',
-        'error',
-        '-f',
-        'lavfi',
-        '-i',
-        'testsrc=size=64x64:rate=10:duration=0.5',
-        '-plays',
-        '0',
-        '-f',
-        'apng',
-        apngPath,
-      ])
+    const { sprite, metadata } = await convertTestAnimation()
 
-      const sprite = await convertAnimatedPng(await readFile(apngPath))
-
-      expect(sprite.framesCount).toBe(5)
-      expect(sprite.fps).toBe(10)
-      const metadata = await sharp(sprite.png).metadata()
-      expect(metadata.width).toBe(100)
-      expect(metadata.height).toBe(500)
-    } finally {
-      await rm(directory, { recursive: true, force: true })
-    }
+    expect(sprite.framesCount).toBe(5)
+    expect(sprite.fps).toBe(10)
+    expect(metadata.width).toBe(100)
+    expect(metadata.height).toBe(500)
   },
 )
+
+test.skipIf(!hasFfmpeg)(
+  'convertAnimatedPng at frame size 200 builds a 200px wide HD sprite',
+  async () => {
+    const { sprite, metadata } = await convertTestAnimation(200)
+
+    expect(sprite.framesCount).toBe(5)
+    expect(metadata.width).toBe(200)
+    expect(metadata.height).toBe(1000)
+  },
+)
+
+test('convertAnimatedPng rejects an invalid frame size', async () => {
+  await expect(convertAnimatedPng(Buffer.alloc(0), 0)).rejects.toThrow(
+    'Invalid sprite frame size',
+  )
+})
