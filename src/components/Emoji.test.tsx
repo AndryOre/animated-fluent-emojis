@@ -223,8 +223,8 @@ test('switches to hover-only playback when the animation ends', async () => {
 
 test('renders nothing for an unknown id', async () => {
   const { container } = await render(<Emoji id="does-not-exist" />)
-  const { emojiManifestPromise } = await import('../utils/index.js')
-  await emojiManifestPromise
+  const { loadEmojiManifest } = await import('../utils/index.js')
+  await loadEmojiManifest()
 
   await new Promise((resolve) => {
     setTimeout(resolve, 50)

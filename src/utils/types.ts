@@ -11,7 +11,38 @@ interface Animation {
 }
 
 /**
- * Represents an individual emoticon.
+ * The runtime-facing subset of an emoticon, as published in the slim manifest.
+ */
+interface SlimEmoticon {
+  /** Unique identifier for the emoticon. */
+  id: string
+  /** Human-readable description of the emoticon. */
+  description: string
+  /** Entity tag for caching purposes. */
+  etag: string
+  /** Whether this emoticon has diverse (skin tone) variants. */
+  diverse: boolean
+  /** Animation properties for this emoticon. */
+  animation: Animation
+  /** Whether the asset site also serves an HD sprite sheet for this emoticon. */
+  hd?: boolean
+}
+
+/**
+ * The slim manifest the runtime fetches: no shortcuts, unicode or keywords.
+ */
+export interface SlimManifest {
+  /** The emoji categories. */
+  categories: {
+    id: string
+    title: string
+    description: string
+    emoticons: SlimEmoticon[]
+  }[]
+}
+
+/**
+ * Represents an individual emoticon of the full manifest, used by the asset pipeline.
  */
 interface Emoticon {
   /** Unique identifier for the emoticon. */
@@ -57,9 +88,9 @@ export interface Manifest {
 }
 
 /**
- * Extends the Emoticon interface with category information.
+ * A slim manifest entry with the title of its category.
  */
-export interface EmojiManifest extends Emoticon {
+export interface EmojiManifest extends SlimEmoticon {
   /** The category to which this emoji belongs. */
   category: string
 }

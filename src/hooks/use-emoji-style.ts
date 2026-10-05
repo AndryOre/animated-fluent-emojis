@@ -1,32 +1,48 @@
 import { useEffect, useState } from 'react'
 
-import { emojiManifestPromise, type EmojiManifest } from '../utils/index.js'
+import { loadEmojiManifest, type EmojiManifest } from '../utils/index.js'
 
-export interface UseEmojiStyleResult {
+export type UseEmojiStyleResult =
+  | { status: 'loading'; emoji: null }
+  | { status: 'ready'; emoji: EmojiManifest }
+  | { status: 'missing'; emoji: null }
+
+interface Resolution {
+  id: string
   emoji: EmojiManifest | null
 }
 
 /**
  * Loads the manifest entry for an emoji.
- * @param id - Key of the emoji in the CDN manifest.
- * @returns The emoji manifest data, or null if not found.
+ * @param id - Key of the emoji in the manifest.
+ * @returns `loading` while the manifest is pending, `ready` with the entry, or
+ * `missing` when the id is unknown or the manifest failed to load.
  */
 export const useEmojiStyle = (id: string): UseEmojiStyleResult => {
-  const [emoji, setEmoji] = useState<EmojiManifest | null>(null)
+  const [resolution, setResolution] = useState<Resolution | null>(null)
 
   useEffect(() => {
-    const fetchEmojiData = async () => {
+    let isCurrent = true
+
+    const resolve = async () => {
+      let emoji: EmojiManifest | null = null
       try {
-        const manifest = await emojiManifestPromise
-        setEmoji(manifest[id] ?? null)
+        const manifest = await loadEmojiManifest()
+        emoji = manifest[id] ?? null
       } catch (error) {
         console.error('Error fetching emoji data:', error)
-        setEmoji(null)
       }
+      if (isCurrent) setResolution({ id, emoji })
     }
 
-    void fetchEmojiData()
+    void resolve()
+    return () => {
+      isCurrent = false
+    }
   }, [id])
 
-  return { emoji }
+  if (resolution?.id !== id) return { status: 'loading', emoji: null }
+  return resolution.emoji
+    ? { status: 'ready', emoji: resolution.emoji }
+    : { status: 'missing', emoji: null }
 }
