@@ -315,3 +315,172 @@ test('searchEmojis treats a non finite positive limit as unlimited and 0 as empt
   expect(await searchEmojis('a', { limit: Infinity })).toHaveLength(6)
   expect(await searchEmojis('a', { limit: 2 })).toHaveLength(2)
 })
+
+const buildManifest = (
+  emoticons: { id: string; unicode: string; diverse?: true }[],
+) => ({
+  categories: [
+    {
+      id: 'all',
+      title: 'All',
+      description: 'All',
+      emoticons: emoticons.map((emoticon) => ({
+        ...emoticon,
+        description: emoticon.id,
+        etag: emoticon.id,
+        animation: { framesCount: 10 },
+      })),
+    },
+  ],
+})
+
+const serveManifest = (manifest: ReturnType<typeof buildManifest>) => {
+  server.use(http.get(MANIFEST_URL, () => HttpResponse.json(manifest)))
+}
+
+test('a shared glyph resolves to the first entry in catalog order', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'base', unicode: '❤' },
+      { id: 'variant', unicode: '❤️' },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('❤')).toEqual({ id: 'base' })
+})
+
+test('a code point prefixed id wins over catalog order and overrides', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'holdon', unicode: '⌛' },
+      { id: 'recycle', unicode: '♻' },
+      { id: 'windturbine', unicode: '♻' },
+      { id: '267b_recycling', unicode: '♻' },
+      { id: '231b_hourglassdone', unicode: '⌛' },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('⌛')).toEqual({ id: '231b_hourglassdone' })
+  expect(await findEmojiByUnicode('♻')).toEqual({ id: '267b_recycling' })
+})
+
+test('an override wins only when its id exists in the manifest', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'windturbine', unicode: '♻' },
+      { id: 'recycle', unicode: '♻' },
+      { id: 'bartlett', unicode: '⚽' },
+      { id: 'other', unicode: '⚽' },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('♻')).toEqual({ id: 'recycle' })
+  expect(await findEmojiByUnicode('⚽')).toEqual({ id: 'bartlett' })
+})
+
+test('the live shared groups resolve to the canonical emoji', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'heart', unicode: '❤️' },
+      { id: 'rainbowheart2', unicode: '❤️' },
+      { id: 'cactuslove', unicode: '❤️' },
+      { id: 'windturbine', unicode: '♻️' },
+      { id: 'vegetablegarden', unicode: '♻️' },
+      { id: 'recycle', unicode: '♻️' },
+      { id: 'hearteyes', unicode: '😍' },
+      { id: 'hearteyeskoala', unicode: '😍' },
+      { id: 'holdon', unicode: '⌛' },
+      { id: '231b_hourglassdone', unicode: '⌛' },
+      { id: 'cooldog', unicode: '🐶' },
+      { id: 'smiledog', unicode: '🐶' },
+      { id: 'coolkoala', unicode: '🐨' },
+      { id: 'koala', unicode: '🐨' },
+      { id: 'sarcastic', unicode: '👏' },
+      { id: 'clap', unicode: '👏' },
+      { id: 'thewave1', unicode: '🙌' },
+      { id: 'handsinair', unicode: '🙌' },
+      { id: 'bartlett', unicode: '⚽' },
+      { id: 'soccerball', unicode: '⚽' },
+      { id: 'wingleft', unicode: '🪽' },
+      { id: 'wing', unicode: '🪽' },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  const resolved = await Promise.all(
+    ['❤️', '♻️', '😍', '⌛', '🐶', '🐨', '👏', '🙌', '⚽', '🪽'].map(
+      async (glyph) => {
+        const match = await findEmojiByUnicode(glyph)
+        return match?.id
+      },
+    ),
+  )
+
+  expect(resolved).toEqual([
+    'heart',
+    'recycle',
+    'hearteyes',
+    '231b_hourglassdone',
+    'smiledog',
+    'koala',
+    'clap',
+    'handsinair',
+    'soccerball',
+    'wing',
+  ])
+})
+
+test('a skin tone only applies when the canonical entry is diverse', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'soccerball', unicode: '⚽' },
+      { id: 'other', unicode: '⚽', diverse: true },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('⚽🏻')).toBeUndefined()
+})
+
+test('a skin tone applies when the canonical entry is diverse', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'other', unicode: '👋' },
+      { id: '1f44b_wavinghand', unicode: '👋', diverse: true },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('👋🏻')).toEqual({
+    id: '1f44b_wavinghand',
+    skinTone: 'light',
+  })
+})
+
+test('ZWJ catalog glyphs match with or without VS16 while text bases still need it', async () => {
+  serveManifest(
+    buildManifest([
+      { id: 'heart-on-fire', unicode: '❤️‍🔥' },
+      { id: 'rainbow-flag', unicode: '🏳️‍🌈' },
+      { id: 'copyright', unicode: '©️' },
+    ]),
+  )
+  const { findEmojiByUnicode } = await importFresh()
+
+  expect(await findEmojiByUnicode('❤‍🔥')).toEqual({ id: 'heart-on-fire' })
+  expect(await findEmojiByUnicode('❤️‍🔥')).toEqual({ id: 'heart-on-fire' })
+  expect(await findEmojiByUnicode('🏳‍🌈')).toEqual({ id: 'rainbow-flag' })
+  expect(await findEmojiByUnicode('©')).toBeUndefined()
+  expect(await findEmojiByUnicode('©️')).toEqual({ id: 'copyright' })
+})
+
+test('searchEmojis floors a fractional limit', async () => {
+  serveSymbolManifest()
+  const { searchEmojis } = await importFresh()
+
+  expect(await searchEmojis('a', { limit: 2.5 })).toHaveLength(2)
+  expect(await searchEmojis('a', { limit: 0.5 })).toEqual([])
+})

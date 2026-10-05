@@ -32,12 +32,30 @@ export interface SearchEmojisOptions {
 }
 
 type ManifestRecord = Record<string, EmojiManifest>
+type NonEmptyGroup = [EmojiManifest, ...EmojiManifest[]]
 
 const DEFAULT_SEARCH_LIMIT = 20
 const VARIATION_SELECTOR_16 = /\u{FE0F}/gu
 const SKIN_TONE_MODIFIERS = /[\u{1F3FB}-\u{1F3FF}]/gu
 const EMOJI_CLUSTER =
   /[\u{1F1E6}-\u{1F1FF}]{2}|.(?:[\u{FE0E}\u{FE0F}\u{20E3}\u{1F3FB}-\u{1F3FF}\u{E0020}-\u{E007F}]|\u{200D}.)*/gsu
+
+const ZERO_WIDTH_JOINER = '\u{200D}'
+const CODE_POINT_PREFIX = /^[\da-f]+(?:_[\da-f]+)*_/
+
+/**
+ * Glyphs whose first entry in catalog order is the wrong emoji, mapped to the
+ * id that should represent them. Applied only when the id is in the manifest.
+ */
+const CANONICAL_OVERRIDES: Readonly<Record<string, string>> = {
+  '\u{267B}': 'recycle',
+  '\u{26BD}': 'soccerball',
+  '\u{1F44F}': 'clap',
+  '\u{1F64C}': 'handsinair',
+  '\u{1F428}': 'koala',
+  '\u{1F436}': 'smiledog',
+  '\u{1FABD}': 'wing',
+}
 
 const TONES: readonly SkinTone[] = [
   'light',
@@ -71,6 +89,35 @@ function hasVariationSelectorAfterBase(text: string | undefined): boolean {
 }
 
 /**
+ * Picks the emoji that represents a glyph shared by several entries: an id
+ * prefixed with the glyph's code points, then a known override present in the
+ * manifest, then the first entry in catalog order.
+ * @param glyph - The VS16-free glyph.
+ * @param group - Every entry sharing the glyph, in catalog order.
+ * @param manifest - The loaded manifest.
+ * @returns The canonical entry.
+ */
+function pickCanonicalEmoji(
+  glyph: string,
+  group: NonEmptyGroup,
+  manifest: ManifestRecord,
+): EmojiManifest {
+  if (group.length === 1) return group[0]
+  const prefix = Array.from(
+    glyph,
+    (character) => character.codePointAt(0)?.toString(16) ?? '',
+  ).join('_')
+  const prefixed = group.find(
+    (emoji) =>
+      CODE_POINT_PREFIX.test(emoji.id) && emoji.id.startsWith(`${prefix}_`),
+  )
+  if (prefixed) return prefixed
+  const overrideId = CANONICAL_OVERRIDES[glyph]
+  const override = overrideId ? manifest[overrideId] : undefined
+  return override && group.includes(override) ? override : group[0]
+}
+
+/**
  * Indexes the catalog by its unicode without VS16, once per manifest.
  * @param manifest - The loaded manifest.
  * @returns A map from VS16-free unicode to the manifest entry.
@@ -78,9 +125,17 @@ function hasVariationSelectorAfterBase(text: string | undefined): boolean {
 function indexByUnicode(manifest: ManifestRecord): Map<string, EmojiManifest> {
   const cached = indexCache.get(manifest)
   if (cached) return cached
-  const index = new Map<string, EmojiManifest>()
+  const groups = new Map<string, NonEmptyGroup>()
   for (const emoji of Object.values(manifest)) {
-    if (emoji.unicode) index.set(stripVariationSelector(emoji.unicode), emoji)
+    if (!emoji.unicode) continue
+    const key = stripVariationSelector(emoji.unicode)
+    const group = groups.get(key)
+    if (group) group.push(emoji)
+    else groups.set(key, [emoji])
+  }
+  const index = new Map<string, EmojiManifest>()
+  for (const [key, group] of groups) {
+    index.set(key, pickCanonicalEmoji(key, group, manifest))
   }
   indexCache.set(manifest, index)
   return index
@@ -101,7 +156,8 @@ function resolveEmoji(
   const plain = stripVariationSelector(text)
   const direct = index.get(plain)
   if (direct) {
-    return hasVariationSelectorAfterBase(direct.unicode) &&
+    return !direct.unicode?.includes(ZERO_WIDTH_JOINER) &&
+      hasVariationSelectorAfterBase(direct.unicode) &&
       !hasVariationSelectorAfterBase(text)
       ? undefined
       : { id: direct.id }
@@ -197,7 +253,7 @@ export async function searchEmojis(
   if (!manifest || needle === '') return []
   const requested = options.limit ?? DEFAULT_SEARCH_LIMIT
   if (requested === 0) return []
-  const limit = requested > 0 ? requested : Infinity
+  const limit = requested > 0 ? Math.floor(requested) : Infinity
   const results: EmojiMatch[] = []
   for (const emoji of Object.values(manifest)) {
     if (results.length >= limit) break
