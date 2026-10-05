@@ -990,3 +990,74 @@ test('rebuilds an emoji from the source when its live file is corrupt', async ()
     fakeFetch.requests.some((request) => isSourceHostRequest(request)),
   ).toBe(true)
 })
+
+const withGhostEmoji = (manifest: Manifest): Manifest => ({
+  categories: manifest.categories.map((category) => ({
+    ...category,
+    emoticons: category.emoticons.map((emoticon) =>
+      emoticon.id === '1f3c1_chequeredflag'
+        ? { ...emoticon, id: 'ghost', origin: undefined }
+        : emoticon,
+    ),
+  })),
+})
+
+const ghostRoutes = async () => {
+  const { manifest } = await publishFirstGeneration()
+  return {
+    previousManifest: withGhostEmoji(manifest),
+    liveRoutes: await buildLiveRoutes(
+      path.join(context.workDirectory, 'out'),
+      (v1Path) => v1Path.replace('1f3c1_chequeredflag', 'ghost'),
+    ),
+  }
+}
+
+test('retains the previous generation of an emoji removed in the sync', async () => {
+  const { previousManifest, liveRoutes } = await ghostRoutes()
+  const fakeFetch = createFakeFetch({ ...spriteRoutes(), ...liveRoutes })
+
+  const result = await buildAssets(seedOptions(fakeFetch, previousManifest))
+
+  expect(result.retained).toBe(1)
+  const files = await listV1Sprites(
+    path.join(context.workDirectory, 'out-next'),
+  )
+  expect(files.some((file) => file.includes('/ghost.'))).toBe(true)
+})
+
+test('reports when removed emoji retention is cut by the file budget', async () => {
+  const { previousManifest, liveRoutes } = await ghostRoutes()
+  const fakeFetch = createFakeFetch({ ...spriteRoutes(), ...liveRoutes })
+  const summaryPath = path.join(context.workDirectory, 'summary.md')
+
+  const result = await buildAssets({
+    ...seedOptions(fakeFetch, previousManifest),
+    maxOutputFiles: 1,
+    stepSummaryPath: summaryPath,
+  })
+
+  expect(result.retained).toBe(0)
+  expect(await readFile(summaryPath, 'utf8')).toContain('retention truncated')
+})
+
+test('drops a retained sheet whose image data is corrupt', async () => {
+  const { previousManifest, liveRoutes } = await ghostRoutes()
+  const ghostRoute = Object.keys(liveRoutes).find((route) =>
+    route.includes('/ghost.'),
+  )
+  const original = liveRoutes[ghostRoute ?? '']?.body
+  if (!(original instanceof Uint8Array))
+    throw new TypeError('missing ghost sprite')
+  const fakeFetch = createFakeFetch({
+    ...spriteRoutes(),
+    ...liveRoutes,
+    [ghostRoute ?? '']: {
+      body: original.subarray(0, -60),
+    },
+  })
+
+  const result = await buildAssets(seedOptions(fakeFetch, previousManifest))
+
+  expect(result.retained).toBe(0)
+})

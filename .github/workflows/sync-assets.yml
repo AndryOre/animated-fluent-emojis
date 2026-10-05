@@ -157,11 +157,11 @@ jobs:
           package-manager-cache: false
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Regenerate emoji lists
         run: |
-          curl --fail --silent --show-error --location \
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
             "https://animated-fluent-emojis.pages.dev/manifest.json" \
             --output manifest.json
           bun run assets:lists --manifest manifest.json
@@ -180,7 +180,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "${branch}"
-          git add docs src/utils/emoji-id.generated.ts
+          if [[ -n "$(git status --porcelain -- src/utils/emoji-id.generated.ts)" ]]; then
+            entry='- Updated the `EmojiId` union from the published emoji catalog.'
+            if ! grep --fixed-strings --quiet "${entry}" CHANGELOG.md; then
+              awk -v entry="${entry}" '{ print } /^## \[Unreleased\]/ && !done { print ""; print entry; done = 1 }' CHANGELOG.md > CHANGELOG.md.tmp
+              mv CHANGELOG.md.tmp CHANGELOG.md
+            fi
+          fi
+          git add CHANGELOG.md docs src/utils/emoji-id.generated.ts
           git commit \
             --message "docs: 📝 update emoji list" \
             --message "- Regenerated the emoji lists from the published manifest"
@@ -222,4 +229,27 @@ jobs:
             gh issue comment "${number}" --repo "${REPOSITORY}" --body "${body}"
           else
             gh issue create --repo "${REPOSITORY}" --title "${title}" --body "${body}"
+          fi
+
+  resolve-failure:
+    name: Close the failure issue after a successful sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [sync, emoji-lists]
+    if: ${{ !failure() && !cancelled() }}
+    permissions:
+      issues: write
+    steps:
+      - name: Close the open failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_URL:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{
+            github.run_id }}
+        run: |
+          title="sync-assets failing"
+          number="$(gh issue list --repo "${REPOSITORY}" --state open --search "\"${title}\" in:title" --json number,title --jq "map(select(.title == \"${title}\")) | .[0].number // empty")"
+          if [[ -n "${number}" ]]; then
+            gh issue close "${number}" --repo "${REPOSITORY}" --comment "Sync Assets succeeded again: ${RUN_URL}"
           fi

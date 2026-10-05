@@ -6,7 +6,7 @@ import { afterEach, beforeEach, expect, test } from 'vitest'
 import type { Manifest } from '../../src/utils/types.js'
 import type { SpriteTask } from './catalog.js'
 import { createSpritePng } from './test-support.js'
-import { validateCatalog } from './validate.js'
+import { findSpriteSheetProblem, validateCatalog } from './validate.js'
 
 const TONES = ['', '_s2', '_s3', '_s4', '_s5', '_s6']
 
@@ -328,4 +328,28 @@ test('rejects an HD sheet taller than the texture limit', async () => {
   await expect(
     run(createManifest({ hd: true, framesCount: 82 }), hdTasks),
   ).rejects.toThrow('above the 16384px texture limit')
+})
+
+test('rejects a sheet whose image data is corrupt past the header', async () => {
+  const tasks = createTasks([''])
+  const png = Buffer.from(await createSpritePng(40))
+  const idatOffset = png.indexOf('IDAT')
+  png.fill(0xff, idatOffset + 4 + 20, idatOffset + 4 + 120)
+  await writeFileInCache(tasks[0]?.outputPath ?? '', png)
+  await expect(
+    validateCatalog({
+      manifest: createManifest(),
+      tasks,
+      cacheDirectory: context.cacheDirectory,
+    }),
+  ).rejects.toThrow('could not be decoded')
+})
+
+test('findSpriteSheetProblem reports a truncated sheet', async () => {
+  const png = await createSpritePng(40)
+  const truncated = png.subarray(0, -80)
+  expect(await findSpriteSheetProblem(truncated, 100, 40)).toContain(
+    'could not be decoded',
+  )
+  expect(await findSpriteSheetProblem(png, 100, 40)).toBeUndefined()
 })
