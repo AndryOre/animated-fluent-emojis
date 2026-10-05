@@ -129,9 +129,10 @@ allowance for injected styles.
   compromised asset site can change what the library renders. Content-addressed
   sprite file names make URLs immutable, but they do not prove the bytes.
 - **The asset site is a single origin.** The default asset site is one
-  Cloudflare Pages project. If it is unavailable, emojis fall back to the
-  fallback glyph or your `fallback` node. Self-hosting is the alternative (see
-  CSP requirements above).
+  Cloudflare Pages project. If it is unavailable, emojis render your `fallback`
+  node, or nothing when none is given: the fallback glyph comes from the
+  manifest, so it cannot show when the manifest itself failed. Self-hosting is
+  the alternative (see CSP requirements above).
 - **The sync trusts the live site and Microsoft's upstream.** Seeding reuses
   sprite sheets from the published site, and the artwork comes from the Teams
   emoticon manifest and the official repository. The pipeline validates the
