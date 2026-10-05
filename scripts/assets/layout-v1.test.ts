@@ -119,3 +119,58 @@ test('fails when the v1 manifest is missing', async () => {
     'v1/manifest.slim.json is unreadable',
   )
 })
+
+const entryWith = (
+  overrides: Record<string, unknown>,
+  animation: Record<string, unknown> = {},
+) => {
+  const base = manifest.categories[0]?.emoticons[0]
+  return {
+    categories: [
+      {
+        id: 'c',
+        title: 'Cat',
+        description: 'd',
+        emoticons: [
+          {
+            ...base,
+            ...overrides,
+            animation: { ...base?.animation, ...animation },
+          },
+        ],
+      },
+    ],
+  } as unknown as Manifest
+}
+
+test('omits default-valued fields from v1 entries', () => {
+  expect(toV1Manifest(manifest).categories[0]?.emoticons[0]).toEqual({
+    id: 'e1',
+    description: 'E',
+    etag: 'abc',
+    unicode: 'x',
+    animation: { framesCount: 4 },
+  })
+})
+
+test('keeps non-default fields in v1 entries', () => {
+  const entry = toV1Manifest(
+    entryWith({ diverse: true, hd: true }, { fps: 30, firstFrame: 2 }),
+  ).categories[0]?.emoticons[0]
+  expect(entry).toEqual({
+    id: 'e1',
+    description: 'E',
+    etag: 'abc',
+    unicode: 'x',
+    animation: { framesCount: 4, fps: 30, firstFrame: 2 },
+    diverse: true,
+    hd: true,
+  })
+})
+
+test('omits hd for a 121-frame emoji and keeps it for an 81-frame one', () => {
+  const tall = toV1Manifest(entryWith({}, { framesCount: 121 }))
+  const capped = toV1Manifest(entryWith({ hd: true }, { framesCount: 81 }))
+  expect(tall.categories[0]?.emoticons[0]).not.toHaveProperty('hd')
+  expect(capped.categories[0]?.emoticons[0]?.hd).toBe(true)
+})

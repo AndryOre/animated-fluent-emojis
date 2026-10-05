@@ -3,7 +3,6 @@ import path from 'node:path'
 
 import type { Manifest } from '../../src/utils/types.js'
 import type { SpriteTask } from './catalog.js'
-import { toSlimManifest, type SlimManifest } from './slim-manifest.js'
 import { findSpriteSheetProblem, validateCatalog } from './validate.js'
 
 /**
@@ -29,19 +28,38 @@ export const V1_HEADERS_FILE = `/v1/sprites/*
   Access-Control-Allow-Origin: *
 `
 
-type SlimCategory = SlimManifest['categories'][number]
+/**
+ * One emoji in the versioned slim manifest. Fields at their default value are
+ * omitted: `fps` 24, `firstFrame` 1, `diverse` false and `hd` false.
+ */
+interface V1Emoticon {
+  readonly id: string
+  readonly description: string
+  readonly etag: string
+  readonly unicode?: string
+  readonly animation: {
+    readonly framesCount: number
+    readonly fps?: number
+    readonly firstFrame?: number
+  }
+  readonly diverse?: true
+  readonly hd?: true
+}
 
 /**
- * The versioned slim manifest shape: the slim entries plus the `unicode`
- * string of each emoji.
+ * The versioned slim manifest shape: compact entries that omit defaults.
  */
 export interface V1Manifest {
-  readonly categories: readonly (Omit<SlimCategory, 'emoticons'> & {
-    readonly emoticons: readonly (SlimCategory['emoticons'][number] & {
-      readonly unicode: string
-    })[]
-  })[]
+  readonly categories: readonly {
+    readonly id: string
+    readonly title: string
+    readonly description: string
+    readonly emoticons: readonly V1Emoticon[]
+  }[]
 }
+
+const DEFAULT_FPS = 24
+const DEFAULT_FIRST_FRAME = 1
 
 /**
  * Inputs for {@link validateV1Layout}.
@@ -77,26 +95,39 @@ export function buildV1SpritePath(legacyPath: string, etag: string): string {
   return `${V1_DIRECTORY}/${match[1] ?? ''}.${etag}${match[2] ?? ''}.png`
 }
 
+function toV1Emoticon(
+  emoticon: Manifest['categories'][number]['emoticons'][number],
+): V1Emoticon {
+  const { fps, framesCount, firstFrame } = emoticon.animation
+  const hd = (emoticon as { hd?: unknown }).hd
+  return {
+    id: emoticon.id,
+    description: emoticon.description,
+    etag: emoticon.etag,
+    ...(emoticon.unicode && { unicode: emoticon.unicode }),
+    animation: {
+      framesCount,
+      ...(fps !== DEFAULT_FPS && { fps }),
+      ...(firstFrame !== DEFAULT_FIRST_FRAME && { firstFrame }),
+    },
+    ...(emoticon.diverse && { diverse: true as const }),
+    ...(hd !== undefined && hd !== false && { hd: true as const }),
+  }
+}
+
 /**
- * Reduces the full manifest to the versioned slim manifest.
+ * Reduces the full manifest to the versioned slim manifest, omitting every
+ * field that sits at its default value.
  * @param manifest The full manifest.
- * @returns The slim manifest with a `unicode` string per emoji.
+ * @returns The compact manifest the v1 runtime reads.
  */
 export function toV1Manifest(manifest: Manifest): V1Manifest {
-  const unicodeById = new Map(
-    manifest.categories.flatMap((category) =>
-      category.emoticons.map(
-        (emoticon) => [emoticon.id, emoticon.unicode] as const,
-      ),
-    ),
-  )
   return {
-    categories: toSlimManifest(manifest).categories.map((category) => ({
-      ...category,
-      emoticons: category.emoticons.map((emoticon) => ({
-        ...emoticon,
-        unicode: unicodeById.get(emoticon.id) ?? '',
-      })),
+    categories: manifest.categories.map((category) => ({
+      id: category.id,
+      title: category.title,
+      description: category.description,
+      emoticons: category.emoticons.map((emoticon) => toV1Emoticon(emoticon)),
     })),
   }
 }
@@ -204,7 +235,7 @@ async function findManifestProblems(
   }
   for (const category of expected.categories) {
     for (const emoticon of category.emoticons) {
-      if (emoticon.unicode.length === 0) {
+      if (emoticon.unicode === undefined) {
         problems.push(`${emoticon.id}: v1 manifest entry has no unicode`)
       }
     }

@@ -313,3 +313,19 @@ test('lists every violation of different rules in one error', async () => {
   expect(message).toContain('missing base sprite task')
   expect(message).toContain('is 64px wide')
 })
+
+test('rejects an HD sheet taller than the texture limit', async () => {
+  const tasks = createTasks([''])
+  const hdTasks = tasks.map((task) => ({
+    ...task,
+    hdOutputPath: 'sprites/Cat/e1@2x.png',
+  }))
+  await writeSprites(tasks, 82)
+  await writeFileInCache(
+    'sprites/Cat/e1@2x.png',
+    await createSpritePng(82, { frameSize: 200 }),
+  )
+  await expect(
+    run(createManifest({ hd: true, framesCount: 82 }), hdTasks),
+  ).rejects.toThrow('above the 16384px texture limit')
+})

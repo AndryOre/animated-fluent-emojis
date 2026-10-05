@@ -493,6 +493,31 @@ test('publishes HD sheets for Teams emojis that match an official one', async ()
   expect(findEmoticon(slim, '1f44b_wavinghand')?.hd).toBeUndefined()
 })
 
+test('plans no HD sheet for an emoji above the HD frame cap', async () => {
+  const routes = withOfficialSmiley(spriteRoutes())
+  routes[`GET ${buildSpriteUrl(SMILEY_ID, '')}`] = {
+    body: await createSpritePng(121),
+  }
+  const teamsManifest = createTeamsManifest()
+  const teamsSmiley = teamsManifest.categories[0]?.emoticons[0]
+  if (teamsSmiley) teamsSmiley.animation.framesCount = 121
+  routes[`GET ${buildManifestUrl(HASH)}`] = { body: teamsManifest }
+  const options = baseOptions(createFakeFetch(routes))
+
+  const result = await buildAssets({ ...options, convert: createConvert(121) })
+
+  const smiley = findEmoticon(result.manifest, SMILEY_ID)
+  expect(smiley?.hd).toBeUndefined()
+  expect(
+    result.manifest.categories[0]?.emoticons[0]?.animation.framesCount,
+  ).toBe(121)
+  await expect(
+    stat(
+      path.join(options.outputDirectory, `sprites/Smilies/${SMILEY_ID}@2x.png`),
+    ),
+  ).rejects.toThrow()
+})
+
 test('publishes HD for an official-only emoji whose HD frame count matches', async () => {
   const options = baseOptions(createFakeFetch(spriteRoutes()))
 
