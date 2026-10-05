@@ -16,6 +16,7 @@
   animation-name: none;
 }
 
-.animateOnHover:hover .emojiImage {
+.animateOnHover:hover .emojiImage,
+:focus .animateOnHover .emojiImage {
   animation-name: emoji-play;
 }

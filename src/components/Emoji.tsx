@@ -13,6 +13,7 @@ import styles from './Emoji.module.css'
  * @param props.animationIterations - How many times to play the animation, or 'infinite'.
  * @param props.autoPlay - Whether to automatically play the animation on mount.
  * @param props.skinTone - The skin tone, for emojis that support it.
+ * @param props.alt - Accessible text, defaults to the emoji description. An empty string marks the emoji as decorative.
  * @returns The rendered Emoji component or null if the emoji is not found.
  */
 export const Emoji = ({
@@ -22,6 +23,7 @@ export const Emoji = ({
   animationIterations = 2,
   autoPlay = true,
   skinTone = 'default',
+  alt,
 }: EmojiProps): ReactElement | null => {
   const { emoji } = useEmojiStyle(id)
   const { isInitialAnimationComplete, animationStyle, imageRef } =
@@ -42,13 +44,15 @@ export const Emoji = ({
 
   return (
     <span
-      title={emoji.description}
+      aria-hidden={alt === '' || undefined}
       style={containerStyle}
       className={containerClassName}
     >
       <img
         ref={imageRef}
-        alt={emoji.description}
+        alt={alt ?? emoji.description}
+        loading="lazy"
+        decoding="async"
         draggable="false"
         src={getSpriteUrl(emoji, skinTone)}
         style={animationStyle}

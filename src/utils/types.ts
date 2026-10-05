@@ -86,4 +86,6 @@ export interface EmojiProps {
   autoPlay?: boolean
   /** The skin tone, for emojis that support it. Default is 'default'. */
   skinTone?: SkinTone
+  /** Accessible text. Defaults to the emoji description; an empty string marks the emoji as decorative. */
+  alt?: string
 }
