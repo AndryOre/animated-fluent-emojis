@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The package description, keywords and README intro describe what the component
+  does today. The "Exclusive Feature" callout is removed.
+- Added a brand kit in `docs/brand/` and the `bun run brand:export` script that
+  generates its rasters.
+
 ## [0.5.2] - 2026-10-05
 
 ### Fixed
