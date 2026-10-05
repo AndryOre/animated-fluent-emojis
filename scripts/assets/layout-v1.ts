@@ -4,7 +4,7 @@ import path from 'node:path'
 import type { Manifest } from '../../src/utils/types.js'
 import type { SpriteTask } from './catalog.js'
 import { toSlimManifest, type SlimManifest } from './slim-manifest.js'
-import { validateCatalog } from './validate.js'
+import { findSpriteSheetProblem, validateCatalog } from './validate.js'
 
 /**
  * The directory holding the versioned asset layout, as described in ADR 0010.
@@ -50,6 +50,16 @@ export interface V1ValidationInput {
   readonly manifest: Manifest
   readonly tasks: readonly SpriteTask[]
   readonly outputDirectory: string
+  readonly retained?: readonly RetainedSprite[]
+}
+
+/**
+ * A previous-generation sheet kept in the site next to the current files.
+ */
+export interface RetainedSprite {
+  readonly v1Path: string
+  readonly hd: boolean
+  readonly framesCount: number
 }
 
 /**
@@ -146,6 +156,7 @@ function splitEtag(
 async function findEtagProblems(
   outputDirectory: string,
   expectedPaths: ReadonlySet<string>,
+  retainedPaths: ReadonlySet<string>,
 ): Promise<string[]> {
   const expectedByStem = new Map(
     [...expectedPaths].map((expected) => {
@@ -159,7 +170,7 @@ async function findEtagProblems(
     path.relative(outputDirectory, file).split(path.sep).join('/'),
   )
   return present
-    .filter((file) => !expectedPaths.has(file))
+    .filter((file) => !expectedPaths.has(file) && !retainedPaths.has(file))
     .map((file) => {
       const parts = splitEtag(file)
       const expectedEtag = parts ? expectedByStem.get(parts.stem) : undefined
@@ -213,18 +224,39 @@ async function isNonEmptyFile(filePath: string): Promise<boolean> {
   }
 }
 
+async function findRetainedProblems(
+  outputDirectory: string,
+  retained: readonly RetainedSprite[],
+): Promise<string[]> {
+  const checks = await Promise.all(
+    retained.map(async (sprite) => {
+      const problem = await findSpriteSheetProblem(
+        path.join(outputDirectory, sprite.v1Path),
+        sprite.hd ? 200 : 100,
+        sprite.framesCount,
+      )
+      return problem === undefined
+        ? undefined
+        : `retained sprite ${sprite.v1Path} ${problem}`
+    }),
+  )
+  return checks.filter((problem) => problem !== undefined)
+}
+
 /**
  * Checks the versioned layout written into the site directory: the same sprite
  * checks as {@link validateCatalog} on the etag-named files, that every file
  * name's etag matches the manifest, and that the v1 manifest and
  * `version.json` are present and consistent.
+ * Retained previous-generation sheets are decoded and checked against their
+ * own frame counts.
  * @param input The manifest, the planned tasks and the built site directory.
  * @throws {Error} An error listing every problem found.
  */
 export async function validateV1Layout(
   input: V1ValidationInput,
 ): Promise<void> {
-  const { manifest, tasks, outputDirectory } = input
+  const { manifest, tasks, outputDirectory, retained = [] } = input
   const v1Tasks = toV1Tasks(tasks, manifest)
   const expectedPaths = new Set(
     v1Tasks.flatMap((task) =>
@@ -235,7 +267,12 @@ export async function validateV1Layout(
   )
   const problems = [
     ...(await findManifestProblems(outputDirectory, manifest)),
-    ...(await findEtagProblems(outputDirectory, expectedPaths)),
+    ...(await findEtagProblems(
+      outputDirectory,
+      expectedPaths,
+      new Set(retained.map((sprite) => sprite.v1Path)),
+    )),
+    ...(await findRetainedProblems(outputDirectory, retained)),
   ]
   for (const expected of expectedPaths) {
     if (!(await isNonEmptyFile(path.join(outputDirectory, expected)))) {
