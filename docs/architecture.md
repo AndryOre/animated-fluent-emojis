@@ -64,9 +64,11 @@ element is injected: everything per-emoji is an inline style on the image.
 
 `size` is `number | string`. A number is pixels, rounded, with the 100 default
 for invalid values. A string is any CSS length (`2rem`, `var(--size)`), used
-as-is for the root's `width` and `height`; the image then gets no `sizes` and
-the fallback glyph is `calc(<size> * 0.75)`. Consumer `style` is spread after
-the sizing styles, so its `width` and `height` win.
+as-is for the root's `width` and `height`, and the image gets `sizes="auto"`;
+the fallback glyph is `calc(<size> * 0.75)`. A numeric string (`"48"`, `"48.5"`)
+is treated as the number, and an empty or blank string falls back to 100.
+Consumer `style` is spread after the sizing styles, so its `width` and `height`
+win.
 
 ### Fallback
 
@@ -112,8 +114,13 @@ autoplay is held by the gate below.
 `true` plays `animationIterations` runs and overrides `autoPlay` and reduced
 motion, still waiting for the image, the viewport and a visible tab. `false`
 pauses on the current frame. A finished run is not restarted by toggling.
-`onPlaybackEnd` fires once when a finite run ends and never for `'infinite'` or
-when the emoji unmounts mid-run.
+
+A run that the gate blocks after it started (the tab is hidden, the emoji
+scrolls out of view, or `playing` becomes `false`) is paused, not cancelled: it
+keeps its animation and resumes from the same frame. Only a run that has not
+started yet has its animation removed until the gate opens. `onPlaybackEnd`
+fires once when a finite run ends and never for `'infinite'` or when the emoji
+unmounts mid-run.
 
 ### Playback gating
 
@@ -140,7 +147,9 @@ animation while the tab is hidden and resumes it when the tab comes back.
 
 Changing the sprite source (`id` or `skinTone`) resets the load, visibility and
 initial-run state, so the new emoji plays its initial run. A sprite that failed
-is retried when its source changes and when the browser comes back online.
+is retried when its source changes and when the browser comes back online,
+through a single `online` listener shared by all `Emoji` instances. `onError`
+fires once per failure, and not for a failure left by a previous attempt.
 `animationIterations` is normalized: `Infinity` means `'infinite'`, and `NaN` or
 a negative value means `0`, which disables autoplay.
 
@@ -153,7 +162,10 @@ never at import time. Components subscribe with `useSyncExternalStore`
 `loading`, so server and client markup match. The slim manifest keeps what the
 runtime needs (`id`, `description`, `etag`, `diverse`, `animation`, `hd` and
 `unicode`); the full `manifest.json` stays on the site for the emoji lists. The
-categories are flattened into a record keyed by emoji id.
+categories are flattened into a record keyed by emoji id. The record has no
+prototype, so ids such as `constructor` or `__proto__` are ordinary keys. A load
+superseded by `configureEmojis` resolves to the current load's result instead of
+a stale one.
 
 The v1 manifest is compact: an entry is
 `{ id, description, etag, unicode?, animation: { framesCount, fps?, firstFrame? }, diverse?: true, hd?: true }`,
@@ -181,8 +193,8 @@ The store has four statuses:
   `console.error`; subscribers see `error`.
 
 A store in `error` is retried, never left failed for good: on the next `Emoji`
-mount, on the next `preloadEmojis` call, and when the browser fires `online`
-(one listener at a time). Each retry goes through `loading` again.
+mount, on the next `preloadEmojis` call, and when the browser fires `online` (a
+single store-level listener at a time). Each retry goes through `loading` again.
 
 `configureEmojis({ assetSiteUrl })` replaces the default asset site
 (`https://animated-fluent-emojis.pages.dev`). Call it before the first `Emoji`
@@ -198,12 +210,14 @@ and are retried as above.
 
 The sprite URL names the file by etag, so it is immutable:
 `getSpriteUrl(emoji, skinTone)` builds
-`<site>/v1/sprites/<category>/<id><tone>.<etag>.png`, and the HD sheet inserts
-`@2x` before the extension. `getSpriteSourceSet` returns, for emojis flagged
-`hd`, `"<standard> 100w, <hd> 200w"` and `undefined` for the rest. The image
-also gets `sizes="<size>px"`, so the browser picks the sheet by the rendered
-width and the device pixel ratio. Tests intercept the manifest request with MSW
-(`src/test/`), and the shapes live in `utils/types.ts`.
+`<site>/v1/sprites/<category title>/<id><tone>.<etag>.png`, where the path
+segment is the URL-encoded category title, not the category id, and the HD sheet
+inserts `@2x` before the extension. `getSpriteSourceSet` returns, for emojis
+flagged `hd`, `"<standard> 100w, <hd> 200w"` and `undefined` for the rest. The
+image also gets `sizes="<size>px"` for a numeric `size` and `sizes="auto"` for a
+string, so the browser picks the sheet by the rendered width and the device
+pixel ratio. Tests intercept the manifest request with MSW (`src/test/`), and
+the shapes live in `utils/types.ts`.
 
 ## Lookup
 
@@ -211,11 +225,15 @@ width and the device pixel ratio. Tests intercept the manifest request with MSW
 `dist/lookup.js`) has no React dependency. It calls `loadEmojiManifest` from the
 same store as `Emoji`, so the manifest is fetched once and shared through a Vite
 chunk. It exports `findEmojiByUnicode`, `extractEmojis` (grapheme segmentation
-with `Intl.Segmenter`, so ZWJ sequences stay whole) and `searchEmojis`
-(case-insensitive description match, 20 results by default). The catalog is
-indexed by normalised unicode, once per manifest, and the functions never
-reject: they resolve to `undefined` or `[]` when the manifest cannot be loaded.
-It has its own `size-limit` entry.
+with `Intl.Segmenter`, so ZWJ sequences stay whole; without it, a code point
+grouper keeps ZWJ sequences, variation selectors, skin tones, keycaps and flags
+together, so it never rejects) and `searchEmojis` (case-insensitive description
+match, 20 results by default; a `limit` that is not a positive number means no
+limit, except `0`, which returns nothing). The catalog is indexed by its unicode
+without VS16, once per manifest. Text-default symbols such as `©` match only
+with VS16 (U+FE0F); mixed skin tones resolve to the base emoji, and a single
+tone to `skinTone`. The functions never reject: they resolve to `undefined` or
+`[]` when the manifest cannot be loaded. It has its own `size-limit` entry.
 
 ## Emoji ids
 
@@ -278,9 +296,17 @@ The etag is part of the file name, so a URL never changes meaning. The
 `_headers` file caches `/v1/sprites/*` as `immutable` for a year,
 `/v1/manifest.slim.json` for an hour, and `/v1/version.json` with `no-cache`.
 The legacy layout (`/manifest.slim.json` and `?v=<etag>` sprite paths) is still
-emitted unchanged for installed 0.4.x versions. `validateV1Layout` checks that
-every file name's etag matches the manifest and that the v1 manifest and
-`version.json` exist.
+emitted for installed 0.4.x versions; its `/sprites/*` files are not
+content-addressed, so they are cached for one day only.
+
+`version.json` lists `skippedIds` when an emoji, or only its HD sheet, failed to
+build, and `limited` when the build was cut short by `--limit`. Either marks the
+published site as unfinished, so the next detect rebuilds. `sync.ts verify-live`
+(`bun run assets:verify-live`) fetches `/v1/version.json` without cache and
+fails when it is missing, lacks the `v1` layout, is `limited` or has another
+pipeline version; `release.yml` runs it before publishing. `validateV1Layout`
+checks that every file name's etag matches the manifest and that the v1 manifest
+and `version.json` exist.
 
 ### Seeding and the previous generation
 

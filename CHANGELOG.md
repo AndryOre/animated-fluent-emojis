@@ -8,6 +8,41 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- **Behavior change (lookup):** `findEmojiByUnicode` requires the variation
+  selector (U+FE0F) for text-default symbols such as `©` and `™`, which no
+  longer match as a bare character.
+- **Behavior change (lookup):** a text with mixed skin tones resolves to the
+  base emoji, with no `skinTone`.
+- **Behavior change (lookup):** `extractEmojis` no longer rejects without
+  `Intl.Segmenter`; it falls back to a code point grouper.
+- **Behavior change (lookup):** a `searchEmojis` `limit` that is not a positive
+  number means no limit, and `0` returns nothing.
+- The manifest record has no prototype, so ids such as `constructor` resolve
+  like any other, and a load superseded by `configureEmojis` returns the current
+  load's result.
+- A run that the playback gate blocks mid-run is paused on its frame instead of
+  restarting.
+- `onError` fires once per failure, and a numeric string `size` such as `"48"`
+  is treated as a number. A string `size` gets `sizes="auto"`.
+- `Emoji` shares one `online` listener across all instances.
+- The sync records `skippedIds` and `limited` in `version.json` and rebuilds
+  until the site is complete; `--limit` must be a positive whole number.
+- Legacy `/sprites/*` files are cached for one day instead of a year, since
+  their URLs are not content-addressed.
+- `assets:verify-live` checks the live v1 layout and pipeline version, and the
+  release workflow runs it before publishing.
+- The release workflow publishes prereleases under their own dist tag.
+- The sync smoke test waits for the deployed `builtAt` and retries its fetches.
+
+### Changed
+
+- Renovate manages dependency updates; `@types/node` is held below 25 and the
+  `npm` pin in the workflows is tracked.
+- The shared manifest chunk has a stable name, `chunks/manifest-[hash].js`.
+- Bumped `eslint-plugin-unicorn` to 77 and `@types/node` to 24.
+
 ## [0.5.1] - 2026-10-05
 
 0.5.0 was tagged but never published to npm; 0.5.1 carries all of its changes
