@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-05
+
 ### Added
 
 - `alt` prop on `Emoji`: accessible text, defaulting to the emoji description;
@@ -128,7 +130,9 @@ and this project adheres to
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.3.0...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.4.0...HEAD
+[0.4.0]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.3.0...v0.4.0
 [0.3.0]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.2.0...v0.3.0
 [0.2.0]:
