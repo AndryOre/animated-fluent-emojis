@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchOk, type FetchLike } from './http.js'
+import { fetchOk, fetchOkOrMissing, type FetchLike } from './http.js'
 
 function sequence(...outcomes: (Response | Error)[]): {
   fetch: FetchLike
@@ -132,5 +132,39 @@ describe('fetchOk', () => {
     await vi.runAllTimersAsync()
     await pending
     expect(calls()).toBe(5)
+  })
+})
+
+describe('fetchOk timeout', () => {
+  it('aborts a stalled attempt and retries it', async () => {
+    vi.useRealTimers()
+    let calls = 0
+    const fetch: FetchLike = (_url, init) => {
+      calls += 1
+      if (calls > 1) return Promise.resolve(status(200))
+      return new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          reject(new Error('aborted'))
+        })
+      })
+    }
+
+    const response = await fetchOk(fetch, 'https://x.test/a', undefined, 2, 20)
+
+    expect(response.status).toBe(200)
+    expect(calls).toBe(2)
+  })
+})
+
+describe('fetchOkOrMissing', () => {
+  it('resolves undefined on 404 and fails on other client errors', async () => {
+    const missing = sequence(status(404)).fetch
+    const forbidden = sequence(status(403)).fetch
+    await expect(
+      fetchOkOrMissing(missing, 'https://x.test/a'),
+    ).resolves.toBeUndefined()
+    await expect(
+      fetchOkOrMissing(forbidden, 'https://x.test/a'),
+    ).rejects.toThrow('HTTP 403')
   })
 })

@@ -11,7 +11,13 @@ import {
   renderEmojiIdModule,
   renderEmojiLists,
 } from './emoji-lists.js'
-import type { FetchLike } from './http.js'
+import {
+  appendStepSummary,
+  assertDiscoveryHealthy,
+  assertFileCountWithinLimit,
+  assertRemovalsWithinLimit,
+} from './guards.js'
+import { fetchOkOrMissing, type FetchLike } from './http.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { fetchMitCommitSha } from './mit.js'
 import {
@@ -48,21 +54,25 @@ export function needsRebuild(
  * @param fetchImplementation The fetch function to use.
  * @param baseUrl The site origin.
  * @param fileName The file to read, such as `version.json`.
+ * @param attempts How many times to try before giving up.
  * @returns The parsed JSON, or undefined when the site or file does not exist yet.
  */
 export async function fetchPublishedJson<Value>(
   fetchImplementation: FetchLike,
   baseUrl: string,
   fileName: string,
+  attempts?: number,
 ): Promise<Value | undefined> {
   const url = `${baseUrl}/${fileName}`
-  const response = await fetchImplementation(url, {
-    headers: { 'cache-control': 'no-cache' },
-  })
-  if (response.status === 404) return undefined
-  if (!response.ok) {
-    throw new Error(`HTTP ${String(response.status)} for ${url}`)
-  }
+  const response = await fetchOkOrMissing(
+    fetchImplementation,
+    url,
+    {
+      headers: { 'cache-control': 'no-cache' },
+    },
+    attempts,
+  )
+  if (!response) return undefined
   try {
     return (await response.json()) as Value
   } catch (error: unknown) {
@@ -120,6 +130,11 @@ function setOutputs(outputs: Record<string, string>): void {
   )
 }
 
+function reportDiscovery(warnings: readonly string[]): void {
+  for (const warning of warnings) console.warn(`warning: ${warning}`)
+  appendStepSummary('Teams discovery warnings', warnings)
+}
+
 async function runDetect(publishedUrl: string, force: boolean): Promise<void> {
   const fetchImplementation: FetchLike = fetch
   const published = await fetchPublishedJson<PublishedVersion>(
@@ -134,7 +149,8 @@ async function runDetect(publishedUrl: string, force: boolean): Promise<void> {
       ...KNOWN_TEAMS_HASHES,
     ],
   })
-  for (const warning of discovery.warnings) console.warn(`warning: ${warning}`)
+  reportDiscovery(discovery.warnings)
+  assertDiscoveryHealthy(discovery, force)
   const mitSha = await fetchMitCommitSha(
     fetchImplementation,
     buildGithubHeaders(),
@@ -164,6 +180,7 @@ async function runBuild(options: {
   outputDirectory: string
   cacheDirectory: string
   limit: number | undefined
+  force: boolean
 }): Promise<void> {
   const fetchImplementation: FetchLike = fetch
   let teamsVersion: TeamsVersion | undefined
@@ -177,6 +194,8 @@ async function runBuild(options: {
       fetchImplementation,
       knownHashes: KNOWN_TEAMS_HASHES,
     })
+    reportDiscovery(discovery.warnings)
+    assertDiscoveryHealthy(discovery, options.force)
     teamsVersion = discovery.version
   }
 
@@ -194,6 +213,17 @@ async function runBuild(options: {
     limit: options.limit,
     previousManifest,
   })
+  if (previousManifest && result.diff) {
+    assertRemovalsWithinLimit(previousManifest, result.diff, options.force)
+  }
+  await assertFileCountWithinLimit(options.outputDirectory)
+  if (result.diff) {
+    appendStepSummary('Catalog diff', [
+      `Added: ${String(result.diff.added.length)}`,
+      `Removed: ${String(result.diff.removed.length)}`,
+      `Changed: ${String(result.diff.changed.length)}`,
+    ])
+  }
   console.log(
     JSON.stringify(
       {
@@ -262,6 +292,7 @@ async function main(): Promise<void> {
         outputDirectory: values.out,
         cacheDirectory: values.cache,
         limit: values.limit === undefined ? undefined : Number(values.limit),
+        force: values.force,
       })
       break
     }
