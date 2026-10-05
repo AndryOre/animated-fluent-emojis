@@ -1,10 +1,10 @@
 import type { SlimManifest } from '../utils/index.js'
 
 export const MANIFEST_URL =
-  'https://animated-fluent-emojis.pages.dev/manifest.slim.json'
+  'https://animated-fluent-emojis.pages.dev/v1/manifest.slim.json'
 
 export const SPRITE_URL_PATTERN =
-  'https://animated-fluent-emojis.pages.dev/sprites/*'
+  'https://animated-fluent-emojis.pages.dev/v1/sprites/*'
 
 export const FIXTURE_MANIFEST: SlimManifest = {
   categories: [

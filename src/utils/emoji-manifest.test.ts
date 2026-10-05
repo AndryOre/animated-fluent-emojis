@@ -67,7 +67,7 @@ test('getSpriteUrl versions the sprite by etag and encodes the category', async 
   const cat = manifest.cat
   if (!cat) throw new Error('fixture changed')
   expect(getSpriteUrl({ ...cat, category: 'Travel and places' })).toBe(
-    'https://animated-fluent-emojis.pages.dev/sprites/Travel%20and%20places/cat.png?v=etag-cat',
+    'https://animated-fluent-emojis.pages.dev/v1/sprites/Travel%20and%20places/cat.etag-cat.png',
   )
 })
 
@@ -88,10 +88,13 @@ test('getSpriteUrl maps every skin tone for diverse emojis only', async () => {
       'medium-dark',
       'dark',
     ] as const
-  ).map((tone) => /waving-hand(.*)\.png/.exec(getSpriteUrl(wave, tone))?.[1])
+  ).map(
+    (tone) =>
+      /waving-hand(.*)\.etag-wave\.png/.exec(getSpriteUrl(wave, tone))?.[1],
+  )
 
   expect(suffixes).toEqual(['', '_s2', '_s3', '_s4', '_s5', '_s6'])
-  expect(getSpriteUrl(cat, 'dark')).toContain('/cat.png?')
+  expect(getSpriteUrl(cat, 'dark')).toContain('/cat.etag-cat.png')
 })
 
 test('importing the manifest module makes no request', async () => {
@@ -133,10 +136,13 @@ test('a failed fetch is retried on the next call', async () => {
 test('a custom asset site serves the manifest and the sprite sheets', async () => {
   const requested: string[] = []
   server.use(
-    http.get('https://assets.example.com/manifest.slim.json', ({ request }) => {
-      requested.push(request.url)
-      return HttpResponse.json(FIXTURE_MANIFEST)
-    }),
+    http.get(
+      'https://assets.example.com/v1/manifest.slim.json',
+      ({ request }) => {
+        requested.push(request.url)
+        return HttpResponse.json(FIXTURE_MANIFEST)
+      },
+    ),
   )
   const { configureEmojis, loadEmojiManifest, getSpriteUrl } =
     await importFreshModule()
@@ -146,9 +152,11 @@ test('a custom asset site serves the manifest and the sprite sheets', async () =
   const cat = manifest.cat
   if (!cat) throw new Error('fixture changed')
 
-  expect(requested).toEqual(['https://assets.example.com/manifest.slim.json'])
+  expect(requested).toEqual([
+    'https://assets.example.com/v1/manifest.slim.json',
+  ])
   expect(getSpriteUrl(cat)).toBe(
-    'https://assets.example.com/sprites/Animals/cat.png?v=etag-cat',
+    'https://assets.example.com/v1/sprites/Animals/cat.etag-cat.png',
   )
 })
 
@@ -160,12 +168,12 @@ test('getSpriteSourceSet describes the sheet and its @2x sheet by width for hd e
   const cat = manifest.cat
   if (!wave || !cat) throw new Error('fixture changed')
 
-  const base = 'https://animated-fluent-emojis.pages.dev/sprites/Smilies'
+  const base = 'https://animated-fluent-emojis.pages.dev/v1/sprites/Smilies'
   expect(getSpriteSourceSet(wave, 'medium-light')).toBe(
-    `${base}/waving-hand_s3.png?v=etag-wave 100w, ${base}/waving-hand_s3@2x.png?v=etag-wave 200w`,
+    `${base}/waving-hand_s3.etag-wave.png 100w, ${base}/waving-hand_s3.etag-wave@2x.png 200w`,
   )
   expect(getSpriteSourceSet(wave)).toBe(
-    `${base}/waving-hand.png?v=etag-wave 100w, ${base}/waving-hand@2x.png?v=etag-wave 200w`,
+    `${base}/waving-hand.etag-wave.png 100w, ${base}/waving-hand.etag-wave@2x.png 200w`,
   )
   expect(getSpriteSourceSet(cat)).toBeUndefined()
 })
