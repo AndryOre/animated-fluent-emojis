@@ -51,7 +51,7 @@ test('passes a CSS length size to the container and fills it with the image', as
   expect(image.parentElement?.style.width).toBe('2rem')
   expect(image.parentElement?.style.height).toBe('2rem')
   expect(image.style.width).toBe('100%')
-  expect(image.hasAttribute('sizes')).toBe(false)
+  expect(image.getAttribute('sizes')).toBe('auto')
 })
 
 test('accepts a var() size', async () => {

@@ -145,15 +145,89 @@ test('onError fires once per manifest failure under StrictMode', async () => {
   )
   await expect.poll(() => first.mock.calls.length).toBe(1)
 
-  vi.stubGlobal('fetch', () => new Promise<Response>(() => 0))
   const second = vi.fn()
   await render(
     <StrictMode>
       <Emoji id="cat" onError={second} />
     </StrictMode>,
   )
+  await expect.poll(() => second.mock.calls.length).toBe(1)
   await new Promise((resolve) => {
     setTimeout(resolve, 100)
   })
   expect(second).toHaveBeenCalledTimes(1)
+})
+
+test('a remount while the store is in error reports only the failure of its own retry', async () => {
+  vi.spyOn(console, 'error').mockImplementation(() => 0 as never)
+  vi.stubGlobal('fetch', () =>
+    Promise.resolve(new Response('nope', { status: 500 })),
+  )
+  configureEmojis({ assetSiteUrl: 'https://remount-failing.test' })
+  const first = vi.fn()
+  await render(<Emoji id="cat" onError={first} />)
+  await expect.poll(() => first.mock.calls.length).toBe(1)
+
+  let rejectFetch: (() => void) | undefined
+  vi.stubGlobal(
+    'fetch',
+    () =>
+      new Promise<Response>((resolve) => {
+        rejectFetch = () => {
+          resolve(new Response('nope', { status: 500 }))
+        }
+      }),
+  )
+  const second = vi.fn()
+  await render(<Emoji id="cat" onError={second} />)
+  await new Promise((resolve) => {
+    setTimeout(resolve, 50)
+  })
+  expect(second).not.toHaveBeenCalled()
+  rejectFetch?.()
+  await expect.poll(() => second.mock.calls.length).toBe(1)
+  await new Promise((resolve) => {
+    setTimeout(resolve, 50)
+  })
+  expect(second).toHaveBeenCalledTimes(1)
+})
+
+test('a numeric string size renders like the number', async () => {
+  const { container } = await render(<Emoji id="waving-hand" size="48" />)
+  const image = await waitForImage(container)
+  const root = container.firstElementChild as HTMLElement
+  expect(root.style.width).toBe('48px')
+  expect(root.style.height).toBe('48px')
+  expect(image.getAttribute('sizes')).toBe('48px')
+})
+
+test('an empty string size uses the default size', async () => {
+  const { container } = await render(<Emoji id="waving-hand" size="" />)
+  await waitForImage(container)
+  const root = container.firstElementChild as HTMLElement
+  expect(root.style.width).toBe('100px')
+  expect(root.style.height).toBe('100px')
+})
+
+test('a CSS length size lets the browser pick the sheet with sizes=auto', async () => {
+  const { container } = await render(<Emoji id="waving-hand" size="2rem" />)
+  const image = await waitForImage(container)
+  expect(image.getAttribute('sizes')).toBe('auto')
+  expect((container.firstElementChild as HTMLElement).style.width).toBe('2rem')
+})
+
+test('mounted emojis share one online listener', async () => {
+  const addSpy = vi.spyOn(globalThis, 'addEventListener')
+  const { container } = await render(
+    <>
+      {Array.from({ length: 50 }, (_, index) => (
+        <Emoji key={index} id="cat" />
+      ))}
+    </>,
+  )
+  await expect.poll(() => container.querySelectorAll('img').length).toBe(50)
+  const onlineRegistrations = addSpy.mock.calls.filter(
+    ([type]) => type === 'online',
+  )
+  expect(onlineRegistrations).toHaveLength(1)
 })
