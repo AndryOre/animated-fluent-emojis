@@ -89,6 +89,9 @@ export const useEmojiAnimation = (
   if (!isRunBlocked && !isInitialAnimationComplete && !hasRunStarted) {
     setHasRunStarted(true)
   }
+  if (!autoPlay && hasRunStarted && !hasInitialRunFinished) {
+    setHasInitialRunFinished(true)
+  }
 
   useEffect(() => {
     const imgElement = imageRef.current
@@ -124,11 +127,10 @@ export const useEmojiAnimation = (
 
     const { framesCount, fps, firstFrame } = emoji.animation
     const isIdle = !playOnHover && isInitialAnimationComplete
-    const holdsFrame = playing === false && hasRunStarted
 
     return {
       width: size,
-      ...((isIdle || (isRunBlocked && !holdsFrame)) && {
+      ...((isIdle || (isRunBlocked && !hasRunStarted)) && {
         animationName: 'none',
       }),
       animationDuration: `${String(framesCount / fps)}s`,
@@ -145,7 +147,6 @@ export const useEmojiAnimation = (
     playOnHover,
     iterationCount,
     isRunBlocked,
-    playing,
     hasRunStarted,
   ])
 
