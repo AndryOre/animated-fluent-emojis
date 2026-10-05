@@ -189,6 +189,44 @@ test('limits the build to the first emojis', async () => {
   ).rejects.toThrow()
 })
 
+test('skips an official emoji whose sprite fails and reports it', async () => {
+  const fakeFetch = createFakeFetch(spriteRoutes())
+  const options = baseOptions(fakeFetch)
+  const summaryPath = path.join(context.workDirectory, 'summary.md')
+
+  const result = await buildAssets({
+    ...options,
+    stepSummaryPath: summaryPath,
+    convert: () => Promise.reject(new Error('bad apng')),
+  })
+
+  expect(result.skipped).toHaveLength(1)
+  expect(result.skipped[0]?.id).toBe('1f3c1_chequeredflag')
+  expect(result.spriteCount).toBe(7)
+  const ids = result.manifest.categories.flatMap((category) =>
+    category.emoticons.map((emoticon) => emoticon.id),
+  )
+  expect(ids).not.toContain('1f3c1_chequeredflag')
+  await expect(
+    stat(path.join(options.outputDirectory, 'sprites/Symbols')),
+  ).rejects.toThrow()
+  expect(await readFile(summaryPath, 'utf8')).toContain('1f3c1_chequeredflag')
+  const state = JSON.parse(
+    await readFile(path.join(options.cacheDirectory, 'state.json'), 'utf8'),
+  ) as Record<string, unknown>
+  expect(Object.keys(state)).toHaveLength(7)
+})
+
+test('fails the build when a Teams sprite fails', async () => {
+  const missingUrl = `GET ${buildSpriteUrl('1f603_grinningfacewithbigeyes', '')}`
+  const routes = Object.fromEntries(
+    Object.entries(spriteRoutes()).filter(([route]) => route !== missingUrl),
+  )
+  const fakeFetch = createFakeFetch(routes)
+
+  await expect(buildAssets(baseOptions(fakeFetch))).rejects.toThrow()
+})
+
 test('diffManifests reports added, removed and changed ids', () => {
   const previous = createTeamsManifest()
   const next = createTeamsManifest()

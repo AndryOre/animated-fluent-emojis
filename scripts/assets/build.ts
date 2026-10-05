@@ -1,4 +1,12 @@
-import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import {
+  appendFile,
+  cp,
+  mkdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises'
 import path from 'node:path'
 
 import type { Manifest } from '../../src/utils/types.js'
@@ -60,6 +68,15 @@ export interface ManifestDiff {
 }
 
 /**
+ * An official-repository emoji dropped from the build because one of its
+ * sprites could not be produced.
+ */
+interface SkippedEmoji {
+  readonly id: string
+  readonly reason: string
+}
+
+/**
  * The outcome of a build.
  */
 export interface BuildResult {
@@ -68,6 +85,7 @@ export interface BuildResult {
   readonly spriteCount: number
   readonly downloaded: number
   readonly reused: number
+  readonly skipped: readonly SkippedEmoji[]
   readonly diff: ManifestDiff | undefined
 }
 
@@ -84,6 +102,7 @@ export interface BuildOptions {
   readonly previousManifest?: Manifest
   readonly convert?: (animatedPng: Buffer) => Promise<ConvertedSprite>
   readonly now?: () => Date
+  readonly stepSummaryPath?: string
 }
 
 /**
@@ -170,6 +189,15 @@ async function writeBytes(filePath: string, bytes: Uint8Array): Promise<void> {
   await writeFile(filePath, bytes)
 }
 
+type SpriteOutcome =
+  | {
+      status: 'ok'
+      task: SpriteTask
+      animation?: AnimationState
+      reused: boolean
+    }
+  | { status: 'failed'; task: SpriteTask; error: Error }
+
 async function produceSprite(
   task: SpriteTask,
   context: {
@@ -207,6 +235,52 @@ async function produceSprite(
   throw new Error(`Sprite task has no source: ${task.outputPath}`)
 }
 
+async function settleSprite(
+  task: SpriteTask,
+  context: Parameters<typeof produceSprite>[1],
+): Promise<SpriteOutcome> {
+  try {
+    return { status: 'ok', ...(await produceSprite(task, context)) }
+  } catch (error: unknown) {
+    return {
+      status: 'failed',
+      task,
+      error: error instanceof Error ? error : new Error(String(error)),
+    }
+  }
+}
+
+function collectSkipped(
+  outcomes: readonly SpriteOutcome[],
+): Map<string, SkippedEmoji> {
+  const skipped = new Map<string, SkippedEmoji>()
+  for (const outcome of outcomes) {
+    if (outcome.status === 'failed' && !skipped.has(outcome.task.id)) {
+      skipped.set(outcome.task.id, {
+        id: outcome.task.id,
+        reason: `${outcome.task.outputPath}: ${outcome.error.message}`,
+      })
+    }
+  }
+  return skipped
+}
+
+async function reportSkipped(
+  skipped: readonly SkippedEmoji[],
+  stepSummaryPath: string | undefined,
+): Promise<void> {
+  if (skipped.length === 0) return
+  for (const entry of skipped) {
+    console.warn(`Skipped official emoji ${entry.id}: ${entry.reason}`)
+  }
+  if (!stepSummaryPath) return
+  const lines = skipped.map((entry) => `- \`${entry.id}\`: ${entry.reason}`)
+  await appendFile(
+    stepSummaryPath,
+    `### Skipped official emojis (${String(skipped.length)})\n\n${lines.join('\n')}\n`,
+  )
+}
+
 function limitCatalog(
   tasks: readonly SpriteTask[],
   limit: number | undefined,
@@ -239,26 +313,39 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     githubHeaders,
   )
   const catalog = buildCatalog(teamsManifest, mitIndex.emojis)
-  const tasks = limitCatalog(catalog.tasks, options.limit)
+  const limitedTasks = limitCatalog(catalog.tasks, options.limit)
 
   const state = await readState(options.cacheDirectory)
-  let results: Awaited<ReturnType<typeof produceSprite>>[]
-  try {
-    results = await mapWithConcurrency(tasks, DOWNLOAD_CONCURRENCY, (task) =>
-      produceSprite(task, {
+  const outcomes = await mapWithConcurrency(
+    limitedTasks,
+    DOWNLOAD_CONCURRENCY,
+    (task) =>
+      settleSprite(task, {
         options,
         mitSha: mitIndex.commitSha,
         state,
         convert,
       }),
-    )
-  } finally {
-    await mkdir(options.cacheDirectory, { recursive: true })
-    await writeFile(
-      path.join(options.cacheDirectory, 'state.json'),
-      JSON.stringify(state),
-    )
-  }
+  )
+  await mkdir(options.cacheDirectory, { recursive: true })
+  await writeFile(
+    path.join(options.cacheDirectory, 'state.json'),
+    JSON.stringify(state),
+  )
+
+  const teamsFailure = outcomes.find(
+    (outcome) => outcome.status === 'failed' && outcome.task.source === 'teams',
+  )
+  if (teamsFailure?.status === 'failed') throw teamsFailure.error
+
+  const skippedById = collectSkipped(outcomes)
+  const skipped = skippedById.values().toArray()
+  await reportSkipped(
+    skipped,
+    options.stepSummaryPath ?? process.env.GITHUB_STEP_SUMMARY,
+  )
+  const tasks = limitedTasks.filter((task) => !skippedById.has(task.id))
+  const results = outcomes.filter((outcome) => outcome.status === 'ok')
 
   const animationsById = new Map<string, AnimationState>()
   for (const result of results) {
@@ -273,15 +360,22 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
   const generatedIds = new Set(tasks.map((task) => task.id))
   const manifest = applyAnimations(
     {
-      categories: catalog.manifest.categories.map((category) => ({
-        ...category,
-        emoticons:
-          options.limit === undefined
-            ? category.emoticons
-            : category.emoticons.filter((emoticon) =>
-                generatedIds.has(emoticon.id),
-              ),
-      })),
+      categories: catalog.manifest.categories
+        .map((category) => ({
+          ...category,
+          emoticons: category.emoticons.filter(
+            (emoticon) =>
+              !skippedById.has(emoticon.id) &&
+              (options.limit === undefined || generatedIds.has(emoticon.id)),
+          ),
+        }))
+        .filter(
+          (category) =>
+            category.emoticons.length > 0 ||
+            !catalog.manifest.categories
+              .find((original) => original.id === category.id)
+              ?.emoticons.some((emoticon) => skippedById.has(emoticon.id)),
+        ),
     },
     animationsById,
   )
@@ -324,6 +418,7 @@ export async function buildAssets(options: BuildOptions): Promise<BuildResult> {
     spriteCount: tasks.length,
     downloaded: results.length - reused,
     reused,
+    skipped,
     diff: options.previousManifest
       ? diffManifests(options.previousManifest, manifest)
       : undefined,
