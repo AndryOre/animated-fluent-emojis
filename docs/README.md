@@ -12,6 +12,7 @@ An index of every document in this repository.
 - [`GOVERNANCE.md`](../GOVERNANCE.md): decision process and project continuity.
 - [`ROADMAP.md`](../ROADMAP.md): project direction.
 - [`SECURITY.md`](../.github/SECURITY.md): how to report vulnerabilities.
+- [`security.md`](security.md): the security design and assurance case.
 - [`AGENTS.md`](../AGENTS.md): instructions for coding agents (`CLAUDE.md`
   imports it).
 
