@@ -119,12 +119,12 @@
     {
       "name": "ESM bundle",
       "path": "dist/animated-fluent-emojis.js",
-      "limit": "3.1 kB"
+      "limit": "2.5 kB"
     },
     {
       "name": "Lookup bundle",
       "path": "dist/lookup.js",
-      "limit": "1.5 kB"
+      "limit": "780 B"
     },
     {
       "name": "Stylesheet",

@@ -222,7 +222,7 @@ type EmojiComponentType = (<Id extends string = string>(
  * @param props.playOnHover - Whether to play the animation on hover.
  * @param props.animationIterations - How many times to play the animation, or 'infinite'.
  * @param props.autoPlay - Whether to automatically play the animation on mount.
- * @param props.playing - Controls playback. Left undefined, `autoPlay` and reduced motion apply as usual. `true` plays `animationIterations` runs, overriding both, once the image has loaded and while the document is visible; `false` pauses on the current frame. A finished run is not restarted by toggling; remount the emoji with a new `key` to play it again.
+ * @param props.playing - Controls playback. Left undefined, `autoPlay` and reduced motion apply as usual. `true` plays `animationIterations` runs, overriding both, once the image has loaded, the emoji is on screen and while the document is visible; `false` pauses on the current frame. A finished run is not restarted by toggling; remount the emoji with a new `key` to play it again.
  * @param props.onPlaybackEnd - Called once when a finite run of `animationIterations` ends. Never called for `'infinite'` or when the emoji unmounts mid-run.
  * @param props.skinTone - The skin tone, for emojis that support it.
  * @param props.alt - Accessible text, defaults to the emoji description. An empty string marks the emoji as decorative.

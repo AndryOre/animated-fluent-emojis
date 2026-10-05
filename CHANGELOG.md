@@ -33,6 +33,18 @@ and this project adheres to
   `sync-assets failing` issue and a
   [rollback how-to](docs/how-to/roll-back-the-asset-site.md) back them up.
 
+- `playing` prop: `true` plays and overrides `autoPlay` and reduced motion,
+  `false` pauses, `undefined` keeps the default. `onPlaybackEnd` fires once when
+  a finite run ends.
+- `size` accepts any CSS length string (`2rem`, `var(--size)`) as well as a
+  number.
+- `animated-fluent-emojis/lookup`: `findEmojiByUnicode`, `extractEmojis` and
+  `searchEmojis`, with no React and the manifest shared with `Emoji`.
+- `DiverseEmojiId`, generated with `EmojiId`, and a `skinTone` typed against it.
+- Sync inputs `rebuild` and `bypass_guards`, a layout-aware trigger that
+  publishes `/v1/` when it is missing or the pipeline version changed, and a v1
+  smoke test that always runs.
+
 ### Changed
 
 - **Behavior change:** when a sprite sheet fails to load, `Emoji` now shows the
@@ -47,6 +59,27 @@ and this project adheres to
 - `size` is rounded, and anything but a finite positive number falls back
   to 100. `animationIterations` is normalized: `Infinity` is `'infinite'`, and
   `NaN` or a negative value disables autoplay.
+- The v1 slim manifest is compact: defaults (`fps` 24, `firstFrame` 1, `diverse`
+  and `hd` false) are omitted and restored by the runtime. The legacy manifest
+  is unchanged.
+- **Behavior change:** only emojis with at most 81 frames get an HD sheet, so
+  the sheet stays under Chromium's 16,384 px limit; validation rejects a taller
+  one. Ten emojis lose their HD sheet and use the standard one.
+- An unknown `id` renders `fallback` (nothing by default) instead of always
+  `null`, warns once in development and never calls `onError`.
+- While autoplay is held, the emoji shows its poster frame.
+- Visibility and reduced-motion listeners are shared at module level instead of
+  one per emoji.
+- The sync replaces `force` with `rebuild` and `bypass_guards`. The removal
+  guard runs on the planned catalog before conversion; the file-count guard is
+  never bypassed.
+- The release workflow is split into a `verify` job (`contents: read`) and a
+  `publish` job (`id-token: write`, no dependency install) that skips when the
+  version already exists, and it checks that `/v1/version.json` is live.
+- `build.ts` is split into deep modules, with no behaviour change.
+- **First sync:** the first sync after this change converts every sprite again,
+  because the live site has no `/v1/` files to seed from, and publishes the
+  whole `/v1/` layout.
 - The asset build downloads unchanged sprite sheets from the live site instead
   of converting them again, decodes each official source once, and fetches with
   retries, backoff and a 60 second timeout.
@@ -59,12 +92,26 @@ and this project adheres to
   `preloadEmojis` and when the browser comes back online, instead of only on the
   next render.
 
+- The manifest request times out after 15 seconds instead of waiting forever.
+- State resets when the sprite changes, not only when the `id` does, and a
+  failed sprite is retried on a source change or when the browser goes online.
+- An unknown `skinTone` falls back to the default sheet.
+
+### Security
+
+- The release workflow gives `id-token: write` only to the job that publishes,
+  which installs nothing and runs no repository scripts.
+- Pipeline validation rejects undecodable or oversized sprites, and the removal
+  guard stops a sync that would drop more than 5% of the catalog before any
+  conversion.
+
 ### Migration
 
 - If you relied on an empty box when a sprite sheet fails, pass
   `fallback={null}`.
-- If you mirror the asset site, publish the `v1` layout; see
-  [ADR 0010](docs/adr/0010-versioned-asset-layout-and-live-seeding.md).
+- An unknown `id` now renders `fallback`; it still renders nothing by default.
+- If you mirror the asset site, publish the `v1` layout with the 0.5 pipeline;
+  see [ADR 0010](docs/adr/0010-versioned-asset-layout-and-live-seeding.md).
 
 ## [0.4.0] - 2026-10-05
 

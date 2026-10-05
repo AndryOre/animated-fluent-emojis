@@ -25,7 +25,7 @@ git hooks on `bun install` through the `prepare` script.
 | `bun run typecheck`     | Runs `tsc -b`.                                                                                         |
 | `bun run knip`          | Finds unused files, exports and dependencies.                                                          |
 | `bun run lint:package`  | Builds, then runs `publint --strict` and `attw --profile esm-only`.                                    |
-| `bun run size`          | Checks bundle and stylesheet sizes against `size-limit`. Needs a prior build.                          |
+| `bun run size`          | Checks the entry, `/lookup` and stylesheet sizes (brotli) against `size-limit`. Needs a prior build.   |
 | `bun run test`          | Runs the Vitest suite once (browser and node projects).                                                |
 | `bun run test:watch`    | Runs Vitest in watch mode.                                                                             |
 | `bun run test:coverage` | Runs Vitest with v8 coverage and enforces the thresholds.                                              |
@@ -122,8 +122,12 @@ The package is ESM-only with an `exports` map for the entry and `style.css`.
 ## Playground
 
 `bun run dev` serves `index.html`, which loads `playground/main.tsx` and imports
-the component straight from `src/`. Edit that file to try ids, sizes and props,
-with hot reload. The playground is not published and is ignored by knip.
+the component straight from `src/`. The page has controls for an unknown id,
+`fallback` (glyph, node, `null`), `skinTone`, `playing`, a string `size` and a
+bad `configureEmojis` site URL that shows the error state; edit the file to try
+other props, with hot reload. To preview reduced motion, emulate the
+`prefers-reduced-motion` media feature in DevTools (Rendering panel). The
+playground is not published and is ignored by knip.
 
 ## Repository settings
 
