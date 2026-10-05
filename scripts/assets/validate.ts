@@ -78,9 +78,7 @@ function findAnimationProblems(manifest: Manifest): string[] {
           : ['firstFrame must be within [1, framesCount]']),
       ]
       return reasons.length > 0
-        ? [
-            `${emoticon.id}: invalid animation (fps ${String(fps)}, framesCount ${String(framesCount)}, firstFrame ${String(firstFrame)}): ${reasons.join('; ')}`,
-          ]
+        ? `${emoticon.id}: invalid animation (fps ${String(fps)}, framesCount ${String(framesCount)}, firstFrame ${String(firstFrame)}): ${reasons.join('; ')}`
         : []
     }),
   )
@@ -285,12 +283,10 @@ function findHdFlagProblems(
       const flagged = (emoticon as { hd?: unknown }).hd === true
       const withHd = emojiTasks.filter((task) => task.hdOutputPath)
       if (flagged && withHd.length !== emojiTasks.length) {
-        return [
-          `${emoticon.id}: flagged hd but not every tone has an HD sprite`,
-        ]
+        return `${emoticon.id}: flagged hd but not every tone has an HD sprite`
       }
       return !flagged && withHd.length > 0
-        ? [`${emoticon.id}: has HD sprites but is not flagged hd`]
+        ? `${emoticon.id}: has HD sprites but is not flagged hd`
         : []
     }),
   )

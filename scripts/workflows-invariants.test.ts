@@ -14,12 +14,10 @@ function collectSteps(workflow: Workflow): WorkflowStep[] {
 }
 
 function collectUses(workflow: Workflow): string[] {
-  const jobUses = Object.values(workflow.jobs ?? {}).flatMap((job) =>
-    job.uses === undefined ? [] : [job.uses],
+  const jobUses = Object.values(workflow.jobs ?? {}).flatMap(
+    (job) => job.uses ?? [],
   )
-  const stepUses = collectSteps(workflow).flatMap((step) =>
-    step.uses === undefined ? [] : [step.uses],
-  )
+  const stepUses = collectSteps(workflow).flatMap((step) => step.uses ?? [])
   return [...jobUses, ...stepUses]
 }
 

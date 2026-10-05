@@ -90,12 +90,10 @@ export async function copySpriteTrees(input: {
     [task.outputPath, task.hdOutputPath].flatMap((relativePath) =>
       relativePath === undefined
         ? []
-        : [
-            {
-              relativePath,
-              etag: emoticonById.get(task.id)?.etag ?? task.etag,
-            },
-          ],
+        : {
+            relativePath,
+            etag: emoticonById.get(task.id)?.etag ?? task.etag,
+          },
     ),
   )
   await mapWithConcurrency(

@@ -6,10 +6,10 @@ import { cdp, page } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
 
-const getImage = (name: string) => page.getByRole('img', { name })
+const getImage = () => page.getByRole('img', { name: 'Cat' })
 
-const findImage = async (name: string) => {
-  const image = getImage(name)
+const findImage = async () => {
+  const image = getImage()
   await expect.element(image).toBeVisible()
   return image.element()
 }
@@ -47,7 +47,7 @@ afterEach(async () => {
 test('passes a CSS length size to the container and fills it with the image', async () => {
   await render(<Emoji id="cat" size="2rem" />)
 
-  const image = await findImage('Cat')
+  const image = await findImage()
   expect(image.parentElement?.style.width).toBe('2rem')
   expect(image.parentElement?.style.height).toBe('2rem')
   expect(image.style.width).toBe('100%')
@@ -61,7 +61,7 @@ test('accepts a var() size', async () => {
     </div>,
   )
 
-  const image = await findImage('Cat')
+  const image = await findImage()
   const container = image.parentElement
   await expect.poll(() => container?.getBoundingClientRect().width).toBe(30)
 })
@@ -69,14 +69,14 @@ test('accepts a var() size', async () => {
 test('keeps sizes for numeric sizes', async () => {
   await render(<Emoji id="cat" size={40} />)
 
-  const image = await findImage('Cat')
+  const image = await findImage()
   expect(image.getAttribute('sizes')).toBe('40px')
 })
 
 test('the consumer style wins over the sizing styles', async () => {
   await render(<Emoji id="cat" size={40} style={{ width: '2rem' }} />)
 
-  const image = await findImage('Cat')
+  const image = await findImage()
   const container = image.parentElement
   expect(container?.style.width).toBe('2rem')
   expect(container?.style.height).toBe('40px')
@@ -87,20 +87,20 @@ test('playing runs the iterations despite autoPlay being off', async () => {
     <Emoji id="cat" autoPlay={false} animationIterations="infinite" playing />,
   )
 
-  await expect.poll(() => getPlayState(getImage('Cat'))).toBe('running')
+  await expect.poll(() => getPlayState(getImage())).toBe('running')
 })
 
 test('playing overrides reduced motion', async () => {
   await emulateReducedMotion('reduce')
   await render(<Emoji id="cat" animationIterations="infinite" playing />)
 
-  await expect.poll(() => getPlayState(getImage('Cat'))).toBe('running')
+  await expect.poll(() => getPlayState(getImage())).toBe('running')
 })
 
 test('playing still pauses while the document is hidden', async () => {
   await render(<Emoji id="cat" animationIterations="infinite" playing />)
 
-  const image = getImage('Cat')
+  const image = getImage()
   await expect.poll(() => getPlayState(image)).toBe('running')
   setDocumentHidden(true)
   await expect.poll(() => getPlayState(image)).toBe('paused')
@@ -111,7 +111,7 @@ test('playing false pauses on the current frame and true resumes', async () => {
     <Emoji id="cat" animationIterations="infinite" playing />,
   )
 
-  const image = getImage('Cat')
+  const image = getImage()
   await expect.poll(() => getPlayState(image)).toBe('running')
 
   await rerender(
@@ -130,7 +130,7 @@ test('playing false holds a run that has not started', async () => {
     <Emoji id="cat" animationIterations="infinite" playing={false} />,
   )
 
-  const image = getImage('Cat')
+  const image = getImage()
   await expect.element(image).toBeVisible()
   await pause()
   expect(getPlayState(image)).toBe('paused')
@@ -142,7 +142,7 @@ test('onPlaybackEnd is called once when the autoplay run ends', async () => {
     <Emoji id="cat" animationIterations={1} onPlaybackEnd={onPlaybackEnd} />,
   )
 
-  const image = getImage('Cat')
+  const image = getImage()
   await expect.element(image).toBeVisible()
   image.element().dispatchEvent(new Event('animationend'))
   image.element().dispatchEvent(new Event('animationend'))
@@ -173,7 +173,7 @@ test('reduced motion turned on mid-run leaves the poster frame and never replays
     <Emoji id="cat" animationIterations={50} onPlaybackEnd={onPlaybackEnd} />,
   )
 
-  const image = getImage('Cat')
+  const image = getImage()
   await expect.poll(() => getPlayState(image)).toBe('running')
 
   await emulateReducedMotion('reduce')
@@ -197,7 +197,7 @@ test('onPlaybackEnd is never called for infinite runs', async () => {
     />,
   )
 
-  const image = getImage('Cat')
+  const image = getImage()
   await expect.element(image).toBeVisible()
   image.element().dispatchEvent(new Event('animationend'))
   await pause()
@@ -211,7 +211,7 @@ test('onPlaybackEnd is not called when the run is cancelled by unmount', async (
     <Emoji id="cat" animationIterations={50} onPlaybackEnd={onPlaybackEnd} />,
   )
 
-  await expect.element(getImage('Cat')).toBeVisible()
+  await expect.element(getImage()).toBeVisible()
   await unmount()
   await pause()
 

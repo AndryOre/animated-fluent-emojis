@@ -164,10 +164,10 @@ const middleFinger = (): MitEmoji =>
     group: 'People & Body',
   })
 
-const previousManifestPinning = (id: string) => {
+const previousManifestPinning = () => {
   const manifest = createTeamsManifest()
   manifest.categories[1]?.emoticons.push({
-    id,
+    id: '1f595_middlefinger',
     description: 'Middle finger',
     shortcuts: [],
     unicode: '🖕',
@@ -227,7 +227,7 @@ test('keeps a pinned official id when Teams now has the emoji', () => {
   const catalog = buildCatalog(
     teams,
     [middleFinger()],
-    previousManifestPinning('1f595_middlefinger'),
+    previousManifestPinning(),
   )
 
   const ids = allEmoticons(catalog).map((emoticon) => emoticon.id)
@@ -246,7 +246,7 @@ test('fails naming a pinned id whose official source vanished', () => {
     buildCatalog(
       createTeamsManifest(),
       [mitEmoji()],
-      previousManifestPinning('1f595_middlefinger'),
+      previousManifestPinning(),
     ),
   ).toThrow('1f595_middlefinger')
 })

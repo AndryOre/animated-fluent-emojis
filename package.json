@@ -84,7 +84,7 @@
     "@eslint-react/eslint-plugin": "^5.24.4",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@size-limit/file": "^14.1.0",
-    "@types/node": "^22.4.0",
+    "@types/node": "^24",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react-swc": "^4.3.3",
@@ -96,7 +96,7 @@
     "eslint-plugin-jsdoc": "^65.1.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-unicorn": "^76",
+    "eslint-plugin-unicorn": "^77",
     "husky": "^9.1.7",
     "knip": "^6.39.0",
     "lint-staged": "^17.6.0",
@@ -121,7 +121,7 @@
       "name": "ESM bundle",
       "path": [
         "dist/animated-fluent-emojis.js",
-        "dist/emoji-manifest-*.js"
+        "dist/chunks/manifest-*.js"
       ],
       "limit": "3.9 kB"
     },
@@ -129,7 +129,7 @@
       "name": "Lookup bundle",
       "path": [
         "dist/lookup.js",
-        "dist/emoji-manifest-*.js"
+        "dist/chunks/manifest-*.js"
       ],
       "limit": "2.3 kB"
     },
