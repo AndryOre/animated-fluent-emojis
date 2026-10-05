@@ -3,7 +3,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 import type { Manifest } from '../../src/utils/types.js'
-import type { SpriteTask } from './catalog.js'
+import { MAX_TEXTURE_HEIGHT, type SpriteTask } from './catalog.js'
 
 const REQUIRED_TONE_SUFFIXES = ['_s2', '_s3', '_s4', '_s5', '_s6'] as const
 const STANDARD_FRAME_SIZE = 100
@@ -235,6 +235,11 @@ async function findDimensionProblems(
         `${label} is ${String(width)}px wide, expected ${String(file.frameSize)}px`,
       )
     }
+    if (file.frameSize === HD_FRAME_SIZE && height > MAX_TEXTURE_HEIGHT) {
+      problems.push(
+        `${label} is ${String(height)}px tall, above the ${String(MAX_TEXTURE_HEIGHT)}px texture limit`,
+      )
+    }
     frameCounts.set(file, height / file.frameSize)
     const expectedFrames = framesById.get(file.task.id)
     if (
@@ -316,6 +321,9 @@ export async function findSpriteSheetProblem(
   const expectedHeight = framesCount * frameSize
   if (!Number.isSafeInteger(framesCount) || framesCount < 1) {
     return `has an invalid expected frame count (${String(framesCount)})`
+  }
+  if (frameSize === HD_FRAME_SIZE && dimensions.height > MAX_TEXTURE_HEIGHT) {
+    return `is ${String(dimensions.height)}px tall, above the ${String(MAX_TEXTURE_HEIGHT)}px texture limit`
   }
   return dimensions.height === expectedHeight
     ? undefined

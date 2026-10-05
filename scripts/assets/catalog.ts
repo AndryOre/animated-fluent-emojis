@@ -338,6 +338,17 @@ export function buildCatalog(
   }
 }
 
+/**
+ * The most frames an emoji may have and still get an HD sheet: 81 frames of
+ * 200 px is 16,200 px, under Chromium's 16,384 px texture limit.
+ */
+export const HD_MAX_FRAMES = 81
+
+/**
+ * The tallest image Chromium uploads as a texture, in pixels.
+ */
+export const MAX_TEXTURE_HEIGHT = 16_384
+
 function planHdTasks(
   tasks: readonly SpriteTask[],
   codepointsById: ReadonlyMap<string, string>,

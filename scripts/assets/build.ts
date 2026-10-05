@@ -15,6 +15,7 @@ import {
   buildCatalog,
   hashEtag,
   hashHdEtag,
+  HD_MAX_FRAMES,
   type HdSkippedEmoji,
   type SpriteTask,
 } from './catalog.js'
@@ -475,7 +476,12 @@ async function buildHdSheets(
     ),
   )
   const emojiTasksById = Map.groupBy(
-    tasks.filter((task) => task.hdOutputPath !== undefined),
+    tasks.filter(
+      (task) =>
+        task.hdOutputPath !== undefined &&
+        (emoticonById.get(task.id)?.animation.framesCount ?? 0) <=
+          HD_MAX_FRAMES,
+    ),
     (task) => task.id,
   )
   const outcomes = await mapWithConcurrency(
