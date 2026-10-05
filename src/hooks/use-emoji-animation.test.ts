@@ -35,7 +35,7 @@ test('derives timing and a percentage poster offset from the manifest entry', as
     animationIterationCount: 3,
     transform: 'translateY(-2.5%)',
   })
-  expect(result.current.animationStyle.animationName).toBeUndefined()
+  expect(result.current.animationStyle.animationName).toBe('none')
 })
 
 test('holds autoplay paused until the image has loaded and is on screen', async () => {

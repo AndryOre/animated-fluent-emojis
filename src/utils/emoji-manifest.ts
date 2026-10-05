@@ -1,6 +1,5 @@
+import { isDevelopment } from './is-development.js'
 import type { CompactManifest, EmojiManifest, SkinTone } from './types.js'
-
-declare const process: { env: { NODE_ENV?: string } }
 
 const DEFAULT_ASSET_SITE_URL = 'https://animated-fluent-emojis.pages.dev'
 
@@ -68,18 +67,6 @@ export function getManifestSnapshot(): ManifestSnapshot {
  */
 export function getServerManifestSnapshot(): ManifestSnapshot {
   return LOADING_SNAPSHOT
-}
-
-/**
- * Tells whether the consumer's bundler left development checks enabled.
- * @returns True unless `process.env.NODE_ENV` is `production`; false where `process` does not exist.
- */
-function isDevelopment(): boolean {
-  try {
-    return process.env.NODE_ENV !== 'production'
-  } catch {
-    return false
-  }
 }
 
 /**

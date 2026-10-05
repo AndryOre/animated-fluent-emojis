@@ -12,6 +12,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'hooks/index.ts': 'Barrel re-exporting hooks that have their own tests.',
   'utils/index.ts':
     'Barrel re-exporting utils, covered by emoji-manifest.test.ts.',
+  'utils/is-development.ts':
+    'Covered through the development warnings in emoji-manifest.store.test.ts and Emoji.correctness.test.tsx.',
   'utils/types.ts': 'Type-only module with no runtime behavior to test.',
   'utils/emoji-id.generated.ts':
     'Generated type-only union, produced and tested by scripts/assets.',
