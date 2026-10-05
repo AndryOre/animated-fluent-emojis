@@ -6,7 +6,11 @@ import { parseArgs } from 'node:util'
 
 import type { Manifest } from '../../src/utils/types.js'
 import { buildAssets, type PublishedVersion } from './build.js'
-import { formatMarkdown, renderEmojiLists } from './emoji-lists.js'
+import {
+  formatSource,
+  renderEmojiIdModule,
+  renderEmojiLists,
+} from './emoji-lists.js'
 import type { FetchLike } from './http.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { fetchMitCommitSha } from './mit.js'
@@ -212,13 +216,19 @@ async function runBuild(options: {
 async function runLists(
   manifestPath: string,
   docsDirectory: string,
+  emojiIdPath: string,
 ): Promise<void> {
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as Manifest
   await mkdir(docsDirectory, { recursive: true })
   for (const [fileName, source] of renderEmojiLists(manifest)) {
     const filePath = path.join(docsDirectory, fileName)
-    await writeFile(filePath, await formatMarkdown(source, filePath))
+    await writeFile(filePath, await formatSource(source, filePath))
   }
+  await mkdir(path.dirname(emojiIdPath), { recursive: true })
+  await writeFile(
+    emojiIdPath,
+    await formatSource(renderEmojiIdModule(manifest), emojiIdPath),
+  )
 }
 
 async function main(): Promise<void> {
@@ -232,6 +242,10 @@ async function main(): Promise<void> {
       limit: { type: 'string' },
       manifest: { type: 'string', default: 'dist-assets/manifest.json' },
       docs: { type: 'string', default: 'docs' },
+      'emoji-id': {
+        type: 'string',
+        default: 'src/utils/emoji-id.generated.ts',
+      },
       force: { type: 'boolean', default: false },
     },
   })
@@ -252,7 +266,7 @@ async function main(): Promise<void> {
       break
     }
     case 'lists': {
-      await runLists(values.manifest, values.docs)
+      await runLists(values.manifest, values.docs, values['emoji-id'])
       break
     }
     default: {
