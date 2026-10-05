@@ -1,11 +1,21 @@
+@keyframes emoji-play {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
+
 .emojiImage {
-  transform: translateY(0) !important;
+  animation-name: emoji-play;
 }
 
 .animateOnHover .emojiImage {
-  animation-play-state: paused !important;
+  animation-name: none;
 }
 
 .animateOnHover:hover .emojiImage {
-  animation-play-state: running !important;
+  animation-name: emoji-play;
 }

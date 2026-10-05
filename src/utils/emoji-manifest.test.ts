@@ -42,10 +42,10 @@ test('fetches the manifest only once across lookups', async () => {
       return HttpResponse.json(FIXTURE_MANIFEST)
     }),
   )
-  const { generateEmojiStyle } = await importFreshModule()
+  const { emojiManifestPromise } = await importFreshModule()
 
-  await generateEmojiStyle('cat', 10)
-  await generateEmojiStyle('grinning-face', 10)
+  await emojiManifestPromise
+  await emojiManifestPromise
 
   expect(requestCount).toBe(1)
 })
@@ -57,25 +57,6 @@ test('rejects when the CDN responds with an HTTP error', async () => {
   const { emojiManifestPromise } = await importFreshModule()
 
   await expect(emojiManifestPromise).rejects.toThrow()
-})
-
-test('generateEmojiStyle builds keyframes spanning every frame', async () => {
-  serveFixtureManifest()
-  const { generateEmojiStyle } = await importFreshModule()
-
-  const css = await generateEmojiStyle('grinning-face', 10)
-
-  expect(css).toContain('@keyframes emoji-grinning-face-10')
-  expect(css).toContain('translateY(-400px)')
-})
-
-test('generateEmojiStyle throws for an unknown id', async () => {
-  serveFixtureManifest()
-  const { generateEmojiStyle } = await importFreshModule()
-
-  await expect(generateEmojiStyle('nope', 10)).rejects.toThrow(
-    'Emoji with id "nope" not found',
-  )
 })
 
 test('getSpriteUrl versions the sprite by etag and encodes the category', async () => {

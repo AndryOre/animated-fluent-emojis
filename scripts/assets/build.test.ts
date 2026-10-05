@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, stat } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, expect, test } from 'vitest'
@@ -7,15 +7,25 @@ import {
   applyAnimations,
   buildAssets,
   diffManifests,
+  fileExists,
+  readState,
   type BuildOptions,
 } from './build.js'
 import { buildManifestUrl, buildSpriteUrl } from './teams.js'
-import { createFakeFetch, createTeamsManifest } from './test-support.js'
+import {
+  createFakeFetch,
+  createSpritePng,
+  createTeamsManifest,
+} from './test-support.js'
 
 const SHA = 'f'.repeat(40)
 const HASH = 'c'.repeat(32)
 const API = 'https://api.github.com/repos/microsoft/fluentui-emoji-animated'
 const RAW = `https://raw.githubusercontent.com/microsoft/fluentui-emoji-animated/${SHA}`
+
+const SMILEY_PNG = await createSpritePng(72)
+const WAVE_PNG = await createSpritePng(21)
+const FLAG_PNG = await createSpritePng(40)
 
 const context = { workDirectory: '' }
 
@@ -30,7 +40,10 @@ afterEach(async () => {
 
 const spriteRoutes = () => {
   const manifest = createTeamsManifest()
-  const routes: Record<string, { body: string } | { body: object }> = {
+  const routes: Record<
+    string,
+    { body: string } | { body: object } | { body: Uint8Array }
+  > = {
     [`GET ${buildManifestUrl(HASH)}`]: { body: manifest },
     [`GET ${API}/commits/main`]: { body: { sha: SHA } },
     [`GET ${API}/git/trees/${SHA}?recursive=1`]: {
@@ -70,7 +83,7 @@ const spriteRoutes = () => {
         : ['']
       for (const suffix of suffixes) {
         routes[`GET ${buildSpriteUrl(emoticon.id, suffix)}`] = {
-          body: `sprite${suffix}`,
+          body: emoticon.diverse ? WAVE_PNG : SMILEY_PNG,
         }
       }
     }
@@ -87,7 +100,7 @@ const baseOptions = (
   cacheDirectory: path.join(context.workDirectory, 'cache'),
   convert: () =>
     Promise.resolve({
-      png: Buffer.from('converted'),
+      png: FLAG_PNG,
       framesCount: 40,
       fps: 24,
     }),
@@ -121,21 +134,16 @@ test('builds the manifest, sprites, version marker, headers and license', async 
   expect(
     await readFile(
       path.join(out, 'sprites/Smilies/1f603_grinningfacewithbigeyes.png'),
-      'utf8',
     ),
-  ).toBe('sprite')
+  ).toEqual(SMILEY_PNG)
   expect(
     await readFile(
       path.join(out, 'sprites/Hand gestures/1f44b_wavinghand_s6.png'),
-      'utf8',
     ),
-  ).toBe('sprite_s6')
+  ).toEqual(WAVE_PNG)
   expect(
-    await readFile(
-      path.join(out, 'sprites/Symbols/1f3c1_chequeredflag.png'),
-      'utf8',
-    ),
-  ).toBe('converted')
+    await readFile(path.join(out, 'sprites/Symbols/1f3c1_chequeredflag.png')),
+  ).toEqual(FLAG_PNG)
   const version: unknown = JSON.parse(
     await readFile(path.join(out, 'version.json'), 'utf8'),
   )
@@ -249,6 +257,52 @@ test('fails the build when a Teams sprite fails', async () => {
   const fakeFetch = createFakeFetch(routes)
 
   await expect(buildAssets(baseOptions(fakeFetch))).rejects.toThrow()
+})
+
+test('reports every failed Teams sprite, not just the first', async () => {
+  const dropped = new Set([
+    `GET ${buildSpriteUrl('1f603_grinningfacewithbigeyes', '')}`,
+    `GET ${buildSpriteUrl('1f44b_wavinghand', '')}`,
+  ])
+  const routes = Object.fromEntries(
+    Object.entries(spriteRoutes()).filter(([route]) => !dropped.has(route)),
+  )
+  const fakeFetch = createFakeFetch(routes)
+
+  let error: unknown
+  try {
+    await buildAssets(baseOptions(fakeFetch))
+  } catch (error_: unknown) {
+    error = error_
+  }
+
+  expect(error).toBeInstanceOf(AggregateError)
+  expect((error as AggregateError).errors).toHaveLength(2)
+  expect((error as Error).message).toContain(
+    '2 Teams sprite download(s) failed',
+  )
+  expect((error as Error).message).toContain('1f603_grinningfacewithbigeyes')
+  expect((error as Error).message).toContain('1f44b_wavinghand')
+})
+
+test('state helpers treat a missing file as absent and propagate other errors', async () => {
+  const cache = path.join(context.workDirectory, 'state-cache')
+  await expect(readState(cache)).resolves.toEqual({})
+  await expect(fileExists(path.join(cache, 'nope'))).resolves.toBe(false)
+
+  await mkdir(cache, { recursive: true })
+  await writeFile(path.join(cache, 'state.json'), '{broken')
+  await expect(readState(cache)).rejects.toThrow(SyntaxError)
+
+  await rm(path.join(cache, 'state.json'))
+  await mkdir(path.join(cache, 'state.json'))
+  await expect(readState(cache)).rejects.toMatchObject({ code: 'EISDIR' })
+
+  const blocker = path.join(cache, 'file')
+  await writeFile(blocker, 'x')
+  await expect(fileExists(path.join(blocker, 'child'))).rejects.toMatchObject({
+    code: 'ENOTDIR',
+  })
 })
 
 test('writes nothing when the catalog fails validation', async () => {

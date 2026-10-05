@@ -1,6 +1,13 @@
+import { createHash } from 'node:crypto'
 import { expect, test } from 'vitest'
 
-import { buildCatalog, buildOutputPath, resolveCategory } from './catalog.js'
+import {
+  buildCatalog,
+  buildOutputPath,
+  hashEtag,
+  PIPELINE_VERSION,
+  resolveCategory,
+} from './catalog.js'
 import { glyphToCodepoints } from './codepoints.js'
 import type { MitEmoji } from './mit.js'
 import { createTeamsManifest } from './test-support.js'
@@ -20,6 +27,15 @@ const mitEmoji = (overrides: Partial<MitEmoji> = {}): MitEmoji => ({
   ],
   ...overrides,
 })
+
+const createHashWithVersion = (
+  version: number,
+  identifiers: readonly string[],
+): string =>
+  createHash('sha256')
+    .update(JSON.stringify([version, ...identifiers]))
+    .digest('hex')
+    .slice(0, 8)
 
 const allEmoticons = (catalog: ReturnType<typeof buildCatalog>) =>
   catalog.manifest.categories.flatMap((category) => category.emoticons)
@@ -86,7 +102,7 @@ test('adds official emojis Teams does not have, by codepoints', () => {
     id: '1f3c1_chequeredflag',
     description: 'Chequered flag',
     unicode: '🏁',
-    etag: 'deadbeef',
+    etag: hashEtag([':deadbeefcafe']),
     diverse: false,
   })
   expect(
@@ -172,6 +188,27 @@ test('marks added official emojis with origin official', () => {
   ).toBe('official')
 })
 
+test('clamps a Teams poster frame that points past the last frame', () => {
+  const teams = createTeamsManifest()
+  teams.categories[1]?.emoticons.push({
+    id: 'lips_teams',
+    description: 'Lips',
+    shortcuts: [],
+    unicode: '👄',
+    etag: 'v1',
+    diverse: false,
+    animation: { fps: 24, framesCount: 1, firstFrame: 36 },
+    keywords: [],
+  })
+
+  const catalog = buildCatalog(teams, [], undefined)
+
+  const lips = allEmoticons(catalog).find(
+    (emoticon) => emoticon.id === 'lips_teams',
+  )
+  expect(lips?.animation.firstFrame).toBe(1)
+})
+
 test('keeps a pinned official id when Teams now has the emoji', () => {
   const teams = createTeamsManifest()
   teams.categories[1]?.emoticons.push({
@@ -239,4 +276,31 @@ test('every official codepoint is present in the final manifest', () => {
   for (const emoji of mitEmojis) {
     expect(published.has(emoji.codepoints), emoji.cldr).toBe(true)
   }
+})
+
+const toneSprites = (toneSha: string): MitEmoji['sprites'] => [
+  { toneSuffix: '', path: 'a.png', blobSha: 'aaaa' },
+  { toneSuffix: '_s2', path: 'b.png', blobSha: toneSha },
+]
+
+const officialEtagFor = (toneSha: string): string | undefined => {
+  const catalog = buildCatalog(createTeamsManifest(), [
+    mitEmoji({ sprites: toneSprites(toneSha) }),
+  ])
+  return allEmoticons(catalog).find(
+    (emoticon) => emoticon.id === '1f3c1_chequeredflag',
+  )?.etag
+}
+
+test('an official etag changes when any tone source changes', () => {
+  expect(officialEtagFor('bbbb')).toBe(officialEtagFor('bbbb'))
+  expect(officialEtagFor('bbbb')).not.toBe(officialEtagFor('cccc'))
+})
+
+test('hashEtag depends on the pipeline version', () => {
+  const current = hashEtag(['aaaa'])
+  expect(current).toMatch(/^[\da-f]{8}$/)
+  expect(PIPELINE_VERSION).toBeGreaterThan(0)
+  const bumped = createHashWithVersion(PIPELINE_VERSION + 1, ['aaaa'])
+  expect(bumped).not.toBe(current)
 })

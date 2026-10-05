@@ -179,14 +179,21 @@ export async function loadMitIndex(
         fetchImplementation,
         buildRawUrl(commitSha, entry.metadataPath),
       )
-      const metadata = (await response.json()) as MitMetadata
-      return {
-        codepoints: hexToCodepoints(metadata.unicode),
-        glyph: metadata.glyph,
-        cldr: metadata.cldr,
-        group: metadata.group,
-        keywords: metadata.keywords,
-        sprites: entry.sprites,
+      try {
+        const metadata = (await response.json()) as MitMetadata
+        return {
+          codepoints: hexToCodepoints(metadata.unicode),
+          glyph: metadata.glyph,
+          cldr: metadata.cldr,
+          group: metadata.group,
+          keywords: metadata.keywords,
+          sprites: entry.sprites,
+        }
+      } catch (error: unknown) {
+        throw new Error(
+          `Invalid metadata for official emoji at ${entry.metadataPath}`,
+          { cause: error },
+        )
       }
     },
   )

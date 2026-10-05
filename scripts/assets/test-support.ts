@@ -1,3 +1,5 @@
+import sharp from 'sharp'
+
 import type { Manifest } from '../../src/utils/types.js'
 import type { FetchLike } from './http.js'
 
@@ -95,4 +97,29 @@ export function createTeamsManifest(): Manifest {
       },
     ],
   }
+}
+
+/**
+ * Encodes a blank vertical sprite sheet.
+ * @param framesCount How many frames tall the sheet is.
+ * @param options Optional overrides.
+ * @param options.frameSize The frame edge in pixels (default 100).
+ * @param options.width The sheet width, when it should differ from the frame size.
+ * @returns PNG bytes of `width x framesCount * frameSize` pixels.
+ */
+export async function createSpritePng(
+  framesCount: number,
+  options: { frameSize?: number; width?: number } = {},
+): Promise<Buffer> {
+  const frameSize = options.frameSize ?? 100
+  return sharp({
+    create: {
+      width: options.width ?? frameSize,
+      height: framesCount * frameSize,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 1 },
+    },
+  })
+    .png()
+    .toBuffer()
 }

@@ -1,11 +1,7 @@
-import { useEffect, type ReactElement } from 'react'
+import { type ReactElement } from 'react'
 
 import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js'
-import {
-  generateEmojiStyle,
-  getSpriteUrl,
-  type EmojiProps,
-} from '../utils/index.js'
+import { getSpriteUrl, type EmojiProps } from '../utils/index.js'
 import styles from './Emoji.module.css'
 
 /**
@@ -28,37 +24,8 @@ export const Emoji = ({
   skinTone = 'default',
 }: EmojiProps): ReactElement | null => {
   const { emoji } = useEmojiStyle(id)
-  const {
-    isInitialAnimationComplete,
-    animationStyle,
-    handleMouseEnter,
-    handleMouseLeave,
-    imageRef,
-  } = useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
-
-  useEffect(() => {
-    if (!emoji) return
-
-    const styleId = `emoji-style-${id}-${String(size)}`
-    let styleElement = document.querySelector(`#${CSS.escape(styleId)}`)
-
-    if (!styleElement) {
-      styleElement = document.createElement('style')
-      styleElement.id = styleId
-      document.head.append(styleElement)
-    }
-
-    const targetElement = styleElement
-    void generateEmojiStyle(id, size).then((style) => {
-      targetElement.innerHTML = style
-    })
-
-    return () => {
-      if (document.head.contains(targetElement)) {
-        targetElement.remove()
-      }
-    }
-  }, [id, size, emoji])
+  const { isInitialAnimationComplete, animationStyle, imageRef } =
+    useEmojiAnimation(emoji, playOnHover, animationIterations, autoPlay, size)
 
   if (!emoji) {
     return null
@@ -70,20 +37,14 @@ export const Emoji = ({
     display: 'inline-block',
     overflow: 'hidden',
   }
-  const containerClassName = [
-    styles.emojiContainer,
-    isInitialAnimationComplete && playOnHover ? styles.animateOnHover : '',
-  ]
-    .join(' ')
-    .trim()
+  const containerClassName =
+    isInitialAnimationComplete && playOnHover ? styles.animateOnHover : ''
 
   return (
     <span
       title={emoji.description}
       style={containerStyle}
       className={containerClassName}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       <img
         ref={imageRef}

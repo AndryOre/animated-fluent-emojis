@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto'
+
 import type { Manifest } from '../../src/utils/types.js'
 import { glyphToCodepoints } from './codepoints.js'
 import type { MitEmoji } from './mit.js'
@@ -22,6 +24,14 @@ const CATEGORY_BY_MIT_GROUP: Readonly<Record<string, string>> = {
 const CATEGORY_OVERRIDES_BY_CODEPOINTS: Readonly<Record<string, string>> = {
   '1f595': 'Hand gestures',
 }
+
+/**
+ * Bump whenever the sprite converter changes its output, so every etag, and
+ * with it the year-long `?v=` cache, changes.
+ */
+export const PIPELINE_VERSION = 1
+
+const ETAG_LENGTH = 8
 
 const PLACEHOLDER_ANIMATION = { fps: 0, framesCount: 0, firstFrame: 1 }
 
@@ -61,6 +71,18 @@ export function buildOutputPath(
   toneSuffix: string,
 ): string {
   return `sprites/${category}/${id}${toneSuffix}.png`
+}
+
+/**
+ * Hashes source identifiers and the pipeline version into a short etag.
+ * @param sourceIdentifiers Every source file SHA the output depends on.
+ * @returns A short hex etag that changes with any identifier or the version.
+ */
+export function hashEtag(sourceIdentifiers: readonly string[]): string {
+  return createHash('sha256')
+    .update(JSON.stringify([PIPELINE_VERSION, ...sourceIdentifiers]))
+    .digest('hex')
+    .slice(0, ETAG_LENGTH)
 }
 
 function slugify(text: string): string {
@@ -211,10 +233,9 @@ export function buildCatalog(
     usedIds.add(id)
     mitEmojiIds.add(id)
     const category = resolveCategory(emoji)
-    const defaultSprite = emoji.sprites.find(
-      (sprite) => sprite.toneSuffix === '',
+    const etag = hashEtag(
+      emoji.sprites.map((sprite) => `${sprite.toneSuffix}:${sprite.blobSha}`),
     )
-    const etag = (defaultSprite ?? emoji.sprites[0])?.blobSha.slice(0, 8) ?? ''
     additionsByCategory.set(category, [
       ...(additionsByCategory.get(category) ?? []),
       buildMitEmoticon(emoji, id, etag),
@@ -225,7 +246,7 @@ export function buildCatalog(
         id,
         category,
         toneSuffix: sprite.toneSuffix,
-        etag: sprite.blobSha.slice(0, 8),
+        etag: hashEtag([`${sprite.toneSuffix}:${sprite.blobSha}`]),
         mitPath: sprite.path,
         outputPath: buildOutputPath(category, id, sprite.toneSuffix),
       })
@@ -245,10 +266,27 @@ export function buildCatalog(
     categories: teams.categories.map((category) => ({
       ...category,
       emoticons: [
-        ...category.emoticons,
+        ...category.emoticons.map((emoticon) => clampPosterFrame(emoticon)),
         ...(additionsByCategory.get(category.title) ?? []),
       ],
     })),
   }
   return { manifest, tasks, mitEmojiIds }
+}
+
+/**
+ * Keeps an emoticon's poster frame inside its sprite sheet. Teams ships a few
+ * single-frame emojis whose `firstFrame` points past the only frame, which
+ * would render as an empty box at rest.
+ * @param emoticon The emoticon as published by Teams.
+ * @returns The emoticon with `firstFrame` clamped to `[1, framesCount]`, or the
+ * same emoticon when `framesCount` is not yet known or already valid.
+ */
+function clampPosterFrame(emoticon: Emoticon): Emoticon {
+  const { framesCount, firstFrame } = emoticon.animation
+  if (framesCount < 1 || firstFrame <= framesCount) return emoticon
+  return {
+    ...emoticon,
+    animation: { ...emoticon.animation, firstFrame: framesCount },
+  }
 }
