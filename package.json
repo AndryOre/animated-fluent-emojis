@@ -1,7 +1,7 @@
 {
   "name": "animated-fluent-emojis",
   "version": "0.5.2",
-  "description": "Animated Fluent Emojis is a React component library that brings Microsoft's Fluent emojis to life in your web applications. This library offers an easy way to integrate expressive and engaging animated emojis, enhancing user experience and visual appeal in your React projects.",
+  "description": "Microsoft's animated Fluent emojis as one component. They play on load or hover, rest under reduced motion and hold their space while they load.",
   "author": "Andry Orellana",
   "license": "ISC",
   "private": false,
@@ -11,17 +11,19 @@
   "type": "module",
   "keywords": [
     "react",
+    "react-component",
+    "emoji",
     "emojis",
     "animated",
-    "fluent",
-    "icons",
-    "microsoft",
+    "animated-emoji",
     "animated-emojis",
+    "fluent",
+    "fluent-emoji",
     "fluent-emojis",
-    "emoji-library",
-    "ui",
+    "microsoft",
+    "animation",
     "emoticons",
-    "animation"
+    "typescript"
   ],
   "repository": {
     "type": "git",

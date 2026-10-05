@@ -19,6 +19,8 @@ never use another package manager (this repo uses `bun.lock`). Read
 - `bun run check` — format, lint, typecheck, knip and package lint. Run this
   after any change.
 - `bun run test` — the Vitest suite. Run this after any change.
+- `bun run brand:export` — regenerates the brand rasters. Run it after changing
+  a logo SVG or the export copy; never edit the generated rasters by hand.
 - `bun run build` — **do not run unless explicitly asked.** It is slow; `check`
   already builds once through `lint:package`.
 

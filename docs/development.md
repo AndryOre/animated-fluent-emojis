@@ -36,6 +36,13 @@ the git hooks on `bun install` through the `prepare` script.
 | `bun run assets:lists`  | Regenerates `docs/EMOJI_LIST_*.md` from `dist-assets/manifest.json`.                                   |
 | `bun run ci:local`      | Runs the CI pipeline locally: install, commits, docs, check, coverage, build, size.                    |
 
+### Brand assets
+
+`bun run brand:export` regenerates the PNG marks, the social preview, the Open
+Graph image and the README cover from the logo SVGs and the export copy. Run it
+after changing either, and never edit the generated rasters by hand. See
+[`brand/README.md`](brand/README.md).
+
 ## Git hooks
 
 Hooks live in `.husky/`:
