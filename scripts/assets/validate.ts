@@ -193,8 +193,10 @@ async function readDimensions(
   source: Buffer | string,
 ): Promise<SpriteDimensions | Error> {
   try {
-    const { width, height } = await sharp(source).metadata()
-    return { width, height }
+    const { info } = await sharp(source)
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+    return { width: info.width, height: info.height }
   } catch (error: unknown) {
     return error instanceof Error ? error : new Error(String(error))
   }

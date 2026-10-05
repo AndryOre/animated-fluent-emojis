@@ -135,13 +135,13 @@ describe('sync-assets.yml failure report job', () => {
     expect(job?.permissions).toEqual({ issues: 'write' })
   })
 
-  test('is the only job granted issues: write', () => {
+  test('is, with resolve-failure, the only job granted issues: write', () => {
     const writers = Object.entries(workflow.jobs ?? {})
       .filter(([, other]) =>
         JSON.stringify(other.permissions ?? {}).includes('issues'),
       )
       .map(([name]) => name)
-    expect(writers).toEqual(['report-failure'])
+    expect(writers).toEqual(['report-failure', 'resolve-failure'])
   })
 
   test('does not interpolate expressions into the script', () => {
@@ -183,5 +183,43 @@ describe('sync-assets.yml smoke steps', () => {
   test('does not interpolate expressions into the scripts', () => {
     expect(legacy?.run).not.toContain('${{')
     expect(v1?.run).not.toContain('${{')
+  })
+})
+
+describe('sync-assets.yml emoji-lists job', () => {
+  const job = readWorkflow('sync-assets.yml').jobs?.['emoji-lists']
+  const runs = job?.steps?.map((step) => step.run ?? '').join('\n') ?? ''
+
+  test('installs without running lifecycle scripts', () => {
+    expect(runs).toContain('bun install --frozen-lockfile --ignore-scripts')
+  })
+
+  test('retries the manifest fetch', () => {
+    const fetchLine =
+      runs.split('\n').find((line) => line.includes('curl ')) ?? ''
+    expect(fetchLine).toContain('--retry 5')
+  })
+
+  test('appends a changelog entry under Unreleased when EmojiId changes', () => {
+    expect(runs).toContain('src/utils/emoji-id.generated.ts')
+    expect(runs).toContain(String.raw`## \[Unreleased\]`)
+    expect(runs).toContain('git add CHANGELOG.md')
+  })
+})
+
+describe('sync-assets.yml failure resolution job', () => {
+  const job = readWorkflow('sync-assets.yml').jobs?.['resolve-failure']
+
+  test('runs after a sync that did not fail, with only issues: write', () => {
+    expect(job?.if).toBe('${{ !failure() && !cancelled() }}')
+    expect(job?.needs).toEqual(['sync', 'emoji-lists'])
+    expect(job?.permissions).toEqual({ issues: 'write' })
+  })
+
+  test('closes the open failure issue without interpolating expressions', () => {
+    const script = job?.steps?.map((step) => step.run ?? '').join('\n') ?? ''
+    expect(script).toContain('gh issue close')
+    expect(script).toContain('sync-assets failing')
+    expect(script).not.toContain('${{')
   })
 })
