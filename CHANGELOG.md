@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-06
+
 ### Added
 
 - Multi-framework support behind subpath exports, see
@@ -352,7 +354,9 @@ plus the release workflow fix below.
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.3...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.6.0...HEAD
+[0.6.0]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.3...v0.6.0
 [0.5.3]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.2...v0.5.3
 [0.5.2]:
