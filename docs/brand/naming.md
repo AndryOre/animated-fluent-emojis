@@ -1,6 +1,6 @@
 # Naming — Animated Fluent Emojis
 
-Draft v1 (2026-10-05). Status: awaiting a decision. The brief
+Draft v1 (2026-10-05). Status: decided (see "Decision" below). The brief
 ([`brief.md`](brief.md)) asks for a playful name that is not boxed into
 Microsoft's "Fluent" name and that fits the frame-strip metaphor.
 

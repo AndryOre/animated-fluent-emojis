@@ -164,8 +164,8 @@ care, not to replace it.
 
 ### Primary Value Proposition
 
-Microsoft's animated Fluent emojis as one React component: they move, they stay
-light, and they respect the people who do not want motion.
+Microsoft's animated Fluent emojis as one component: they move, they stay light,
+and they respect the people who do not want motion.
 
 Variations observed:
 

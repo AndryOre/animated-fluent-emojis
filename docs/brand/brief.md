@@ -1,17 +1,17 @@
 # Brief — Animated Fluent Emojis
 
-Draft v1 (2026-10-05). Status: awaiting review. The name is not decided yet:
-`naming.md` (step 3) evaluates the current name against alternatives.
+Draft v1 (2026-10-05). Status: applied; updated for 0.7. The name is decided:
+`naming.md` keeps Animated Fluent Emojis.
 
 ## Category
 
 A component library (ESM only, TypeScript) that renders Microsoft's animated
-Fluent emoji on the web. Today it ships a React component (React 18 and 19): one
+Fluent emoji on the web. Today it ships adapters for React, Vue, Svelte and
+Astro, plus a `<fluent-emoji>` element for everything else (see ADR 0014): one
 `<Emoji>` reads a small manifest, fetched lazily on first render, and plays
-sprite sheets served from a static asset site. It is becoming multi-framework
-(see ADR 0014) with native Vue, Svelte and Astro adapters and a `<fluent-emoji>`
-element for everything else. It plays on load, on hover or on focus, shows a
-still poster frame under reduced motion, and ships descriptive `alt` text.
+sprite sheets served from a static asset site. It plays on load, on hover or on
+focus, shows a still poster frame under reduced motion, and ships descriptive
+`alt` text.
 
 Where it is going, and what the brand has to stretch to without claiming it
 today:
@@ -20,8 +20,7 @@ today:
 - Animated files ready to embed in a README or GitHub profile. Sprite sheets
   cannot animate in a plain `<img>`, so this needs a new asset type.
 
-Copy written now only claims what ships today: React until the 0.6 release ships
-the other adapters.
+Copy written now only claims what ships today.
 
 ## Audience
 
@@ -151,8 +150,8 @@ Rules:
 - The accent fill never carries text in its own color. On light ground, text and
   links use the link ink, since `#2EC4A0` on `#F7FAF9` is below 3:1.
 - Labels on an accent fill are the dark label color, never white.
-- The risk is that mint is common in developer tools. The frame-strip mark and
-  the motion carry the distinctiveness, not the color.
+- The risk is that mint is common in developer tools. The Sticker mark and the
+  motion carry the distinctiveness, not the color.
 
 ### Logo: Sticker
 
