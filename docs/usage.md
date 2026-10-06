@@ -302,8 +302,9 @@ void preloadEmojis(['1f44b_wavinghand', '1f525_fire'], { skinTone: 'medium' })
 ### Asset site
 
 By default the manifest and sprite sheets come from
-`https://animated-fluent-emojis.pages.dev`. To serve them from your own copy,
-call `configureEmojis` once, before the first `Emoji` renders:
+`https://animated-fluent-emojis-cdn.andryore.dev`. The previous address,
+`https://animated-fluent-emojis.pages.dev`, keeps working. To serve them from
+your own copy, call `configureEmojis` once, before the first `Emoji` renders:
 
 ```js
 import { configureEmojis } from 'animated-fluent-emojis'

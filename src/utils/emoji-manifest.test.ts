@@ -100,7 +100,7 @@ test('getSpriteUrl versions the sprite by etag and encodes the category', async 
   const cat = manifest.cat
   if (!cat) throw new Error('fixture changed')
   expect(getSpriteUrl({ ...cat, category: 'Travel and places' })).toBe(
-    'https://animated-fluent-emojis.pages.dev/v1/sprites/Travel%20and%20places/cat.etag-cat.png',
+    'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites/Travel%20and%20places/cat.etag-cat.png',
   )
 })
 
@@ -201,7 +201,8 @@ test('getSpriteSourceSet describes the sheet and its @2x sheet by width for hd e
   const cat = manifest.cat
   if (!wave || !cat) throw new Error('fixture changed')
 
-  const base = 'https://animated-fluent-emojis.pages.dev/v1/sprites/Smilies'
+  const base =
+    'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites/Smilies'
   expect(getSpriteSourceSet(wave, 'medium-light')).toBe(
     `${base}/waving-hand_s3.etag-wave.png 100w, ${base}/waving-hand_s3.etag-wave@2x.png 200w`,
   )

@@ -27,9 +27,9 @@ The `verify` job has `contents: read` only. It:
 2. Fails unless the tagged commit is on `main`.
 3. Runs `bun ci`.
 4. Runs `bun run assets:verify-live`. This is the v1 gate: it fails unless
-   `https://animated-fluent-emojis.pages.dev/v1/version.json` answers 200, lists
-   the `v1` layout, was not built with `--limit` and carries the current
-   `pipelineVersion`. If it fails, run the asset sync first.
+   `https://animated-fluent-emojis-cdn.andryore.dev/v1/version.json` answers
+   200, lists the `v1` layout, was not built with `--limit` and carries the
+   current `pipelineVersion`. If it fails, run the asset sync first.
 5. Runs `bun run check`, `bun run test` and `bun run build`.
 6. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
    and fails if it is empty.

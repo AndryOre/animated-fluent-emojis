@@ -1,10 +1,10 @@
 import type { CompactManifest } from '../utils/index.js'
 
 export const MANIFEST_URL =
-  'https://animated-fluent-emojis.pages.dev/v1/manifest.slim.json'
+  'https://animated-fluent-emojis-cdn.andryore.dev/v1/manifest.slim.json'
 
 export const SPRITE_URL_PATTERN =
-  'https://animated-fluent-emojis.pages.dev/v1/sprites/*'
+  'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites/*'
 
 export const FIXTURE_MANIFEST: CompactManifest = {
   categories: [

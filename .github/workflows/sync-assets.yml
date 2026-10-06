@@ -99,7 +99,7 @@ jobs:
       - name: Smoke test the legacy layout
         if: success()
         env:
-          SITE_URL: https://animated-fluent-emojis.pages.dev
+          SITE_URL: https://animated-fluent-emojis-cdn.andryore.dev
         run: |
           curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
             "${SITE_URL}/manifest.slim.json" --output manifest.slim.json
@@ -111,7 +111,7 @@ jobs:
       - name: Smoke test the v1 layout
         if: success()
         env:
-          SITE_URL: https://animated-fluent-emojis.pages.dev
+          SITE_URL: https://animated-fluent-emojis-cdn.andryore.dev
         run: |
           expected_built_at=""
           if [[ -f dist-assets/v1/version.json ]]; then
@@ -173,7 +173,7 @@ jobs:
       - name: Regenerate emoji lists
         run: |
           curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
-            "https://animated-fluent-emojis.pages.dev/manifest.json" \
+            "https://animated-fluent-emojis-cdn.andryore.dev/manifest.json" \
             --output manifest.json
           bun run assets:lists --manifest manifest.json
           rm manifest.json

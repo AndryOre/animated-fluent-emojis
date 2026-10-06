@@ -54,6 +54,6 @@ and does. The design and its limits are in
 
 Open the page with the network panel and check that the manifest request goes to
 `/v1/manifest.slim.json` on your origin, and that no request goes to
-`animated-fluent-emojis.pages.dev`. A blocked request shows as a CSP violation
-in the console, and the emoji renders its fallback; see
+`animated-fluent-emojis-cdn.andryore.dev`. A blocked request shows as a CSP
+violation in the console, and the emoji renders its fallback; see
 [fallback](../usage.md#fallback).

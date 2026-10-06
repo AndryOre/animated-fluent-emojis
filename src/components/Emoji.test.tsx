@@ -4,7 +4,7 @@ import { page, userEvent } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
 
-const SPRITE_BASE = 'https://animated-fluent-emojis.pages.dev/v1/sprites'
+const SPRITE_BASE = 'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites'
 
 const getTransform = (image: ReturnType<typeof getImage>) =>
   getComputedStyle(image.element()).transform
