@@ -42,7 +42,7 @@
     "url": "git+https://github.com/AndryOre/animated-fluent-emojis.git",
     "directory": "packages/animated-fluent-emojis"
   },
-  "homepage": "https://github.com/AndryOre/animated-fluent-emojis#readme",
+  "homepage": "https://animated-fluent-emojis.andryore.dev",
   "bugs": "https://github.com/AndryOre/animated-fluent-emojis/issues",
   "module": "./dist/animated-fluent-emojis.js",
   "types": "./dist/index.d.ts",

@@ -28,7 +28,7 @@ is applied as identity: mark, voice, palette and motion.
 - [`tools/`](tools/): the export script (`export.mjs`), its copy and size
   budgets (`brand-export-spec.mjs`) and their test.
 - [`og/`](og/): `social-preview.png` (1280x640, for the GitHub repository
-  settings) and `og.png` (1200x630, for a future landing page).
+  settings) and `og.png` (1200x630, for the website's link previews).
 - [`brandbook/`](brandbook/index.html): a standalone HTML brand book. Its fonts
   are declared in [`fonts.css`](brandbook/fonts.css) and live in
   [`brandbook/fonts/`](brandbook/fonts/) with their license in

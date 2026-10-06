@@ -35,16 +35,15 @@ Applied by hand, as repository settings are not code
 | Repository, Settings, Social preview | Upload [`og/social-preview.png`](og/social-preview.png) (1280x640, 235 KB)                                                  |
 | Repository, About, description       | "Fluent emojis, but they move: Microsoft's animated emojis as one component. Not affiliated with or endorsed by Microsoft." |
 | Repository, About, topics            | `react`, `emoji`, `emojis`, `animated-emojis`, `fluent-emoji`, `fluent-emojis`, `animation`, `typescript`                   |
-| Repository, About, website           | Leave empty until the landing page exists                                                                                   |
+| Repository, About, website           | `https://animated-fluent-emojis.andryore.dev`                                                                               |
 | npm page                             | Nothing to do: it shows the README and the `package.json` fields above                                                      |
 
 ## Not done on purpose
 
 - No rename, no npm publish and no domain purchase.
-- No landing page yet. The animated mark (`logo/mark-animated.svg`) is ready for
-  the landing's header when it exists. GitHub blocks CSS animation inside SVG
-  images, so it does not animate in the README. Animated files for READMEs now
-  ship from the files site; see
+- The animated mark (`logo/mark-animated.svg`) is for the website's header.
+  GitHub blocks CSS animation inside SVG images, so it does not animate in the
+  README. Animated files for READMEs now ship from the files site; see
   [`use-without-code.md`](../how-to/use-without-code.md).
 - No halo mark, favicon set, PWA icons, store tiles or channel art.
 

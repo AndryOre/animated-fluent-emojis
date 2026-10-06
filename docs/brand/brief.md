@@ -16,7 +16,8 @@ focus, shows a still poster frame under reduced motion, and ships descriptive
 Where it is going, and what the brand has to stretch to without claiming it
 today:
 
-- A landing page built with the library itself.
+- The website (landing, gallery and docs), built with the library itself. It
+  ships at animated-fluent-emojis.andryore.dev.
 - Animated files ready to embed in a README or GitHub profile. Sprite sheets
   cannot animate in a plain `<img>`, so this needs a new asset type.
 
@@ -31,13 +32,13 @@ Copy written now only claims what ships today.
   GitHub profiles. This is the audience of
   `Tarikul-Islam-Anik/Animated-Fluent-Emojis` (1,102 stars), see
   `competitors.md`.
-- **Also on the landing page:** non-technical visitors (designers, creators,
+- **Also on the website:** non-technical visitors (designers, creators,
   community managers) who come for the emoji, not for the code. What they can do
   there is not decided yet, so copy stays at the level of "see them move" and
   does not promise a workflow.
 - **Constraint:** the visual system and the words have to work for them too: on
-  a future landing page, in social posts and in a README header, without
-  technical vocabulary where a non-technical reader would meet it.
+  the landing page, in social posts and in a README header, without technical
+  vocabulary where a non-technical reader would meet it.
 
 ## Pains
 
@@ -103,8 +104,7 @@ lazy loading and sizes, CI, OpenSSF Scorecard.
   has a personality, but it does not steal the scene.
 - One cheerful accent plus neutrals.
 - Rounded, chubby shapes that fit the Fluent style without imitating it.
-- Must work in light and dark, in README and npm previews, and later on the
-  landing page.
+- Must work in light and dark, in README and npm previews, and on the website.
 
 ### Playfulness
 
@@ -193,7 +193,7 @@ serif). Candidates were Figtree, DM Sans, Nunito Sans and Manrope. Space Grotesk
   text, for dark grounds), so no file depends on the font.
 - **Scope:** the README and npm page keep the platform's own fonts. Figtree
   applies to the brand assets (cover, social preview, OG image), the brandbook
-  and any future landing page.
+  and the website.
 
 ## Symbolic metaphor
 
@@ -222,7 +222,8 @@ Rejected:
 - English only.
 - The kit lives in `docs/brand/`.
 - Scope follows Snug's process without YouTube, store tiles or app settings.
-- The landing page is not part of this work.
+- The website is not part of the brand kit work; it is covered by
+  [ADR 0018](../adr/0018-website-on-coolify-with-astro-and-starlight.md).
 - Nothing is published to npm, the repository is not renamed and no domain is
   bought without an explicit OK.
 

@@ -33,3 +33,5 @@ Vue, Svelte, Astro and React are covered by the
   Pages project and the secrets behind the asset site.
 - [`roll-back-the-asset-site.md`](roll-back-the-asset-site.md): restoring an
   earlier asset site deployment.
+- [`translate-the-website.md`](translate-the-website.md): add a website
+  translation and refresh a stale one with `i18n:status`.
