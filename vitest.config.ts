@@ -43,6 +43,7 @@ export default defineConfig({
           name: 'node',
           environment: 'node',
           include: [
+            'src/core/**/*.test.ts',
             'src/utils/**/*.test.ts',
             'src/lookup/**/*.test.ts',
             'src/test/**/*.test.ts',
