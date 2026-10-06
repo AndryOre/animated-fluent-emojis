@@ -1,0 +1,120 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "stream",
+  "agentGuidance": false,
+  "globalDependencies": ["bun.lock", "bunfig.toml"],
+  "tasks": {
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
+    "typecheck": {
+      "dependsOn": ["transit"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!dist/**",
+        "!coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": []
+    },
+    "check": {
+      "dependsOn": ["transit"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!dist/**",
+        "!coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["transit"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!dist/**",
+        "!coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": []
+    },
+    "test:coverage": {
+      "dependsOn": ["transit"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!dist/**",
+        "!coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "build": {
+      "dependsOn": ["transit"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!dist/**",
+        "!coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": ["dist/**"]
+    },
+    "lint:package": {
+      "dependsOn": ["transit"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!dist/**",
+        "!coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": ["dist/**"]
+    },
+    "size": {
+      "dependsOn": ["build"],
+      "outputs": []
+    },
+    "//#check:root": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/dist/**",
+        "!**/coverage/**",
+        "!dist-assets/**",
+        "!dist-files/**",
+        "!.cache/**"
+      ],
+      "outputs": []
+    },
+    "//#test:coverage:root": {
+      "inputs": [
+        "scripts/**",
+        "eslint-rules/**",
+        "docs/adr/**",
+        "docs/brand/tools/**",
+        "packages/*/src/**",
+        "vitest.config.ts"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "//#test:root": {
+      "inputs": [
+        "scripts/**",
+        "eslint-rules/**",
+        "docs/adr/**",
+        "docs/brand/tools/**",
+        "packages/*/src/**",
+        "vitest.config.ts"
+      ],
+      "outputs": []
+    }
+  }
+}

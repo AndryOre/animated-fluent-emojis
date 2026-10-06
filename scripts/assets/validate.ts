@@ -2,7 +2,7 @@ import { stat } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { MAX_TEXTURE_HEIGHT, type SpriteTask } from './catalog.js'
 import {
   HD_FRAME_SIZE,

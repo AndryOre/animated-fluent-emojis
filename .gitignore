@@ -28,10 +28,11 @@ dist-ssr
 .claude/worktrees
 .eslintcache
 
-coverage
+**/coverage
 .vitest
 
 # Generated asset site
 dist-assets
 .cache
 dist-files
+.turbo

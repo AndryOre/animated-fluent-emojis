@@ -1,6 +1,6 @@
 import sharp from 'sharp'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import type { FetchLike } from './http.js'
 
 /**

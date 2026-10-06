@@ -229,7 +229,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          if [[ -z "$(git status --porcelain -- docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json)" ]]; then
+          if [[ -z "$(git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json)" ]]; then
             echo "Emoji lists are up to date."
             exit 0
           fi
@@ -237,7 +237,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "${branch}"
-          if [[ -n "$(git status --porcelain -- src/utils/emoji-id.generated.ts)" ]]; then
+          if [[ -n "$(git status --porcelain -- packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts)" ]]; then
             entry="- Updated the \`EmojiId\` union from the published emoji catalog."
             unreleased="$(awk '/^## \[Unreleased\]/ { inside = 1; next } /^## \[/ { inside = 0 } inside { print }' CHANGELOG.md)"
             if ! grep --fixed-strings --quiet -- "${entry}" <<< "${unreleased}"; then
@@ -253,7 +253,7 @@ jobs:
               mv CHANGELOG.md.tmp CHANGELOG.md
             fi
           fi
-          git add CHANGELOG.md docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json
+          git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json
           git commit \
             --message "docs: 📝 update emoji list" \
             --message "- Regenerated the emoji lists from the published manifest"

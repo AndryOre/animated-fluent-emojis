@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { pruneManifest } from './manifest-ops.js'
 
 const animation = { fps: 10, framesCount: 4, firstFrame: 1 }

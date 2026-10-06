@@ -1,0 +1,224 @@
+{
+  "name": "animated-fluent-emojis",
+  "version": "0.8.0",
+  "description": "Microsoft's animated Fluent emojis as one component. They play on load or hover, rest under reduced motion and hold their space while they load.",
+  "author": "Andry Orellana",
+  "license": "MIT",
+  "private": false,
+  "sideEffects": [
+    "**/*.css",
+    "./dist/element.js",
+    "./dist/astro/client.js"
+  ],
+  "type": "module",
+  "keywords": [
+    "react",
+    "react-component",
+    "vue",
+    "vue-component",
+    "svelte",
+    "svelte-component",
+    "astro-component",
+    "web-component",
+    "custom-element",
+    "angular",
+    "solid",
+    "preact",
+    "emoji",
+    "emojis",
+    "animated",
+    "animated-emoji",
+    "animated-emojis",
+    "fluent",
+    "fluent-emoji",
+    "fluent-emojis",
+    "microsoft",
+    "animation",
+    "emoticons",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndryOre/animated-fluent-emojis.git"
+  },
+  "homepage": "https://github.com/AndryOre/animated-fluent-emojis#readme",
+  "bugs": "https://github.com/AndryOre/animated-fluent-emojis/issues",
+  "module": "./dist/animated-fluent-emojis.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/animated-fluent-emojis.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./astro": {
+      "types": "./dist/astro/index.d.ts",
+      "default": "./dist/astro/Emoji.astro"
+    },
+    "./element": {
+      "types": "./dist/element/index.d.ts",
+      "import": "./dist/element.js"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "import": "./dist/vue.js"
+    },
+    "./svelte": {
+      "types": "./dist/svelte/index.d.ts",
+      "svelte": "./dist/svelte/index.js",
+      "import": "./dist/svelte/index.js"
+    },
+    "./lookup": {
+      "types": "./dist/lookup/index.d.ts",
+      "import": "./dist/lookup.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
+    "lint:package": "bun run build && publint --strict && attw --pack . --profile esm-only",
+    "check": "bun run typecheck && bun run lint:package",
+    "size": "size-limit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "vue": "^3.3.0",
+    "astro": "^5.0.0 || ^6.0.0 || ^7.0.0",
+    "solid-js": "^1.0.0",
+    "preact": "^10.0.0 || ^11.0.0",
+    "svelte": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "astro": {
+      "optional": true
+    },
+    "solid-js": {
+      "optional": true
+    },
+    "preact": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@size-limit/file": "^14.1.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@types/node": "^24",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react-swc": "^4.3.3",
+    "@vitest/browser-playwright": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "astro": "catalog:",
+    "axe-core": "^4.13.0",
+    "msw": "^3",
+    "playwright": "^1.63.0",
+    "preact": "^11.0.0",
+    "publint": "^0.3.25",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "size-limit": "^14.1.0",
+    "solid-js": "^1.9.15",
+    "svelte": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "^5.1.2",
+    "vitest": "catalog:",
+    "vitest-browser-react": "^2.3.0",
+    "vue": "catalog:"
+  },
+  "size-limit": [
+    {
+      "name": "ESM bundle",
+      "path": [
+        "dist/animated-fluent-emojis.js",
+        "dist/react.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "4.5 kB"
+    },
+    {
+      "name": "React bundle",
+      "path": [
+        "dist/react.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "4.5 kB"
+    },
+    {
+      "name": "Element bundle",
+      "path": [
+        "dist/element.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "5 kB"
+    },
+    {
+      "name": "Vue bundle",
+      "path": [
+        "dist/vue.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "4.5 kB"
+    },
+    {
+      "name": "Svelte bundle",
+      "path": [
+        "dist/svelte/runtime.js",
+        "dist/svelte/Emoji.svelte",
+        "dist/svelte/FallbackHost.svelte",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "6 kB"
+    },
+    {
+      "name": "Astro client script",
+      "path": [
+        "dist/astro/client.js",
+        "dist/chunks/environment-signals-*.js",
+        "dist/chunks/markup-*.js",
+        "dist/chunks/playback-gate-*.js"
+      ],
+      "limit": "4 kB"
+    },
+    {
+      "name": "Lookup bundle",
+      "path": [
+        "dist/lookup.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "2.8 kB"
+    },
+    {
+      "name": "Stylesheet",
+      "path": "dist/style.css",
+      "limit": "170 B"
+    }
+  ]
+}

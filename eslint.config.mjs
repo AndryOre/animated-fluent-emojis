@@ -100,7 +100,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['*.config.{ts,mjs}'],
+    files: ['**/*.config.{ts,mjs}'],
     rules: { 'unicorn/no-top-level-side-effects': 'off' },
   },
   {
@@ -121,5 +121,5 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   prettierConfig,
-  globalIgnores(['dist/**', 'coverage/**', '.claude/worktrees/**']),
+  globalIgnores(['**/dist/**', '**/coverage/**', '.claude/worktrees/**']),
 ])

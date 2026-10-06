@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, expect, test, vi } from 'vitest'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import type { BuildResult } from './build.js'
 import { PIPELINE_VERSION } from './catalog.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'

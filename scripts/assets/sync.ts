@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { buildAssets } from './build.js'
 import { PIPELINE_VERSION } from './catalog.js'
 import {
@@ -609,7 +609,8 @@ export async function runCommand(
       docs: { type: 'string', default: 'docs' },
       'emoji-id': {
         type: 'string',
-        default: 'src/utils/emoji-id.generated.ts',
+        default:
+          'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts',
       },
       rebuild: { type: 'boolean', default: false },
       'bypass-guards': { type: 'boolean', default: false },
