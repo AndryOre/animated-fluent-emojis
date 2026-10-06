@@ -8,6 +8,22 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- A public files site, `https://animated-fluent-emojis-files.andryore.dev`, with
+  every emoji and skin tone as an animated GIF, an animated WebP and a
+  poster-frame PNG at stable URLs such as `/gif/<slug>.gif`, plus an
+  `/index.json`. Slugs are frozen in a committed registry. The artwork is
+  Microsoft's, see [ADR 0015](docs/adr/0015-public-files-site.md).
+- The emoji lists show a preview and links to the public files of each emoji.
+
+### Changed
+
+- The asset site default URL is now
+  `https://animated-fluent-emojis-cdn.andryore.dev`. Consumers with a strict
+  Content Security Policy must allow that host in `img-src` and `connect-src`.
+  The old `pages.dev` URL keeps working.
+
 ## [0.7.0] - 2026-10-06
 
 ### Removed
