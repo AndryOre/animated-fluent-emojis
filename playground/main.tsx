@@ -7,8 +7,9 @@ import {
 } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { configureEmojis, Emoji } from '../src/index.js'
+import { configureEmojis } from '../src/index.js'
 import type { SkinTone } from '../src/index.js'
+import { Emoji } from '../src/react/index.js'
 
 const rootElement = document.querySelector('#root')
 

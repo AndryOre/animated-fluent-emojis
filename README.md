@@ -76,7 +76,7 @@ stylesheet carries the animation keyframes; without it emojis render as static
 sprite sheets.
 
 ```jsx
-import { Emoji } from 'animated-fluent-emojis'
+import { Emoji } from 'animated-fluent-emojis/react'
 
 import 'animated-fluent-emojis/style.css'
 

@@ -27,7 +27,9 @@ export default defineConfig({
           include: [
             'src/components/**/*.test.tsx',
             'src/hooks/**/*.test.{ts,tsx}',
+            'src/react/**/*.test.{ts,tsx}',
             'src/vanilla/**/*.test.ts',
+            'src/test/conformance/**/*.test.{ts,tsx}',
           ],
           setupFiles: ['src/test/browser-setup.ts'],
           browser: {
@@ -43,6 +45,7 @@ export default defineConfig({
         test: {
           name: 'node',
           environment: 'node',
+          exclude: ['src/test/conformance/**'],
           include: [
             'src/core/**/*.test.ts',
             'src/utils/**/*.test.ts',

@@ -3,6 +3,7 @@
 The full API of `animated-fluent-emojis`. For install and a first emoji, start
 with the [README](../README.md).
 
+- [Importing the component](#importing-the-component)
 - [Props](#props)
 - [Hover and focus](#hover-and-focus)
 - [Reduced motion](#reduced-motion)
@@ -20,6 +21,18 @@ emoji renders, never at import time. While it loads, `Emoji` renders an empty,
 the id is unknown it renders nothing. If the manifest cannot be loaded, it
 renders your `fallback` node, or nothing, and retries on the next mount, the
 next `preloadEmojis` call or when the browser comes back online.
+
+## Importing the component
+
+Import `Emoji` from the React subpath:
+
+```jsx
+import { Emoji } from 'animated-fluent-emojis/react'
+```
+
+Migrating from 0.5: the root `Emoji` export is deprecated in 0.6 and removed in
+0.7. Change the import path, nothing else; props and behavior are identical.
+`configureEmojis` and `preloadEmojis` stay at `animated-fluent-emojis`.
 
 ## Props
 
