@@ -29,8 +29,9 @@ The following are explicitly not planned:
 
 - **Custom emoji artwork** — the library wraps Microsoft's Fluent emoji set and
   does not ship or accept original artwork.
-- **Non-React framework wrappers** — Vue, Svelte, Solid, and similar bindings
-  are not planned; the library targets React only.
+- **Native Angular, Solid, Qwik and Ember adapters** — those frameworks use the
+  `<fluent-emoji>` element until someone asks for more; see
+  [ADR 0014](docs/adr/0014-multi-framework-support.md).
 - **Backend services and telemetry** — the library is a client-side component
   set; its only network requests are the manifest and sprite sheets it loads
   from the asset site, and it collects no usage data.

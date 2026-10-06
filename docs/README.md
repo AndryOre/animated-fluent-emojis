@@ -5,8 +5,9 @@ An index of every document in this repository.
 ## Core
 
 - [`README.md`](../README.md): user-facing portal with install and usage.
-- [`usage.md`](usage.md): the full API: props, playback, fallback, preloading,
-  asset site, lookup and types.
+- [`usage.md`](usage.md): the full API: per-framework setup (React, Vue, Svelte,
+  Astro, plain HTML), props, playback, fallback, preloading, asset site, lookup
+  and types.
 - [`troubleshooting.md`](troubleshooting.md): fixes for common problems, by
   symptom.
 - [`CHANGELOG.md`](../CHANGELOG.md): release notes, newest first.
@@ -24,7 +25,7 @@ An index of every document in this repository.
 
 - [`development.md`](development.md): setup, scripts, git hooks, CI,
   conventions, testing, playground and repository settings.
-- [`architecture.md`](architecture.md): code map of the component, hooks,
+- [`architecture.md`](architecture.md): code map of the core, the adapters,
   manifest, animation, asset pipeline and CSS.
 - [`how-to/cut-a-release.md`](how-to/cut-a-release.md): releasing and the npm
   trusted publisher setup.
@@ -42,6 +43,12 @@ An index of every document in this repository.
   stylesheet and preloading in Next.js.
 - [`how-to/preload-for-a-picker.md`](how-to/preload-for-a-picker.md): warming
   the manifest and sprite sheets for an emoji picker.
+- [`how-to/use-with-angular.md`](how-to/use-with-angular.md): `<fluent-emoji>`
+  in Angular.
+- [`how-to/use-with-solid.md`](how-to/use-with-solid.md): `<fluent-emoji>` in
+  Solid.
+- [`how-to/use-with-preact.md`](how-to/use-with-preact.md): `<fluent-emoji>` or
+  `preact/compat` in Preact.
 
 ## Architecture decision records
 
@@ -59,6 +66,7 @@ An index of every document in this repository.
 - [`adr/0011-compact-slim-manifest-and-hd-frame-cap.md`](adr/0011-compact-slim-manifest-and-hd-frame-cap.md)
 - [`adr/0012-brand-kit-in-docs-brand.md`](adr/0012-brand-kit-in-docs-brand.md)
 - [`adr/0013-relicense-to-mit.md`](adr/0013-relicense-to-mit.md)
+- [`adr/0014-multi-framework-support.md`](adr/0014-multi-framework-support.md)
 
 ## Brand
 

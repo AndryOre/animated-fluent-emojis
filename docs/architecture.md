@@ -1,14 +1,25 @@
 # Architecture
 
-A short code map of `animated-fluent-emojis`. The package exports one component,
-`Emoji`, the `configureEmojis` and `preloadEmojis` functions, a few types and a
-stylesheet. Terms such as fallback glyph, asset layout version and sprite
-generation are defined in [`CONTEXT.md`](../CONTEXT.md).
+A short code map of `animated-fluent-emojis`. The package is a framework-free
+core, a set of adapters (React, Vue, Svelte, Astro and the `<fluent-emoji>`
+element), the `configureEmojis` and `preloadEmojis` functions, a few types and a
+stylesheet. See [Core and adapters](#core-and-adapters). Terms such as fallback
+glyph, asset layout version and sprite generation are defined in
+[`CONTEXT.md`](../CONTEXT.md).
 
 ```text
 scripts/assets/         builds the manifests and sprites published to Pages
 src/
-  index.ts              public entry: Emoji, configureEmojis, preloadEmojis, types
+  index.ts              root entry: configureEmojis, preloadEmojis, createEmoji,
+                        types, and the deprecated React Emoji
+  core/                 framework-free: normalization, playback gate, image wiring,
+                        environment signals
+  vanilla/              createEmoji, the DOM controller every non-React adapter uses
+  react/                the `/react` entry
+  vue/                  the `/vue` entry, defineComponent and h
+  svelte/               the `/svelte` entry, a Svelte 5 .svelte component
+  astro/                the `/astro` entry, a .astro component plus client script
+  element/              the `/element` entry, the <fluent-emoji> Web Component
   lookup/index.ts       the `animated-fluent-emojis/lookup` entry, no React
   components/
     Emoji.tsx           the component
@@ -28,7 +39,51 @@ src/
 playground/main.tsx     manual playground rendered by `bun run dev`
 ```
 
+## Core and adapters
+
+Every adapter is a thin layer over one framework-free core, recorded in
+[ADR 0014](adr/0014-multi-framework-support.md). Importing the root entry or the
+core touches no DOM and needs no framework.
+
+- `src/core/normalize.ts` turns `size` and `animationIterations` into numbers
+  and CSS lengths.
+- `src/core/playback-gate.ts` is a pure state machine. It takes events (image
+  loaded, visibility changed, animation ended, source changed, rearmed) and
+  produces the plain CSS style and the playing state, so every adapter animates
+  the same way.
+- `src/core/image-wiring.ts` attaches the image `load` and `error` handlers and
+  the visibility observer.
+- `src/core/environment-signals.ts` tracks `prefers-reduced-motion` and
+  `document.hidden`.
+
+The adapters:
+
+| Subpath    | Source         | Built on                                              |
+| ---------- | -------------- | ----------------------------------------------------- |
+| `.`        | `src/index.ts` | `createEmoji`, the manifest store, deprecated `Emoji` |
+| `/react`   | `src/react`    | the hooks in `src/hooks` over the core                |
+| `/vue`     | `src/vue`      | `defineComponent` and `h` over the core               |
+| `/svelte`  | `src/svelte`   | a `.svelte` source file over `createEmoji`            |
+| `/astro`   | `src/astro`    | build-time HTML plus a client script                  |
+| `/element` | `src/element`  | `createEmoji` in a shadow root                        |
+
+`createEmoji` renders the same `span > img` markup as the React component into
+any DOM node. The Svelte component and `<fluent-emoji>` call it; the Svelte
+package ships the `.svelte` source, so the consumer's compiler builds it. The
+Astro component renders the markup on the server from the manifest and
+`src/astro/client.ts` starts playback in the browser, also on `astro:page-load`.
+The element keeps its keyframes in the shadow root and reads its fallback from a
+`slot="fallback"` child; it dispatches `emoji-load`, `emoji-error` and
+`playback-end`.
+
+One conformance suite in `src/test/conformance` runs against React, Vue, Svelte,
+`createEmoji` and the element, so the adapters behave the same. Angular, Solid
+and Preact use the element; their JSX types are augmented in
+`src/element/types.ts`.
+
 ## Component
+
+This section describes the React `Emoji` in `src/components`.
 
 `Emoji` is a `forwardRef` component, so a `ref` reaches the root `<span>` on
 React 18 and 19. Besides its own props (`id`, `size`, `playOnHover`,
@@ -380,11 +435,12 @@ the import.
 
 ## Build output
 
-Vite 8 library mode builds two ES modules, `dist/animated-fluent-emojis.js` and
-`dist/lookup.js`, plus a shared chunk with the manifest store, with `react` and
-`react-dom` externalized, and type declarations. `size-limit` measures each
-entry together with the shared manifest chunk (brotli), since importing either
-subpath loads both: 3.9 kB for the component bundle and 2.3 kB for lookup. The
-stylesheet is limited to 170 B. The bundle starts with a `"use client";` banner
-so it works from Next.js server components. See
-[ADR 0003](adr/0003-esm-only-and-vite-8.md).
+Vite 8 library mode builds one ES module per entry (`animated-fluent-emojis`,
+`react`, `element`, `vue`, `lookup`, `svelte/runtime`, `astro/client` and
+`astro/server`) plus shared chunks, one of them the manifest store. `react`,
+`react-dom` and `vue` are externalized. The `.svelte` and `.astro` sources are
+copied to `dist` as they are, and type declarations are generated. `size-limit`
+measures each entry together with its shared chunks (brotli); the limits are in
+the `size-limit` field of `package.json`, and the stylesheet is limited to 170
+B. The root and `react` bundles start with a `"use client";` banner so they work
+from Next.js server components. See [ADR 0003](adr/0003-esm-only-and-vite-8.md).

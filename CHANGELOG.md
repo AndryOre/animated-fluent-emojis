@@ -10,13 +10,41 @@ and this project adheres to
 
 ### Added
 
-- `animated-fluent-emojis/react` subpath exporting `Emoji` and its types.
+- Multi-framework support behind subpath exports, see
+  [ADR 0014](docs/adr/0014-multi-framework-support.md):
+  - `animated-fluent-emojis/react` exports `Emoji` and its types.
+  - `animated-fluent-emojis/vue` exports a native Vue 3 `Emoji` with a
+    `fallback` slot and `load`, `error` and `playbackEnd` events.
+  - `animated-fluent-emojis/svelte` exports a native Svelte 5 `Emoji` with a
+    `fallback` snippet.
+  - `animated-fluent-emojis/astro` exports an Astro `Emoji` that renders at
+    build time and starts playback with a small client script.
+  - `animated-fluent-emojis/element` registers `<fluent-emoji>`, a Web Component
+    for Angular, Solid, Preact, Lit, Alpine, htmx and plain HTML. It has a
+    `slot="fallback"` and the `emoji-load`, `emoji-error` and `playback-end`
+    events.
+  - `createEmoji` at the root renders an emoji into any DOM node and returns a
+    controller with `update` and `destroy`.
+- Install and usage steps for every framework in the
+  [usage guide](docs/usage.md#frameworks), how-tos for
+  [Angular](docs/how-to/use-with-angular.md),
+  [Solid](docs/how-to/use-with-solid.md) and
+  [Preact](docs/how-to/use-with-preact.md), and a "Works with" table in the
+  README.
+- `vue`, `svelte`, `astro`, `solid-js` and `preact` as optional peer
+  dependencies.
+
+### Changed
+
+- The playback logic moved to a framework-free core shared by every adapter, and
+  one conformance suite checks that they behave alike.
 
 ### Deprecated
 
 - The root `Emoji` export, removed in 0.7. Migrate by changing the import path
   to `animated-fluent-emojis/react`, nothing else. `configureEmojis` and
-  `preloadEmojis` stay at the root.
+  `preloadEmojis` stay at the root. In 0.7 `react` also becomes an optional peer
+  dependency.
 
 ## [0.5.3] - 2026-10-06
 
