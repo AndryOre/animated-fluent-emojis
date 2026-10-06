@@ -62,13 +62,13 @@ const markdownPath = `${Astro.url.pathname.replace(/\/$/, '')}.md`
   }
 
   .missing {
-    --afe-notice-border: var(--sl-color-blue);
-    --afe-notice-background: var(--sl-color-blue-low);
+    --afe-notice-border: var(--border);
+    --afe-notice-background: var(--secondary);
   }
 
   .stale {
-    --afe-notice-border: var(--sl-color-orange);
-    --afe-notice-background: var(--sl-color-orange-low);
+    --afe-notice-border: var(--primary-text);
+    --afe-notice-background: var(--secondary);
   }
 
   .copy-markdown {

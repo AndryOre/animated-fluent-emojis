@@ -19,6 +19,18 @@ import { REPOSITORY_URL } from './src/site-links'
 const CDN_ORIGIN = 'https://animated-fluent-emojis-cdn.andryore.dev'
 const FILES_ORIGIN = 'https://animated-fluent-emojis-files.andryore.dev'
 
+/**
+ * Hashes of the inline scripts Starlight ships in its sidebar, mobile menu and
+ * theme picker components, which Astro does not hash into the policy itself.
+ * `src/seo/distribution-audit.ts` fails the build-output test when a Starlight upgrade
+ * changes one of them.
+ */
+const STARLIGHT_INLINE_SCRIPT_HASHES = [
+  'sha256-f/zAUE74ucc3JYp4r4QQvkJofoQdkOIhHYK+jeZ6eko=',
+  'sha256-wX2yOADeV+NMngflD5uYi3vl50SHC4sfM1EmylVjlX4=',
+  'sha256-7eCV4jtsr4t4knb3c4FCRPeu7GGZeOUGE3XvWix0XOQ=',
+] as const
+
 function localized(pick: (locale: Locale) => string): Record<string, string> {
   return Object.fromEntries(
     LOCALES.map((locale) => [localeSegment(locale), pick(locale)]),
@@ -45,7 +57,7 @@ export default defineConfig({
     csp: {
       scriptDirective: {
         resources: ["'self'", "'wasm-unsafe-eval'"],
-        hashes: [THEME_INIT_HASH],
+        hashes: [THEME_INIT_HASH, ...STARLIGHT_INLINE_SCRIPT_HASHES],
       },
       styleDirective: { resources: ["'self'", "'unsafe-inline'"] },
       directives: [
@@ -74,6 +86,7 @@ export default defineConfig({
         Header: './src/docs/components/DocumentationHeader.astro',
         PageTitle: './src/docs/components/DocumentationPageTitle.astro',
         ThemeProvider: './src/docs/components/DocumentationThemeProvider.astro',
+        ThemeSelect: './src/docs/components/DocumentationThemeSelect.astro',
       },
       sidebar: [
         { slug: docSlug('usage.md') },
