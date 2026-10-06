@@ -1,4 +1,5 @@
 import { docsSitemapSource } from '../docs/sitemap'
+import { gallerySitemapSource } from '../gallery/sitemap'
 import type { RobotsContribution } from './robots'
 import { coreSitemapSource, type SitemapSource } from './sitemap'
 
@@ -9,6 +10,7 @@ import { coreSitemapSource, type SitemapSource } from './sitemap'
 export const SITEMAP_SOURCES: readonly SitemapSource[] = [
   coreSitemapSource,
   docsSitemapSource,
+  gallerySitemapSource,
 ]
 
 /**

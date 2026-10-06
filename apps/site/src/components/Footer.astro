@@ -10,7 +10,7 @@ interface Props {
 const { locale } = Astro.props
 const { footer } = getUi(locale)
 const links = [
-  { href: localePath(locale, '/gallery/'), label: footer.links.gallery },
+  { href: localePath(locale, '/emojis/'), label: footer.links.gallery },
   { href: localePath(locale, '/docs/'), label: footer.links.docs },
   { href: REPOSITORY_URL, label: footer.links.github },
   { href: NPM_URL, label: footer.links.npm },
