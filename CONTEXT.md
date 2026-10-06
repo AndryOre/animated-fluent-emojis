@@ -1,7 +1,8 @@
 # Animated Fluent Emojis
 
-A React component that renders Microsoft's animated Fluent emojis from a
-generated, automatically refreshed catalog hosted on a static site.
+A component library, with a React component today and more frameworks coming,
+that renders Microsoft's animated Fluent emojis from a generated, automatically
+refreshed catalog hosted on a static site.
 
 ## Language
 
@@ -69,3 +70,16 @@ default variant
 **Pipeline version**: The version of the build rules; a change republishes every
 sprite even when no upstream source changed. _Avoid_: Build version, schema
 version
+
+**Core**: The framework-free layer: size and iteration normalization, the pure
+playback-gate state machine that produces plain CSS style, and image wiring.
+Every adapter is a thin layer over it. _Avoid_: Engine, shared code, base
+
+**Adapter**: A framework's entry point to the library, published as a subpath
+export (`/react`, `/vue`, `/svelte`, `/astro`, `/element`) and built on the
+core. A native adapter uses the framework's own idioms, such as slots. _Avoid_:
+Wrapper, binding, plugin
+
+**Element**: The `<fluent-emoji>` Web Component exported from `/element`, for
+frameworks with no native adapter and for plain HTML. _Avoid_: Custom tag, web
+component (when the specific element is meant)

@@ -26,3 +26,4 @@ column.
 | 0011   | [Compact slim manifest, HD frame cap and layout-aware sync](0011-compact-slim-manifest-and-hd-frame-cap.md)    | Accepted | -                        |
 | 0012   | [Brand kit lives in docs/brand](0012-brand-kit-in-docs-brand.md)                                               | Accepted | -                        |
 | 0013   | [Relicense to MIT](0013-relicense-to-mit.md)                                                                   | Accepted | -                        |
+| 0014   | [Multi-framework support through subpath adapters](0014-multi-framework-support.md)                            | Accepted | -                        |
