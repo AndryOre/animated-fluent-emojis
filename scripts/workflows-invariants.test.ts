@@ -235,6 +235,61 @@ describe('sync-assets.yml sync job', () => {
     expect(String(deploy?.with?.wranglerVersion)).toMatch(/^\d+\.\d+\.\d+$/)
   })
 
+  test('detect compares the files site', () => {
+    const detect = steps.find((step) => step.id === 'detect')
+    expect(detect?.run).toContain('--files-url "${FILES_URL}"')
+    expect(detect?.env?.FILES_URL).toBe(
+      'https://animated-fluent-emojis-files.andryore.dev',
+    )
+  })
+
+  test('builds then deploys the files site after the asset deploy', () => {
+    const names = steps.map((step) => step.name)
+    const assetDeploy = names.indexOf('Deploy to Cloudflare Pages')
+    const build = names.indexOf('Build the files site')
+    const deploy = names.indexOf('Deploy the files site to Cloudflare Pages')
+    expect(assetDeploy).toBeGreaterThan(-1)
+    expect(build).toBeGreaterThan(assetDeploy)
+    expect(deploy).toBeGreaterThan(build)
+    expect(steps[build]?.run).toContain('bun run assets:files')
+    expect(steps[build]?.if).toContain('changed')
+  })
+
+  test('the files deploy targets its own project with the same token', () => {
+    const deploy = steps.find(
+      (step) => step.name === 'Deploy the files site to Cloudflare Pages',
+    )
+    expect(deploy?.uses).toMatch(/^cloudflare\/wrangler-action@[0-9a-f]{40}$/)
+    expect(String(deploy?.with?.command)).toContain('pages deploy dist-files')
+    expect(String(deploy?.with?.command)).toContain(
+      '--project-name=animated-fluent-emojis-files',
+    )
+    expect(String(deploy?.with?.command)).toContain('--branch=main')
+    expect(String(deploy?.with?.apiToken)).toContain('CLOUDFLARE_API_TOKEN')
+    expect(String(deploy?.with?.wranglerVersion)).toMatch(/^\d+\.\d+\.\d+$/)
+  })
+
+  test('smoke tests the files site with retries on every request', () => {
+    const smoke = steps.find(
+      (step) => step.name === 'Smoke test the files site',
+    )
+    expect(smoke).toBeDefined()
+    expect(smoke?.if ?? '').not.toContain('changed')
+    expect(smoke?.env?.FILES_SITE_URL).toBe(
+      'https://animated-fluent-emojis-files.andryore.dev',
+    )
+    expect(smoke?.run).toContain('/version.json')
+    expect(smoke?.run).toContain('/index.json')
+    for (const format of ['gif', 'webp', 'png'])
+      expect(smoke?.run).toContain(format)
+    const requests = (smoke?.run ?? '')
+      .split('\n')
+      .filter((line) => line.includes('curl '))
+    expect(requests.length).toBeGreaterThanOrEqual(3)
+    for (const line of requests) expect(line).toContain('--retry 5')
+    expect(smoke?.run).not.toContain('${{')
+  })
+
   test('allows at least 90 minutes for a full rebuild', () => {
     expect(Number(job?.['timeout-minutes'])).toBeGreaterThanOrEqual(90)
   })
