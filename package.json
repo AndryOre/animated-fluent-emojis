@@ -50,6 +50,10 @@
       "types": "./dist/element/index.d.ts",
       "import": "./dist/element.js"
     },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "import": "./dist/vue.js"
+    },
     "./lookup": {
       "types": "./dist/lookup/index.d.ts",
       "import": "./dist/lookup.js"
@@ -170,6 +174,14 @@
         "dist/chunks/manifest-*.js"
       ],
       "limit": "5 kB"
+    },
+    {
+      "name": "Vue bundle",
+      "path": [
+        "dist/vue.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "4.5 kB"
     },
     {
       "name": "Lookup bundle",

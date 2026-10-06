@@ -30,6 +30,7 @@ export default defineConfig({
             'src/react/**/*.test.{ts,tsx}',
             'src/vanilla/**/*.test.ts',
             'src/element/**/*.test.ts',
+            'src/vue/**/*.test.ts',
             'src/test/conformance/**/*.test.{ts,tsx}',
           ],
           setupFiles: ['src/test/browser-setup.ts'],

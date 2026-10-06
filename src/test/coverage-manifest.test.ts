@@ -16,6 +16,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Entry that registers the element and re-exports its types, covered by fluent-emoji.test.ts.',
   'element/types.ts':
     'Type-only module with global and framework typings, checked by element.types.test.ts.',
+  'vue/index.ts':
+    'Entry that re-exports the Vue Emoji and its types, covered by emoji.test.ts and the Vue conformance suite.',
   'utils/types.ts': 'Type-only module with no runtime behavior to test.',
   'utils/emoji-id.generated.ts':
     'Generated type-only union, produced and tested by scripts/assets.',
