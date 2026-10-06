@@ -117,6 +117,35 @@ Vitest has two projects (`vitest.config.ts`):
 - **`node`**: `src/utils/**`, `src/test/**`, `eslint-rules/**`, `docs/adr/**`
   and `scripts/**` tests.
 
+### Conformance suite
+
+`src/test/conformance/suite.ts` holds one behaviour spec (placeholder, ready,
+unknown id, manifest error, glyph fallback, reduced motion, playback gating by
+image, viewport and hidden tab, `playing`, and a single `onPlaybackEnd`) that
+runs in the `browser` project against the shared MSW manifest fixtures. It
+observes the rendered DOM only (`span > img`, the `[role="img"]` glyph, the
+inline `animation-play-state`), so every adapter must render the same structure.
+
+An adapter plugs in with a driver, about 15 lines of glue in
+`src/test/conformance/<adapter>.conformance.test.ts(x)`:
+
+```ts
+defineConformanceSuite('my-adapter', () => ({
+  mount: (container, options) => {},
+  update: (options) => {},
+  unmount: () => {},
+}))
+```
+
+- `mount(container, options)` renders the emoji into `container`, forwarding
+  `ConformanceOptions` (`id`, `size`, `animationIterations`, `autoPlay`,
+  `playing`, `alt`, `onPlaybackEnd`, `onError`) unchanged, and may be async.
+- `update(options)` re-renders with `options` replacing the previous ones.
+- `unmount()` removes the emoji and releases everything it holds.
+
+The factory is called once per test, so keep state inside the closure. The
+contract lives in `src/test/conformance/driver.ts`.
+
 `src/test/coverage-manifest.test.ts` fails when a source module has no test and
 no documented exemption. Rationale: [ADR 0004](adr/0004-vitest-browser-mode.md).
 
