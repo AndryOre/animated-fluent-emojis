@@ -23,7 +23,7 @@ export. The `emoji-play` animation name and its keyframe both come from the
 `.emojiImage` class in that stylesheet. The inline style from
 `useEmojiAnimation` only sets the duration, the `steps()` timing and the pause
 state, so without the stylesheet nothing names an animation and the sprite sheet
-stays on its first frame. See [CSS](architecture.md#css).
+stays on its poster frame. See [CSS](architecture.md#css).
 
 Other cases look the same and are not bugs:
 
@@ -57,9 +57,8 @@ which ends in one of four states:
 - `error`: the manifest request failed, timed out or answered a non-2xx status.
   The store logs `Error fetching emoji data:` with the reason to the console,
   calls `onError` without an event, and renders `fallback`, or nothing. The
-  Unicode glyph fallback needs the manifest, so it does not appear in this
-  state.
-- `ready`, but the sprite sheet request fails: the glyph fallback renders
+  fallback glyph needs the manifest, so it does not appear in this state.
+- `ready`, but the sprite sheet request fails: the fallback glyph renders
   (labelled with `alt`), or your `fallback`, and `onError` gets the image event.
 
 **Fix:** Open the console and the network tab and look for the lines above.
@@ -189,7 +188,7 @@ bunx playwright install chromium
 
 ## See also
 
-- [Usage guide](usage.md): props, fallback behaviour, preloading and the asset
+- [Usage guide](usage.md): props, fallback behavior, preloading and the asset
   site.
 - [Security design](security.md): the CSP requirements and the threat model.
 - [Architecture](architecture.md): the manifest store, CSS and build output.

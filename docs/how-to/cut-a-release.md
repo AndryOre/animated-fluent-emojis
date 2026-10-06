@@ -25,13 +25,15 @@ The `verify` job has `contents: read` only. It:
 
 1. Fails unless the tag matches the `package.json` version.
 2. Fails unless the tagged commit is on `main`.
-3. Fails unless `https://animated-fluent-emojis.pages.dev/v1/version.json`
-   returns 200. This is the v1 gate: the release stops if the v1 asset layout is
-   not live, so run the asset sync first.
-4. Runs `bun ci`, `bun run check`, `bun run test` and `bun run build`.
-5. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
+3. Runs `bun ci`.
+4. Runs `bun run assets:verify-live`. This is the v1 gate: it fails unless
+   `https://animated-fluent-emojis.pages.dev/v1/version.json` answers 200, lists
+   the `v1` layout, was not built with `--limit` and carries the current
+   `pipelineVersion`. If it fails, run the asset sync first.
+5. Runs `bun run check`, `bun run test` and `bun run build`.
+6. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
    and fails if it is empty.
-6. Packs the tarball and uploads it with the notes as the `release-artifact`
+7. Packs the tarball and uploads it with the notes as the `release-artifact`
    artifact.
 
 The `publish` job needs `verify`, runs in the `npm` GitHub Environment and is
