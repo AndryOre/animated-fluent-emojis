@@ -12,7 +12,11 @@ import {
   renderEmojiIdModule,
   renderEmojiLists,
 } from './emoji-lists.js'
-import { buildFilesSite, type EncodeFiles } from './files-site.js'
+import {
+  buildFilesSite,
+  type EncodeFiles,
+  type IndexEntry,
+} from './files-site.js'
 import {
   appendStepSummary,
   assertDiscoveryHealthy,
@@ -24,7 +28,12 @@ import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { V1_DIRECTORY } from './layout-v1.js'
 import { diffManifests } from './manifest-ops.js'
 import { fetchMitCommitSha } from './mit.js'
-import { deriveRegistry, type SlugRegistry } from './public-slugs.js'
+import {
+  deriveRegistry,
+  mergeRegistries,
+  registryFromIndex,
+  type SlugRegistry,
+} from './public-slugs.js'
 import type { PublishedVersion } from './site-writer.js'
 import {
   discoverTeamsVersion,
@@ -503,20 +512,66 @@ export async function runFiles(
   })
 }
 
+async function readLiveIndex(
+  indexPath: string | undefined,
+): Promise<SlugRegistry | undefined> {
+  if (indexPath === undefined) return undefined
+  let source: string
+  try {
+    source = await readFile(indexPath, 'utf8')
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+    console.warn(
+      `No live index at ${indexPath}; freezing slugs from the committed registry alone.`,
+    )
+    return undefined
+  }
+  return registryFromIndex(JSON.parse(source) as IndexEntry[])
+}
+
 /**
- * Writes the per-category emoji lists and the emoji-id module from a manifest.
+ * Writes the per-category emoji lists and the emoji-id module from a manifest,
+ * and freezes the slugs of newly published emoji into the committed registry.
  * @param manifestPath The built `manifest.json`.
  * @param docsDirectory Where the `EMOJI_LIST_*.md` files go.
  * @param emojiIdPath Where the generated emoji-id module goes.
+ * @param options Registry, live index and files site settings.
+ * @param options.registryPath The committed slug registry, rewritten in place; defaults to the repository one.
+ * @param options.indexPath A downloaded live `index.json`; when absent or missing on disk, only the committed registry is used and a warning is logged.
+ * @param options.filesUrl The files site origin the list links point at.
+ * @throws {Error} When the live index conflicts with the committed registry.
  */
 export async function runLists(
   manifestPath: string,
   docsDirectory: string,
   emojiIdPath: string,
+  options: {
+    registryPath?: string
+    indexPath?: string
+    filesUrl?: string
+  } = {},
 ): Promise<void> {
+  const registryPath = options.registryPath ?? fileURLToPath(SLUG_REGISTRY_URL)
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as Manifest
+  const committed = JSON.parse(
+    await readFile(registryPath, 'utf8'),
+  ) as SlugRegistry
+  const live = await readLiveIndex(options.indexPath)
+  const registry = deriveRegistry(
+    manifest,
+    live === undefined ? committed : mergeRegistries(committed, live),
+  )
+  await writeFile(
+    registryPath,
+    await formatSource(JSON.stringify(registry), registryPath),
+  )
   await mkdir(docsDirectory, { recursive: true })
-  for (const [fileName, source] of renderEmojiLists(manifest)) {
+  const lists = renderEmojiLists(
+    manifest,
+    registry,
+    options.filesUrl ?? DEFAULT_FILES_URL,
+  )
+  for (const [fileName, source] of lists) {
     const filePath = path.join(docsDirectory, fileName)
     await writeFile(filePath, await formatSource(source, filePath))
   }
@@ -545,6 +600,7 @@ export async function runCommand(
       'files-url': { type: 'string', default: DEFAULT_FILES_URL },
       'files-out': { type: 'string', default: 'dist-files' },
       registry: { type: 'string' },
+      index: { type: 'string' },
       'teams-hash': { type: 'string' },
       out: { type: 'string', default: 'dist-assets' },
       cache: { type: 'string', default: '.cache/assets' },
@@ -605,7 +661,13 @@ export async function runCommand(
       break
     }
     case 'lists': {
-      await runLists(values.manifest, values.docs, values['emoji-id'])
+      await runLists(values.manifest, values.docs, values['emoji-id'], {
+        ...(values.registry !== undefined && {
+          registryPath: values.registry,
+        }),
+        ...(values.index !== undefined && { indexPath: values.index }),
+        filesUrl: values['files-url'],
+      })
       break
     }
     default: {

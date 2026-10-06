@@ -137,6 +137,37 @@ export function deriveRegistry(
 }
 
 /**
+ * Derives the registry a live `index.json` implies: one key per emoji and per
+ * skin tone.
+ * @param entries The `id`, `slug` and tones of every `index.json` entry.
+ * @returns The sorted registry of the live slugs.
+ * @throws {Error} When a tone is not a known skin tone.
+ */
+export function registryFromIndex(
+  entries: readonly {
+    id: string
+    slug: string
+    tones: readonly { tone: string; slug: string }[]
+  }[],
+): SlugRegistry {
+  const suffixByTone = new Map(
+    TONE_SUFFIXES.map((suffix) => [TONE_SLUGS[suffix].slice(1), suffix]),
+  )
+  const slugs: Record<string, string> = {}
+  for (const { id, slug, tones } of entries) {
+    slugs[id] = slug
+    for (const { tone, slug: toneSlug } of tones) {
+      const suffix = suffixByTone.get(tone)
+      if (suffix === undefined) {
+        throw new Error(`Unknown skin tone "${tone}" for ${id} in index.json.`)
+      }
+      slugs[`${id}${suffix}`] = toneSlug
+    }
+  }
+  return { version: 1, slugs: sortSlugs(slugs) }
+}
+
+/**
  * Merges the committed registry with the registry derived from the live files site.
  * @param committed The registry committed in the repository.
  * @param live The registry derived from the live `index.json`.

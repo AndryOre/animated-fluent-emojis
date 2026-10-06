@@ -1,6 +1,7 @@
 import { format, resolveConfig } from 'prettier'
 
 import type { Manifest } from '../../src/utils/types.js'
+import { listRegistryKeys, type SlugRegistry } from './public-slugs.js'
 
 /**
  * Builds the file name of a category's emoji list.
@@ -18,26 +19,63 @@ function escapeCell(text: string): string {
     .trim()
 }
 
+function requireSlug(slugs: SlugRegistry, key: string): string {
+  const slug = slugs.slugs[key]
+  if (slug === undefined) throw new Error(`No public slug for ${key}.`)
+  return slug
+}
+
+const FORMAT_LABELS = { gif: 'GIF', webp: 'WebP', png: 'PNG' } as const
+
+function renderFileLinks(filesBaseUrl: string, slug: string): string {
+  return Object.entries(FORMAT_LABELS)
+    .map(
+      ([format, label]) =>
+        `[${label}](${filesBaseUrl}/${format}/${slug}.${format})`,
+    )
+    .join(' ')
+}
+
 /**
  * Renders the per-category Markdown emoji lists for a manifest. The hand-written
- * `EMOJI_LIST.md` index is left untouched.
+ * `EMOJI_LIST.md` index is left untouched. Each row gets a 32px PNG preview and
+ * links to the GIF, WebP and PNG files; emoji with skin tones list the links of
+ * every tone on their own line.
  * @param manifest The final emoji manifest.
+ * @param slugs The frozen registry the file URLs are built from.
+ * @param filesBaseUrl The files site origin, with or without a trailing slash.
  * @returns File contents keyed by file name, unformatted.
+ * @throws {Error} When an emoji or tone has no slug in the registry.
  */
-export function renderEmojiLists(manifest: Manifest): Map<string, string> {
+export function renderEmojiLists(
+  manifest: Manifest,
+  slugs: SlugRegistry,
+  filesBaseUrl: string,
+): Map<string, string> {
+  const baseUrl = filesBaseUrl.replace(/\/+$/, '')
+  const keysById = Map.groupBy(listRegistryKeys(manifest), ({ id }) => id)
   const files = new Map<string, string>()
   for (const category of manifest.categories) {
-    const rows = category.emoticons.map(
-      (emoticon) =>
-        `| ${escapeCell(emoticon.id)} | ${emoticon.unicode} | ${escapeCell(emoticon.description)} | ${escapeCell([...new Set(emoticon.keywords)].join(', '))} |`,
-    )
+    const rows = category.emoticons.map((emoticon) => {
+      const [defaultKey, ...toneKeys] = keysById.get(emoticon.id) ?? []
+      const slug = requireSlug(slugs, defaultKey?.key ?? emoticon.id)
+      const links = [
+        renderFileLinks(baseUrl, slug),
+        ...toneKeys.map(
+          ({ key, tone }) =>
+            `${tone.slice(1)}: ${renderFileLinks(baseUrl, requireSlug(slugs, key))}`,
+        ),
+      ].join('<br>')
+      const preview = `<img src="${baseUrl}/png/${slug}.png" width="32" height="32" alt="">`
+      return `| ${escapeCell(emoticon.id)} | ${preview} | ${emoticon.unicode} | ${escapeCell(emoticon.description)} | ${escapeCell([...new Set(emoticon.keywords)].join(', '))} | ${links} |`
+    })
     files.set(
       buildCategoryFileName(category.title),
       [
         `# ${category.title}`,
         '',
-        '| ID | Unicode | Description | Keywords |',
-        '| -- | ------- | ----------- | -------- |',
+        '| ID | Preview | Unicode | Description | Keywords | Files |',
+        '| -- | ------- | ------- | ----------- | -------- | ----- |',
         ...rows,
         '',
       ].join('\n'),

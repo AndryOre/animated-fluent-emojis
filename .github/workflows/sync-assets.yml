@@ -210,15 +210,26 @@ jobs:
           curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
             "https://animated-fluent-emojis-cdn.andryore.dev/manifest.json" \
             --output manifest.json
-          bun run assets:lists --manifest manifest.json
-          rm manifest.json
+          status="$(curl --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
+            --write-out '%{http_code}' \
+            "https://animated-fluent-emojis-files.andryore.dev/index.json" \
+            --output index.json)"
+          if [[ "${status}" == "404" ]]; then
+            echo "The files site has no index.json yet; using the committed slug registry alone."
+            rm -f index.json
+          elif [[ "${status}" != "200" ]]; then
+            echo "Unexpected status ${status} fetching index.json." >&2
+            exit 1
+          fi
+          bun run assets:lists --manifest manifest.json --index index.json
+          rm -f manifest.json index.json
 
       - name: Open a pull request when the lists changed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          if [[ -z "$(git status --porcelain -- docs src/utils/emoji-id.generated.ts)" ]]; then
+          if [[ -z "$(git status --porcelain -- docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json)" ]]; then
             echo "Emoji lists are up to date."
             exit 0
           fi
@@ -242,7 +253,7 @@ jobs:
               mv CHANGELOG.md.tmp CHANGELOG.md
             fi
           fi
-          git add CHANGELOG.md docs src/utils/emoji-id.generated.ts
+          git add CHANGELOG.md docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json
           git commit \
             --message "docs: 📝 update emoji list" \
             --message "- Regenerated the emoji lists from the published manifest"

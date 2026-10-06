@@ -282,6 +282,87 @@ test('runLists writes the emoji lists and the emoji-id module', async () => {
   expect(await readFile(emojiIdPath, 'utf8')).toContain('1f44b_wavinghand')
 })
 
+test('runLists freezes new slugs into the registry and leaves frozen ones alone', async () => {
+  const scratch = await createScratch()
+  const manifestPath = path.join(scratch, 'manifest.json')
+  await writeFile(manifestPath, JSON.stringify(createTeamsManifest()))
+  const registryPath = path.join(scratch, 'slugs.json')
+  await writeFile(
+    registryPath,
+    JSON.stringify({
+      version: 1,
+      slugs: { '1f603_grinningfacewithbigeyes': 'frozen-grin' },
+    }),
+  )
+  const indexPath = path.join(scratch, 'index.json')
+  await writeFile(
+    indexPath,
+    JSON.stringify([{ id: '1f44b_wavinghand', slug: 'live-wave', tones: [] }]),
+  )
+
+  await runLists(
+    manifestPath,
+    path.join(scratch, 'docs'),
+    path.join(scratch, 'emoji-id.generated.ts'),
+    { registryPath, indexPath },
+  )
+
+  const { slugs } = JSON.parse(await readFile(registryPath, 'utf8')) as {
+    slugs: Record<string, string>
+  }
+  expect(slugs['1f603_grinningfacewithbigeyes']).toBe('frozen-grin')
+  expect(slugs['1f44b_wavinghand']).toBe('live-wave')
+  expect(slugs['1f44b_wavinghand_s2']).toBe('live-wave-light')
+  expect(
+    await readFile(path.join(scratch, 'docs', 'EMOJI_LIST_Smilies.md'), 'utf8'),
+  ).toContain('/png/frozen-grin.png')
+})
+
+test('runLists falls back to the committed registry when the live index is missing', async () => {
+  const scratch = await createScratch()
+  const manifestPath = path.join(scratch, 'manifest.json')
+  await writeFile(manifestPath, JSON.stringify(createTeamsManifest()))
+  const registryPath = path.join(scratch, 'slugs.json')
+  await writeFile(registryPath, JSON.stringify({ version: 1, slugs: {} }))
+  const warn = vi.spyOn(console, 'warn').mockReturnValue()
+
+  await runLists(
+    manifestPath,
+    path.join(scratch, 'docs'),
+    path.join(scratch, 'emoji-id.generated.ts'),
+    { registryPath, indexPath: path.join(scratch, 'missing.json') },
+  )
+
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('No live index'))
+  expect(await readFile(registryPath, 'utf8')).toContain('waving-hand')
+  warn.mockRestore()
+})
+
+test('runLists fails on a conflict between the live index and the registry', async () => {
+  const scratch = await createScratch()
+  const manifestPath = path.join(scratch, 'manifest.json')
+  await writeFile(manifestPath, JSON.stringify(createTeamsManifest()))
+  const registryPath = path.join(scratch, 'slugs.json')
+  await writeFile(
+    registryPath,
+    JSON.stringify({ version: 1, slugs: { '1f44b_wavinghand': 'wave-a' } }),
+  )
+  const indexPath = path.join(scratch, 'index.json')
+  await writeFile(
+    indexPath,
+    JSON.stringify([{ id: '1f44b_wavinghand', slug: 'wave-b', tones: [] }]),
+  )
+
+  await expect(
+    runLists(
+      manifestPath,
+      path.join(scratch, 'docs'),
+      path.join(scratch, 'emoji-id.generated.ts'),
+      { registryPath, indexPath },
+    ),
+  ).rejects.toThrow('Slug conflict')
+})
+
 test('runCommand dispatches lists with the given paths', async () => {
   const scratch = await createScratch()
   const manifestPath = path.join(scratch, 'manifest.json')
