@@ -1,16 +1,11 @@
 import { useSyncExternalStore } from 'react'
 
-import { createSharedSubscription } from '../utils/shared-subscription.js'
-
-const subscribe = createSharedSubscription((notify) => {
-  document.addEventListener('visibilitychange', notify)
-  return () => {
-    document.removeEventListener('visibilitychange', notify)
-  }
-})
+import {
+  getDocumentHidden,
+  subscribeToDocumentHidden,
+} from '../core/environment-signals.js'
 
 const noopSubscribe = (): (() => void) => Function.prototype as () => void
-const getHidden = (): boolean => document.hidden
 const getNeverHidden = (): boolean => false
 
 /**
@@ -21,7 +16,7 @@ const getNeverHidden = (): boolean => false
  */
 export const useDocumentHidden = (isActive: boolean): boolean =>
   useSyncExternalStore(
-    isActive ? subscribe : noopSubscribe,
-    isActive ? getHidden : getNeverHidden,
+    isActive ? subscribeToDocumentHidden : noopSubscribe,
+    isActive ? getDocumentHidden : getNeverHidden,
     getNeverHidden,
   )
