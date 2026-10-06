@@ -1,7 +1,17 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import react from '@vitejs/plugin-react-swc'
 import { playwright } from '@vitest/browser-playwright'
+import { getViteConfig } from 'astro/config'
 import { msw } from 'msw/vite'
 import { defineConfig } from 'vitest/config'
+
+const astroProject = await getViteConfig({
+  test: {
+    name: 'astro',
+    environment: 'node',
+    include: ['src/astro/Emoji.test.ts'],
+  },
+})({ command: 'serve', mode: 'test' })
 
 export default defineConfig({
   test: {
@@ -21,7 +31,12 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        plugins: [react(), msw({ mode: 'worker-only' })],
+        plugins: [
+          react(),
+          svelte({ compilerOptions: { hmr: false } }),
+          msw({ mode: 'worker-only' }),
+        ],
+        optimizeDeps: { include: ['svelte'] },
         test: {
           name: 'browser',
           include: [
@@ -30,6 +45,8 @@ export default defineConfig({
             'src/react/**/*.test.{ts,tsx}',
             'src/vanilla/**/*.test.ts',
             'src/element/**/*.test.ts',
+            'src/vue/**/*.test.ts',
+            'src/astro/client.test.ts',
             'src/test/conformance/**/*.test.{ts,tsx}',
           ],
           setupFiles: ['src/test/browser-setup.ts'],
@@ -43,6 +60,7 @@ export default defineConfig({
       },
       {
         extends: true,
+        plugins: [svelte()],
         test: {
           name: 'node',
           environment: 'node',
@@ -51,6 +69,7 @@ export default defineConfig({
             'src/core/**/*.test.ts',
             'src/utils/**/*.test.ts',
             'src/lookup/**/*.test.ts',
+            'src/astro/{markup,server}.test.ts',
             'src/test/**/*.test.ts',
             'eslint-rules/**/*.test.ts',
             'docs/adr/**/*.test.ts',
@@ -58,6 +77,7 @@ export default defineConfig({
           ],
         },
       },
+      astroProject,
     ],
   },
 })
