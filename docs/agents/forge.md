@@ -30,18 +30,20 @@ into `/forge` itself, identical in every repo, and nothing below needs to
 restate it.
 
 A fresh worktree only needs `bun install --frozen-lockfile --silent`
-(`worktree.bootstrap` in `forge.config.json`). No codegen and no env files to
-copy from the main checkout — this is a framework component library with no
-runtime secrets.
+(`worktree.bootstrap` in `forge.config.json`). The isolated linker installs a
+`node_modules` per workspace, so every worktree gets its own. No codegen and no
+env files to copy from the main checkout — this is a framework component library
+with no runtime secrets.
 
 ## Self-check
 
 Commands a worker runs before considering its own change done: see
 `commands.selfCheck` in `forge.config.json`.
 
-`bun run check` and `bun run test` — the self-check. `build`
-(`tsc -b && vite build`) is deliberately left out: it's slow and the maintainer
-asks for it explicitly, except in tickets whose acceptance criteria require it.
+`bun run check` and `bun run test` — the self-check; both fan out through
+Turborepo to the workspaces and the root. `build` (`tsc -b && vite build`) is
+deliberately left out: it's slow and the maintainer asks for it explicitly,
+except in tickets whose acceptance criteria require it.
 
 ## Concurrency
 

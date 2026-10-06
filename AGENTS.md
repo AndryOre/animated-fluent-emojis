@@ -4,12 +4,17 @@ Instructions for coding agents working in this repository.
 
 ## Stack
 
-A component library that renders Microsoft's Fluent animated emojis from an
-asset site, with adapters for React, Vue, Svelte, Astro and a `<fluent-emoji>`
-element. The framework peer dependencies are optional. TypeScript (strict),
-ESM-only, built with Vite 8 library mode, tested with Vitest Browser Mode,
-managed with bun. See [`docs/architecture.md`](docs/architecture.md) for the
-code map.
+A bun-workspaces monorepo ([ADR 0016](docs/adr/0016-bun-workspaces-monorepo.md))
+orchestrated by Turborepo. TypeScript (strict), ESM-only, managed with bun. The
+root holds tooling only:
+
+- [`packages/animated-fluent-emojis`](packages/animated-fluent-emojis/AGENTS.md):
+  the published component library, with adapters for React, Vue, Svelte, Astro
+  and a `<fluent-emoji>` element. Built with Vite 8 library mode, tested with
+  Vitest Browser Mode.
+- [`apps/assets`](apps/assets/AGENTS.md): the private asset pipeline.
+
+See [`docs/architecture.md`](docs/architecture.md) for the code map.
 
 ## Running scripts
 
@@ -42,21 +47,11 @@ non-JSDoc `/* */` comments, except lint or type directives. Detail:
 
 ## Quirks and gotchas
 
-- Tests need Playwright's Chromium installed first:
-  [`docs/development.md#testing`](docs/development.md#testing).
-- Component and hook tests run in a real browser, pure logic in a `node`
-  project, and the `.astro` component in an `astro` project; put new tests where
-  the project globs match:
-  [`docs/development.md#testing`](docs/development.md#testing).
-- The package is ESM-only; never add a CommonJS entry or a `require` condition:
-  [`docs/development.md#packaging`](docs/development.md#packaging).
-- `style.css` is a separate export consumers must import; keep `sideEffects`
-  covering CSS: [`docs/architecture.md#css`](docs/architecture.md#css).
-- The slim manifest is fetched lazily on first render, so tests mock it with
-  MSW: [`docs/architecture.md#manifest`](docs/architecture.md#manifest).
-- Every new source module needs a test or an entry in the exemptions list of
-  `src/test/coverage-manifest.test.ts`:
-  [`docs/development.md#testing`](docs/development.md#testing).
+- Library rules (test projects and Playwright, MSW manifest mocking, ESM-only,
+  `style.css`, and the coverage manifest requirement for new modules) live in
+  [`packages/animated-fluent-emojis/AGENTS.md`](packages/animated-fluent-emojis/AGENTS.md).
+- The coverage manifest is `scripts/coverage-manifest.test.ts`, with one
+  exemption list keyed by repo-relative paths.
 - The asset pipeline lives in `apps/assets`, with its own rules:
   [`apps/assets/AGENTS.md`](apps/assets/AGENTS.md).
 - Actions are SHA-pinned and workflows are linted; edit them with care:

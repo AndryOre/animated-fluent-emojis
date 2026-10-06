@@ -28,3 +28,4 @@ column.
 | 0013   | [Relicense to MIT](0013-relicense-to-mit.md)                                                                   | Accepted | -                        |
 | 0014   | [Multi-framework support through subpath adapters](0014-multi-framework-support.md)                            | Accepted | -                        |
 | 0015   | [Public files site on a second Pages project](0015-public-files-site.md)                                       | Accepted | -                        |
+| 0016   | [Bun-workspaces monorepo](0016-bun-workspaces-monorepo.md)                                                     | Accepted | -                        |
