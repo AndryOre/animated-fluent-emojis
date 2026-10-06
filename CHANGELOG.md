@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-10-06
+
 ### Changed
 
 - Relicensed the code from ISC to MIT, see
@@ -312,7 +314,9 @@ plus the release workflow fix below.
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.2...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.3...HEAD
+[0.5.3]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.2...v0.5.3
 [0.5.2]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.1...v0.5.2
 [0.5.1]:
