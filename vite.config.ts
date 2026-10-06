@@ -1,9 +1,29 @@
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import react from '@vitejs/plugin-react-swc'
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import dts from 'vite-plugin-dts'
 
 const rootDirectory = import.meta.dirname
+
+const ASTRO_RAW_FILES = ['Emoji.astro', 'emoji.css']
+
+const copyAstroComponent = (): Plugin => ({
+  name: 'copy-astro-component',
+  generateBundle() {
+    for (const fileName of ASTRO_RAW_FILES) {
+      // eslint-disable-next-line unicorn/no-this-outside-of-class -- the bundler passes its plugin context as `this`
+      this.emitFile({
+        type: 'asset',
+        fileName: `astro/${fileName}`,
+        source: readFileSync(
+          path.resolve(rootDirectory, 'src/astro', fileName),
+          'utf8',
+        ),
+      })
+    }
+  },
+})
 
 export default defineConfig({
   build: {
@@ -13,6 +33,8 @@ export default defineConfig({
         react: path.resolve(rootDirectory, 'src/react/index.ts'),
         element: path.resolve(rootDirectory, 'src/element/index.ts'),
         lookup: path.resolve(rootDirectory, 'src/lookup/index.ts'),
+        'astro/client': path.resolve(rootDirectory, 'src/astro/client.ts'),
+        'astro/server': path.resolve(rootDirectory, 'src/astro/server.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
@@ -38,6 +60,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    copyAstroComponent(),
     dts({
       include: ['src'],
       tsconfigPath: './tsconfig.build.json',

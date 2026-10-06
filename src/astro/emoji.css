@@ -1,0 +1,22 @@
+@keyframes emoji-play {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.afe-image {
+  animation-name: emoji-play;
+}
+
+.afe-hover .afe-image {
+  animation-name: none;
+}
+
+.afe-hover:hover .afe-image,
+:is(a, button):focus-visible .afe-hover .afe-image {
+  animation-name: emoji-play;
+}
