@@ -17,16 +17,26 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'v8',
-      include: ['src/**/*.{ts,tsx}'],
+      include: [
+        'src/**/*.{ts,tsx,svelte}',
+        'scripts/**/*.ts',
+        'eslint-rules/**/*.mjs',
+        'docs/brand/tools/**/*.mjs',
+      ],
       exclude: [
         'src/**/*.test.{ts,tsx}',
         'src/test/**',
         'src/**/*.d.ts',
+        'scripts/**/*.test.ts',
+        'scripts/assets/test-support.ts',
+        'eslint-rules/**/*.test.ts',
+        'docs/brand/tools/**/*.test.ts',
+        'docs/brand/tools/export.mjs',
         'src/utils/types.ts',
         'src/utils/emoji-id.generated.ts',
       ],
       reporter: ['text', 'lcov'],
-      thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },
+      thresholds: { lines: 95, functions: 95, branches: 90, statements: 95 },
     },
     projects: [
       {
