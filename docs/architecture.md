@@ -452,8 +452,9 @@ after the asset deploy. Nothing it produces is committed. See
 - Each file is encoded by `public-files.ts` from the emoji's HD sheet when it
   has one, else the 100px sheet. The encoder is injectable so tests avoid real
   encoding.
-- Slugs come from the frozen registry in `public-slugs.json`; the live
-  `index.json` is merged in before a build so published URLs never change.
+- Slugs come from the frozen registry in `public-slugs.json`, which each sync
+  rewrites through the lists pull request after merging the live `index.json`
+  into it, so published URLs never change.
 - The file count is guarded by `MAX_OUTPUT_FILES`, kept under the Free plan cap
   of 20,000 files.
 

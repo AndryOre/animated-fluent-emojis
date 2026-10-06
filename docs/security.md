@@ -52,10 +52,11 @@ go through the same validation as built ones.
 
 The files site is a second Cloudflare Pages project, built from the asset site
 by the same workflow. Its files are public downloads and the library does not
-use it at runtime, so it adds no request to a consumer's CSP. A sync merges the
-live public index into the slug registry before a build, so published file URLs
-never change. A compromised files site can serve altered files to people who
-link them, but cannot change what the library renders.
+use it at runtime, so it adds no request to a consumer's CSP. Published slugs
+are frozen in the committed registry, and each sync merges the live public index
+back into it through the lists pull request, so published file URLs never
+change. A compromised files site can serve altered files to people who link
+them, but cannot change what the library renders.
 
 ## CSP requirements
 
