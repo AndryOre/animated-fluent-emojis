@@ -47,19 +47,22 @@ for header in content-security-policy x-content-type-options referrer-policy per
   grep -qi "^$header:" <<<"$headers" || fail "missing $header"
 done
 csp="$(grep -i '^content-security-policy:' <<<"$headers")"
+grep -qF "frame-ancestors 'none'" <<<"$csp" || fail "CSP header lacks frame-ancestors"
+meta_csp="$(curl -s "$base/" | grep -Eo '<meta http-equiv="content-security-policy" content="[^"]*"' | head -n1 || true)"
+[ -n "$meta_csp" ] || fail "page has no CSP meta tag"
 cdn="https://animated-fluent-emojis-cdn.andryore.dev"
 files="https://animated-fluent-emojis-files.andryore.dev"
-if sed "s#$cdn##g;s#$files##g" <<<"$csp" | grep -Eq 'https?://'; then
+if sed "s#$cdn##g;s#$files##g" <<<"$meta_csp" | grep -Eq 'https?://'; then
   fail "CSP names an origin other than the asset and files sites"
 fi
 for directive in img-src connect-src; do
-  directive_value="$(tr ';' '\n' <<<"$csp" | grep -E "^ ?$directive ")"
+  directive_value="$(tr ';' '\n' <<<"$meta_csp" | grep -E "(^|\")? ?$directive ")"
   grep -qF "$cdn" <<<"$directive_value" || fail "$directive lacks the asset site"
   grep -qF "$files" <<<"$directive_value" || fail "$directive lacks the files site"
 done
-script_src="$(tr ';' '\n' <<<"$csp" | grep -E '^ ?script-src ')"
+script_src="$(tr ';' '\n' <<<"$meta_csp" | grep -E 'script-src ')"
 case "$script_src" in *"'unsafe-inline'"*) fail "script-src allows unsafe-inline" ;; esac
-grep -qF "base-uri 'none'" <<<"$csp" || fail "CSP lacks base-uri"
+grep -qF "base-uri 'none'" <<<"$meta_csp" || fail "CSP lacks base-uri"
 
 [ "$(header_of cache-control "$base/")" = no-cache ] || fail "HTML lacks no-cache"
 asset="$(curl -s "$base/" | grep -Eo '/_astro/[A-Za-z0-9._-]+' | head -n1 || true)"

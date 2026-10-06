@@ -1,12 +1,7 @@
 ---
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
-import {
-  hreflangAlternates,
-  localePath,
-  localeUrl,
-  type Locale,
-} from '../i18n/locales'
+import { hreflangAlternates, localeUrl, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { THEME_INIT_SCRIPT } from '../scripts/theme-init'
 
@@ -53,7 +48,7 @@ const canonical = localeUrl(locale, path)
     <meta property="og:url" content={canonical} />
   </head>
   <body class="flex min-h-dvh flex-col font-sans">
-    <Header locale={locale} path={notFound ? localePath(locale) : path} />
+    <Header locale={locale} path={notFound ? '/' : path} />
     <slot />
     <Footer locale={locale} />
   </body>

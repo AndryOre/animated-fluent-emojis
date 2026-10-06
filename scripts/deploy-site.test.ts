@@ -87,11 +87,14 @@ describe('sync-assets.yml website redeploy', () => {
   const names = steps.map((step) => step.name)
   const redeploy = steps.find((step) => step.name === 'Redeploy the website')
 
-  test('runs after the files site deploy and only when assets changed', () => {
+  test('runs after the files site smoke test, only when assets changed, and never fails the sync', () => {
     expect(names.indexOf('Redeploy the website')).toBeGreaterThan(
-      names.indexOf('Deploy the files site to Cloudflare Pages'),
+      names.indexOf('Smoke test the files site'),
     )
-    expect(redeploy?.if).toBe("steps.detect.outputs.changed == 'true'")
+    expect(redeploy?.if).toBe(
+      "steps.detect.outputs.changed == 'true' && success()",
+    )
+    expect(redeploy?.['continue-on-error']).toBe(true)
   })
 
   test('uses the shared deploy script with the same secret and variable', () => {

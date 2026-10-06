@@ -114,13 +114,6 @@ jobs:
             pages deploy apps/assets/dist-files
             --project-name=animated-fluent-emojis-files --branch=main
 
-      - name: Redeploy the website
-        if: steps.detect.outputs.changed == 'true'
-        env:
-          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-          SITE_COOLIFY_APP_UUID: ${{ vars.SITE_COOLIFY_APP_UUID }}
-        run: bash .github/scripts/deploy-coolify.sh
-
       - name: Smoke test the legacy layout
         if: success()
         env:
@@ -184,6 +177,14 @@ jobs:
               "${FILES_SITE_URL}${file_path}" > /dev/null
           done
           rm index.json
+
+      - name: Redeploy the website
+        if: steps.detect.outputs.changed == 'true' && success()
+        continue-on-error: true
+        env:
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          SITE_COOLIFY_APP_UUID: ${{ vars.SITE_COOLIFY_APP_UUID }}
+        run: bash .github/scripts/deploy-coolify.sh
 
   emoji-lists:
     name: Refresh emoji lists
