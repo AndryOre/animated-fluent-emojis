@@ -12,6 +12,7 @@ export interface WorkflowStep {
   readonly id?: string
   readonly name?: string
   readonly if?: string
+  readonly 'continue-on-error'?: boolean
   readonly uses?: string
   readonly run?: string
   readonly env?: Record<string, unknown>
@@ -20,6 +21,7 @@ export interface WorkflowStep {
 
 interface WorkflowJob {
   readonly if?: string
+  readonly 'continue-on-error'?: boolean
   readonly needs?: unknown
   readonly 'timeout-minutes'?: unknown
   readonly uses?: string

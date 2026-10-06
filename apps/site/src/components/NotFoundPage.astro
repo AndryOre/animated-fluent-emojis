@@ -1,0 +1,46 @@
+---
+import Emoji from 'animated-fluent-emojis/astro'
+
+import { localePath, type Locale } from '../i18n/locales'
+import { getUi } from '../i18n/ui'
+import Layout from '../layouts/Layout.astro'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const { notFound } = getUi(locale)
+const buttonClass =
+  'inline-flex h-11 items-center rounded-full px-6 text-sm font-semibold'
+---
+
+<Layout
+  locale={locale}
+  title={`${notFound.title} | ${getUi(locale).meta.siteName}`}
+  description={notFound.body}
+  notFound
+>
+  <main
+    id="main"
+    class="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-6 px-6 py-24 text-center"
+  >
+    <Emoji id="shrug" size={96} alt="" />
+    <h1 class="text-[40px] leading-tight font-extrabold">{notFound.title}</h1>
+    <p class="text-muted-foreground">{notFound.body}</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a
+        href={localePath(locale)}
+        class={`${buttonClass} bg-primary text-primary-foreground`}
+      >
+        {notFound.home}
+      </a>
+      <a
+        href={localePath(locale, '/gallery/')}
+        class={`${buttonClass} border border-border bg-card`}
+      >
+        {notFound.gallery}
+      </a>
+    </div>
+  </main>
+</Layout>
