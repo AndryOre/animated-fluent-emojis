@@ -10,34 +10,71 @@ bunx playwright install chromium
 Bun `1.4.2` is required (see `packageManager` in `package.json`). Husky installs
 the git hooks on `bun install` through the `prepare` script.
 
+## Workspaces
+
+The repository is a Bun workspaces monorepo
+([ADR 0016](adr/0016-bun-workspaces-monorepo.md)) with Turborepo (local cache
+only) on top.
+
+| Workspace                         | Package                           | What lives there                                                                                                                                |
+| --------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.` (root)                        | `animated-fluent-emojis-monorepo` | Private host, tooling only: `eslint-rules/`, `scripts/`, `docs/`, the brand kit, `turbo.json`, `bunfig.toml`.                                   |
+| `packages/animated-fluent-emojis` | `animated-fluent-emojis`          | The one published package: `src/`, the playground, Vite, Vitest and tsconfig build configs, `size-limit` and `attw`.                            |
+| `apps/assets`                     | `@animated-fluent-emojis/assets`  | Private asset pipeline: `sync.ts`, its modules and tests, `public-slugs.json`. Outputs `dist-assets/`, `dist-files/`, `.cache/assets` under it. |
+
+Shared dependency versions are in the Bun catalog in the root `package.json`
+(`catalog:`). `bunfig.toml` sets `linker = "isolated"` explicitly, and it works
+with the Vitest `browser`, `node` and `astro` projects without a fallback. If it
+ever breaks one of them, try a narrow `publicHoistPattern` first and
+`linker = "hoisted"` only after that.
+
+### Script fan-out
+
+Root scripts keep their names and fan out through `turbo.json`. `check` runs
+`turbo run check check:root` and `test` runs `turbo run test test:root`. The
+Turborepo tasks are `transit`, `typecheck`, `check`, `test`, `test:coverage`,
+`build`, `lint:package` and `size`, plus the root tasks `//#check:root`,
+`//#test:root` and `//#test:coverage:root`. `transit` makes a change in the
+library invalidate its dependents, such as `apps/assets` through its
+`animated-fluent-emojis: workspace:*` devDependency. Format, lint and knip run
+once for the whole repository in `check:root`.
+
+A workspace script must not share a name with a Turborepo task unless it is
+meant to run in that task: `turbo run build` executes any workspace script
+called `build`. That is why the pipeline scripts in `apps/assets` are named
+`sync:detect`, `sync:build`, `sync:verify-live`, `sync:lists` and `sync:files`,
+and the root `assets:*` scripts call them with
+`bun run --cwd apps/assets sync:*`. `--cwd` changes the working directory, so
+any path passed through must be absolute.
+
 ## Scripts
 
-| Script                       | What it does                                                                                                                                          |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run dev`                | Starts the Vite dev server serving the playground.                                                                                                    |
-| `bun run build`              | Type-checks (`tsc -b`) and builds the library with Vite. Slow; run only if asked.                                                                     |
-| `bun run check`              | Aggregate gate: format:check, lint, typecheck, knip, lint:package.                                                                                    |
-| `bun run fix`                | Aggregate autofix: format:write, lint:fix, typecheck.                                                                                                 |
-| `bun run format:check`       | Checks formatting with Prettier (no writes).                                                                                                          |
-| `bun run format:write`       | Formats the repository with Prettier.                                                                                                                 |
-| `bun run lint`               | Runs ESLint with `--max-warnings=0` (cached).                                                                                                         |
-| `bun run lint:fix`           | Runs ESLint with `--fix`.                                                                                                                             |
-| `bun run typecheck`          | Runs `tsc -b`.                                                                                                                                        |
-| `bun run knip`               | Finds unused files, exports and dependencies.                                                                                                         |
-| `bun run lint:package`       | Builds, then runs `publint --strict` and `attw --profile esm-only`.                                                                                   |
-| `bun run size`               | Checks the size (brotli) of the eight `size-limit` entries: ESM, React, Element, Vue, Svelte, Astro client, Lookup and the stylesheet. Needs a build. |
-| `bun run test`               | Runs the Vitest suite once (browser, node and astro projects).                                                                                        |
-| `bun run test:watch`         | Runs Vitest in watch mode.                                                                                                                            |
-| `bun run test:coverage`      | Runs Vitest with v8 coverage and enforces the thresholds.                                                                                             |
-| `bun run lint:docs`          | Runs lychee over the docs with the same arguments as `lint-docs.yml`.                                                                                 |
-| `bun run lint:commits`       | Runs commitlint over the commits since `origin/main`, like the CI job.                                                                                |
-| `bun run assets:detect`      | Reports whether the published asset site is out of date (Teams manifest or Microsoft's repository).                                                   |
-| `bun run assets:build`       | Builds the manifest and sprites into `dist-assets/`; needs `ffmpeg`. Add `-- --limit 20` for a sample.                                                |
-| `bun run assets:verify-live` | Checks that the live asset site serves the current v1 layout and pipeline version.                                                                    |
-| `bun run assets:files`       | Builds the files site from `dist-assets/` into `dist-files/`; needs the built asset site. Add `-- --files-out <dir>` to change the output.            |
-| `bun run assets:lists`       | Regenerates `docs/EMOJI_LIST_*.md` from `dist-assets/manifest.json`.                                                                                  |
-| `bun run brand:export`       | Regenerates the brand rasters from the logo SVGs; needs Chromium.                                                                                     |
-| `bun run ci:local`           | Runs the CI pipeline locally: install, commits, docs, check, coverage, build, size.                                                                   |
+| Script                       | What it does                                                                                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run dev`                | Starts the Vite dev server serving the playground (library workspace).                                                                                                    |
+| `bun run build`              | Runs `turbo run build`: type-checks (`tsc -b`) and builds the library with Vite. Slow; run only if asked.                                                                 |
+| `bun run check`              | Aggregate gate: `turbo run check check:root` (workspace typecheck and lint:package; repo-wide format:check, lint, typecheck and knip).                                    |
+| `bun run fix`                | Aggregate autofix: format:write, lint:fix, typecheck.                                                                                                                     |
+| `bun run format:check`       | Checks formatting with Prettier (no writes).                                                                                                                              |
+| `bun run format:write`       | Formats the repository with Prettier.                                                                                                                                     |
+| `bun run lint`               | Runs ESLint with `--max-warnings=0` (cached).                                                                                                                             |
+| `bun run lint:fix`           | Runs ESLint with `--fix`.                                                                                                                                                 |
+| `bun run typecheck`          | Runs `turbo run typecheck`, then the root `tsc --noEmit`.                                                                                                                 |
+| `bun run knip`               | Finds unused files, exports and dependencies.                                                                                                                             |
+| `bun run lint:package`       | Builds the library, then runs `publint --strict` and `attw --profile esm-only`.                                                                                           |
+| `bun run size`               | Checks the size (brotli) of the eight `size-limit` entries: ESM, React, Element, Vue, Svelte, Astro client, Lookup and the stylesheet. Needs a build.                     |
+| `bun run test`               | Runs `turbo run test test:root`: the library (browser, node and astro projects), `apps/assets` and the root suites.                                                       |
+| `bun run test:watch`         | Runs Vitest in watch mode in the library workspace.                                                                                                                       |
+| `bun run test:coverage`      | Runs Vitest with v8 coverage in every workspace and enforces the thresholds.                                                                                              |
+| `bun run lint:docs`          | Runs lychee over the docs with the same arguments as `lint-docs.yml`.                                                                                                     |
+| `bun run lint:commits`       | Runs commitlint over the commits since `origin/main`, like the CI job.                                                                                                    |
+| `bun run assets:detect`      | Reports whether the published asset site is out of date (Teams manifest or Microsoft's repository).                                                                       |
+| `bun run assets:build`       | Builds the manifest and sprites into `apps/assets/dist-assets/`; needs `ffmpeg`. Add `-- --limit 20` for a sample.                                                        |
+| `bun run assets:verify-live` | Checks that the live asset site serves the current v1 layout and pipeline version.                                                                                        |
+| `bun run assets:files`       | Builds the files site from `dist-assets/` into `dist-files/` (under `apps/assets`); needs the built asset site. Add `-- --files-out <absolute dir>` to change the output. |
+| `bun run assets:lists`       | Regenerates `docs/EMOJI_LIST_*.md` from `apps/assets/dist-assets/manifest.json`.                                                                                          |
+| `bun run brand:export`       | Regenerates the brand rasters from the logo SVGs; needs Chromium.                                                                                                         |
+| `bun run ci:local`           | Runs the CI pipeline locally: install, commits, docs, check, coverage, build, size.                                                                                       |
 
 ### Brand assets
 
@@ -60,7 +97,12 @@ Hooks live in `.husky/`:
 
 ## CI
 
-Every PR runs the full `ci.yml` pipeline, docs-only changes included:
+Every PR runs the full `ci.yml` pipeline, docs-only changes included. Jobs check
+out with `fetch-depth: 0` and restore the `.turbo` cache. On pull requests the
+Turborepo tasks run with `--affected`, so only the workspaces touched by the
+change (and their dependents) are checked; on `main` they run in full. The root
+tasks (`check:root`, `test:coverage:root`) are never filtered. Job names are
+unchanged:
 
 - **Quality**: format check, lint, typecheck, knip.
 - **Test**: Vitest browser mode with coverage; uploads a test report when it
@@ -73,7 +115,7 @@ Every PR runs the full `ci.yml` pipeline, docs-only changes included:
 `sync-assets.yml` runs weekly (and on demand) outside the PR pipeline: it
 detects new emoji versions, rebuilds and deploys the asset site to Cloudflare
 Pages, smoke tests the published manifest and a sprite, builds the files site
-into `dist-files/` and deploys it to its own Pages project
+into `apps/assets/dist-files/` and deploys it to its own Pages project
 (`animated-fluent-emojis-files`), smoke tests it (`version.json`, `index.json`
 and one GIF, WebP and PNG from the public index), and opens a pull request with
 the regenerated emoji lists. Detection also reports a rebuild when the files
@@ -116,7 +158,9 @@ comments. Rationale: [ADR 0002](adr/0002-tsdoc-only-code-comments.md).
 
 ## Testing
 
-Vitest has three projects (`vitest.config.ts`):
+The library keeps three Vitest projects in
+`packages/animated-fluent-emojis/vitest.config.ts` (paths below are relative to
+that workspace):
 
 - **`browser`**: tests under `src/components`, `src/hooks`, `src/react`,
   `src/vanilla`, `src/element` and `src/vue`, plus `src/astro/client.test.ts`
@@ -124,20 +168,29 @@ Vitest has three projects (`vitest.config.ts`):
   MSW mocking the slim manifest request (`src/test/browser-setup.ts`). The
   manifest is fetched lazily, so a test that needs a fresh load resets the
   module state first. Run `bunx playwright install chromium` once.
-- **`node`**: tests under `src/core`, `src/utils`, `src/lookup`, `src/test`
-  (except the conformance suite), `eslint-rules`, `docs/adr`, `docs/brand/tools`
-  and `scripts`, plus `src/astro/markup.test.ts` and `src/astro/server.test.ts`.
+- **`node`**: tests under `src/core`, `src/utils`, `src/lookup` and `src/test`
+  (except the conformance suite), plus `src/astro/markup.test.ts` and
+  `src/astro/server.test.ts`.
 - **`astro`**: `src/astro/Emoji.test.ts`, which renders the `.astro` component
   through Astro's container API.
 
+`apps/assets` has one `node` project (`apps/assets/vitest.config.ts`). The root
+`vitest.config.ts` is a `node` project over `eslint-rules`, `docs/adr`,
+`docs/brand/tools` and `scripts`, which includes the workflow invariants and the
+coverage manifest tests.
+
+The browser conformance test "shows a sized, hidden placeholder, then the ready
+image" can flake under heavy host load; rerun it before suspecting a regression.
+
 ### Conformance suite
 
-`src/test/conformance/suite.ts` holds one behavior spec (placeholder, ready,
-unknown id, manifest error, fallback glyph, reduced motion, playback gating by
-image, viewport and hidden tab, `playing`, and a single `onPlaybackEnd`) that
-runs in the `browser` project against the shared MSW manifest fixtures. It
-observes the rendered DOM only (`span > img`, the `[role="img"]` glyph, the
-inline `animation-play-state`), so every adapter must render the same structure.
+`packages/animated-fluent-emojis/src/test/conformance/suite.ts` holds one
+behavior spec (placeholder, ready, unknown id, manifest error, fallback glyph,
+reduced motion, playback gating by image, viewport and hidden tab, `playing`,
+and a single `onPlaybackEnd`) that runs in the `browser` project against the
+shared MSW manifest fixtures. It observes the rendered DOM only (`span > img`,
+the `[role="img"]` glyph, the inline `animation-play-state`), so every adapter
+must render the same structure.
 
 An adapter plugs in with a driver, about 15 lines of glue in
 `src/test/conformance/<adapter>.conformance.test.ts(x)`:
@@ -159,25 +212,42 @@ defineConformanceSuite('my-adapter', () => ({
 The factory is called once per test, so keep state inside the closure. The
 contract lives in `src/test/conformance/driver.ts`.
 
-`bun run test:coverage` measures `src/**` (including `.svelte`), `scripts/**`,
-`eslint-rules/**` and `docs/brand/tools/**` and enforces 95% lines, functions
-and statements and 90% branches. `.astro` files are not reported by v8 (the
-container render test covers them) and `docs/brand/tools/export.mjs` needs a
-real browser, so neither is measured. Local runs skip the ffmpeg tests when
-`ffmpeg` is missing; CI always runs them, so CI numbers are at least as high.
+`bun run test:coverage` measures each workspace and enforces these thresholds
+(lines, functions, branches, statements):
 
-`src/test/coverage-manifest.test.ts` walks all four roots and fails when a
-source module has no colocated test and no documented exemption, or when an
-exemption is stale. Rationale: [ADR 0004](adr/0004-vitest-browser-mode.md).
+| Workspace                         | Measured                                                   | Thresholds  |
+| --------------------------------- | ---------------------------------------------------------- | ----------- |
+| `packages/animated-fluent-emojis` | `src/**` (including `.svelte`)                             | 95/95/90/95 |
+| `apps/assets`                     | `*.ts` (not tests, `test-support.ts` or the Vitest config) | 95/95/90/95 |
+| root                              | `scripts/**`, `eslint-rules/**` and `docs/brand/tools/**`  | 94/95/87/94 |
+
+`.astro` files are not reported by v8 (the container render test covers them)
+and `docs/brand/tools/export.mjs` needs a real browser, so neither is measured.
+Local runs skip the ffmpeg tests when `ffmpeg` is missing; CI always runs them,
+so CI numbers are at least as high.
+
+`scripts/coverage-manifest.test.ts` walks the source roots of every workspace
+and fails when a source module has no colocated test and no documented
+exemption, or when an exemption is stale. One exemption list serves all
+workspaces, keyed by repo-relative paths. Rationale:
+[ADR 0004](adr/0004-vitest-browser-mode.md).
 
 ## Packaging
 
-The package is ESM-only with an `exports` map for the entry, `./react`, `./vue`,
-`./svelte`, `./astro`, `./element`, `./lookup` and `style.css`. The JavaScript
-entries import a shared manifest chunk that stays out of `exports` and ships
-through `files: ["dist"]`. A Rolldown `advancedChunks` group in `vite.config.ts`
-names it `chunks/manifest-[hash].js`, so the `size-limit` globs always match it.
-`bun run lint:package` validates the package. Rationale:
+The published package is `packages/animated-fluent-emojis`. It is ESM-only with
+an `exports` map for the entry, `./react`, `./vue`, `./svelte`, `./astro`,
+`./element`, `./lookup` and `style.css`. The JavaScript entries import a shared
+manifest chunk that stays out of `exports` and ships through `files: ["dist"]`.
+A Rolldown `advancedChunks` group in the workspace's `vite.config.ts` names it
+`chunks/manifest-[hash].js`, so the `size-limit` globs always match it.
+`bun run lint:package` validates the package. `repository.directory` points at
+the workspace. A `prepack` script copies the root `README.md` and `LICENSE` into
+the workspace (gitignored there), and releases pack with `bun pm pack` from that
+directory; the tarball is verified to contain `package.json`, `README.md`,
+`LICENSE` and `dist`. The tag `v*` is bare, the version is checked against the
+library workspace's `package.json`, and the changelog stays at the root
+`CHANGELOG.md`. Publishing to npm through OIDC is unchanged
+([how to cut a release](how-to/cut-a-release.md)). Rationale:
 [ADR 0003](adr/0003-esm-only-and-vite-8.md).
 
 ## Dependency updates
@@ -190,12 +260,13 @@ version that the workflows install with `npm install -g npm@<version>`.
 ## Playground
 
 `bun run dev` serves `index.html`, which loads `playground/main.tsx` and imports
-the component straight from `src/`. The page has controls for an unknown id,
-`fallback` (glyph, node, `null`), `skinTone`, `playing`, a string `size` and a
-bad `configureEmojis` site URL that shows the error state; edit the file to try
-other props, with hot reload. To preview reduced motion, emulate the
-`prefers-reduced-motion` media feature in DevTools (Rendering panel). The
-playground is not published and is ignored by knip.
+the component straight from `src/` (all in `packages/animated-fluent-emojis`).
+The page has controls for an unknown id, `fallback` (glyph, node, `null`),
+`skinTone`, `playing`, a string `size` and a bad `configureEmojis` site URL that
+shows the error state; edit the file to try other props, with hot reload. To
+preview reduced motion, emulate the `prefers-reduced-motion` media feature in
+DevTools (Rendering panel). The playground is not published and is ignored by
+knip.
 
 ## Repository settings
 
