@@ -29,6 +29,7 @@ export default defineConfig({
             'src/hooks/**/*.test.{ts,tsx}',
             'src/react/**/*.test.{ts,tsx}',
             'src/vanilla/**/*.test.ts',
+            'src/element/**/*.test.ts',
             'src/test/conformance/**/*.test.{ts,tsx}',
           ],
           setupFiles: ['src/test/browser-setup.ts'],

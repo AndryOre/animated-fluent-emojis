@@ -27,6 +27,21 @@ const emulateReducedMotion = async (value: 'reduce' | 'no-preference') => {
     .toBe(value === 'reduce')
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- callers narrow the element type, as querySelector does
+const queryDeep = <T extends Element = Element>(
+  root: ParentNode,
+  selector: string,
+): T | null => {
+  const direct = root.querySelector<T>(selector)
+  if (direct) return direct
+  for (const element of root.querySelectorAll('*')) {
+    if (!element.shadowRoot) continue
+    const nested = queryDeep<T>(element.shadowRoot, selector)
+    if (nested) return nested
+  }
+  return null
+}
+
 const configureIsolatedSite = (): void => {
   configureEmojis({
     assetSiteUrl: `https://conformance-${crypto.randomUUID()}.test`,
@@ -51,8 +66,8 @@ export const defineConformanceSuite = (
     const mount = async (options: ConformanceOptions): Promise<void> => {
       await driver.current.mount(container, options)
     }
-    const getImage = () => container.querySelector('img')
-    const getGlyph = () => container.querySelector('[role="img"]')
+    const getImage = () => queryDeep<HTMLImageElement>(container, 'img')
+    const getGlyph = () => queryDeep(container, '[role="img"]')
     const getPlayState = () => getImage()?.style.animationPlayState
     const waitForRunning = () =>
       expect.poll(getPlayState, { timeout: 5000 }).toBe('running')
@@ -76,16 +91,19 @@ export const defineConformanceSuite = (
     test('shows a sized, hidden placeholder, then the ready image', async () => {
       let isReleased = false
       vi.stubGlobal('fetch', async () => {
-        await vi.waitFor(() => {
-          expect(isReleased).toBe(true)
-        })
+        await vi.waitFor(
+          () => {
+            expect(isReleased).toBe(true)
+          },
+          { timeout: 5000 },
+        )
         return Response.json(FIXTURE_MANIFEST)
       })
       configureIsolatedSite()
 
       await mount({ id: 'cat', size: 64 })
 
-      const placeholder = container.querySelector('span')
+      const placeholder = queryDeep<HTMLElement>(container, 'span')
       expect(getImage()).toBeNull()
       expect(placeholder?.getAttribute('aria-hidden')).toBe('true')
       expect(placeholder?.getBoundingClientRect().width).toBe(64)
@@ -103,7 +121,7 @@ export const defineConformanceSuite = (
       await mount({ id: 'no-such-emoji' })
 
       await pause(100)
-      expect(container.querySelector('img, [role="img"]')).toBeNull()
+      expect(queryDeep(container, 'img, [role="img"]')).toBeNull()
     })
 
     test('a manifest error reports onError once and renders nothing', async () => {
@@ -119,7 +137,7 @@ export const defineConformanceSuite = (
       await expect.poll(() => onError.mock.calls.length).toBe(1)
       await pause(100)
       expect(onError).toHaveBeenCalledTimes(1)
-      expect(container.querySelector('img, [role="img"]')).toBeNull()
+      expect(queryDeep(container, 'img, [role="img"]')).toBeNull()
     })
 
     test('a failed sprite falls back to the Unicode glyph and reports the error', async () => {

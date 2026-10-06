@@ -5,6 +5,7 @@
     "src/react/index.ts",
     "src/lookup/index.ts",
     "src/vanilla/create-emoji.ts",
+    "src/element/index.ts",
   ],
   "ignoreBinaries": ["ffmpeg", "ffprobe"],
   "ignore": ["playground/**", "eslint-rules/*.d.mts", "coverage/**"],

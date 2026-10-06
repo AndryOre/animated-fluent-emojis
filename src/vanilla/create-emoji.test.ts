@@ -39,9 +39,12 @@ afterEach(() => {
 test('renders a sized placeholder while the manifest loads, then the image', async () => {
   let isReleased = false
   vi.stubGlobal('fetch', async () => {
-    await vi.waitFor(() => {
-      expect(isReleased).toBe(true)
-    })
+    await vi.waitFor(
+      () => {
+        expect(isReleased).toBe(true)
+      },
+      { timeout: 5000 },
+    )
     return Response.json(FIXTURE_MANIFEST)
   })
   configureEmojis({ assetSiteUrl: 'https://vanilla-loading.test' })
