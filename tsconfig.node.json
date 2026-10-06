@@ -18,6 +18,7 @@
     "vitest.config.ts",
     "eslint-rules",
     "docs/adr",
+    "docs/brand/tools",
     "scripts"
   ]
 }
