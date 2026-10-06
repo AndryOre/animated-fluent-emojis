@@ -320,6 +320,20 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(fetchLine).toContain('--retry 5')
   })
 
+  test('downloads the live index and stages the slug registry', () => {
+    expect(runs).toContain(
+      'animated-fluent-emojis-files.andryore.dev/index.json',
+    )
+    expect(runs).toContain('--index index.json')
+    expect(runs).toContain('"404"')
+    expect(runs).toContain(
+      'git status --porcelain -- docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+    )
+    expect(runs).toContain(
+      'git add CHANGELOG.md docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+    )
+  })
+
   test('appends a changelog entry under Unreleased when EmojiId changes', () => {
     expect(runs).toContain('src/utils/emoji-id.generated.ts')
     expect(runs).toContain(String.raw`## \[Unreleased\]`)

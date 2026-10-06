@@ -6,6 +6,7 @@ import {
   deriveRegistry,
   listRegistryKeys,
   mergeRegistries,
+  registryFromIndex,
   SLUG_PATTERN,
   slugify,
   type SlugRegistry,
@@ -183,4 +184,24 @@ describe('committed public-slugs.json', () => {
       expect(missing).toEqual([])
     },
   )
+})
+
+test('registryFromIndex maps entries and tones back to registry keys', () => {
+  expect(
+    registryFromIndex([
+      {
+        id: '1f44b_wavinghand',
+        slug: 'waving-hand',
+        tones: [{ tone: 'medium-dark', slug: 'waving-hand-medium-dark' }],
+      },
+    ]).slugs,
+  ).toEqual({
+    '1f44b_wavinghand': 'waving-hand',
+    '1f44b_wavinghand_s5': 'waving-hand-medium-dark',
+  })
+  expect(() =>
+    registryFromIndex([
+      { id: 'x', slug: 'x', tones: [{ tone: 'purple', slug: 'x-purple' }] },
+    ]),
+  ).toThrow('Unknown skin tone')
 })

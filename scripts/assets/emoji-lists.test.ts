@@ -7,7 +7,14 @@ import {
   renderEmojiIdModule,
   renderEmojiLists,
 } from './emoji-lists.js'
+import { deriveRegistry } from './public-slugs.js'
 import { createTeamsManifest } from './test-support.js'
+
+const FILES = 'https://files.example'
+
+function render(manifest = createTeamsManifest()): Map<string, string> {
+  return renderEmojiLists(manifest, deriveRegistry(manifest), FILES)
+}
 
 test('buildCategoryFileName matches the existing docs naming', () => {
   expect(buildCategoryFileName('Travel and places')).toBe(
@@ -17,7 +24,7 @@ test('buildCategoryFileName matches the existing docs naming', () => {
 })
 
 test('renders one table per category and leaves the index alone', () => {
-  const files = renderEmojiLists(createTeamsManifest())
+  const files = render()
 
   expect(files.keys().toArray()).toEqual([
     'EMOJI_LIST_Smilies.md',
@@ -27,8 +34,32 @@ test('renders one table per category and leaves the index alone', () => {
   const smilies = files.get('EMOJI_LIST_Smilies.md') ?? ''
   expect(smilies).toContain('# Smilies')
   expect(smilies).toContain(
-    '| 1f603_grinningfacewithbigeyes | 😃 | Grinning face with big eyes | grinning |',
+    '| 1f603_grinningfacewithbigeyes | <img src="https://files.example/png/grinning-face-with-big-eyes.png" width="32" height="32" alt=""> | 😃 | Grinning face with big eyes | grinning | [GIF](https://files.example/gif/grinning-face-with-big-eyes.gif) [WebP](https://files.example/webp/grinning-face-with-big-eyes.webp) [PNG](https://files.example/png/grinning-face-with-big-eyes.png) |',
   )
+})
+
+test('lists the file links of every skin tone of a diverse emoji', () => {
+  const hands = render().get('EMOJI_LIST_Hand_gestures.md') ?? ''
+
+  expect(hands).toContain('/png/waving-hand.png" width="32"')
+  expect(hands).toContain(
+    '<br>light: [GIF](https://files.example/gif/waving-hand-light.gif) [WebP](https://files.example/webp/waving-hand-light.webp) [PNG](https://files.example/png/waving-hand-light.png)',
+  )
+  expect(hands).toContain('<br>medium-dark: ')
+})
+
+test('trims a trailing slash from the files url and rejects a missing slug', () => {
+  const manifest = createTeamsManifest()
+
+  const smilies =
+    renderEmojiLists(manifest, deriveRegistry(manifest), `${FILES}/`).get(
+      'EMOJI_LIST_Smilies.md',
+    ) ?? ''
+
+  expect(smilies).not.toContain('example//')
+  expect(() =>
+    renderEmojiLists(manifest, { version: 1, slugs: {} }, FILES),
+  ).toThrow('No public slug for 1f603_grinningfacewithbigeyes')
 })
 
 test('escapes pipes and collapses whitespace in cells', () => {
@@ -39,7 +70,7 @@ test('escapes pipes and collapses whitespace in cells', () => {
   if (!smiliesCategory) throw new Error('fixture changed')
   smiliesCategory.emoticons = [{ ...emoticon, description: 'a | b\n  c' }]
 
-  const smilies = renderEmojiLists(manifest).get('EMOJI_LIST_Smilies.md') ?? ''
+  const smilies = render(manifest).get('EMOJI_LIST_Smilies.md') ?? ''
 
   expect(smilies).toContain(String.raw`a \| b c`)
 })
