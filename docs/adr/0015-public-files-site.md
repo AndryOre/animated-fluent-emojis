@@ -50,9 +50,10 @@ and the license and notice files. Skin tones add `-light`, `-medium-light`,
 `-medium`, `-medium-dark` or `-dark`. Slugs are kebab-case descriptions, frozen
 in a committed registry, `scripts/assets/public-slugs.json`. A frozen slug never
 changes, a collision gets `-2`, `-3`, and a slug whose emoji disappears stays
-reserved, so a URL once published is never pointed at another emoji. The live
-`index.json` is merged into the registry before each build, and a conflict
-aborts the run.
+reserved, so a URL once published is never pointed at another emoji. Each sync
+merges the live public `index.json` into the committed registry through the
+lists pull request, not the files build, which reads the committed registry
+alone, and a conflict aborts that run.
 
 Files are encoded with sharp from the existing sprite sheets, the HD sheet when
 the emoji has one and the 100px sheet otherwise, with deterministic settings so
