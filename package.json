@@ -105,6 +105,7 @@
     "assets:build": "bun scripts/assets/sync.ts build",
     "assets:verify-live": "bun scripts/assets/sync.ts verify-live",
     "assets:lists": "bun scripts/assets/sync.ts lists",
+    "assets:files": "bun scripts/assets/sync.ts files",
     "brand:export": "bun docs/brand/tools/export.mjs",
     "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },
