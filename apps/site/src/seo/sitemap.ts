@@ -1,0 +1,101 @@
+import {
+  hreflangAlternates,
+  LOCALES,
+  localeUrl,
+  SITE_ORIGIN,
+} from '../i18n/locales'
+
+/**
+ * One page to list in the sitemap. A `localized` route expands to every locale
+ * with `xhtml:link` alternates; a non-localized one is listed once.
+ */
+export interface SitemapRoute {
+  path: string
+  localized: boolean
+  lastmod?: string
+}
+
+/**
+ * A provider of sitemap routes. Feature modules add theirs to
+ * `SITEMAP_SOURCES` in `seo/sources.ts`.
+ */
+export type SitemapSource = () => readonly SitemapRoute[]
+
+/**
+ * Routes every site has: the localized home page.
+ * @returns The core routes.
+ */
+export const coreSitemapSource: SitemapSource = () => [
+  { path: '/', localized: true },
+]
+
+function escapeXml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+}
+
+function lastmodLine(lastmod: string | undefined): string {
+  return lastmod ? `    <lastmod>${escapeXml(lastmod)}</lastmod>\n` : ''
+}
+
+function urlBlock(
+  loc: string,
+  lastmod: string | undefined,
+  alternateLines: string,
+): string {
+  return `  <url>\n    <loc>${escapeXml(loc)}</loc>\n${lastmodLine(lastmod)}${alternateLines}  </url>`
+}
+
+function alternateLines(path: string): string {
+  return hreflangAlternates(path)
+    .map(
+      ({ hreflang, href }) =>
+        `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${escapeXml(href)}"/>\n`,
+    )
+    .join('')
+}
+
+/**
+ * Collects routes from several sources, dropping duplicates by path.
+ * @param sources - Route providers.
+ * @returns The unique routes in source order.
+ */
+export function collectSitemapRoutes(
+  sources: readonly SitemapSource[],
+): SitemapRoute[] {
+  const seen = new Set<string>()
+  return sources.flatMap((source) =>
+    source().filter((route) => {
+      const key = `${String(route.localized)}:${route.path}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    }),
+  )
+}
+
+/**
+ * Renders the XML sitemap.
+ * @param routes - Routes to list.
+ * @returns A complete `sitemap.xml` document.
+ */
+export function buildSitemapXml(routes: readonly SitemapRoute[]): string {
+  const blocks = routes.flatMap((route) =>
+    route.localized
+      ? LOCALES.map((locale) =>
+          urlBlock(
+            localeUrl(locale, route.path),
+            route.lastmod,
+            alternateLines(route.path),
+          ),
+        )
+      : urlBlock(`${SITE_ORIGIN}${route.path}`, route.lastmod, ''),
+  )
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${blocks.join('\n')}
+</urlset>
+`
+}

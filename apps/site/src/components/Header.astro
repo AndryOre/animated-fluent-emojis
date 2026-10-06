@@ -1,0 +1,100 @@
+---
+import logoMark from '../../../../docs/brand/logo/mark.svg?url'
+import { LOCALE_NAMES, localePath, LOCALES, type Locale } from '../i18n/locales'
+import { getUi } from '../i18n/ui'
+import { REPOSITORY_URL } from '../site-links'
+import ThemeToggle from './ThemeToggle.astro'
+
+interface Props {
+  locale: Locale
+  path?: string
+}
+
+const { locale, path = '/' } = Astro.props
+const { header } = getUi(locale)
+const links = [
+  { href: localePath(locale, '/gallery/'), label: header.nav.gallery },
+  { href: localePath(locale, '/docs/'), label: header.nav.docs },
+  { href: REPOSITORY_URL, label: header.nav.github },
+]
+const linkClass =
+  'rounded-full px-3 py-2 text-sm font-medium text-foreground hover:text-primary-text'
+---
+
+<header class="border-b border-border bg-background">
+  <a
+    href="#main"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+  >
+    {header.skipLink}
+  </a>
+  <div class="flex items-center justify-between gap-3 px-4 py-4 min-[860px]:px-6 min-[860px]:py-3.5">
+    <a
+      href={localePath(locale)}
+      aria-label={header.homeLabel}
+      class="flex items-center gap-2.5 text-base font-extrabold tracking-tight"
+    >
+      <img src={logoMark} alt="" width="28" height="28" class="size-7" />
+      <span class="max-[480px]:sr-only">{getUi(locale).meta.siteName}</span>
+    </a>
+
+    <nav
+      aria-label={header.navLabel}
+      class="hidden items-center gap-1 min-[860px]:flex"
+    >
+      {links.map((link) => (
+        <a href={link.href} class={linkClass}>
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <details class="relative" data-menu>
+        <summary class="inline-flex h-10 cursor-pointer list-none items-center rounded-full border border-border bg-card px-3 text-sm font-medium min-[860px]:hidden [&::-webkit-details-marker]:hidden">
+          {header.menu}
+        </summary>
+        <nav
+          aria-label={header.navLabel}
+          class="absolute right-0 z-40 mt-2 flex w-48 flex-col rounded-brand border border-border bg-card p-2 shadow-lg min-[860px]:hidden"
+        >
+          {links.map((link) => (
+            <a href={link.href} class={linkClass}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </details>
+
+      <details class="relative" data-menu>
+        <summary
+          aria-label={header.languageLabel}
+          class="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border border-border bg-card px-3 text-sm font-medium [&::-webkit-details-marker]:hidden"
+        >
+          <span lang={locale}>{LOCALE_NAMES[locale]}</span>
+        </summary>
+        <ul class="absolute right-0 z-40 mt-2 max-h-80 w-56 overflow-auto rounded-brand border border-border bg-card p-2 shadow-lg">
+          {LOCALES.map((code) => (
+            <li>
+              <a
+                href={localePath(code, path)}
+                lang={code}
+                hreflang={code}
+                aria-current={code === locale ? 'true' : undefined}
+                class:list={[
+                  linkClass,
+                  'block',
+                  code === locale && 'bg-accent',
+                ]}
+              >
+                {LOCALE_NAMES[code]}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <ThemeToggle locale={locale} />
+    </div>
+  </div>
+</header>
