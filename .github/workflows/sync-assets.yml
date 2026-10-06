@@ -221,7 +221,7 @@ jobs:
             echo "Unexpected status ${status} fetching index.json." >&2
             exit 1
           fi
-          bun run assets:lists --manifest manifest.json --index index.json
+          bun run assets:lists --manifest "${GITHUB_WORKSPACE}/manifest.json" --index "${GITHUB_WORKSPACE}/index.json"
           rm -f manifest.json index.json
 
       - name: Open a pull request when the lists changed

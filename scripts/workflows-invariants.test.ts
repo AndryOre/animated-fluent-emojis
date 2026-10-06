@@ -326,7 +326,8 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(runs).toContain(
       'animated-fluent-emojis-files.andryore.dev/index.json',
     )
-    expect(runs).toContain('--index index.json')
+    expect(runs).toContain('--index "${GITHUB_WORKSPACE}/index.json"')
+    expect(runs).toContain('--manifest "${GITHUB_WORKSPACE}/manifest.json"')
     expect(runs).toContain('"404"')
     expect(runs).toContain(
       'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
