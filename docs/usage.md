@@ -349,9 +349,10 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
 
 The root exports `configureEmojis`, `preloadEmojis`, `createEmoji`, the
 deprecated `Emoji` and the types `EmojiProps`, `SkinTone`, `EmojiId`,
-`DiverseEmojiId`, `EmojiController`, `EmojiOptions` and `EmojiFallback`. Each
-adapter subpath exports its own `Emoji` and `EmojiProps`; `/element` exports the
-`FluentEmojiElement` type. `EmojiId` is the union of every published id and is
-generated from the catalog; the `id` prop is typed `EmojiId | (string & {})`, so
-known ids autocomplete and ids added to the catalog after your installed version
-still compile.
+`DiverseEmojiId`, `EmojiController`, `EmojiOptions` and `EmojiFallback`.
+`/react`, `/vue` and `/svelte` each export their own `Emoji` and `EmojiProps`;
+`/astro` has a default export and the `EmojiAstroProps` type; `/element` exports
+the `FluentEmojiElement` type. `EmojiId` is the union of every published id and
+is generated from the catalog; the `id` prop is typed `EmojiId | (string & {})`,
+so known ids autocomplete and ids added to the catalog after your installed
+version still compile.

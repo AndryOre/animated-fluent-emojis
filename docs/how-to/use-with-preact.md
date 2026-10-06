@@ -12,22 +12,21 @@ stylesheet:
 import 'animated-fluent-emojis/element'
 ```
 
-The package augments the `preact` JSX types, so the tag is typed with its
-kebab-case attributes:
+The package augments the `preact` JSX types with the element's kebab-case
+attributes:
 
 ```tsx
 export function Greeting() {
-  return (
-    <fluent-emoji id="1f44b_wavinghand" size={64} play-on-hover>
-      <span slot="fallback">👋</span>
-    </fluent-emoji>
-  )
+  return <fluent-emoji id="1f44b_wavinghand" size={64} play-on-hover />
 }
 ```
 
-To react to `emoji-load`, `emoji-error` or `playback-end`, call
-`addEventListener` on the element from a ref. Attributes, properties and events
-are listed in the [usage guide](../usage.md#plain-html).
+The JSX types declare attributes only, not `children` or `ref`. A
+`<span slot="fallback">` child works at runtime but is rejected by a strict
+TypeScript check, as is a `ref` for calling `addEventListener` on `emoji-load`,
+`emoji-error` or `playback-end`. Add a local JSX augmentation or suppress those
+lines until the types cover them. Attributes, properties and events are listed
+in the [usage guide](../usage.md#plain-html).
 
 ## The React adapter
 

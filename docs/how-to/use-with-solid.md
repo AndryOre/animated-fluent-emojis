@@ -14,9 +14,9 @@ import 'animated-fluent-emojis/element'
 
 ## Use the tag
 
-The package augments the `solid-js` JSX types, so `<fluent-emoji>` is typed with
-its kebab-case attributes. Use `on:` to listen to its events, which Solid
-attaches to the element directly:
+The package augments the `solid-js` JSX types with the element's kebab-case
+attributes. Use `on:` to listen to its events, which Solid attaches to the
+element directly:
 
 ```tsx
 export function Greeting() {
@@ -28,12 +28,15 @@ export function Greeting() {
       on:playback-end={() => {
         console.log('done')
       }}
-    >
-      <span slot="fallback">👋</span>
-    </fluent-emoji>
+    />
   )
 }
 ```
+
+The JSX types declare attributes only, not `children` or `ref`. A
+`<span slot="fallback">` child works at runtime but is rejected by a strict
+TypeScript check, so add a local JSX augmentation or suppress that line until
+the types cover it.
 
 Attributes, properties and events are listed in the
 [usage guide](../usage.md#plain-html).
