@@ -29,9 +29,20 @@ workflow keeps both sites current.
 6. Add the custom domain `animated-fluent-emojis-files.andryore.dev` to the
    files project (Custom domains tab). The workflow builds the files site with
    that origin and smoke tests it there.
-7. In the repository settings, allow GitHub Actions to create and approve pull
-   requests, and enable auto-merge. The workflow opens a pull request with the
-   regenerated emoji lists.
+7. Create a fine-grained personal access token for the emoji-lists pull request
+   ([ADR 0017](../adr/0017-personal-token-for-the-emoji-lists-pr.md)): resource
+   owner is the maintainer, repository access is only this repository, and the
+   permissions are **Contents: Read and write** and **Pull requests: Read and
+   write** (Metadata read is implicit). Set no expiry. Store it, then enable
+   auto-merge in the repository settings:
+
+   ```sh
+   gh secret set LISTS_BOT_TOKEN
+   ```
+
+   The workflow opens a pull request with the regenerated emoji lists using this
+   token. The "Allow GitHub Actions to create and approve pull requests" setting
+   stays off.
 
 ## First deployment
 
@@ -73,3 +84,16 @@ uses the committed slug registry alone.
   `apps/assets/dist-assets/manifest.json`.
 - A new Teams manifest hash that the web client does not advertise yet can be
   added to `apps/assets/known-teams-versions.ts`.
+
+### Rotate the lists token
+
+1. Create a new fine-grained token with the same scopes as in step 7.
+2. Store it with `gh secret set LISTS_BOT_TOKEN`.
+3. Revoke the old token in the maintainer's token settings.
+4. Re-run **Sync Assets** from the Actions tab and check that the emoji-lists
+   pull request opens, passes CI and merges.
+
+If the token is missing, revoked or lacks a scope, the emoji-lists step fails on
+the next run where the lists changed (it exits before using the token when
+nothing changed), and the `Report a failed sync` job opens or comments on the
+`sync-assets failing` issue. Rotate the token, then re-run the workflow.

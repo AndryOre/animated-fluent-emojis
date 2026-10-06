@@ -29,3 +29,4 @@ column.
 | 0014   | [Multi-framework support through subpath adapters](0014-multi-framework-support.md)                            | Accepted | -                        |
 | 0015   | [Public files site on a second Pages project](0015-public-files-site.md)                                       | Accepted | -                        |
 | 0016   | [Bun-workspaces monorepo](0016-bun-workspaces-monorepo.md)                                                     | Accepted | -                        |
+| 0017   | [Personal token for the emoji-lists pull request](0017-personal-token-for-the-emoji-lists-pr.md)               | Accepted | -                        |
