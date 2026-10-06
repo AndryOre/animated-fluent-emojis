@@ -19,13 +19,14 @@ export interface SitemapRoute {
  * A provider of sitemap routes. Feature modules add theirs to
  * `SITEMAP_SOURCES` in `seo/sources.ts`.
  */
-export type SitemapSource = () => readonly SitemapRoute[]
+export type SitemapSource = () =>
+  readonly SitemapRoute[] | Promise<readonly SitemapRoute[]>
 
 /**
  * Routes every site has: the localized home page.
  * @returns The core routes.
  */
-export const coreSitemapSource: SitemapSource = () => [
+export const coreSitemapSource = (): SitemapRoute[] => [
   { path: '/', localized: true },
 ]
 
@@ -60,14 +61,18 @@ function alternateLines(path: string): string {
 /**
  * Collects routes from several sources, dropping duplicates by path.
  * @param sources - Route providers.
- * @returns The unique routes in source order.
+ * @returns The unique routes in source order, resolved once every source has
+ * answered.
  */
-export function collectSitemapRoutes(
+export async function collectSitemapRoutes(
   sources: readonly SitemapSource[],
-): SitemapRoute[] {
+): Promise<SitemapRoute[]> {
   const seen = new Set<string>()
-  return sources.flatMap((source) =>
-    source().filter((route) => {
+  const lists = await Promise.all(
+    sources.map((source) => Promise.resolve(source())),
+  )
+  return lists.flatMap((routes) =>
+    routes.filter((route) => {
       const key = `${String(route.localized)}:${route.path}`
       if (seen.has(key)) return false
       seen.add(key)

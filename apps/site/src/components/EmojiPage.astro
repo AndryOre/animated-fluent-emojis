@@ -1,0 +1,115 @@
+---
+import { loadEmojiPageData } from '../emoji-pages/data'
+import {
+  emojiPagePath,
+  fillName,
+  imageObjectJsonLd,
+  ogImagePath,
+  relatedEmojis,
+} from '../emoji-pages/emoji-page'
+import { fileUrl } from '../gallery/public-index'
+import { localePath, SITE_ORIGIN, type Locale } from '../i18n/locales'
+import { getUi } from '../i18n/ui'
+import Layout from '../layouts/Layout.astro'
+import { EmojiPageDetail } from './gallery/EmojiPageDetail'
+
+interface Props {
+  locale: Locale
+  slug: string
+}
+
+const { locale, slug } = Astro.props
+const { emojiPage, gallery } = getUi(locale)
+const { emojis, names } = await loadEmojiPageData(locale)
+const emoji = emojis.find((candidate) => candidate.slug === slug)
+const localized = names.get(slug)
+if (!emoji || !localized) throw new Error(`Unknown emoji "${slug}"`)
+
+const related = relatedEmojis(emoji, emojis).map((item) => ({
+  emoji: item,
+  name: names.get(item.slug)?.name ?? item.description,
+}))
+---
+
+<Layout
+  locale={locale}
+  title={fillName(emojiPage.title, localized.name)}
+  description={fillName(emojiPage.description, localized.name)}
+  path={emojiPagePath(slug)}
+  image={`${SITE_ORIGIN}${ogImagePath(slug)}`}
+  jsonLd={imageObjectJsonLd(emoji, localized.name, locale)}
+>
+  <main
+    id="main"
+    class="mx-auto w-full max-w-[1100px] flex-1 px-4 py-8 min-[860px]:px-6"
+  >
+    <div class="grid gap-8 min-[860px]:grid-cols-2">
+      <div class="min-[860px]:order-2">
+        <EmojiPageDetail
+          client:load
+          emoji={emoji}
+          name={localized.name}
+          strings={gallery}
+        />
+      </div>
+      <div class="min-[860px]:order-1">
+        <nav
+          aria-label={emojiPage.breadcrumbLabel}
+          class="mb-4 font-mono text-xs text-muted-foreground"
+        >
+          <a href={localePath(locale, '/')}>{emojiPage.breadcrumbHome}</a>
+          {' / '}
+          <a href={localePath(locale, '/emojis/')}>
+            {emojiPage.breadcrumbEmojis}
+          </a>
+          {' / '}
+          <span aria-current="page">{localized.name}</span>
+        </nav>
+        <h1 class="text-[40px] leading-tight font-extrabold">
+          {localized.name}
+        </h1>
+        <p class="mt-1 font-mono text-xs text-muted-foreground">
+          {emoji.category}
+        </p>
+        <h2 class="mt-6 text-xs font-semibold text-muted-foreground">
+          {emojiPage.keywordsLabel}
+        </h2>
+        <ul class="mt-2 flex flex-wrap gap-2">
+          {localized.keywords.map((keyword) => (
+            <li class="rounded-full bg-secondary px-3 py-1 text-xs">
+              {keyword}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    {related.length > 0 && (
+      <section class="mt-12" aria-labelledby="related-heading">
+        <h2 id="related-heading" class="mb-4 text-xl font-extrabold">
+          {emojiPage.relatedTitle}
+        </h2>
+        <ul class="grid grid-cols-3 gap-3 min-[860px]:grid-cols-6">
+          {related.map((item) => (
+            <li>
+              <a
+                href={localePath(locale, emojiPagePath(item.emoji.slug))}
+                class="flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card p-1 hover:bg-secondary"
+              >
+                <img
+                  src={fileUrl(item.emoji.urls.png)}
+                  width="48"
+                  height="48"
+                  loading="lazy"
+                  alt=""
+                />
+                <span class="w-full truncate text-center font-mono text-[10px] text-muted-foreground">
+                  {item.name}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </main>
+</Layout>

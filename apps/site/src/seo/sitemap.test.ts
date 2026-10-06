@@ -27,14 +27,19 @@ describe('sitemap', () => {
     expect(xml).not.toContain('xhtml:link')
   })
 
-  it('accepts routes from other sources and drops duplicates', () => {
-    const routes = collectSitemapRoutes([
+  it('accepts routes from other sources and drops duplicates', async () => {
+    const routes = await collectSitemapRoutes([
       coreSitemapSource,
       () => [
         { path: '/gallery/', localized: true },
         { path: '/', localized: true },
       ],
+      () => Promise.resolve([{ path: '/async/', localized: true }]),
     ])
-    expect(routes.map((route) => route.path)).toEqual(['/', '/gallery/'])
+    expect(routes.map((route) => route.path)).toEqual([
+      '/',
+      '/gallery/',
+      '/async/',
+    ])
   })
 })

@@ -112,7 +112,15 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Thin endpoint that feeds buildSearchIndex, tested in gallery/search.test.ts.',
   'apps/site/src/components/GalleryPage.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/gallery/Gallery.tsx': GALLERY_ISLAND_REASON,
-  'apps/site/src/components/gallery/EmojiDetail.tsx': GALLERY_ISLAND_REASON,
+  'apps/site/src/components/gallery/EmojiPageDetail.tsx':
+    'Emoji page island that wires tone chips and the query string around EmojiDetail, whose tone behavior is tested in EmojiDetail.test.tsx.',
+  'apps/site/src/components/EmojiPage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/pages/emojis/[slug].astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/[locale]/emojis/[slug].astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/og/[slug].png.ts':
+    'Thin endpoint that feeds composeOgImage, tested in emoji-pages/og-image.test.ts and the emoji-pages build-output test.',
+  'apps/site/src/emoji-pages/data.ts':
+    'Memoized join of the public index and annotations, both tested in gallery/, and exercised by the emoji-pages build-output test.',
   'apps/site/src/components/gallery/ChipGroup.tsx': GALLERY_ISLAND_REASON,
   'apps/site/src/components/gallery/use-gallery-data.ts': GALLERY_ISLAND_REASON,
   'apps/site/src/docs/components/DocumentationHeader.astro':

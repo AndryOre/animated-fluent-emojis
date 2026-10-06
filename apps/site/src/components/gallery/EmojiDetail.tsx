@@ -43,6 +43,7 @@ export interface EmojiDetailProps {
   size: number
   strings: GalleryStrings
   headingId?: string
+  page?: boolean
 }
 
 /**
@@ -68,13 +69,13 @@ async function downloadFile(url: string, filename: string): Promise<void> {
 
 /**
  * Self-contained detail view of one emoji: live preview, snippet tabs, copy
- * and download actions, and the "Copied" live region. Reused by the emoji
- * pages.
+ * and download actions, and the "Copied" live region. With `page`, the stage
+ * is square and the name heading is left to the emoji page.
  * @param props - The emoji, its localized name and the global tone and size.
  * @returns The detail view.
  */
 export function EmojiDetail(props: EmojiDetailProps) {
-  const { emoji, name, tone, size, strings, headingId } = props
+  const { emoji, name, tone, size, strings, headingId, page = false } = props
   const [kind, setKind] = useState<SnippetKind>('react')
   const [status, setStatus] = useState('')
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -136,7 +137,13 @@ export function EmojiDetail(props: EmojiDetailProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex h-44 items-center justify-center rounded-brand bg-secondary">
+      <div
+        className={
+          page
+            ? 'flex aspect-square items-center justify-center rounded-2xl bg-secondary'
+            : 'flex h-44 items-center justify-center rounded-brand bg-secondary'
+        }
+      >
         <Emoji
           key={`${emoji.id}-${appliedTone ?? 'default'}`}
           id={emoji.id}
@@ -147,9 +154,11 @@ export function EmojiDetail(props: EmojiDetailProps) {
         />
       </div>
       <div>
-        <h2 id={headingId} className="text-xl font-extrabold">
-          {name}
-        </h2>
+        {!page && (
+          <h2 id={headingId} className="text-xl font-extrabold">
+            {name}
+          </h2>
+        )}
         <p className="font-mono text-xs text-muted-foreground">
           <span className="sr-only">{strings.idLabel}: </span>
           {emoji.id}

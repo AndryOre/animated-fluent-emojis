@@ -176,9 +176,16 @@ export async function fetchPublicIndex(
 
 const memoizedIndex = new Map<string, Promise<PublicEmoji[]>>()
 
+function restrictToSlugs(emojis: PublicEmoji[]): PublicEmoji[] {
+  const only = process.env.SITE_EMOJI_SLUGS
+  if (only === undefined || only === '') return emojis
+  const wanted = new Set(only.split(','))
+  return emojis.filter((emoji) => wanted.has(emoji.slug))
+}
+
 async function fetchOrForget(): Promise<PublicEmoji[]> {
   try {
-    return await fetchPublicIndex()
+    return restrictToSlugs(await fetchPublicIndex())
   } catch (error) {
     memoizedIndex.delete(FILES_SITE_ORIGIN)
     throw error
@@ -187,7 +194,9 @@ async function fetchOrForget(): Promise<PublicEmoji[]> {
 
 /**
  * Loads the public index once per build; later calls share the same promise.
- * A failure is not cached, so the next call retries.
+ * A failure is not cached, so the next call retries. `SITE_EMOJI_SLUGS`, a
+ * comma-separated list, keeps only those emojis so tests can build a small
+ * site.
  * @returns The validated emojis.
  */
 export function loadPublicIndex(): Promise<PublicEmoji[]> {
