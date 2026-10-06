@@ -10,6 +10,7 @@ import {
   type RefAttributes,
 } from 'react'
 
+import { normalizeSize, toCssLength } from '../core/normalize.js'
 import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js'
 import {
   getSpriteSourceSet,
@@ -24,30 +25,12 @@ const DEFAULT_SIZE = 100
 
 const warnedMissingIds = new Set<string>()
 
-const NUMERIC_STRING = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/
-
 const subscribeToOnline = createSharedSubscription((notify) => {
   globalThis.addEventListener('online', notify)
   return () => {
     globalThis.removeEventListener('online', notify)
   }
 })
-
-const normalizeSize = (size: number | string): number | string => {
-  if (typeof size === 'string') {
-    const trimmed = size.trim()
-    if (trimmed === '') return DEFAULT_SIZE
-    if (!NUMERIC_STRING.test(trimmed)) return size
-    const parsed = Number(trimmed)
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_SIZE
-  }
-  return Number.isFinite(size) && Math.round(size) > 0
-    ? Math.round(size)
-    : DEFAULT_SIZE
-}
-
-const toCssLength = (size: number | string): string =>
-  typeof size === 'number' ? `${String(size)}px` : size
 
 const EmojiComponent = (
   {

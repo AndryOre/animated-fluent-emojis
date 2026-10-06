@@ -1,23 +1,26 @@
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
   type CSSProperties,
   type RefObject,
 } from 'react'
 
+import { wireEmojiImage } from '../core/image-wiring.js'
+import {
+  createPlaybackGateState,
+  gateAnimationEnded,
+  gateImageLoaded,
+  gateRearmed,
+  gateSourceChanged,
+  gateVisibilityChanged,
+  resolvePlaybackGate,
+  type PlaybackGateConfig,
+  type PlaybackGateState,
+} from '../core/playback-gate.js'
 import type { EmojiManifest } from '../utils/index.js'
-import { observeVisibility } from '../utils/visibility-observer.js'
 import { useDocumentHidden } from './use-document-hidden.js'
 import { usePrefersReducedMotion } from './use-prefers-reduced-motion.js'
-
-const normalizeIterations = (
-  value: number | 'infinite',
-): number | 'infinite' => {
-  if (value === 'infinite' || value === Infinity) return 'infinite'
-  return Number.isNaN(value) || value < 0 ? 0 : value
-}
 
 export interface EmojiPlaybackControls {
   playing?: boolean
@@ -31,7 +34,8 @@ export interface UseEmojiAnimationResult {
 }
 
 /**
- * Custom hook for managing emoji animation.
+ * Custom hook for managing emoji animation. Holds the core playback gate state
+ * and wires the image element; every playback decision comes from the core.
  * @param emoji - The emoji manifest data or null if not loaded.
  * @param playOnHover - Whether to play the animation on hover.
  * @param animationIterations - The number of animation iterations.
@@ -55,104 +59,81 @@ export const useEmojiAnimation = (
   controls: EmojiPlaybackControls = {},
 ): UseEmojiAnimationResult => {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const iterationCount = normalizeIterations(animationIterations)
   const { playing, onPlaybackEnd } = controls
-  const autoPlay =
-    iterationCount !== 0 &&
-    (playing !== undefined || (autoPlayRequested && !prefersReducedMotion))
   const emojiId = emoji?.id
   const [trackedSource, setTrackedSource] = useState(spriteSource)
-  const [hasImageLoaded, setHasImageLoaded] = useState(false)
-  const [isOnScreen, setIsOnScreen] = useState(false)
-  const [hasInitialRunFinished, setHasInitialRunFinished] = useState(false)
-  const [hasRunStarted, setHasRunStarted] = useState(false)
+  const [gateState, setGateState] = useState<PlaybackGateState>(
+    createPlaybackGateState,
+  )
   if (trackedSource !== spriteSource) {
-    setHasRunStarted(false)
     setTrackedSource(spriteSource)
-    setHasInitialRunFinished(false)
-    setHasImageLoaded(false)
-    setIsOnScreen(false)
+    setGateState(gateSourceChanged())
   }
-  const isInitialAnimationComplete = hasInitialRunFinished || !autoPlay
-  const isDocumentHidden = useDocumentHidden(!isInitialAnimationComplete)
+  const baseConfig: PlaybackGateConfig = {
+    animation: emoji?.animation ?? null,
+    playOnHover,
+    animationIterations,
+    autoPlayRequested,
+    playing,
+    prefersReducedMotion,
+    isDocumentHidden: false,
+    size,
+  }
+  const isDocumentHidden = useDocumentHidden(
+    !resolvePlaybackGate(gateState, baseConfig).isInitialAnimationComplete,
+  )
+  const view = resolvePlaybackGate(gateState, {
+    ...baseConfig,
+    isDocumentHidden,
+  })
+  if (view.state !== gateState) setGateState(view.state)
+
   const imageRef = useRef<HTMLImageElement>(null)
-  const latestRef = useRef({ onPlaybackEnd, isFiniteRun: false })
+  const latestRef = useRef({
+    onPlaybackEnd,
+    isFiniteRun: view.isFiniteRun,
+    state: view.state,
+  })
   useEffect(() => {
     latestRef.current = {
       onPlaybackEnd,
-      isFiniteRun: autoPlay && iterationCount !== 'infinite',
+      isFiniteRun: view.isFiniteRun,
+      state: view.state,
     }
   })
-  const canAutoplay = hasImageLoaded && isOnScreen && !isDocumentHidden
-  const isRunBlocked =
-    !(isInitialAnimationComplete || canAutoplay) || playing === false
-  if (!isRunBlocked && !isInitialAnimationComplete && !hasRunStarted) {
-    setHasRunStarted(true)
-  }
-  if (!autoPlay && hasRunStarted && !hasInitialRunFinished) {
-    setHasInitialRunFinished(true)
-  }
 
   useEffect(() => {
     const imgElement = imageRef.current
     if (emojiId === undefined || !imgElement) return
 
-    let hasReportedEnd = false
-    const handleAnimationEnd = () => {
-      setHasInitialRunFinished(true)
-      if (hasReportedEnd || !latestRef.current.isFiniteRun) return
-      hasReportedEnd = true
-      latestRef.current.onPlaybackEnd?.()
+    const apply = (update: (state: PlaybackGateState) => PlaybackGateState) => {
+      latestRef.current.state = update(latestRef.current.state)
+      // eslint-disable-next-line @eslint-react/set-state-in-effect -- also runs when re-arming the end report on re-attach
+      setGateState(update)
     }
-
-    const handleLoad = () => {
-      setHasImageLoaded(true)
-    }
-
-    imgElement.addEventListener('animationend', handleAnimationEnd)
-    imgElement.addEventListener('load', handleLoad)
-    const stopObserving = observeVisibility(imgElement, (isVisible) => {
-      setIsOnScreen(isVisible)
-      if (imgElement.complete && imgElement.naturalWidth > 0) handleLoad()
+    apply(gateRearmed)
+    return wireEmojiImage(imgElement, {
+      onLoad: () => {
+        apply(gateImageLoaded)
+      },
+      onVisibilityChange: (isVisible) => {
+        apply((state) => gateVisibilityChanged(state, isVisible))
+      },
+      onAnimationEnd: () => {
+        const result = gateAnimationEnded(
+          latestRef.current.state,
+          latestRef.current.isFiniteRun,
+        )
+        latestRef.current.state = result.state
+        setGateState(result.state)
+        if (result.shouldReportEnd) latestRef.current.onPlaybackEnd?.()
+      },
     })
-    return () => {
-      imgElement.removeEventListener('animationend', handleAnimationEnd)
-      imgElement.removeEventListener('load', handleLoad)
-      stopObserving()
-    }
   }, [emojiId, spriteSource, hasSpriteFailed])
 
-  const animationStyle = useMemo<CSSProperties>(() => {
-    if (!emoji) return {}
-
-    const { framesCount, fps, firstFrame } = emoji.animation
-    const isIdle = !playOnHover && isInitialAnimationComplete
-
-    return {
-      width: size,
-      ...((isIdle || (isRunBlocked && !hasRunStarted)) && {
-        animationName: 'none',
-      }),
-      animationDuration: `${String(framesCount / fps)}s`,
-      animationTimingFunction: `steps(${String(framesCount)})`,
-      animationIterationCount:
-        isInitialAnimationComplete && playOnHover ? 'infinite' : iterationCount,
-      animationPlayState: isIdle || isRunBlocked ? 'paused' : 'running',
-      transform: `translateY(${String((-(firstFrame - 1) / framesCount) * 100)}%)`,
-    }
-  }, [
-    emoji,
-    size,
-    isInitialAnimationComplete,
-    playOnHover,
-    iterationCount,
-    isRunBlocked,
-    hasRunStarted,
-  ])
-
   return {
-    isInitialAnimationComplete,
-    animationStyle,
+    isInitialAnimationComplete: view.isInitialAnimationComplete,
+    animationStyle: view.style,
     imageRef,
   }
 }
