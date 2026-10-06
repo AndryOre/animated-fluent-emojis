@@ -30,7 +30,7 @@ import {
   type TeamsVersion,
 } from './teams.js'
 
-const DEFAULT_PUBLISHED_URL = 'https://animated-fluent-emojis.pages.dev'
+const DEFAULT_PUBLISHED_URL = 'https://animated-fluent-emojis-cdn.andryore.dev'
 
 /**
  * Decides whether the published v1 layout is missing or was built by another

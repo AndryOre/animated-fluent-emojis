@@ -165,8 +165,8 @@ test('preloadEmojis warms the sprite sheets of the given ids once', async () => 
   await preloadEmojis(['cat'], { skinTone: 'dark' })
 
   expect(requestedSources).toEqual([
-    'https://animated-fluent-emojis.pages.dev/v1/sprites/Animals/cat.etag-cat.png',
-    'https://animated-fluent-emojis.pages.dev/v1/sprites/Smilies/waving-hand_s6.etag-wave.png',
+    'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites/Animals/cat.etag-cat.png',
+    'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites/Smilies/waving-hand_s6.etag-wave.png',
   ])
 })
 

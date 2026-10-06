@@ -17,7 +17,7 @@ if (!rootElement) {
   throw new Error('Root element #root not found')
 }
 
-const DEFAULT_SITE_URL = 'https://animated-fluent-emojis.pages.dev'
+const DEFAULT_SITE_URL = 'https://animated-fluent-emojis-cdn.andryore.dev'
 const BAD_SITE_URL = 'https://invalid.example.invalid'
 const SKIN_TONES: SkinTone[] = [
   'default',

@@ -1,7 +1,7 @@
 import { isDevelopment } from './is-development.js'
 import type { CompactManifest, EmojiManifest, SkinTone } from './types.js'
 
-const DEFAULT_ASSET_SITE_URL = 'https://animated-fluent-emojis.pages.dev'
+const DEFAULT_ASSET_SITE_URL = 'https://animated-fluent-emojis-cdn.andryore.dev'
 
 const MANIFEST_TIMEOUT_MS = 15_000
 const DEFAULT_EMOJI_SIZE = 100
