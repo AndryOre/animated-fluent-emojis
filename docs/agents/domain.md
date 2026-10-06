@@ -27,8 +27,9 @@ suggest creating them upfront.
 
 ## File structure
 
-Single-context repo (no monorepo signals detected: no `pnpm-workspace.yaml`, no
-`workspaces` field, no populated `packages/*`).
+Single-context bun-workspaces monorepo
+([ADR 0016](../adr/0016-bun-workspaces-monorepo.md)): `apps/*` and `packages/*`
+share one root `CONTEXT.md` and one `docs/adr/`.
 
 ```
 /
