@@ -53,7 +53,7 @@ React moves in two steps:
 - **0.7**: the root `Emoji` is removed and `react` becomes an optional peer
   (done).
 
-Until 0.7, `react` stays a required peer. `vue`, `svelte` and `astro` become
+Before 0.7, `react` was a required peer. `vue`, `svelte` and `astro` become
 optional peers when their adapter lands. A monorepo with one package per
 framework was rejected: the release workflow, npm OIDC
 ([ADR 0005](0005-npm-trusted-publishing.md)), size-limit and publint all work as

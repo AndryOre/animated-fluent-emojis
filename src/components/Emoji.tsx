@@ -12,11 +12,8 @@ import {
 
 import { normalizeSize, toCssLength } from '../core/normalize.js'
 import { useEmojiAnimation, useEmojiStyle } from '../hooks/index.js'
-import {
-  getSpriteSourceSet,
-  getSpriteUrl,
-  type EmojiProps,
-} from '../utils/index.js'
+import type { EmojiProps } from '../react/types.js'
+import { getSpriteSourceSet, getSpriteUrl } from '../utils/index.js'
 import { isDevelopment } from '../utils/is-development.js'
 import { createSharedSubscription } from '../utils/shared-subscription.js'
 import styles from './Emoji.module.css'
