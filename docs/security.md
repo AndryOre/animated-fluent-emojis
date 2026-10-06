@@ -37,7 +37,7 @@ The threats worth reasoning about follow from that surface:
 | Party                        | What it controls                                                                                                            | How far it is trusted                                                                                 |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | The consumer app             | Where the component renders, the CSP, and the optional `assetSiteUrl` passed to `configureEmojis`.                          | Fully. It decides which asset site the library talks to.                                              |
-| The npm package              | The code that runs in the app and the default asset site URL, `https://animated-fluent-emojis.pages.dev`.                   | As any dependency. Releases are built from a signed tag with provenance (see Supply chain below).     |
+| The npm package              | The code that runs in the app and the default asset site URL, `https://animated-fluent-emojis-cdn.andryore.dev`.            | As any dependency. Releases are built from a signed tag with provenance (see Supply chain below).     |
 | The asset site               | The slim manifest at `/v1/manifest.slim.json` and the sprite sheets under `/v1/sprites/`.                                   | As the source of what the library renders. The library does not verify what it serves.                |
 | Microsoft's upstream artwork | The Teams emoticon manifest and Microsoft's MIT-licensed `microsoft/fluentui-emoji-animated` repository the pipeline reads. | As the source of the artwork. The pipeline validates the files it generates, not the upstream itself. |
 
@@ -54,13 +54,18 @@ go through the same validation as built ones.
 With the default asset site, a consumer that sets a Content Security Policy
 needs:
 
-- `connect-src https://animated-fluent-emojis.pages.dev`, for the manifest
-  fetch.
-- `img-src https://animated-fluent-emojis.pages.dev`, for the sprite sheets.
+- `connect-src https://animated-fluent-emojis-cdn.andryore.dev`, for the
+  manifest fetch.
+- `img-src https://animated-fluent-emojis-cdn.andryore.dev`, for the sprite
+  sheets.
 
 The sprite URL is `<site>/v1/sprites/<category title>/<id><tone>.<etag>.png`,
 with `@2x` before the extension for an HD sprite sheet, so one origin covers
 both.
+
+The previous address, `https://animated-fluent-emojis.pages.dev`, keeps working.
+If you upgrade with a strict CSP written for it, add the new host to both
+directives, because the library now requests the `andryore.dev` address.
 
 When you pass a different `assetSiteUrl` to `configureEmojis`, use that origin
 in both directives instead. To host the asset site yourself, follow

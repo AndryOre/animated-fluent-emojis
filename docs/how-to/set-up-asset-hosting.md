@@ -18,7 +18,10 @@ after that the workflow keeps the site current.
    gh secret set CLOUDFLARE_API_TOKEN
    ```
 
-4. In the repository settings, allow GitHub Actions to create and approve pull
+4. Add the custom domain `animated-fluent-emojis-cdn.andryore.dev` to the Pages
+   project (Custom domains tab). It is the address the library uses by default.
+   The `animated-fluent-emojis.pages.dev` address keeps working alongside it.
+5. In the repository settings, allow GitHub Actions to create and approve pull
    requests, and enable auto-merge. The workflow opens a pull request with the
    regenerated emoji lists.
 

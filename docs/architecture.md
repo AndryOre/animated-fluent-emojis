@@ -257,9 +257,9 @@ mount, on the next `preloadEmojis` call, and when the browser fires `online` (a
 single store-level listener at a time). Each retry goes through `loading` again.
 
 `configureEmojis({ assetSiteUrl })` replaces the default asset site
-(`https://animated-fluent-emojis.pages.dev`). Call it before the first `Emoji`
-renders. A later change to another site bumps an internal generation so an
-in-flight response from the old site is dropped, resets the store, refetches
+(`https://animated-fluent-emojis-cdn.andryore.dev`). Call it before the first
+`Emoji` renders. A later change to another site bumps an internal generation so
+an in-flight response from the old site is dropped, resets the store, refetches
 while components are subscribed, and in development warns that a fetch had
 already started.
 
