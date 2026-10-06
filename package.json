@@ -50,6 +50,7 @@
     "assets:verify-live": "bun run --cwd apps/assets sync:verify-live",
     "assets:lists": "bun run --cwd apps/assets sync:lists",
     "assets:files": "bun run --cwd apps/assets sync:files",
+    "i18n:status": "bun run --cwd apps/site i18n:status",
     "brand:export": "bun docs/brand/tools/export.mjs",
     "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },

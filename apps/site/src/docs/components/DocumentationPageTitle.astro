@@ -1,0 +1,89 @@
+---
+import PageTitle from '@astrojs/starlight/components/PageTitle.astro'
+
+import { splitLocalePath } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+
+const { locale } = splitLocalePath(Astro.url.pathname)
+const { translationStatus } = Astro.locals.starlightRoute.entry.data
+const { notices, copyMarkdown, copiedMarkdown } = getUi(locale).docs
+const markdownPath = `${Astro.url.pathname.replace(/\/$/, '')}.md`
+---
+
+{translationStatus !== 'translated' && (
+  <p
+    class:list={['translation-notice', translationStatus]}
+    role="note"
+    data-translation-status={translationStatus}
+  >
+    {notices[translationStatus]}
+  </p>
+)}
+<PageTitle />
+<button
+  type="button"
+  class="copy-markdown"
+  data-copy-markdown={markdownPath}
+  data-copied-label={copiedMarkdown}
+>
+  {copyMarkdown}
+</button>
+
+<script>
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-copy-markdown]')
+    .forEach((button) => {
+      const label = button.textContent
+      button.addEventListener('click', async () => {
+        try {
+          const response = await fetch(button.dataset.copyMarkdown ?? '')
+          if (!response.ok) throw new Error(String(response.status))
+          await navigator.clipboard.writeText(await response.text())
+          button.textContent = button.dataset.copiedLabel ?? label
+          setTimeout(() => {
+            button.textContent = label
+          }, 2000)
+        } catch {
+          button.dataset.failed = 'true'
+        }
+      })
+    })
+</script>
+
+<style>
+  .translation-notice {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--afe-notice-border);
+    border-radius: var(--radius, 1rem);
+    background: var(--afe-notice-background);
+    color: var(--sl-color-text);
+    font-size: var(--sl-text-sm);
+  }
+
+  .missing {
+    --afe-notice-border: var(--sl-color-blue);
+    --afe-notice-background: var(--sl-color-blue-low);
+  }
+
+  .stale {
+    --afe-notice-border: var(--sl-color-orange);
+    --afe-notice-background: var(--sl-color-orange-low);
+  }
+
+  .copy-markdown {
+    margin-top: 0.75rem;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--sl-color-text);
+    font: inherit;
+    font-size: var(--sl-text-sm);
+    cursor: pointer;
+  }
+
+  .copy-markdown:hover {
+    background: var(--sl-color-gray-6);
+  }
+</style>
