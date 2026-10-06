@@ -13,6 +13,8 @@ root holds tooling only:
   and a `<fluent-emoji>` element. Built with Vite 8 library mode, tested with
   Vitest Browser Mode.
 - [`apps/assets`](apps/assets/AGENTS.md): the private asset pipeline.
+- [`apps/site`](apps/site/AGENTS.md): the private static website (Astro,
+  Starlight, Tailwind).
 
 See [`docs/architecture.md`](docs/architecture.md) for the code map.
 

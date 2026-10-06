@@ -36,3 +36,5 @@ dist-assets
 .cache
 dist-files
 .turbo
+
+.astro

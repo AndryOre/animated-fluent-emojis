@@ -11,7 +11,8 @@ const config = {
   proseWrap: 'always',
   endOfLine: 'lf',
   arrowParens: 'always',
-  plugins: ['@ianvs/prettier-plugin-sort-imports'],
+  plugins: ['prettier-plugin-astro', '@ianvs/prettier-plugin-sort-imports'],
+  overrides: [{ files: '*.astro', options: { parser: 'astro' } }],
   importOrder: ['<THIRD_PARTY_MODULES>', '', '^@/(.*)$', '', '^[./]'],
 }
 
