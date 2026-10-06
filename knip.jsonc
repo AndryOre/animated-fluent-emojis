@@ -5,6 +5,11 @@
     ".": {
       "entry": ["scripts/**/*.ts", "eslint-rules/index.mjs"],
     },
+    "apps/assets": {
+      "entry": ["*.test.ts"],
+      "ignoreDependencies": ["animated-fluent-emojis"],
+      "project": ["*.ts"],
+    },
     "packages/animated-fluent-emojis": {
       "entry": [
         "src/index.ts",

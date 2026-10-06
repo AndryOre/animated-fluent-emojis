@@ -1,0 +1,25 @@
+{
+  "name": "@animated-fluent-emojis/assets",
+  "private": true,
+  "type": "module",
+  "description": "The pipeline that builds the animated Fluent emoji catalog and publishes it to the asset and files sites.",
+  "scripts": {
+    "detect": "bun sync.ts detect",
+    "build": "bun sync.ts build",
+    "verify-live": "bun sync.ts verify-live",
+    "lists": "bun sync.ts lists",
+    "files": "bun sync.ts files",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@vitest/coverage-v8": "catalog:",
+    "animated-fluent-emojis": "workspace:*",
+    "sharp": "^0.35.5",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

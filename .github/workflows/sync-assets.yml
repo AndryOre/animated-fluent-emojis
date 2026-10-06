@@ -94,8 +94,8 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: 4.147.0
           command:
-            pages deploy dist-assets --project-name=animated-fluent-emojis
-            --branch=main
+            pages deploy apps/assets/dist-assets
+            --project-name=animated-fluent-emojis --branch=main
 
       - name: Build the files site
         if: steps.detect.outputs.changed == 'true'
@@ -111,8 +111,8 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: 4.147.0
           command:
-            pages deploy dist-files --project-name=animated-fluent-emojis-files
-            --branch=main
+            pages deploy apps/assets/dist-files
+            --project-name=animated-fluent-emojis-files --branch=main
 
       - name: Smoke test the legacy layout
         if: success()
@@ -132,8 +132,8 @@ jobs:
           SITE_URL: https://animated-fluent-emojis-cdn.andryore.dev
         run: |
           expected_built_at=""
-          if [[ -f dist-assets/v1/version.json ]]; then
-            expected_built_at="$(jq --raw-output '.builtAt' dist-assets/v1/version.json)"
+          if [[ -f apps/assets/dist-assets/v1/version.json ]]; then
+            expected_built_at="$(jq --raw-output '.builtAt' apps/assets/dist-assets/v1/version.json)"
           fi
           published_built_at=""
           for attempt in $(seq 1 12); do
@@ -229,7 +229,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          if [[ -z "$(git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json)" ]]; then
+          if [[ -z "$(git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json)" ]]; then
             echo "Emoji lists are up to date."
             exit 0
           fi
@@ -253,7 +253,7 @@ jobs:
               mv CHANGELOG.md.tmp CHANGELOG.md
             fi
           fi
-          git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json
+          git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json
           git commit \
             --message "docs: 📝 update emoji list" \
             --message "- Regenerated the emoji lists from the published manifest"
