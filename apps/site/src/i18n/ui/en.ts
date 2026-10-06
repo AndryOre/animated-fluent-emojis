@@ -41,6 +41,17 @@ export const en = {
     title: 'Animated Fluent Emojis',
     tagline: 'Microsoft Fluent animated emojis for the web.',
   },
+  docs: {
+    howToGroup: 'How-to guides',
+    copyMarkdown: 'Copy page as Markdown',
+    copiedMarkdown: 'Copied',
+    notices: {
+      missing:
+        'This page is not available in your language yet. Showing the English version.',
+      stale:
+        'The translation of this page is out of date. Showing the English version.',
+    },
+  },
   notFound: {
     title: "That page isn't here.",
     body: 'The link may be old, or the emoji may have moved.',
