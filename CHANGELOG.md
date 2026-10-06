@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `animated-fluent-emojis/react` subpath exporting `Emoji` and its types.
+
+### Deprecated
+
+- The root `Emoji` export, removed in 0.7. Migrate by changing the import path
+  to `animated-fluent-emojis/react`, nothing else. `configureEmojis` and
+  `preloadEmojis` stay at the root.
+
 ## [0.5.3] - 2026-10-06
 
 ### Changed
