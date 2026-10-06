@@ -29,11 +29,26 @@ subcommand.
    `POST /accounts/<account-id>/pages/projects/animated-fluent-emojis/deployments/<deployment-id>/rollback`
    with the same API token the workflow uses.
 
+## Roll back the files site
+
+The files site is a separate Pages project, `animated-fluent-emojis-files`, that
+`sync-assets.yml` deploys right after the asset site. It rolls back the same
+way, independently of the asset site: use the dashboard steps above, or the
+`wrangler` and API calls with `animated-fluent-emojis-files` as the project
+name. Check the deployment's preview URL first: `/version.json`, `/index.json`
+and one file listed in it must load.
+
+Roll back only the project that is broken. The `Smoke test the files site` step
+failing points at the files site; the legacy and v1 smoke tests point at the
+asset site. Published file URLs do not change between deployments, so a rollback
+never breaks existing links.
+
 ## After the rollback
 
 - The rolled-back site serves an older `version.json`, so the next detect sees a
   Teams hash or repository commit that no longer matches upstream and rebuilds.
-  The next weekly run will therefore redeploy the bad build unless the cause is
+  The same holds for the files site, whose `version.json` is checked too. The
+  next weekly run will therefore redeploy the bad build unless the cause is
   fixed first. To keep the project pinned until then, disable the
   `sync-assets.yml` workflow.
 - Once the fix is merged, run **Sync Assets** manually with `rebuild` to build

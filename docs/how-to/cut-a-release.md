@@ -21,20 +21,26 @@ package to npm and creates the GitHub Release.
 
 Pushing the tag triggers `.github/workflows/release.yml`, which has two jobs.
 
-The `verify` job has `contents: read` only. It:
+The `verify` job has `contents: read` and `checks: read` only. It:
 
 1. Fails unless the tag matches the `package.json` version.
 2. Fails unless the tagged commit is on `main`.
-3. Runs `bun ci`.
-4. Runs `bun run assets:verify-live`. This is the v1 gate: it fails unless
+3. Waits up to 20 minutes (polling every 30 seconds) for the `CI passed` check
+   run of the tagged commit and fails unless it concludes `success`. It also
+   fails if no such run exists or it is still running at the deadline.
+4. Runs `bun ci`.
+5. Runs `bun run assets:verify-live`. This is the v1 gate: it fails unless
    `https://animated-fluent-emojis-cdn.andryore.dev/v1/version.json` answers
    200, lists the `v1` layout, was not built with `--limit` and carries the
    current `pipelineVersion`. If it fails, run the asset sync first.
-5. Runs `bun run check`, `bun run test` and `bun run build`.
-6. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
+6. Runs `bun run check`, `bun run test` and `bun run build`.
+7. Extracts the `## [x.y.z]` section of `CHANGELOG.md` into `release-notes.md`
    and fails if it is empty.
-7. Packs the tarball and uploads it with the notes as the `release-artifact`
+8. Packs the tarball and uploads it with the notes as the `release-artifact`
    artifact.
+
+If the CI gate fails, re-run the failed CI job on `main`, then re-run the
+Release workflow for the same tag. No new tag is needed.
 
 The `publish` job needs `verify`, runs in the `npm` GitHub Environment and is
 the only job with `id-token: write` (plus `contents: write`). It installs no

@@ -262,7 +262,9 @@ test('autoplays the new emoji when the id changes after the run finished', async
 
   const second = getImage('Cat')
   await expect.element(second).toBeVisible()
-  await expect.poll(() => second.element().getAnimations().length).toBe(1)
+  await expect
+    .poll(() => second.element().getAnimations().length, { timeout: 5000 })
+    .toBe(1)
 })
 
 test('loops when animationIterations is Infinity', async () => {

@@ -392,7 +392,7 @@ describe('release.yml job split', () => {
   })
 
   test('verify is read-only and runs the full quality gate', () => {
-    expect(verify?.permissions).toEqual({ contents: 'read' })
+    expect(verify?.permissions).toEqual({ contents: 'read', checks: 'read' })
     for (const command of [
       'bun ci',
       'bun run check',
@@ -401,6 +401,20 @@ describe('release.yml job split', () => {
     ]) {
       expect(verifyScript).toContain(command)
     }
+  })
+
+  test('verify waits for a green CI passed check before installing anything', () => {
+    const steps = verify?.steps ?? []
+    const gateIndex = steps.findIndex(
+      (step) => step.name === 'Require green CI on the tagged commit',
+    )
+    const installIndex = steps.findIndex((step) => step.run === 'bun ci')
+    expect(gateIndex).toBeGreaterThan(-1)
+    expect(gateIndex).toBeLessThan(installIndex)
+    const gate = steps[gateIndex]
+    expect(gate?.run).toContain('"CI passed"')
+    expect(gate?.run).not.toContain('${{')
+    expect(gate?.env).toEqual({ GH_TOKEN: '${{ github.token }}' })
   })
 
   test('publish needs verify and runs no dependency install', () => {

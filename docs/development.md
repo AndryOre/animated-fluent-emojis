@@ -34,6 +34,7 @@ the git hooks on `bun install` through the `prepare` script.
 | `bun run assets:detect`      | Reports whether the published asset site is out of date (Teams manifest or Microsoft's repository).                                                   |
 | `bun run assets:build`       | Builds the manifest and sprites into `dist-assets/`; needs `ffmpeg`. Add `-- --limit 20` for a sample.                                                |
 | `bun run assets:verify-live` | Checks that the live asset site serves the current v1 layout and pipeline version.                                                                    |
+| `bun run assets:files`       | Builds the files site from `dist-assets/` into `dist-files/`; needs the built asset site. Add `-- --files-out <dir>` to change the output.            |
 | `bun run assets:lists`       | Regenerates `docs/EMOJI_LIST_*.md` from `dist-assets/manifest.json`.                                                                                  |
 | `bun run brand:export`       | Regenerates the brand rasters from the logo SVGs; needs Chromium.                                                                                     |
 | `bun run ci:local`           | Runs the CI pipeline locally: install, commits, docs, check, coverage, build, size.                                                                   |
@@ -71,9 +72,13 @@ Every PR runs the full `ci.yml` pipeline, docs-only changes included:
 
 `sync-assets.yml` runs weekly (and on demand) outside the PR pipeline: it
 detects new emoji versions, rebuilds and deploys the asset site to Cloudflare
-Pages, smoke tests the published manifest and a sprite, and opens a pull request
-with the regenerated emoji lists. A failed run opens or updates a single
-`sync-assets failing` issue. It also publishes the `/v1/` layout whenever
+Pages, smoke tests the published manifest and a sprite, builds the files site
+into `dist-files/` and deploys it to its own Pages project
+(`animated-fluent-emojis-files`), smoke tests it (`version.json`, `index.json`
+and one GIF, WebP and PNG from the public index), and opens a pull request with
+the regenerated emoji lists. Detection also reports a rebuild when the files
+site's `version.json` is missing or stale. A failed run opens or updates a
+single `sync-assets failing` issue. It also publishes the `/v1/` layout whenever
 `/v1/version.json` is missing, lacks the `v1` layout or carries another pipeline
 version. Manual dispatch takes two inputs: `rebuild` forces a build even when
 nothing changed, and `bypass_guards` skips the Teams discovery guard and the
@@ -85,7 +90,8 @@ test always runs. Setup:
 
 Other workflows: `lint-docs.yml` (offline link and anchor check with lychee),
 `lint-workflows.yml` (workflow linting), `lint-pr.yml` (PR title), `labels.yml`
-(label sync), `scorecard.yml` (OpenSSF Scorecard) and `release.yml` (see
+(label sync), `scorecard.yml` (OpenSSF Scorecard) and `release.yml` (which waits
+for the `CI passed` check of the tagged commit to succeed before publishing; see
 [`how-to/cut-a-release.md`](how-to/cut-a-release.md) and
 [ADR 0005](adr/0005-npm-trusted-publishing.md)). All third-party actions are
 pinned to a commit SHA.
