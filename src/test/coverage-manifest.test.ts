@@ -13,7 +13,7 @@ const SOURCE_ROOTS = [
 
 const EXEMPTIONS: Readonly<Record<string, string>> = {
   'src/index.ts':
-    'Public barrel that only re-exports Emoji, configureEmojis, preloadEmojis and the public types, covered by Emoji.test.tsx.',
+    'Public barrel that only re-exports createEmoji, configureEmojis, preloadEmojis and the public types, covered by root-exports.test.ts.',
   'src/hooks/index.ts': 'Barrel re-exporting hooks that have their own tests.',
   'src/utils/index.ts':
     'Barrel re-exporting utils, covered by emoji-manifest.test.ts.',

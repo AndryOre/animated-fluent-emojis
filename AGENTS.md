@@ -4,8 +4,9 @@ Instructions for coding agents working in this repository.
 
 ## Stack
 
-A React component library (`Emoji`) that renders Microsoft's Fluent animated
-emojis from an asset site. React 18/19 peer dependency, TypeScript (strict),
+A component library that renders Microsoft's Fluent animated emojis from an
+asset site, with adapters for React, Vue, Svelte, Astro and a `<fluent-emoji>`
+element. The framework peer dependencies are optional. TypeScript (strict),
 ESM-only, built with Vite 8 library mode, tested with Vitest Browser Mode,
 managed with bun. See [`docs/architecture.md`](docs/architecture.md) for the
 code map.
@@ -44,7 +45,8 @@ non-JSDoc `/* */` comments, except lint or type directives. Detail:
 - Tests need Playwright's Chromium installed first:
   [`docs/development.md#testing`](docs/development.md#testing).
 - Component and hook tests run in a real browser, pure logic in a `node`
-  project; put new tests where the project globs match:
+  project, and the `.astro` component in an `astro` project; put new tests where
+  the project globs match:
   [`docs/development.md#testing`](docs/development.md#testing).
 - The package is ESM-only; never add a CommonJS entry or a `require` condition:
   [`docs/development.md#packaging`](docs/development.md#packaging).

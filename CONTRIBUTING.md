@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to Animated Fluent Emojis! This
+Thanks for your interest in contributing to Animated Fluent Emojis. This
 document covers the conventions this repository expects from a pull request.
 
 By participating in this project, you agree to abide by the
@@ -17,7 +17,8 @@ bun install
 
 Useful scripts (see `package.json` for the full list):
 
-- `bun run check` runs the static checks (formatting, linting, type-checking).
+- `bun run check` runs the static checks: formatting, linting, type-checking,
+  knip and the package lint (which builds once).
 - `bun run test` runs the test suite.
 
 ## Where to start
@@ -58,7 +59,7 @@ commit message.
 
 The `CI passed` check must be green before a pull request can be merged. Run
 both `bun run check` and `bun run test` locally before opening a PR to catch
-issues early.
+issues early. `bun run ci:local` runs the whole pipeline, with coverage.
 
 ## Tests
 
