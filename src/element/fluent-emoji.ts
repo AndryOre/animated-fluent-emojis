@@ -165,14 +165,14 @@ const createElementClass = (): CustomElementConstructor => {
     }
   }
 
-  for (const { property } of PROPERTY_SPECS) {
+  for (const { property, parse } of PROPERTY_SPECS) {
     Object.defineProperty(FluentEmoji.prototype, property, {
       configurable: true,
       get(this: FluentEmoji): unknown {
         return this.state[property]
       },
       set(this: FluentEmoji, value: unknown) {
-        this.state[property] = value
+        this.state[property] = typeof value === 'string' ? parse(value) : value
         this.refresh()
       },
     })

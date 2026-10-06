@@ -169,3 +169,13 @@ test('removing the element releases its content', async () => {
 
   expect(element?.shadowRoot?.querySelector('span')).toBeNull()
 })
+
+test('property sets parse string values like attributes do', () => {
+  const host = mount('<fluent-emoji id="cat"></fluent-emoji>')
+  const element = host.querySelector<HTMLElement>('fluent-emoji')
+  Reflect.set(element ?? {}, 'playing', 'false')
+  Reflect.set(element ?? {}, 'size', '32')
+
+  expect(Reflect.get(element ?? {}, 'playing')).toBe(false)
+  expect(Reflect.get(element ?? {}, 'size')).toBe(32)
+})
