@@ -26,10 +26,10 @@ The props below are shared by every adapter; each framework section says how a
 prop is spelled there. The component fetches a small manifest from the asset
 site the first time an emoji renders, never at import time. While it loads,
 `Emoji` renders an empty, `aria-hidden` placeholder of the final size, so the
-layout does not shift. If the id is unknown it renders nothing. If the manifest
-cannot be loaded, it renders your `fallback` node, or nothing, and retries on
-the next mount, the next `preloadEmojis` call or when the browser comes back
-online.
+layout does not shift. If the id is unknown it renders your `fallback` node, or
+nothing. If the manifest cannot be loaded, it renders your `fallback` node, or
+nothing, and retries on the next mount, the next `preloadEmojis` call or when
+the browser comes back online.
 
 ## Frameworks
 
@@ -335,10 +335,10 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
   sequences match even when the variation selector is missing (minimally
   qualified).
 - When several catalog entries share a glyph, lookup returns the canonical
-  emoji: the official id prefixed with the glyph's code points, otherwise a
-  reviewed override, otherwise the first entry in catalog order. For example,
-  `❤️` resolves to the heart rather than a variant that reuses the glyph. With a
-  skin tone, it falls back to a sibling entry that has tones.
+  emoji: the id prefixed with the glyph's code points, otherwise a reviewed
+  override, otherwise the first entry in catalog order. For example, `❤️`
+  resolves to the heart rather than a variant that reuses the glyph. With a skin
+  tone, it falls back to a sibling entry that has tones.
 - `extractEmojis(text)` finds every catalog emoji in a text, keeping ZWJ
   sequences whole, with its offset and length. Without `Intl.Segmenter` it falls
   back to a code point grouper, and neither function ever rejects.
@@ -348,12 +348,13 @@ await searchEmojis('party', { limit: 5 }) // [{ id }]
 
 ### Types
 
-The root exports `configureEmojis`, `preloadEmojis`, `createEmoji`, the
-deprecated `Emoji` and the types `EmojiProps`, `SkinTone`, `EmojiId`,
-`DiverseEmojiId`, `EmojiController`, `EmojiOptions` and `EmojiFallback`.
-`/react`, `/vue` and `/svelte` each export their own `Emoji` and `EmojiProps`;
-`/astro` has a default export and the `EmojiAstroProps` type; `/element` exports
-the `FluentEmojiElement` type. `EmojiId` is the union of every published id and
-is generated from the catalog; the `id` prop is typed `EmojiId | (string & {})`,
-so known ids autocomplete and ids added to the catalog after your installed
-version still compile.
+The root exports `configureEmojis`, `preloadEmojis` and `createEmoji`, and the
+types `SkinTone`, `EmojiId`, `DiverseEmojiId`, `EmojiController`, `EmojiOptions`
+and `EmojiFallback`. The `Emoji` component and `EmojiProps` were removed from
+the root in 0.7.0; import them from `/react`. `/react`, `/vue` and `/svelte`
+each export their own `Emoji` and `EmojiProps`; `/astro` has a default export
+and the `EmojiAstroProps` type; `/element` exports the `FluentEmojiElement`
+type. `EmojiId` is the union of every published id and is generated from the
+catalog; the `id` prop is typed `EmojiId | (string & {})`, so known ids
+autocomplete and ids added to the catalog after your installed version still
+compile.

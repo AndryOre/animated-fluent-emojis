@@ -9,6 +9,9 @@ glyph, asset layout version and sprite generation are defined in
 
 ```text
 scripts/assets/         builds the manifests and sprites published to Pages
+scripts/lint-docs.ts    runs lychee over the docs
+scripts/lint-commits.ts runs commitlint over the branch
+scripts/workflow-files.ts  lists the workflow files for the linters
 src/
   index.ts              root entry: configureEmojis, preloadEmojis, createEmoji,
                         types
@@ -25,16 +28,18 @@ src/
     Emoji.tsx           the component
     Emoji.module.css    the sprite keyframe and hover/focus rules (CSS modules)
   hooks/
+    index.ts                      barrel for the hooks
     use-emoji-style.ts            resolves an id to its manifest entry
     use-emoji-animation.ts        animation state, playback gating, inline style, image ref
     use-prefers-reduced-motion.ts tracks prefers-reduced-motion
     use-document-hidden.ts        tracks document.hidden
   utils/
     emoji-manifest.ts   manifest store, asset site config, sprite URLs, preload
+    is-development.ts   development-only warning gate
     visibility-observer.ts  one IntersectionObserver shared by every emoji
     shared-subscription.ts  one listener fanned out to every subscriber
     emoji-id.generated.ts  the generated EmojiId union
-    types.ts            manifest and prop types
+    types.ts            manifest types and SkinTone; props live in each adapter
   test/                 browser setup, fixtures, coverage-manifest guard
 playground/main.tsx     manual playground rendered by `bun run dev`
 ```
@@ -134,7 +139,7 @@ the image for the `fallback`:
   the slim manifest, in a `role="img"` span labelled with `alt` (or the
   description). When the manifest entry has no `unicode`, nothing is rendered.
 - `fallback` set to a node: that node, inside the same root span.
-- `fallback={null}`: nothing, the 0.4 behaviour.
+- `fallback={null}`: nothing, the 0.4 behavior.
 
 The fallback glyph needs the manifest, so it never shows when the manifest
 itself failed: there is no entry to read the character from. Only an explicit
@@ -165,10 +170,10 @@ autoplay is held by the gate below.
 
 ### Controlled playback
 
-`playing` is a three-state control. `undefined` keeps the behaviour above.
-`true` plays `animationIterations` runs and overrides `autoPlay` and reduced
-motion, still waiting for the image, the viewport and a visible tab. `false`
-pauses on the current frame. A finished run is not restarted by toggling.
+`playing` is a three-state control. `undefined` keeps the behavior above. `true`
+plays `animationIterations` runs and overrides `autoPlay` and reduced motion,
+still waiting for the image, the viewport and a visible tab. `false` pauses on
+the current frame. A finished run is not restarted by toggling.
 
 A run that the gate blocks after it started (the tab is hidden, the emoji
 scrolls out of view, or `playing` becomes `false`) is paused, not cancelled: it
@@ -315,15 +320,19 @@ committed. See [ADR 0006](adr/0006-cloudflare-pages-asset-hosting.md),
 
 - `teams.ts` finds the newest Teams emoticon manifest by probing candidate
   hashes and comparing `Last-Modified`.
-- `mit.ts` indexes the official `fluentui-emoji-animated` repository.
+- `mit.ts` indexes Microsoft's MIT-licensed `fluentui-emoji-animated`
+  repository.
 - `http.ts` wraps `fetch` with up to five attempts, exponential backoff, the
   `Retry-After` header and a 60 second timeout per attempt.
 - `catalog.ts` merges both by Unicode codepoints, plans every sprite, including
   skin tones and the HD sheets, and derives the content-hashed etags together
   with `PIPELINE_VERSION`.
-- `sprites.ts` converts the official APNGs into vertical sprite sheets (100px
-  frames, 200px for HD) with ffmpeg and sharp, keeping the exact fps. Each
-  official source is decoded once, whatever the number of sizes.
+- `sprites.ts` converts the repository's APNGs into vertical sprite sheets
+  (100px frames, 200px for HD) with ffmpeg and sharp, keeping the exact fps.
+  Each source is decoded once, whatever the number of sizes.
+- `codepoints.ts` normalizes Unicode codepoints, `emoji-lists.ts` writes the
+  `docs/EMOJI_LIST_*.md` files, `limiter.ts` bounds concurrency and
+  `known-teams-versions.ts` lists the Teams manifest versions already seen.
 - `constants.ts` holds the frame sizes (100 and 200), the skin tone suffixes and
   `indexEmoticons`, shared by every module below.
 - `seed.ts` downloads sheets from the live site, seeds the cache with the
@@ -419,7 +428,7 @@ the workflow.
 
 `sync-assets.yml` detects a `/v1/version.json` that is missing, lacks the `v1`
 layout or carries another pipeline version, and builds in that case even when
-Teams and the official repository are unchanged. Manual dispatch has two inputs
+Teams and Microsoft's repository are unchanged. Manual dispatch has two inputs
 that replace the old `force`: `rebuild` forces a build, `bypass_guards` skips
 the Teams discovery and removal guards. The first sync after 0.5 converts every
 sprite again, because the live site has no `/v1/` files to seed from.

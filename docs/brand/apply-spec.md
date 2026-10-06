@@ -13,7 +13,7 @@ the source of truth, and this file maps it to every surface. Status is as of
 | `docs/assets/Cover-light.webp` | Added by the script from the horizontal lockup and the light tokens (1920x960), the light pair of `Cover.webp`                |
 | Logo, tokens, fonts, brandbook | In `docs/brand/`                                                                                                              |
 | `README.md`                    | Intro, notice and features from `copy.md`, plain headings, a light and dark cover through `<picture>`, API in `docs/usage.md` |
-| `package.json`                 | `description` and `keywords` from `copy.md`                                                                                   |
+| `package.json`                 | `description` from `copy.md`; `keywords` extended for the 0.6 adapters                                                        |
 | `CHANGELOG.md`                 | One `Changed` entry under `[Unreleased]`                                                                                      |
 | `docs/README.md`               | Brand section linking `brand/README.md`, and ADRs 0010 to 0012 listed                                                         |
 | `AGENTS.md`                    | `bun run brand:export` in "Running scripts"                                                                                   |

@@ -1,6 +1,6 @@
 # Copy — Animated Fluent Emojis
 
-Draft v1 (2026-10-05). Status: awaiting review. Written with
+Draft v1 (2026-10-05). Status: applied; updated for 0.7. Written with
 [`voice.md`](voice.md) (README and npm vocabulary, one light line per surface).
 Every claim describes what ships today and is checked against the README, the
 changelog and `package.json` (see "Claims checked" below). Nothing here mentions
@@ -21,15 +21,14 @@ three animated emojis already under the intro stay.
 
 > **Fluent emojis, but they move.**
 >
-> Drop Microsoft's animated Fluent emojis into a React app: one import, one tag.
+> Drop Microsoft's animated Fluent emojis into a React, Vue, Svelte or Astro
+> app, or any page through the `<fluent-emoji>` element: one import, one tag.
 > They play on load or on hover, rest on a still frame when someone asks for
 > less motion, and hold their space in the layout while they load.
 >
 > ```jsx
 > <Emoji id="1f44b_wavinghand" />
 > ```
->
-> Works with React 18 and 19.
 >
 > The artwork belongs to Microsoft. The code is MIT. This project is not
 > affiliated with or endorsed by Microsoft. See "Assets and licensing" (a link
@@ -41,7 +40,7 @@ Replaces the eight bullets under "Features". The headings lose their decorative
 emoji (the section headings follow in the apply stage).
 
 - **One component.** `<Emoji id="…" />`, with `size`, `skinTone` and the other
-  props below.
+  props, in each supported framework.
 - **Plays when you want.** On load, on hover or focus, or driven by `playing`.
 - **Rests when asked.** Under reduced motion it stays on its poster frame.
 - **Holds its space.** An empty placeholder of the final size keeps the layout
@@ -54,7 +53,7 @@ emoji (the section headings follow in the apply stage).
 - **Fails softly.** A sprite sheet that does not load shows the emoji's native
   character, or your own `fallback`.
 - **Findable.** `animated-fluent-emojis/lookup` turns a character or a
-  description into an id, with no React.
+  description into an id, with no framework.
 - **Typed.** TypeScript types, with autocomplete for emoji ids.
 
 ## package.json
@@ -64,8 +63,8 @@ emoji (the section headings follow in the apply stage).
 > Microsoft's animated Fluent emojis as one component. They play on load or
 > hover, rest under reduced motion and hold their space while they load.
 
-React appears in `peerDependencies`, in the keywords and in the README, so the
-description can stay free of a framework name.
+The frameworks appear in `peerDependencies`, in the keywords and in the README,
+so the description can stay free of a framework name.
 
 **keywords:**
 
@@ -73,6 +72,16 @@ description can stay free of a framework name.
 [
   "react",
   "react-component",
+  "vue",
+  "vue-component",
+  "svelte",
+  "svelte-component",
+  "astro-component",
+  "web-component",
+  "custom-element",
+  "angular",
+  "solid",
+  "preact",
   "emoji",
   "emojis",
   "animated",
@@ -131,14 +140,14 @@ For `[Unreleased]`, in the project's candid style:
 | Claim                                                 | Source                                                                         |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Plays on load or on hover                             | `README.md` props `autoPlay`, `playOnHover`; Playback                          |
-| Rests on a poster frame under reduced motion          | `README.md` "Reduced motion"                                                   |
+| Rests on a poster frame under reduced motion          | `docs/usage.md` "Reduced motion"                                               |
 | Holds its space while it loads                        | `README.md` intro to the manifest: empty `aria-hidden` placeholder of the size |
 | The manifest is fetched on first render               | `README.md`: "never at import time"                                            |
-| HD sprite sheets at 2x on high-density screens        | `README.md` "Images and HD sprite sheets"                                      |
+| HD sprite sheets at 2x on high-density screens        | `docs/usage.md` "Images and HD sprite sheets"                                  |
 | `alt` defaults to the description; `""` is decorative | `README.md` props table, `alt`                                                 |
-| Fallback glyph or custom `fallback`                   | `README.md` "Fallback"                                                         |
-| Lookup has no React                                   | `README.md` "Lookup"                                                           |
-| React 18 and 19, TypeScript, id autocomplete          | `package.json` `peerDependencies`; `README.md` props, `id`                     |
+| Fallback glyph or custom `fallback`                   | `docs/usage.md` "Fallback"                                                     |
+| Lookup has no framework                               | `docs/usage.md` "Lookup"                                                       |
+| Five adapters, TypeScript, id autocomplete            | `package.json` `exports`; `README.md` props, `id`                              |
 | The code is MIT; the artwork is Microsoft's           | `README.md` "License" and "Assets and licensing"                               |
 
 ## Brand review (2026-10-05)

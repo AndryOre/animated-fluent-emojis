@@ -44,5 +44,5 @@ of the library, see [`docs/security.md`](../docs/security.md).
 ## Credit
 
 Reporters are credited by name (or handle) in the GitHub Security Advisory
-unless you ask to stay anonymous when you report. Let us know your preference in
-the initial report.
+unless you ask to stay anonymous when you report. State your preference in the
+initial report.

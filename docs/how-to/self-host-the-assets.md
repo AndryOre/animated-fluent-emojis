@@ -45,8 +45,9 @@ img-src https://emojis.example.com
 
 The sprite URL is `<site>/v1/sprites/<category title>/<id><tone>.<etag>.png`,
 with `@2x` before the extension for an HD sprite sheet, so one origin covers
-both. The component injects no `<style>` element, so it needs no `style-src`
-allowance. The design and its limits are in
+both. The framework adapters inject no `<style>` element, so they need no
+`style-src` allowance; the `<fluent-emoji>` element adds one to its shadow root
+and does. The design and its limits are in
 [security](../security.md#csp-requirements).
 
 ## Verify

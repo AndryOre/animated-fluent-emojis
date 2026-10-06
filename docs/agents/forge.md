@@ -31,17 +31,17 @@ restate it.
 
 A fresh worktree only needs `bun install --frozen-lockfile --silent`
 (`worktree.bootstrap` in `forge.config.json`). No codegen and no env files to
-copy from the main checkout — this is a plain React library with no runtime
-secrets.
+copy from the main checkout — this is a framework component library with no
+runtime secrets.
 
 ## Self-check
 
 Commands a worker runs before considering its own change done: see
 `commands.selfCheck` in `forge.config.json`.
 
-`bun run lint` — the self-check. `build` (`tsc -b && vite build`) is
-deliberately left out: it's slow and the maintainer asks for it explicitly,
-except in tickets whose acceptance criteria require it.
+`bun run check` and `bun run test` — the self-check. `build`
+(`tsc -b && vite build`) is deliberately left out: it's slow and the maintainer
+asks for it explicitly, except in tickets whose acceptance criteria require it.
 
 ## Concurrency
 

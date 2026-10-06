@@ -23,7 +23,7 @@ what gets merged.
 3. **ADR for hard-to-reverse choices.** Decisions that are expensive to reverse
    (architecture, packaging, supported platforms, or anything that changes how
    contributors work) are recorded as an Architecture Decision Record under
-   `docs/adr/`, not just discussed in a PR description.
+   `docs/adr/`, not only discussed in a PR description.
 
 ## Roles and responsibilities
 

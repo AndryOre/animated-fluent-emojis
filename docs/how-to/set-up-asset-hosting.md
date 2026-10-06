@@ -37,7 +37,7 @@ CLOUDFLARE_API_TOKEN=<token> bunx wrangler pages deploy dist-assets \
 ## Day to day
 
 - The workflow runs every Monday and rebuilds only when a new Teams manifest or
-  a new commit of the official repository is found.
+  a new commit of Microsoft's repository is found.
 - `bun run assets:detect` shows what it would do without changing anything.
 - `bun run assets:build -- --limit 20` builds a small sample into `dist-assets/`
   for a quick local check. Building needs `ffmpeg` and `ffprobe` installed.

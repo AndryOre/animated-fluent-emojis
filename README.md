@@ -21,9 +21,9 @@
 **Fluent emojis, but they move.**
 
 Drop Microsoft's animated Fluent emojis into a React, Vue, Svelte or Astro app,
-or any page through a web component: one import, one tag. They play on load or
-on hover, rest on a still frame when someone asks for less motion, and hold
-their space in the layout while they load.
+or any page through the `<fluent-emoji>` element: one import, one tag. They play
+on load or on hover, rest on a still frame when someone asks for less motion,
+and hold their space in the layout while they load.
 
 ```jsx
 <Emoji id="1f44b_wavinghand" />
@@ -32,6 +32,12 @@ their space in the layout while they load.
 The artwork belongs to Microsoft. The code is MIT. This project is not
 affiliated with or endorsed by Microsoft. See
 [Assets and licensing](#assets-and-licensing).
+
+<p align="center">
+  <img src="docs/assets/rocket-launch.webp" alt="Rocket Launch" width="100" height="100">
+  <img src="docs/assets/fire.webp" alt="Fire" width="100" height="100">
+  <img src="docs/assets/hundred-points.webp" alt="Hundred Points" width="100" height="100">
+</p>
 
 <details>
 <summary>Table of Contents</summary>
@@ -54,12 +60,21 @@ affiliated with or endorsed by Microsoft. See
 
 ## Features
 
-- **One component.** `<Emoji id="…" />`, with `size`, `skinTone` and more.
+- **One component.** `<Emoji id="…" />`, with `size`, `skinTone` and more, in
+  each supported framework.
 - **Plays when you want.** On load, on hover or focus, or driven by `playing`.
 - **Rests when asked.** Under reduced motion it stays on its poster frame.
-- **Holds its space.** A placeholder of the final size keeps the layout steady.
-- **Sharp on HD screens.** HD sprite sheets are served at 2x.
-- **Accessible.** `alt` defaults to the description; failures show a glyph.
+- **Holds its space.** An empty placeholder of the final size keeps the layout
+  steady while it loads. The manifest is fetched on first render, never at
+  import.
+- **Sharp on HD screens.** Emojis with an HD sprite sheet are served at 2x to
+  high-density displays.
+- **Described by default.** `alt` comes from the emoji's description, and
+  `alt=""` marks it decorative.
+- **Fails softly.** A sprite sheet that does not load shows the emoji's native
+  character, or your own `fallback`.
+- **Findable.** `animated-fluent-emojis/lookup` turns a character or a
+  description into an id, with no framework.
 - **Typed.** TypeScript types, with autocomplete for emoji ids.
 
 ## Installation
@@ -106,7 +121,7 @@ import 'animated-fluent-emojis/style.css'
 ```
 
 The manifest is fetched on first render, never at import; see the
-[usage guide](docs/usage.md#fallback) for loading and failure behaviour.
+[usage guide](docs/usage.md#fallback) for loading and failure behavior.
 
 ### Next.js and server components
 
@@ -120,18 +135,18 @@ and `preloadEmojis` from a client module, not a Server Component.
 These are the React props; the other adapters take the same set in their own
 spelling, see the [usage guide](docs/usage.md#frameworks).
 
-| Prop                | Type                 | Default     | Description                                     |
-| ------------------- | -------------------- | ----------- | ----------------------------------------------- |
-| id                  | `EmojiId` or string  | -           | The emoji to render; known ids autocomplete     |
-| size                | number or string     | 100         | Pixels, or any CSS length such as `2rem`        |
-| playOnHover         | boolean              | false       | Play on hover and on keyboard focus             |
-| animationIterations | number or 'infinite' | 2           | How many times to play on load                  |
-| autoPlay            | boolean              | true        | Play on mount                                   |
-| playing             | boolean              | -           | Controls playback: `true` plays, `false` pauses |
-| onPlaybackEnd       | function             | -           | Called when a finite run ends                   |
-| skinTone            | SkinTone             | 'default'   | Skin tone for emojis that have variants         |
-| alt                 | string               | description | Accessible text; `""` marks it decorative       |
-| fallback            | ReactNode            | glyph       | Rendered when the image or manifest fails       |
+| Prop                | Type                 | Default     | Description                                                    |
+| ------------------- | -------------------- | ----------- | -------------------------------------------------------------- |
+| id                  | `EmojiId` or string  | -           | The emoji to render; known ids autocomplete                    |
+| size                | number or string     | 100         | Pixels, or any CSS length such as `2rem`                       |
+| playOnHover         | boolean              | false       | Play on hover and on keyboard focus                            |
+| animationIterations | number or 'infinite' | 2           | How many times to play on load                                 |
+| autoPlay            | boolean              | true        | Play on mount                                                  |
+| playing             | boolean              | -           | Controls playback: `true` plays, `false` pauses                |
+| onPlaybackEnd       | function             | -           | Called when a finite run ends                                  |
+| skinTone            | SkinTone             | 'default'   | Skin tone for emojis that have variants                        |
+| alt                 | string               | description | Accessible text; `""` marks it decorative                      |
+| fallback            | ReactNode            | glyph       | Rendered when the id is unknown or the image or manifest fails |
 
 `className`, `style`, `ref`, `onLoad`, `onError` and any other `<span>`
 attribute are also accepted. Every prop, with edge cases, is in the
@@ -154,8 +169,8 @@ attribute are also accepted. Every prop, with edge cases, is in the
 
 ## Migrating from 0.4
 
-- The glyph fallback is the new default: a failed sprite sheet shows the emoji's
-  native character. Pass `fallback={null}` to restore the 0.4 behaviour.
+- The fallback glyph is the new default: a failed sprite sheet shows the emoji's
+  native character. Pass `fallback={null}` to restore the 0.4 behavior.
 - `Emoji` now forwards `ref` and any `<span>` attribute to its root span, and
   merges `className` and `style`.
 - A failed manifest load is retried on the next mount, `preloadEmojis` call or
@@ -188,7 +203,7 @@ and [Travel and Places](./docs/EMOJI_LIST_Travel_and_places.md).
 
 ## Contributing
 
-We welcome contributions to Animated Fluent Emojis! Read
+Contributions to Animated Fluent Emojis are welcome. Read
 [CONTRIBUTING](CONTRIBUTING.md) for setup and conventions, and the
 [development guide](docs/development.md) for scripts and tooling. Everyone
 taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). To report a
@@ -206,8 +221,9 @@ If you find Animated Fluent Emojis useful, please consider supporting it:
 
 ## License
 
-Animated Fluent Emojis is free for commercial and personal use. The software is
-licensed under the [MIT](LICENSE) © Andry Orellana.
+The code is free for commercial and personal use. It is licensed under the
+[MIT](LICENSE) © Andry Orellana. The emoji artwork is Microsoft's; see
+[Assets and licensing](#assets-and-licensing).
 
 ## Assets and licensing
 
@@ -217,7 +233,7 @@ refreshed automatically. Most emojis come from the animated Fluent emoji set
 that Microsoft Teams publishes; the rest come from Microsoft's MIT-licensed
 [fluentui-emoji-animated][Microsoft Fluent Emojis Animated] repository. The
 sprites remain Microsoft's assets: this package's MIT license covers the code
-only. The MIT notice for the official repository is published at
+only. The MIT notice for Microsoft's repository is published at
 `/LICENSE-fluentui-emoji-animated.txt` on the asset site.
 
 ## Acknowledgements
