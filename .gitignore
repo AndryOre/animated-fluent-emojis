@@ -34,3 +34,4 @@ coverage
 # Generated asset site
 dist-assets
 .cache
+dist-files
