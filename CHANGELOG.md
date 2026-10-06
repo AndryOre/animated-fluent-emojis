@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-06
+
 ### Removed
 
 - **Breaking:** the root `Emoji` export, deprecated in 0.6. Change the import
@@ -374,7 +376,9 @@ plus the release workflow fix below.
 - Initial release of the animated Fluent emoji React components.
 
 [Unreleased]:
-  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.6.0...HEAD
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.7.0...HEAD
+[0.7.0]:
+  https://github.com/AndryOre/animated-fluent-emojis/compare/v0.6.0...v0.7.0
 [0.6.0]:
   https://github.com/AndryOre/animated-fluent-emojis/compare/v0.5.3...v0.6.0
 [0.5.3]:
