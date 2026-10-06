@@ -1,0 +1,148 @@
+[
+  {
+    "slug": "grinning-face-with-big-eyes",
+    "id": "1f603_grinningfacewithbigeyes",
+    "description": "Grinning face with big eyes",
+    "unicode": "😃",
+    "category": "Smilies",
+    "keywords": [
+      "D",
+      "awesome",
+      "big",
+      "blissful",
+      "d",
+      "excited",
+      "eyes",
+      "face",
+      "glad",
+      "glee",
+      "grin",
+      "grinning",
+      "haha",
+      "happy",
+      "jolly",
+      "joy",
+      "joyful",
+      "lol",
+      "lucky",
+      "mouth",
+      "open",
+      "smile",
+      "smiling",
+      "teeth",
+      "with",
+      "yay"
+    ],
+    "urls": {
+      "gif": "/gif/grinning-face-with-big-eyes.gif",
+      "webp": "/webp/grinning-face-with-big-eyes.webp",
+      "png": "/png/grinning-face-with-big-eyes.png"
+    },
+    "tones": []
+  },
+  {
+    "slug": "waving-hand",
+    "id": "1f44b_wavinghand",
+    "description": "Waving hand",
+    "unicode": "👋",
+    "category": "Hand gestures",
+    "keywords": [
+      "bye",
+      "cya",
+      "g2g",
+      "greetings",
+      "gtg",
+      "hand",
+      "happy",
+      "hello",
+      "hey",
+      "hi",
+      "later",
+      "outtie",
+      "ttfn",
+      "ttyl",
+      "wave",
+      "waving",
+      "yo",
+      "you"
+    ],
+    "urls": {
+      "gif": "/gif/waving-hand.gif",
+      "webp": "/webp/waving-hand.webp",
+      "png": "/png/waving-hand.png"
+    },
+    "tones": [
+      {
+        "tone": "light",
+        "slug": "waving-hand-light",
+        "urls": {
+          "gif": "/gif/waving-hand-light.gif",
+          "webp": "/webp/waving-hand-light.webp",
+          "png": "/png/waving-hand-light.png"
+        }
+      },
+      {
+        "tone": "medium-light",
+        "slug": "waving-hand-medium-light",
+        "urls": {
+          "gif": "/gif/waving-hand-medium-light.gif",
+          "webp": "/webp/waving-hand-medium-light.webp",
+          "png": "/png/waving-hand-medium-light.png"
+        }
+      },
+      {
+        "tone": "medium",
+        "slug": "waving-hand-medium",
+        "urls": {
+          "gif": "/gif/waving-hand-medium.gif",
+          "webp": "/webp/waving-hand-medium.webp",
+          "png": "/png/waving-hand-medium.png"
+        }
+      },
+      {
+        "tone": "medium-dark",
+        "slug": "waving-hand-medium-dark",
+        "urls": {
+          "gif": "/gif/waving-hand-medium-dark.gif",
+          "webp": "/webp/waving-hand-medium-dark.webp",
+          "png": "/png/waving-hand-medium-dark.png"
+        }
+      },
+      {
+        "tone": "dark",
+        "slug": "waving-hand-dark",
+        "urls": {
+          "gif": "/gif/waving-hand-dark.gif",
+          "webp": "/webp/waving-hand-dark.webp",
+          "png": "/png/waving-hand-dark.png"
+        }
+      }
+    ]
+  },
+  {
+    "slug": "fire",
+    "id": "fire",
+    "description": "Fire",
+    "unicode": "🔥",
+    "category": "Travel and places",
+    "keywords": [
+      "af",
+      "burn",
+      "fire",
+      "flame",
+      "heat",
+      "hot",
+      "lit",
+      "litaf",
+      "passion",
+      "tool",
+      "warm"
+    ],
+    "urls": {
+      "gif": "/gif/fire.gif",
+      "webp": "/webp/fire.webp",
+      "png": "/png/fire.png"
+    },
+    "tones": []
+  }
+]

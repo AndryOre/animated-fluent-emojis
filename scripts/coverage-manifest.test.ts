@@ -80,8 +80,31 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Thin endpoint that feeds route sources to buildSitemapXml, tested in seo/sitemap.test.ts.',
   'apps/site/src/scripts/theme-keys.ts':
     'Constants-only module shared by the init script and the toggle, exercised by theme-init.test.ts.',
+  'apps/site/src/gallery/index.ts':
+    'Barrel that only re-exports the gallery data API, each module tested in its own colocated test.',
   'apps/site/src/site-links.ts':
     'Constants-only list of external URLs, with no behavior to test.',
+  'apps/site/src/content.config.ts':
+    'Astro content collection wiring, verified through the site build output.',
+  'apps/site/src/docs/loader.ts':
+    'Astro content loader that feeds loadCatalog into the store, verified through the site build output; the catalog itself is tested in catalog.test.ts.',
+  'apps/site/src/docs/paths.ts':
+    'Constants-only module with the docs and translations directories.',
+  'apps/site/src/docs/i18n-status.ts':
+    'CLI entry that prints formatStatusReport, tested through status and catalog in catalog.test.ts.',
+  'apps/site/src/docs/published.ts':
+    'Allowlist and route helpers, exercised by links.test.ts.',
+  'apps/site/src/docs/status.ts':
+    'Report formatter, exercised by catalog.test.ts.',
+  'apps/site/src/docs/sitemap.ts':
+    'Docs sitemap source, exercised through the registered sources in seo/sources.test.ts.',
+  'apps/site/src/pages/[...slug].md.ts': ASTRO_PAGE_REASON,
+  'apps/site/src/docs/components/DocumentationHeader.astro':
+    ASTRO_PRESENTATION_REASON,
+  'apps/site/src/docs/components/DocumentationPageTitle.astro':
+    'Starlight override rendering the translation notice and the copy button, verified through the site build output.',
+  'apps/site/src/docs/components/DocumentationThemeProvider.astro':
+    ASTRO_PRESENTATION_REASON,
   ...Object.fromEntries(
     ['en', 'es', 'de', 'fr', 'it', 'ja', 'ko', 'pt-br', 'ru', 'zh-cn'].map(
       (locale) => [

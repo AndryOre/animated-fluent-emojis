@@ -1,3 +1,4 @@
+import { docsSitemapSource } from '../docs/sitemap'
 import type { RobotsContribution } from './robots'
 import { coreSitemapSource, type SitemapSource } from './sitemap'
 
@@ -5,7 +6,10 @@ import { coreSitemapSource, type SitemapSource } from './sitemap'
  * Every provider of sitemap routes. Gallery, docs and emoji pages append their
  * own source here; `pages/sitemap.xml.ts` renders the union.
  */
-export const SITEMAP_SOURCES: readonly SitemapSource[] = [coreSitemapSource]
+export const SITEMAP_SOURCES: readonly SitemapSource[] = [
+  coreSitemapSource,
+  docsSitemapSource,
+]
 
 /**
  * Every contribution to `robots.txt`. Modules append their disallowed paths or

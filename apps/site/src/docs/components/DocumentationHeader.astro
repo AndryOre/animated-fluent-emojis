@@ -1,0 +1,12 @@
+---
+import Search from '@astrojs/starlight/components/Search.astro'
+
+import Header from '../../components/Header.astro'
+import { splitLocalePath } from '../../i18n/locales'
+
+const { path, locale } = splitLocalePath(Astro.url.pathname)
+---
+
+<Header locale={locale} path={path}>
+  <Search slot="search" />
+</Header>
