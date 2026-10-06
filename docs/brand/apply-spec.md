@@ -41,10 +41,11 @@ Applied by hand, as repository settings are not code
 ## Not done on purpose
 
 - No rename, no npm publish and no domain purchase.
-- No landing page and no README-embeddable animated files. The animated mark
-  (`logo/mark-animated.svg`) is ready for the landing's header when it exists.
-  GitHub blocks CSS animation inside SVG images, so it does not animate in the
-  README.
+- No landing page yet. The animated mark (`logo/mark-animated.svg`) is ready for
+  the landing's header when it exists. GitHub blocks CSS animation inside SVG
+  images, so it does not animate in the README. Animated files for READMEs now
+  ship from the files site; see
+  [`use-without-code.md`](../how-to/use-without-code.md).
 - No halo mark, favicon set, PWA icons, store tiles or channel art.
 
 ## Verification
