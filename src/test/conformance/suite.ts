@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import {
+  afterEach,
+  test as baseTest,
+  beforeEach,
+  describe,
+  expect,
+  vi,
+} from 'vitest'
 import { cdp } from 'vitest/browser'
 
 import { configureEmojis } from '../../utils/index.js'
@@ -54,11 +61,17 @@ const configureIsolatedSite = (): void => {
  * `docs/development.md#testing`.
  * @param adapterName - Names the `describe` block.
  * @param createDriver - Returns a fresh driver for each test.
+ * @param omittedBehaviours - Titles of tests that cannot apply to the adapter, such as the loading placeholder of an adapter that renders on the server.
  */
 export const defineConformanceSuite = (
   adapterName: string,
   createDriver: ConformanceDriverFactory,
+  omittedBehaviours: readonly string[] = [],
 ): void => {
+  const test = (name: string, run: () => Promise<void>): void => {
+    if (omittedBehaviours.includes(name)) baseTest.skip(name, run)
+    else baseTest(name, run)
+  }
   describe(`conformance: ${adapterName}`, () => {
     let container: HTMLElement
     const driver = { current: createDriver() }

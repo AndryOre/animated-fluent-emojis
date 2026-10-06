@@ -1,4 +1,4 @@
-import { copyFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import react from '@vitejs/plugin-react-swc'
 import { defineConfig, type Plugin } from 'vite'
@@ -30,6 +30,25 @@ const shipSvelteSource = (): Plugin => ({
   },
 })
 
+const ASTRO_RAW_FILES = ['Emoji.astro', 'emoji.css']
+
+const copyAstroComponent = (): Plugin => ({
+  name: 'copy-astro-component',
+  generateBundle() {
+    for (const fileName of ASTRO_RAW_FILES) {
+      // eslint-disable-next-line unicorn/no-this-outside-of-class -- the bundler passes its plugin context as `this`
+      this.emitFile({
+        type: 'asset',
+        fileName: `astro/${fileName}`,
+        source: readFileSync(
+          path.resolve(rootDirectory, 'src/astro', fileName),
+          'utf8',
+        ),
+      })
+    }
+  },
+})
+
 export default defineConfig({
   build: {
     lib: {
@@ -40,6 +59,8 @@ export default defineConfig({
         vue: path.resolve(rootDirectory, 'src/vue/index.ts'),
         lookup: path.resolve(rootDirectory, 'src/lookup/index.ts'),
         'svelte/runtime': path.resolve(rootDirectory, 'src/svelte/runtime.ts'),
+        'astro/client': path.resolve(rootDirectory, 'src/astro/client.ts'),
+        'astro/server': path.resolve(rootDirectory, 'src/astro/server.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
@@ -73,6 +94,7 @@ export default defineConfig({
   plugins: [
     react(),
     shipSvelteSource(),
+    copyAstroComponent(),
     dts({
       include: ['src'],
       tsconfigPath: './tsconfig.build.json',

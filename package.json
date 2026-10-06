@@ -7,12 +7,14 @@
   "private": false,
   "sideEffects": [
     "**/*.css",
-    "./dist/element.js"
+    "./dist/element.js",
+    "./dist/astro/client.js"
   ],
   "type": "module",
   "keywords": [
     "react",
     "react-component",
+    "astro-component",
     "emoji",
     "emojis",
     "animated",
@@ -45,6 +47,10 @@
     "./react": {
       "types": "./dist/react/index.d.ts",
       "import": "./dist/react.js"
+    },
+    "./astro": {
+      "types": "./dist/astro/index.d.ts",
+      "default": "./dist/astro/Emoji.astro"
     },
     "./element": {
       "types": "./dist/element/index.d.ts",
@@ -97,12 +103,16 @@
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
     "vue": "^3.0.0",
+    "astro": "^5.0.0 || ^6.0.0 || ^7.0.0",
     "solid-js": "^1.0.0",
     "preact": "^10.0.0 || ^11.0.0",
     "svelte": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "vue": {
+      "optional": true
+    },
+    "astro": {
       "optional": true
     },
     "solid-js": {
@@ -130,6 +140,7 @@
     "@vitejs/plugin-react-swc": "^4.3.3",
     "@vitest/browser-playwright": "^5",
     "@vitest/coverage-v8": "^5",
+    "astro": "^7.3.5",
     "axe-core": "^4.13.0",
     "eslint": "^10",
     "eslint-config-prettier": "^10.1.8",
@@ -203,6 +214,16 @@
         "dist/chunks/manifest-*.js"
       ],
       "limit": "6 kB"
+    },
+    {
+      "name": "Astro client script",
+      "path": [
+        "dist/astro/client.js",
+        "dist/chunks/environment-signals-*.js",
+        "dist/chunks/markup-*.js",
+        "dist/chunks/playback-gate-*.js"
+      ],
+      "limit": "4 kB"
     },
     {
       "name": "Lookup bundle",

@@ -1,0 +1,18 @@
+---
+import './emoji.css'
+import { renderEmojiHtml } from './server.js'
+import type { EmojiAstroProps } from './types.js'
+
+type Props = EmojiAstroProps
+
+const fallbackHtml = Astro.slots.has('fallback')
+  ? await Astro.slots.render('fallback')
+  : ''
+const html = await renderEmojiHtml(Astro.props, fallbackHtml)
+---
+
+<Fragment set:html={html} />
+
+<script>
+  import './client.js'
+</script>

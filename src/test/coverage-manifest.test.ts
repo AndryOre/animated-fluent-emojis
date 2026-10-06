@@ -26,6 +26,9 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Declaration file for the shipped Emoji.svelte, with no runtime behavior to test.',
   'svelte/types.ts':
     'Type-only module with the Svelte Emoji props, no runtime behavior to test.',
+  'astro/index.ts':
+    'Type-only declaration of the .astro component, checked by the container render test in Emoji.test.ts.',
+  'astro/types.ts': 'Type-only module with no runtime behavior to test.',
   'utils/types.ts': 'Type-only module with no runtime behavior to test.',
   'utils/emoji-id.generated.ts':
     'Generated type-only union, produced and tested by scripts/assets.',
