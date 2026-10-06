@@ -54,6 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REBUILD: ${{ inputs.rebuild }}
           BYPASS_GUARDS: ${{ inputs.bypass_guards }}
+          FILES_URL: https://animated-fluent-emojis-files.andryore.dev
         run: |
           args=()
           if [[ "${REBUILD}" == "true" ]]; then
@@ -62,7 +63,7 @@ jobs:
           if [[ "${BYPASS_GUARDS}" == "true" ]]; then
             args+=(--bypass-guards)
           fi
-          bun run assets:detect "${args[@]}"
+          bun run assets:detect --files-url "${FILES_URL}" "${args[@]}"
 
       - name: Install ffmpeg
         if: steps.detect.outputs.changed == 'true'
@@ -94,6 +95,23 @@ jobs:
           wranglerVersion: 4.147.0
           command:
             pages deploy dist-assets --project-name=animated-fluent-emojis
+            --branch=main
+
+      - name: Build the files site
+        if: steps.detect.outputs.changed == 'true'
+        env:
+          FILES_URL: https://animated-fluent-emojis-files.andryore.dev
+        run: bun run assets:files --files-url "${FILES_URL}"
+
+      - name: Deploy the files site to Cloudflare Pages
+        if: steps.detect.outputs.changed == 'true'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: 4.147.0
+          command:
+            pages deploy dist-files --project-name=animated-fluent-emojis-files
             --branch=main
 
       - name: Smoke test the legacy layout
@@ -142,6 +160,23 @@ jobs:
           curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors --head \
             "${SITE_URL}/v1/sprites/${hd_sprite_path}@2x.png" > /dev/null
           rm manifest.slim.json version.json
+
+      - name: Smoke test the files site
+        if: success()
+        env:
+          FILES_SITE_URL: https://animated-fluent-emojis-files.andryore.dev
+        run: |
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
+            --header 'cache-control: no-cache' \
+            "${FILES_SITE_URL}/version.json" > /dev/null
+          curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors \
+            "${FILES_SITE_URL}/index.json" --output index.json
+          for format in gif webp png; do
+            file_path="$(jq --raw-output --arg format "${format}" '.[0].urls[$format]' index.json)"
+            curl --fail --silent --show-error --location --retry 5 --retry-delay 10 --retry-all-errors --head \
+              "${FILES_SITE_URL}${file_path}" > /dev/null
+          done
+          rm index.json
 
   emoji-lists:
     name: Refresh emoji lists
