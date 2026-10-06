@@ -38,3 +38,7 @@ dist-files
 .turbo
 
 .astro
+
+# Playwright
+playwright-report
+test-results

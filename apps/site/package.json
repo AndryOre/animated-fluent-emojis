@@ -14,7 +14,10 @@
     "check": "astro check",
     "i18n:status": "bun src/docs/i18n-status.ts",
     "test": "vitest run --passWithNoTests",
-    "test:coverage": "vitest run --coverage --passWithNoTests"
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test:dist": "SITE_DIST_REQUIRED=1 vitest run src/seo/distribution-output.test.ts",
+    "test:e2e": "playwright test",
+    "lighthouse": "bash scripts/lighthouse-budget.sh"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",
@@ -31,6 +34,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
