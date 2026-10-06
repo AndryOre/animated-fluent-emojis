@@ -87,10 +87,11 @@ rejects and the store enters `error`, then retries once the browser fires
 need to allow.
 
 **Fix:** Allow the asset site origin, by default
-`https://animated-fluent-emojis.pages.dev`, in `connect-src` and `img-src`. The
-exact directives are in [CSP requirements](security.md#csp-requirements). If you
-self-host, allow your own origin instead and call `configureEmojis` before the
-first `Emoji` renders. See [Asset site](usage.md#asset-site).
+`https://animated-fluent-emojis-cdn.andryore.dev`, in `connect-src` and
+`img-src`. The exact directives are in
+[CSP requirements](security.md#csp-requirements). If you self-host, allow your
+own origin instead and call `configureEmojis` before the first `Emoji` renders.
+See [Asset site](usage.md#asset-site).
 
 ## Next.js reports an error for configureEmojis or Emoji
 
@@ -158,7 +159,7 @@ import { setupServer } from 'msw/node'
 
 const server = setupServer(
   http.get(
-    'https://animated-fluent-emojis.pages.dev/v1/manifest.slim.json',
+    'https://animated-fluent-emojis-cdn.andryore.dev/v1/manifest.slim.json',
     () => HttpResponse.json(compactManifest),
   ),
 )
