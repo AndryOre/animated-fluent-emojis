@@ -85,3 +85,16 @@ Wrapper, binding, plugin
 **Element**: The `<fluent-emoji>` Web Component exported from `/element`, for
 frameworks with no native adapter and for plain HTML. _Avoid_: Custom tag, web
 component (when the specific element is meant)
+
+**Public file**: A standalone per-emoji, per-tone GIF, WebP or poster-frame PNG
+that anyone can link or download from the files site. _Avoid_: Export, download,
+still
+
+**Files site**: The Cloudflare Pages site that serves public files at stable
+URLs, separate from the asset site. _Avoid_: CDN, download site
+
+**Slug**: The readable, frozen name of an emoji and tone in public file URLs.
+The id stays the catalog id. _Avoid_: Handle, name
+
+**Public index**: The `index.json` on the files site, listing every public file
+by slug. _Avoid_: Manifest
