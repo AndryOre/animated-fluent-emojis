@@ -93,6 +93,7 @@ uses the committed slug registry alone.
 4. Re-run **Sync Assets** from the Actions tab and check that the emoji-lists
    pull request opens, passes CI and merges.
 
-If the token is missing, revoked or lacks a scope, the emoji-lists step fails
-and the `Report a failed sync` job opens or comments on the
+If the token is missing, revoked or lacks a scope, the emoji-lists step fails on
+the next run where the lists changed (it exits before using the token when
+nothing changed), and the `Report a failed sync` job opens or comments on the
 `sync-assets failing` issue. Rotate the token, then re-run the workflow.

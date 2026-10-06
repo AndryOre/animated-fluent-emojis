@@ -53,8 +53,9 @@ and rotation are in [Set up asset hosting](../how-to/set-up-asset-hosting.md).
 - With no expiry, revocation is the kill switch. A leaked token is limited to
   this repository and cannot bypass the ruleset: its pull requests still need
   the required check.
-- A missing, revoked or under-scoped token makes the `emoji-lists` step fail.
-  The `Report a failed sync` job then opens or comments on the
-  `sync-assets failing` issue.
+- A missing, revoked or under-scoped token makes the `emoji-lists` step fail,
+  but only on a run where the lists changed: the step exits before using the
+  token when nothing changed. The `Report a failed sync` job then opens or
+  comments on the `sync-assets failing` issue.
 - The token belongs to the maintainer, so it must be rotated if access changes.
 - Actions cannot create or approve pull requests anywhere in the repository.
