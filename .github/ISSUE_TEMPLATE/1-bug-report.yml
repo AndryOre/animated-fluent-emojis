@@ -17,23 +17,25 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug! Please fill in as much detail as possible so it can be reproduced and fixed quickly.
+        Thanks for taking the time to report a bug. Please fill in as much detail as possible so it can be reproduced and fixed quickly.
 
   - type: input
     id: package-version
     attributes:
       label: Package version
       description: The installed version of `animated-fluent-emojis`.
-      placeholder: 'e.g. 0.2.0'
+      placeholder: 'e.g. 0.7.0'
     validations:
       required: true
 
   - type: input
-    id: react-version
+    id: framework-version
     attributes:
-      label: React version
-      description: The installed version of `react` and `react-dom`.
-      placeholder: 'e.g. 19.1.0'
+      label: Framework and version
+      description:
+        The framework you render the emoji in, or the `<fluent-emoji>` element,
+        and its version.
+      placeholder: 'e.g. React 19.1.0, Vue 3.5, Svelte 5, Astro 5'
     validations:
       required: true
 

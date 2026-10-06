@@ -9,9 +9,10 @@ which are the source of truth for what's actually being worked on next.
 
 The focus for the next year is maintenance rather than new surface area:
 
-- **Maintenance** — keeping dependencies, tooling, and CI current as React and
-  the bundler ecosystem evolve.
-- **React 19** — supporting React 19 as the primary target, with the library
+- **Maintenance** — keeping dependencies, tooling, and CI current as the
+  supported frameworks and the bundler ecosystem evolve.
+- **Framework support** — keeping the React, Vue, Svelte, Astro and
+  `<fluent-emoji>` adapters in step with their frameworks, with the library
   shipped as ESM-only.
 - **Bug fixes** — addressing defects as they're reported.
 - **Issue triage** — keeping the issue tracker current so contributors and users

@@ -1,8 +1,8 @@
 # Animated Fluent Emojis
 
-A component library, with a React component today and more frameworks coming,
-that renders Microsoft's animated Fluent emojis from a generated, automatically
-refreshed catalog hosted on a static site.
+A component library, with adapters for React, Vue, Svelte, Astro and a
+`<fluent-emoji>` element, that renders Microsoft's animated Fluent emojis from a
+generated, automatically refreshed catalog hosted on a static site.
 
 ## Language
 
@@ -27,8 +27,9 @@ emoji's shortcuts, unicode and keywords. Only the pipeline and the emoji lists
 read it. _Avoid_: Catalog file, index
 
 **Slim manifest**: The `manifest.slim.json` the runtime fetches, lazily and
-once: only id, description, etag, `diverse`, animation and `hd` per emoji, with
-every field at its default value omitted. _Avoid_: Light manifest, mini manifest
+once: only id, description, etag, `unicode`, `diverse`, animation and `hd` per
+emoji, with every field at its default value omitted. _Avoid_: Light manifest,
+mini manifest
 
 **Poster frame**: The frame an emoji rests on when nothing animates: before
 playback, with `autoPlay` off, or under reduced motion. It is the animation's
@@ -72,8 +73,9 @@ sprite even when no upstream source changed. _Avoid_: Build version, schema
 version
 
 **Core**: The framework-free layer: size and iteration normalization, the pure
-playback-gate state machine that produces plain CSS style, and image wiring.
-Every adapter is a thin layer over it. _Avoid_: Engine, shared code, base
+playback-gate state machine that produces plain CSS style, image wiring and the
+environment signals (reduced motion, visibility, document hidden). Every adapter
+is a thin layer over it. _Avoid_: Engine, shared code, base
 
 **Adapter**: A framework's entry point to the library, published as a subpath
 export (`/react`, `/vue`, `/svelte`, `/astro`, `/element`) and built on the
