@@ -348,6 +348,12 @@ committed. See [ADR 0006](adr/0006-cloudflare-pages-asset-hosting.md),
   production), `manifest-ops.ts` (diff, animation, HD and prune helpers) and
   `site-writer.ts` (the legacy and v1 copies, manifests, `_headers` and the
   license).
+- `public-slugs.ts` derives and merges the frozen slug registry
+  (`public-slugs.json`) that names every public file: `slugify`,
+  `listRegistryKeys`, `deriveRegistry` and `mergeRegistries`.
+- `public-files.ts` encodes one sprite sheet into a GIF, a WebP and a
+  poster-frame PNG with sharp, with deterministic settings.
+- `files-site.ts` builds the files site (see [Files site](#files-site)).
 - `sync.ts` is the CLI behind `assets:detect`, `assets:build`, `assets:lists`
   and `assets:verify-live`. Its `--cache` option defaults to `.cache/assets`,
   the local directory that holds the sprites keyed by `etag`.
@@ -432,6 +438,24 @@ Teams and Microsoft's repository are unchanged. Manual dispatch has two inputs
 that replace the old `force`: `rebuild` forces a build, `bypass_guards` skips
 the Teams discovery and removal guards. The first sync after 0.5 converts every
 sprite again, because the live site has no `/v1/` files to seed from.
+
+## Files site
+
+`buildFilesSite()` in `scripts/assets/files-site.ts` reads `dist-assets/` and
+writes `dist-files/`, which `sync-assets.yml` deploys to a second Pages project
+after the asset deploy. Nothing it produces is committed. See
+[ADR 0015](adr/0015-public-files-site.md).
+
+- Output: `/gif/<slug>.gif`, `/webp/<slug>.webp`, `/png/<slug>.png`,
+  `/index.json` (the public index), `/version.json`, the license and notice
+  files and `_headers`.
+- Each file is encoded by `public-files.ts` from the emoji's HD sheet when it
+  has one, else the 100px sheet. The encoder is injectable so tests avoid real
+  encoding.
+- Slugs come from the frozen registry in `public-slugs.json`; the live
+  `index.json` is merged in before a build so published URLs never change.
+- The file count is guarded by `MAX_OUTPUT_FILES`, kept under the Free plan cap
+  of 20,000 files.
 
 ## CSS
 
