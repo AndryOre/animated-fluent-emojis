@@ -212,13 +212,36 @@ export function formatErrorChain(error: unknown): string {
   return lines.join('\n')
 }
 
-function buildGithubHeaders(): Record<string, string> {
-  const token = process.env.GITHUB_TOKEN
+/**
+ * Everything the sync commands read from their surroundings.
+ */
+export interface SyncDependencies {
+  readonly fetch: FetchLike
+  readonly environment: Readonly<Record<string, string | undefined>>
+  readonly buildAssets: typeof buildAssets
+}
+
+/**
+ * Creates the real dependencies the CLI runs with: the global fetch, the process
+ * environment and the real asset build.
+ * @returns The dependencies wired to the live globals.
+ */
+export function createDefaultDependencies(): SyncDependencies {
+  return { fetch, environment: process.env, buildAssets }
+}
+
+function buildGithubHeaders(
+  environment: SyncDependencies['environment'],
+): Record<string, string> {
+  const token = environment.GITHUB_TOKEN
   return token ? { authorization: `Bearer ${token}` } : {}
 }
 
-function setOutputs(outputs: Record<string, string>): void {
-  const outputFile = process.env.GITHUB_OUTPUT
+function setOutputs(
+  environment: SyncDependencies['environment'],
+  outputs: Record<string, string>,
+): void {
+  const outputFile = environment.GITHUB_OUTPUT
   if (!outputFile) return
   appendFileSync(
     outputFile,
@@ -228,17 +251,34 @@ function setOutputs(outputs: Record<string, string>): void {
   )
 }
 
-function reportDiscovery(warnings: readonly string[]): void {
+function reportDiscovery(
+  environment: SyncDependencies['environment'],
+  warnings: readonly string[],
+): void {
   for (const warning of warnings) console.warn(`warning: ${warning}`)
-  appendStepSummary('Teams discovery warnings', warnings)
+  appendStepSummary(
+    'Teams discovery warnings',
+    warnings,
+    environment.GITHUB_STEP_SUMMARY,
+  )
 }
 
-async function runDetect(
-  publishedUrl: string,
-  rebuild: boolean,
-  bypassGuards: boolean,
+/**
+ * Compares the published catalog with the newest upstream versions and writes
+ * the `changed`, `teams_hash` and `mit_sha` step outputs.
+ * @param options The command options.
+ * @param options.publishedUrl The published site origin.
+ * @param options.rebuild Whether to report a rebuild regardless.
+ * @param options.bypassGuards Whether the discovery guard is bypassed.
+ * @param dependencies The fetch and environment to use.
+ */
+export async function runDetect(
+  options: { publishedUrl: string; rebuild: boolean; bypassGuards: boolean },
+  dependencies: SyncDependencies = createDefaultDependencies(),
 ): Promise<void> {
-  const fetchImplementation: FetchLike = fetch
+  const { publishedUrl, rebuild, bypassGuards } = options
+  const { environment } = dependencies
+  const fetchImplementation = dependencies.fetch
   const published = await fetchPublishedJson<PublishedVersion>(
     fetchImplementation,
     publishedUrl,
@@ -256,11 +296,11 @@ async function runDetect(
       ...KNOWN_TEAMS_HASHES,
     ],
   })
-  reportDiscovery(discovery.warnings)
+  reportDiscovery(environment, discovery.warnings)
   assertDiscoveryHealthy(discovery, bypassGuards)
   const mitSha = await fetchMitCommitSha(
     fetchImplementation,
-    buildGithubHeaders(),
+    buildGithubHeaders(environment),
   )
   const changed = needsRebuild(
     published,
@@ -275,22 +315,38 @@ async function runDetect(
       2,
     ),
   )
-  setOutputs({
+  setOutputs(environment, {
     changed: String(changed),
     teams_hash: discovery.version.hash,
     mit_sha: mitSha,
   })
 }
 
-async function runBuild(options: {
-  teamsHash: string | undefined
-  publishedUrl: string
-  outputDirectory: string
-  cacheDirectory: string
-  limit: number | undefined
-  bypassGuards: boolean
-}): Promise<void> {
-  const fetchImplementation: FetchLike = fetch
+/**
+ * Builds the asset site into the output directory and reports a summary.
+ * @param options The command options.
+ * @param options.teamsHash A pinned Teams metadata hash, or undefined to discover the newest.
+ * @param options.publishedUrl The published site origin.
+ * @param options.outputDirectory Where the site is written.
+ * @param options.cacheDirectory Where converted sprites are cached.
+ * @param options.limit Builds only this many emojis when set.
+ * @param options.bypassGuards Whether the safety guards are bypassed.
+ * @param dependencies The fetch, environment and build to use.
+ * @throws {Error} When the pinned Teams hash is not available.
+ */
+export async function runBuild(
+  options: {
+    teamsHash: string | undefined
+    publishedUrl: string
+    outputDirectory: string
+    cacheDirectory: string
+    limit: number | undefined
+    bypassGuards: boolean
+  },
+  dependencies: SyncDependencies = createDefaultDependencies(),
+): Promise<void> {
+  const { environment } = dependencies
+  const fetchImplementation = dependencies.fetch
   let teamsVersion: TeamsVersion | undefined
   if (options.teamsHash) {
     teamsVersion = await probeVersion(fetchImplementation, options.teamsHash)
@@ -302,7 +358,7 @@ async function runBuild(options: {
       fetchImplementation,
       knownHashes: KNOWN_TEAMS_HASHES,
     })
-    reportDiscovery(discovery.warnings)
+    reportDiscovery(environment, discovery.warnings)
     assertDiscoveryHealthy(discovery, options.bypassGuards)
     teamsVersion = discovery.version
   }
@@ -312,9 +368,9 @@ async function runBuild(options: {
     options.publishedUrl,
     'manifest.json',
   )
-  const result = await buildAssets({
+  const result = await dependencies.buildAssets({
     fetchImplementation,
-    githubHeaders: buildGithubHeaders(),
+    githubHeaders: buildGithubHeaders(environment),
     teamsVersion,
     outputDirectory: options.outputDirectory,
     cacheDirectory: options.cacheDirectory,
@@ -328,18 +384,26 @@ async function runBuild(options: {
   })
   await assertFileCountWithinLimit(options.outputDirectory)
   if (result.diff) {
-    appendStepSummary('Catalog diff', [
-      `Added: ${String(result.diff.added.length)}`,
-      `Removed: ${String(result.diff.removed.length)}`,
-      `Changed: ${String(result.diff.changed.length)}`,
-    ])
+    appendStepSummary(
+      'Catalog diff',
+      [
+        `Added: ${String(result.diff.added.length)}`,
+        `Removed: ${String(result.diff.removed.length)}`,
+        `Changed: ${String(result.diff.changed.length)}`,
+      ],
+      environment.GITHUB_STEP_SUMMARY,
+    )
   }
-  appendStepSummary('Sprite sources', [
-    `Seeded from the live site: ${String(result.seeded)} emoji(s)`,
-    `Built from source: ${String(result.downloaded)} sprite(s)`,
-    `Reused from the cache: ${String(result.reused)} sprite(s)`,
-    `Retained from the previous generation: ${String(result.retained)} emoji(s)`,
-  ])
+  appendStepSummary(
+    'Sprite sources',
+    [
+      `Seeded from the live site: ${String(result.seeded)} emoji(s)`,
+      `Built from source: ${String(result.downloaded)} sprite(s)`,
+      `Reused from the cache: ${String(result.reused)} sprite(s)`,
+      `Retained from the previous generation: ${String(result.retained)} emoji(s)`,
+    ],
+    environment.GITHUB_STEP_SUMMARY,
+  )
   console.log(
     JSON.stringify(
       {
@@ -361,7 +425,13 @@ async function runBuild(options: {
   )
 }
 
-async function runLists(
+/**
+ * Writes the per-category emoji lists and the emoji-id module from a manifest.
+ * @param manifestPath The built `manifest.json`.
+ * @param docsDirectory Where the `EMOJI_LIST_*.md` files go.
+ * @param emojiIdPath Where the generated emoji-id module goes.
+ */
+export async function runLists(
   manifestPath: string,
   docsDirectory: string,
   emojiIdPath: string,
@@ -379,8 +449,18 @@ async function runLists(
   )
 }
 
-async function main(): Promise<void> {
+/**
+ * Parses the CLI arguments and runs the chosen command.
+ * @param argv The arguments after the script name.
+ * @param dependencies The fetch, environment and build to use.
+ * @throws {Error} When the command is unknown.
+ */
+export async function runCommand(
+  argv: readonly string[],
+  dependencies: SyncDependencies = createDefaultDependencies(),
+): Promise<void> {
   const { values, positionals } = parseArgs({
+    args: [...argv],
     allowPositionals: true,
     options: {
       'published-url': { type: 'string', default: DEFAULT_PUBLISHED_URL },
@@ -402,25 +482,31 @@ async function main(): Promise<void> {
   switch (command) {
     case 'detect': {
       await runDetect(
-        values['published-url'],
-        values.rebuild,
-        values['bypass-guards'],
+        {
+          publishedUrl: values['published-url'],
+          rebuild: values.rebuild,
+          bypassGuards: values['bypass-guards'],
+        },
+        dependencies,
       )
       break
     }
     case 'build': {
-      await runBuild({
-        teamsHash: values['teams-hash'],
-        publishedUrl: values['published-url'],
-        outputDirectory: values.out,
-        cacheDirectory: values.cache,
-        limit: parseLimit(values.limit),
-        bypassGuards: values['bypass-guards'],
-      })
+      await runBuild(
+        {
+          teamsHash: values['teams-hash'],
+          publishedUrl: values['published-url'],
+          outputDirectory: values.out,
+          cacheDirectory: values.cache,
+          limit: parseLimit(values.limit),
+          bypassGuards: values['bypass-guards'],
+        },
+        dependencies,
+      )
       break
     }
     case 'verify-live': {
-      await verifyLive(fetch, values['published-url'])
+      await verifyLive(dependencies.fetch, values['published-url'])
       break
     }
     case 'lists': {
@@ -437,7 +523,7 @@ async function main(): Promise<void> {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   try {
-    await main()
+    await runCommand(process.argv.slice(2))
   } catch (error: unknown) {
     console.error(formatErrorChain(error))
     process.exitCode = 1

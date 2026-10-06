@@ -16,6 +16,8 @@ const hasFfmpeg =
   spawnSync('ffmpeg', ['-version']).status === 0 &&
   spawnSync('ffprobe', ['-version']).status === 0
 
+const skipWithoutFfmpeg = !hasFfmpeg && !process.env.CI
+
 test('parseFrameRate keeps the exact fractional rate', () => {
   expect(parseFrameRate('143/6')).toBeCloseTo(23.8333, 4)
   expect(parseFrameRate('10/1')).toBe(10)
@@ -77,7 +79,7 @@ async function convertTestAnimation(frameSizes?: readonly number[]) {
   }
 }
 
-test.skipIf(!hasFfmpeg)(
+test.skipIf(skipWithoutFfmpeg)(
   'convertAnimatedPng stacks every frame into a 100px wide sprite',
   async () => {
     const { sprites, metadata } = await convertTestAnimation()
@@ -90,7 +92,7 @@ test.skipIf(!hasFfmpeg)(
   },
 )
 
-test.skipIf(!hasFfmpeg)(
+test.skipIf(skipWithoutFfmpeg)(
   'convertAnimatedPng builds the 100px and 200px sheets from one decode',
   async () => {
     const { apng, sprites, metadata } = await convertTestAnimation([100, 200])

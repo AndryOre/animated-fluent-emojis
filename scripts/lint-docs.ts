@@ -82,6 +82,14 @@ export function buildLycheeCacheRelativePath(version: string): string {
   return path.join('lychee', version, 'lychee')
 }
 
+/** Injectable collaborators of {@link ensureLycheeBinary}. */
+export interface LycheeBinaryDependencies {
+  resolveCacheRoot: () => string
+  fetchArchive: (url: string) => Promise<Response>
+  arch: NodeJS.Architecture
+  platform: NodeJS.Platform
+}
+
 function resolveGitCommonDirectory(): string {
   const result = spawnSync('git', ['rev-parse', '--git-common-dir'], {
     encoding: 'utf8',
@@ -112,9 +120,13 @@ function findBinaryRecursively(
 async function downloadLycheeBinary(
   version: string,
   destinationPath: string,
+  dependencies: LycheeBinaryDependencies,
 ): Promise<void> {
-  const url = buildLycheeDownloadUrl(version, resolveLycheeArch())
-  const response = await fetch(url)
+  const url = buildLycheeDownloadUrl(
+    version,
+    resolveLycheeArch(dependencies.arch, dependencies.platform),
+  )
+  const response = await dependencies.fetchArchive(url)
   if (!response.ok) {
     throw new Error(
       `lint-docs: failed to download lychee from ${url} (HTTP ${String(response.status)}).`,
@@ -152,19 +164,32 @@ async function downloadLycheeBinary(
   }
 }
 
+function defaultLycheeDependencies(): LycheeBinaryDependencies {
+  return {
+    resolveCacheRoot: resolveGitCommonDirectory,
+    fetchArchive: (url) => fetch(url),
+    arch: process.arch,
+    platform: process.platform,
+  }
+}
+
 /**
  * Returns a cached lychee binary, downloading it on first use.
  * @param version The lychee release version to ensure is cached.
+ * @param dependencies The cache root, fetch and platform, defaulting to the real ones.
  * @returns The absolute path of the cached binary.
  */
-export async function ensureLycheeBinary(version: string): Promise<string> {
+export async function ensureLycheeBinary(
+  version: string,
+  dependencies: LycheeBinaryDependencies = defaultLycheeDependencies(),
+): Promise<string> {
   const binaryPath = path.join(
-    resolveGitCommonDirectory(),
+    dependencies.resolveCacheRoot(),
     buildLycheeCacheRelativePath(version),
   )
   if (existsSync(binaryPath)) return binaryPath
   console.log(`lint-docs: lychee ${version} not cached, downloading...`)
-  await downloadLycheeBinary(version, binaryPath)
+  await downloadLycheeBinary(version, binaryPath, dependencies)
   console.log(`lint-docs: cached lychee ${version} at ${binaryPath}.`)
   return binaryPath
 }
@@ -173,12 +198,12 @@ function exitCodeOf(code: number | null): number {
   return typeof code === 'number' ? code : 1
 }
 
-async function main(): Promise<void> {
-  const binaryPath = await ensureLycheeBinary(LYCHEE_VERSION)
-  const child = spawn(binaryPath, [...LYCHEE_ARGS, ...process.argv.slice(2)], {
-    stdio: 'inherit',
-  })
-  process.exitCode = await new Promise<number>((resolve, reject) => {
+function spawnInherited(
+  binaryPath: string,
+  binaryArguments: string[],
+): Promise<number> {
+  const child = spawn(binaryPath, binaryArguments, { stdio: 'inherit' })
+  return new Promise<number>((resolve, reject) => {
     child.on('error', reject)
     child.on('close', (code) => {
       resolve(exitCodeOf(code))
@@ -186,9 +211,28 @@ async function main(): Promise<void> {
   })
 }
 
+/**
+ * Runs lychee over the docs with the cached pinned binary.
+ * @param extraArguments Arguments appended to {@link LYCHEE_ARGS}.
+ * @param ensureBinary Resolves the lychee binary path.
+ * @param spawnBinary Runs the binary and resolves its exit code.
+ * @returns The lychee exit code.
+ */
+export async function runDocumentationLint(
+  extraArguments: string[] = process.argv.slice(2),
+  ensureBinary: (version: string) => Promise<string> = ensureLycheeBinary,
+  spawnBinary: (
+    binaryPath: string,
+    binaryArguments: string[],
+  ) => Promise<number> = spawnInherited,
+): Promise<number> {
+  const binaryPath = await ensureBinary(LYCHEE_VERSION)
+  return spawnBinary(binaryPath, [...LYCHEE_ARGS, ...extraArguments])
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   try {
-    await main()
+    process.exitCode = await runDocumentationLint()
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error)
     process.exitCode = 1
