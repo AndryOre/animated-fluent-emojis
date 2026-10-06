@@ -5,11 +5,13 @@ Draft v1 (2026-10-05). Status: awaiting review. The name is not decided yet:
 
 ## Category
 
-A React component library (ESM only, React 18 and 19, TypeScript) that renders
-Microsoft's animated Fluent emoji on the web. One `<Emoji>` component reads a
-small manifest, fetched lazily on first render, and plays sprite sheets served
-from a static asset site. It plays on load, on hover or on focus, shows a still
-poster frame under reduced motion, and ships descriptive `alt` text.
+A component library (ESM only, TypeScript) that renders Microsoft's animated
+Fluent emoji on the web. Today it ships a React component (React 18 and 19): one
+`<Emoji>` reads a small manifest, fetched lazily on first render, and plays
+sprite sheets served from a static asset site. It is becoming multi-framework
+(see ADR 0014) with native Vue, Svelte and Astro adapters and a `<fluent-emoji>`
+element for everything else. It plays on load, on hover or on focus, shows a
+still poster frame under reduced motion, and ships descriptive `alt` text.
 
 Where it is going, and what the brand has to stretch to without claiming it
 today:
@@ -18,12 +20,14 @@ today:
 - Animated files ready to embed in a README or GitHub profile. Sprite sheets
   cannot animate in a plain `<img>`, so this needs a new asset type.
 
-Copy written now only claims what ships today.
+Copy written now only claims what ships today: React until the 0.6 release ships
+the other adapters.
 
 ## Audience
 
-- **Primary today:** React developers adding expression to a UI: chat and
-  reactions, empty states, onboarding, marketing pages.
+- **Primary today:** React developers (and, from 0.6, Vue, Svelte and Astro
+  developers) adding expression to a UI: chat and reactions, empty states,
+  onboarding, marketing pages.
 - **Planned:** developers and creators who want animated emoji in READMEs and
   GitHub profiles. This is the audience of
   `Tarikul-Islam-Anik/Animated-Fluent-Emojis` (1,102 stars), see
@@ -225,6 +229,7 @@ Rejected:
 
 ## Out of scope
 
-- Wrappers for frameworks other than React.
+- Native adapters beyond React, Vue, Svelte, Astro and the `<fluent-emoji>`
+  element, such as Angular, Solid, Qwik or Ember, until there is demand.
 - Original emoji artwork.
 - Domain purchase.
