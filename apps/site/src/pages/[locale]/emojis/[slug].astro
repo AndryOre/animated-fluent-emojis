@@ -1,0 +1,24 @@
+---
+import EmojiPage from '../../../components/EmojiPage.astro'
+import { loadEmojiPageData } from '../../../emoji-pages/data'
+import {
+  localeFromSegment,
+  LOCALES,
+  localeSegment,
+} from '../../../i18n/locales'
+
+export async function getStaticPaths() {
+  const { emojis } = await loadEmojiPageData('en')
+  return LOCALES.filter((locale) => locale !== 'en').flatMap((locale) =>
+    emojis.map(({ slug }) => ({
+      params: { locale: localeSegment(locale), slug },
+    })),
+  )
+}
+
+const locale = localeFromSegment(Astro.params.locale)
+if (!locale) throw new Error(`Unknown locale "${Astro.params.locale}"`)
+const { slug } = Astro.params
+---
+
+<EmojiPage locale={locale} slug={slug} />

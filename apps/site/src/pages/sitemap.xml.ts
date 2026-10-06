@@ -1,8 +1,9 @@
 import { buildSitemapXml, collectSitemapRoutes } from '../seo/sitemap'
 import { SITEMAP_SOURCES } from '../seo/sources'
 
-export function GET() {
-  return new Response(buildSitemapXml(collectSitemapRoutes(SITEMAP_SOURCES)), {
+export async function GET() {
+  const routes = await collectSitemapRoutes(SITEMAP_SOURCES)
+  return new Response(buildSitemapXml(routes), {
     headers: { 'Content-Type': 'application/xml; charset=utf-8' },
   })
 }
