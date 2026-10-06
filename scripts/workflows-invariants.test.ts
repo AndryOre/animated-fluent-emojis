@@ -225,7 +225,7 @@ describe('sync-assets.yml sync job', () => {
 
   test('the v1 smoke only compares builtAt when a local build exists', () => {
     const v1 = steps.find((step) => step.name === 'Smoke test the v1 layout')
-    expect(v1?.run).toContain('-f dist-assets/v1/version.json')
+    expect(v1?.run).toContain('-f apps/assets/dist-assets/v1/version.json')
   })
 
   test('pins an exact wrangler version', () => {
@@ -260,7 +260,9 @@ describe('sync-assets.yml sync job', () => {
       (step) => step.name === 'Deploy the files site to Cloudflare Pages',
     )
     expect(deploy?.uses).toMatch(/^cloudflare\/wrangler-action@[0-9a-f]{40}$/)
-    expect(String(deploy?.with?.command)).toContain('pages deploy dist-files')
+    expect(String(deploy?.with?.command)).toContain(
+      'pages deploy apps/assets/dist-files',
+    )
     expect(String(deploy?.with?.command)).toContain(
       '--project-name=animated-fluent-emojis-files',
     )
@@ -327,10 +329,10 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(runs).toContain('--index index.json')
     expect(runs).toContain('"404"')
     expect(runs).toContain(
-      'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+      'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
     )
     expect(runs).toContain(
-      'git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+      'git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
     )
   })
 

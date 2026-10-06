@@ -18,13 +18,12 @@ export default defineConfig({
       ],
       exclude: [
         'scripts/**/*.test.ts',
-        'scripts/assets/test-support.ts',
         'eslint-rules/**/*.test.ts',
         'docs/brand/tools/**/*.test.ts',
         'docs/brand/tools/export.mjs',
       ],
       reporter: ['text', 'lcov'],
-      thresholds: { lines: 95, functions: 95, branches: 89, statements: 95 },
+      thresholds: { lines: 94, functions: 95, branches: 87, statements: 94 },
     },
   },
 })

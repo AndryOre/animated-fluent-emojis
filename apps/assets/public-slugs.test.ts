@@ -15,7 +15,7 @@ import {
 const LIVE_MANIFEST_URL =
   'https://animated-fluent-emojis.pages.dev/manifest.json'
 const LOCAL_MANIFEST_PATH = new URL(
-  '../../dist-assets/manifest.json',
+  'dist-assets/manifest.json',
   import.meta.url,
 )
 const COMMITTED_PATH = new URL('public-slugs.json', import.meta.url)
