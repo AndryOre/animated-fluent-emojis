@@ -101,6 +101,8 @@
         "docs/adr/**",
         "docs/brand/tools/**",
         "packages/*/src/**",
+        ".github/workflows/**",
+        "renovate.json5",
         "vitest.config.ts"
       ],
       "outputs": ["coverage/**"]
@@ -112,6 +114,8 @@
         "docs/adr/**",
         "docs/brand/tools/**",
         "packages/*/src/**",
+        ".github/workflows/**",
+        "renovate.json5",
         "vitest.config.ts"
       ],
       "outputs": []
