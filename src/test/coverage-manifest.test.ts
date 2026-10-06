@@ -16,6 +16,14 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Entry that registers the element and re-exports its types, covered by fluent-emoji.test.ts.',
   'element/types.ts':
     'Type-only module with global and framework typings, checked by element.types.test.ts.',
+  'svelte/index.ts':
+    'Entry that re-exports the Svelte Emoji and its types, covered by svelte.conformance.test.ts and svelte.adapter.test.ts.',
+  'svelte/runtime.ts':
+    'Re-export seam between the shipped Svelte source and the shared chunks, covered by svelte.conformance.test.ts.',
+  'svelte/Emoji.d.svelte.ts':
+    'Declaration file for the shipped Emoji.svelte, with no runtime behavior to test.',
+  'svelte/types.ts':
+    'Type-only module with the Svelte Emoji props, no runtime behavior to test.',
   'utils/types.ts': 'Type-only module with no runtime behavior to test.',
   'utils/emoji-id.generated.ts':
     'Generated type-only union, produced and tested by scripts/assets.',

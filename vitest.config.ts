@@ -1,3 +1,4 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import react from '@vitejs/plugin-react-swc'
 import { playwright } from '@vitest/browser-playwright'
 import { msw } from 'msw/vite'
@@ -21,7 +22,12 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        plugins: [react(), msw({ mode: 'worker-only' })],
+        plugins: [
+          react(),
+          svelte({ compilerOptions: { hmr: false } }),
+          msw({ mode: 'worker-only' }),
+        ],
+        optimizeDeps: { include: ['svelte'] },
         test: {
           name: 'browser',
           include: [
@@ -43,6 +49,7 @@ export default defineConfig({
       },
       {
         extends: true,
+        plugins: [svelte()],
         test: {
           name: 'node',
           environment: 'node',
