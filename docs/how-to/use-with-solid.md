@@ -33,10 +33,19 @@ export function Greeting() {
 }
 ```
 
-The JSX types declare attributes only, not `children` or `ref`. A
-`<span slot="fallback">` child works at runtime but is rejected by a strict
-TypeScript check, so add a local JSX augmentation or suppress that line until
-the types cover it.
+The fallback goes in as a child with `slot="fallback"`, and `ref` gives you the
+element:
+
+```tsx
+<fluent-emoji
+  id="1f44b_wavinghand"
+  ref={(element) => {
+    element.playing = false
+  }}
+>
+  <span slot="fallback">👋</span>
+</fluent-emoji>
+```
 
 Attributes, properties and events are listed in the
 [usage guide](../usage.md#plain-html).

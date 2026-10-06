@@ -50,6 +50,18 @@ export interface FluentEmojiAttributes {
   style?: string
 }
 
+/**
+ * The attributes accepted by `<fluent-emoji>` in Solid and Preact JSX, which
+ * add `children` for the `slot="fallback"` content and `ref` for the element.
+ */
+export interface FluentEmojiJsxAttributes extends FluentEmojiAttributes {
+  children?: unknown
+  ref?:
+    | FluentEmojiElement
+    | ((element: FluentEmojiElement) => void)
+    | { current: FluentEmojiElement | null }
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     'fluent-emoji': FluentEmojiElement
@@ -65,7 +77,7 @@ declare module 'vue' {
 declare module 'solid-js' {
   namespace JSX {
     interface IntrinsicElements {
-      'fluent-emoji': FluentEmojiAttributes
+      'fluent-emoji': FluentEmojiJsxAttributes
     }
   }
 }
@@ -73,7 +85,7 @@ declare module 'solid-js' {
 declare module 'preact' {
   namespace JSX {
     interface IntrinsicElements {
-      'fluent-emoji': FluentEmojiAttributes
+      'fluent-emoji': FluentEmojiJsxAttributes
     }
   }
 }
