@@ -22,8 +22,12 @@ how it renders.
   `src/test/**`, `eslint-rules/**`, `docs/adr/**`) without a browser.
 - **MSW in `worker-only` mode** mocks the CDN manifest in the browser project.
 - **Accessibility** is checked with `axe-core` in `Emoji.a11y.test.tsx`.
-- **Coverage** uses the v8 provider with thresholds (90% lines, functions and
-  statements, 85% branches) enforced by `bun run test:coverage` in CI.
+- **Coverage** uses the v8 provider over `src/**` (including `.svelte`),
+  `scripts/**`, `eslint-rules/**` and `docs/brand/tools/**`, with thresholds
+  (95% lines, functions and statements, 90% branches) enforced by
+  `bun run test:coverage` in CI. `.astro` files are not reported by v8 and stay
+  covered by the container render test, and the brand export CLI
+  (`docs/brand/tools/export.mjs`) needs a real browser, so both are left out.
 
 ### Rejected alternatives
 

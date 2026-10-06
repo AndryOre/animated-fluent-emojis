@@ -146,8 +146,16 @@ defineConformanceSuite('my-adapter', () => ({
 The factory is called once per test, so keep state inside the closure. The
 contract lives in `src/test/conformance/driver.ts`.
 
-`src/test/coverage-manifest.test.ts` fails when a source module has no test and
-no documented exemption. Rationale: [ADR 0004](adr/0004-vitest-browser-mode.md).
+`bun run test:coverage` measures `src/**` (including `.svelte`), `scripts/**`,
+`eslint-rules/**` and `docs/brand/tools/**` and enforces 95% lines, functions
+and statements and 90% branches. `.astro` files are not reported by v8 (the
+container render test covers them) and `docs/brand/tools/export.mjs` needs a
+real browser, so neither is measured. Local runs skip the ffmpeg tests, which CI
+runs, so CI numbers are at least as high.
+
+`src/test/coverage-manifest.test.ts` walks all four roots and fails when a
+source module has no colocated test and no documented exemption, or when an
+exemption is stale. Rationale: [ADR 0004](adr/0004-vitest-browser-mode.md).
 
 ## Packaging
 
