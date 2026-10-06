@@ -16,7 +16,7 @@ interface Props {
 const { locale } = Astro.props
 const { home, meta } = getUi(locale)
 
-const galleryHref = localePath(locale, '/gallery/')
+const galleryHref = localePath(locale, '/emojis/')
 const index = await loadPublicIndex()
 const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
 if (!snippetEmoji) throw new Error('The public index has no waving hand')
