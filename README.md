@@ -240,7 +240,8 @@ only. The MIT notice for Microsoft's repository is published at
 Every emoji and skin tone is also a plain file (GIF, WebP and PNG) on the files
 site, `animated-fluent-emojis-files.andryore.dev`, for people who use them
 without the library; see [Use without code](docs/how-to/use-without-code.md).
-The artwork is Microsoft's, and the site publishes Microsoft's MIT notice at
+The artwork is Microsoft's and its use is subject to Microsoft's terms. The site
+publishes the notice for the emojis from Microsoft's MIT-licensed repository at
 `/LICENSE-fluentui-emoji-animated.txt` and the attribution at `/NOTICE.txt`.
 
 ## Acknowledgements

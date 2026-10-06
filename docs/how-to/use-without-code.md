@@ -101,8 +101,10 @@ background. There, use the WebP or the PNG, which keep smooth edges.
 
 ## Credit
 
-The emoji artwork is Microsoft's. This project is not affiliated with or
-endorsed by Microsoft. The site publishes Microsoft's MIT notice at
-`/LICENSE-fluentui-emoji-animated.txt` and the attribution at `/NOTICE.txt`.
+The emoji artwork is Microsoft's, and its use is subject to Microsoft's terms.
+This project is not affiliated with or endorsed by Microsoft. Some emojis come
+from Microsoft's MIT-licensed repository; the notice that applies to them is at
+`/LICENSE-fluentui-emoji-animated.txt`. The attribution is at `/NOTICE.txt`.
+Check the terms that apply to the artwork before you use it in your own work.
 
 Building a website or app? The [usage guide](../usage.md) covers the library.
