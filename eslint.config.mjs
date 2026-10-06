@@ -1,6 +1,7 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import eslintReact from '@eslint-react/eslint-plugin'
 import prettierConfig from 'eslint-config-prettier'
+import astro from 'eslint-plugin-astro'
 import jsdoc from 'eslint-plugin-jsdoc'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -103,6 +104,12 @@ export default defineConfig([
     files: ['**/*.config.{ts,mjs}'],
     rules: { 'unicorn/no-top-level-side-effects': 'off' },
   },
+  ...astro.configs.recommended,
+  {
+    files: ['**/*.astro'],
+    plugins: { local: localPlugin },
+    rules: { 'local/no-non-doc-comments': 'error' },
+  },
   {
     files: ['**/*.{ts,tsx,mjs}'],
     plugins: {
@@ -121,5 +128,10 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   prettierConfig,
-  globalIgnores(['**/dist/**', '**/coverage/**', '.claude/worktrees/**']),
+  globalIgnores([
+    '**/.astro/**',
+    '**/dist/**',
+    '**/coverage/**',
+    '.claude/worktrees/**',
+  ]),
 ])

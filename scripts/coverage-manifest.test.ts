@@ -7,6 +7,7 @@ const REPOSITORY_ROOT = path.resolve(import.meta.dirname, '..')
 const SOURCE_ROOTS = [
   'packages/animated-fluent-emojis/src',
   'apps/assets',
+  'apps/site/src',
   'scripts',
   'eslint-rules',
   'docs/brand/tools',
@@ -57,6 +58,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Test-support helpers shared by the apps/assets tests, with no behavior of their own.',
   'apps/assets/vitest.config.ts':
     'Vitest configuration for the pipeline workspace, with no behavior to test.',
+  'apps/site/src/pages/index.astro':
+    'Placeholder landing page that renders one emoji through the library Astro adapter, with no logic to test.',
   'scripts/workflow-files.ts':
     'Workflow loader used by workflows-invariants.test.ts, which exercises it against the real workflows.',
   'docs/brand/tools/export.mjs':

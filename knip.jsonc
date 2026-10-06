@@ -10,6 +10,9 @@
       "ignoreDependencies": ["animated-fluent-emojis"],
       "project": ["*.ts"],
     },
+    "apps/site": {
+      "ignoreDependencies": ["@astrojs/starlight"],
+    },
     "packages/animated-fluent-emojis": {
       "entry": [
         "src/index.ts",

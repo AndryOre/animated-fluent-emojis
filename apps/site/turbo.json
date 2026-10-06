@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "check": {
+      "dependsOn": ["transit", "^build"],
+      "inputs": ["$TURBO_DEFAULT$", "!dist/**", "!.astro/**"]
+    },
+    "build": {
+      "dependsOn": ["transit", "^build"],
+      "inputs": ["$TURBO_DEFAULT$", "!dist/**", "!.astro/**"],
+      "outputs": ["dist/**"]
+    }
+  }
+}
