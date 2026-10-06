@@ -3,7 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "check": {
-      "dependsOn": ["transit", "^build"],
+      "dependsOn": ["transit", "^build", "^check"],
       "inputs": ["$TURBO_DEFAULT$", "!dist/**", "!.astro/**"]
     },
     "build": {
