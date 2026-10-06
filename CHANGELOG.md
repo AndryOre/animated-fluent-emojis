@@ -8,6 +8,26 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Removed
+
+- **Breaking:** the root `Emoji` export, deprecated in 0.6. Change the import
+  path to `animated-fluent-emojis/react`, nothing else; props and behavior are
+  identical:
+
+  ```diff
+  -import { Emoji } from 'animated-fluent-emojis'
+  +import { Emoji } from 'animated-fluent-emojis/react'
+  ```
+
+- **Breaking:** the `EmojiProps` type at the root. Import it from
+  `animated-fluent-emojis/react`. `configureEmojis`, `preloadEmojis`,
+  `createEmoji`, `EmojiId`, `DiverseEmojiId` and `SkinTone` stay at the root.
+
+### Changed
+
+- `react` and `react-dom` are now optional peer dependencies, so Vue, Svelte and
+  Astro installs no longer get a React peer warning.
+
 ## [0.6.0] - 2026-10-06
 
 ### Added

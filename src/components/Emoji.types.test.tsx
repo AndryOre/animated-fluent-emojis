@@ -1,7 +1,12 @@
 import type { ComponentRef } from 'react'
 import { expectTypeOf, test } from 'vitest'
 
-import type { DiverseEmojiId, EmojiId, EmojiProps, SkinTone } from '../index.js'
+import type {
+  DiverseEmojiId,
+  EmojiId,
+  EmojiProps,
+  SkinTone,
+} from '../react/index.js'
 import { Emoji } from './Emoji.js'
 
 test('id accepts known literals and dynamic strings', () => {

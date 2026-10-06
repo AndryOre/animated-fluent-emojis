@@ -64,9 +64,9 @@ affiliated with or endorsed by Microsoft. See
 
 ## Installation
 
-Install the package. It is ESM-only. Until 0.7, `react` and `react-dom` (18
-or 19) are required peer dependencies; the Vue, Svelte, Astro, Solid and Preact
-peers are optional:
+Install the package. It is ESM-only. Every framework peer is optional, so you
+only install the one you use (`react` and `react-dom` 18 or 19, `vue`, `svelte`,
+`astro`, `solid-js` or `preact`):
 
 ```sh
 bun add animated-fluent-emojis

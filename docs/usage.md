@@ -53,10 +53,11 @@ import { Emoji } from 'animated-fluent-emojis/react'
 import 'animated-fluent-emojis/style.css'
 ```
 
-Migrating from 0.5: the root `Emoji` export is deprecated in 0.6 and removed in
-0.7. Change the import path, nothing else; props and behavior are identical.
+Migrating from 0.6 or earlier: the root `Emoji` export was deprecated in 0.6 and
+removed in 0.7. Change the import path, nothing else; props and behavior are
+identical. The `EmojiProps` type moved to `animated-fluent-emojis/react` too.
 `configureEmojis` and `preloadEmojis` stay at `animated-fluent-emojis`. React 18
-and 19 are supported.
+and 19 are supported, and `react` and `react-dom` are optional peers.
 
 ### Vue
 

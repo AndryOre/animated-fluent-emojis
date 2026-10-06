@@ -25,7 +25,7 @@ The bundle starts with `"use client";`, so a Server Component can import `Emoji`
 directly, with no wrapper file:
 
 ```jsx
-import { Emoji } from 'animated-fluent-emojis'
+import { Emoji } from 'animated-fluent-emojis/react'
 
 export default function Page() {
   return <Emoji id="1f44b_wavinghand" size={64} />

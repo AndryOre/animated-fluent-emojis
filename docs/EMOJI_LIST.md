@@ -33,7 +33,7 @@ To use an emoji in your React application, import the `Emoji` component and use
 the ID from the appropriate category list:
 
 ```jsx
-import { Emoji } from 'animated-fluent-emojis'
+import { Emoji } from 'animated-fluent-emojis/react'
 
 function MyComponent() {
   return <Emoji id="1f4af_hundredpointssymbol" />

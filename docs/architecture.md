@@ -11,7 +11,7 @@ glyph, asset layout version and sprite generation are defined in
 scripts/assets/         builds the manifests and sprites published to Pages
 src/
   index.ts              root entry: configureEmojis, preloadEmojis, createEmoji,
-                        types, and the deprecated React Emoji
+                        types
   core/                 framework-free: normalization, playback gate, image wiring,
                         environment signals
   vanilla/              createEmoji, the DOM controller every non-React adapter uses
@@ -58,14 +58,14 @@ core touches no DOM and needs no framework.
 
 The adapters:
 
-| Subpath    | Source         | Built on                                              |
-| ---------- | -------------- | ----------------------------------------------------- |
-| `.`        | `src/index.ts` | `createEmoji`, the manifest store, deprecated `Emoji` |
-| `/react`   | `src/react`    | the hooks in `src/hooks` over the core                |
-| `/vue`     | `src/vue`      | `defineComponent` and `h` over the core               |
-| `/svelte`  | `src/svelte`   | a `.svelte` source file over `createEmoji`            |
-| `/astro`   | `src/astro`    | build-time HTML plus a client script                  |
-| `/element` | `src/element`  | `createEmoji` in a shadow root                        |
+| Subpath    | Source         | Built on                                   |
+| ---------- | -------------- | ------------------------------------------ |
+| `.`        | `src/index.ts` | `createEmoji`, the manifest store, types   |
+| `/react`   | `src/react`    | the hooks in `src/hooks` over the core     |
+| `/vue`     | `src/vue`      | `defineComponent` and `h` over the core    |
+| `/svelte`  | `src/svelte`   | a `.svelte` source file over `createEmoji` |
+| `/astro`   | `src/astro`    | build-time HTML plus a client script       |
+| `/element` | `src/element`  | `createEmoji` in a shadow root             |
 
 `createEmoji` renders the same `span > img` markup as the React component into
 any DOM node. The Svelte component and `<fluent-emoji>` call it; the Svelte
