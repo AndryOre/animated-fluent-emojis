@@ -27,6 +27,7 @@ column.
 | 0012   | [Brand kit lives in docs/brand](0012-brand-kit-in-docs-brand.md)                                               | Accepted | -                        |
 | 0013   | [Relicense to MIT](0013-relicense-to-mit.md)                                                                   | Accepted | -                        |
 | 0014   | [Multi-framework support through subpath adapters](0014-multi-framework-support.md)                            | Accepted | -                        |
-| 0015   | [Public files site on a second Pages project](0015-public-files-site.md)                                       | Accepted | -                        |
+| 0015   | [Public files site on a second Pages project](0015-public-files-site.md)                                       | Accepted | 0018                     |
 | 0016   | [Bun-workspaces monorepo](0016-bun-workspaces-monorepo.md)                                                     | Accepted | -                        |
 | 0017   | [Personal token for the emoji-lists pull request](0017-personal-token-for-the-emoji-lists-pr.md)               | Accepted | -                        |
+| 0018   | [Website on Coolify with Astro and Starlight](0018-website-on-coolify-with-astro-and-starlight.md)             | Accepted | -                        |

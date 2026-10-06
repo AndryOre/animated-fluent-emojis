@@ -98,3 +98,26 @@ The id stays the catalog id. _Avoid_: Handle, name
 
 **Public index**: The `index.json` on the files site, listing every public file
 by slug. _Avoid_: Manifest
+
+**Website**: The public site at `animated-fluent-emojis.andryore.dev`: landing
+page, docs, gallery and emoji pages. _Avoid_: Landing site, homepage, docs site
+(for the whole)
+
+**Gallery**: The searchable page of every catalog emoji on the website, with a
+snippet and public files for each. _Avoid_: Browser, explorer, icon page
+
+**Emoji page**: The static website page of one emoji, at its slug, in every
+locale. _Avoid_: Detail page, emoji route
+
+**Snippet**: The copyable code that renders one emoji with one adapter or the
+element. _Avoid_: Code sample, embed code
+
+**Locale**: One of the website's languages, with its own URL prefix (none for
+English). _Avoid_: Language code, lang
+
+**Stale translation**: A translated docs page whose recorded source hash no
+longer matches its English source; the website shows the English page instead.
+_Avoid_: Outdated page, untranslated page
+
+**Localized name**: An emoji's name and keywords in a locale, taken from Unicode
+CLDR annotations. _Avoid_: Translated description
