@@ -176,6 +176,16 @@ export const en = {
     retry: 'Try again',
     loading: 'Loading emojis',
   },
+  emojiPage: {
+    title: '{name}, animated emoji · Animated Fluent Emojis',
+    description:
+      'The animated {name} emoji from Microsoft Fluent. Copy the code for React, Vue, Svelte, Astro or HTML, or download it as a GIF, WebP or PNG.',
+    breadcrumbLabel: 'Breadcrumb',
+    breadcrumbHome: 'Home',
+    breadcrumbEmojis: 'Emojis',
+    keywordsLabel: 'Keywords',
+    relatedTitle: 'Related emojis',
+  },
   notFound: {
     title: "That page isn't here.",
     body: 'The link may be old, or the emoji may have moved.',
