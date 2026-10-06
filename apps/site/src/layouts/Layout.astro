@@ -1,0 +1,60 @@
+---
+import Footer from '../components/Footer.astro'
+import Header from '../components/Header.astro'
+import {
+  hreflangAlternates,
+  localePath,
+  localeUrl,
+  type Locale,
+} from '../i18n/locales'
+import { getUi } from '../i18n/ui'
+import { THEME_INIT_SCRIPT } from '../scripts/theme-init'
+
+import '../styles/global.css'
+
+interface Props {
+  locale: Locale
+  title?: string
+  description?: string
+  path?: string
+  notFound?: boolean
+}
+
+const { locale, path = '/', notFound = false } = Astro.props
+const { meta } = getUi(locale)
+const title = Astro.props.title ?? meta.siteName
+const description = Astro.props.description ?? meta.description
+const canonical = localeUrl(locale, path)
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <script is:inline set:html={THEME_INIT_SCRIPT} />
+    {notFound ? (
+      <meta name="robots" content="noindex" />
+    ) : (
+      <>
+        <link rel="canonical" href={canonical} />
+        {hreflangAlternates(path).map(({ hreflang, href }) => (
+          <link rel="alternate" hreflang={hreflang} href={href} />
+        ))}
+      </>
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={meta.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body class="flex min-h-dvh flex-col font-sans">
+    <Header locale={locale} path={notFound ? localePath(locale) : path} />
+    <slot />
+    <Footer locale={locale} />
+  </body>
+</html>

@@ -13,6 +13,11 @@ const SOURCE_ROOTS = [
   'docs/brand/tools',
 ] as const
 
+const ASTRO_PAGE_REASON =
+  'Astro route that only picks a locale and renders a shared component, verified through the site build output.'
+const ASTRO_PRESENTATION_REASON =
+  'Presentational Astro component with no logic of its own; its inputs are tested in apps/site/src/i18n.'
+
 const EXEMPTIONS: Readonly<Record<string, string>> = {
   'packages/animated-fluent-emojis/src/index.ts':
     'Public barrel that only re-exports createEmoji, configureEmojis, preloadEmojis and the public types, covered by root-exports.test.ts.',
@@ -58,8 +63,33 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Test-support helpers shared by the apps/assets tests, with no behavior of their own.',
   'apps/assets/vitest.config.ts':
     'Vitest configuration for the pipeline workspace, with no behavior to test.',
-  'apps/site/src/pages/index.astro':
-    'Placeholder landing page that renders one emoji through the library Astro adapter, with no logic to test.',
+  'apps/site/src/pages/index.astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/404.astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/[locale]/index.astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/[locale]/404.astro': ASTRO_PAGE_REASON,
+  'apps/site/src/components/Footer.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/Header.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/HomePage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/ThemeToggle.astro':
+    'Presentational Astro component plus a small DOM script; the pure init logic is tested in theme-init.test.ts.',
+  'apps/site/src/layouts/Layout.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/pages/robots.txt.ts':
+    'Thin endpoint that feeds contributions to buildRobotsTxt, tested in seo/robots.test.ts.',
+  'apps/site/src/pages/sitemap.xml.ts':
+    'Thin endpoint that feeds route sources to buildSitemapXml, tested in seo/sitemap.test.ts.',
+  'apps/site/src/scripts/theme-keys.ts':
+    'Constants-only module shared by the init script and the toggle, exercised by theme-init.test.ts.',
+  'apps/site/src/site-links.ts':
+    'Constants-only list of external URLs, with no behavior to test.',
+  ...Object.fromEntries(
+    ['en', 'es', 'de', 'fr', 'it', 'ja', 'ko', 'pt-br', 'ru', 'zh-cn'].map(
+      (locale) => [
+        `apps/site/src/i18n/ui/${locale}.ts`,
+        'Data-only UI string file, checked for key parity by i18n/ui.test.ts.',
+      ],
+    ),
+  ),
   'scripts/workflow-files.ts':
     'Workflow loader used by workflows-invariants.test.ts, which exercises it against the real workflows.',
   'docs/brand/tools/export.mjs':
