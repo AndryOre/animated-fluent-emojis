@@ -41,6 +41,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/animated-fluent-emojis.js"
     },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react.js"
+    },
     "./lookup": {
       "types": "./dist/lookup/index.d.ts",
       "import": "./dist/lookup.js"
@@ -124,6 +128,14 @@
       "name": "ESM bundle",
       "path": [
         "dist/animated-fluent-emojis.js",
+        "dist/chunks/manifest-*.js"
+      ],
+      "limit": "4.5 kB"
+    },
+    {
+      "name": "React bundle",
+      "path": [
+        "dist/react.js",
         "dist/chunks/manifest-*.js"
       ],
       "limit": "4.5 kB"

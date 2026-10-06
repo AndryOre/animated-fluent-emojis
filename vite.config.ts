@@ -10,6 +10,7 @@ export default defineConfig({
     lib: {
       entry: {
         'animated-fluent-emojis': path.resolve(rootDirectory, 'src/index.ts'),
+        react: path.resolve(rootDirectory, 'src/react/index.ts'),
         lookup: path.resolve(rootDirectory, 'src/lookup/index.ts'),
       },
       formats: ['es'],
@@ -26,7 +27,9 @@ export default defineConfig({
           ],
         },
         banner: (chunk) =>
-          chunk.name === 'animated-fluent-emojis' ? '"use client";' : '',
+          chunk.name === 'animated-fluent-emojis' || chunk.name === 'react'
+            ? '"use client";'
+            : '',
       },
     },
     sourcemap: true,
