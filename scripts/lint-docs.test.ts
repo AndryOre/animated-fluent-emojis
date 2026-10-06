@@ -3,6 +3,7 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -110,7 +111,7 @@ function createArchive(
   const archivePath = path.join(directory, 'fixture.tar.gz')
   const tar = spawnSync('tar', ['-czf', archivePath, '-C', source, '.'])
   if (tar.status !== 0) throw new Error(tar.stderr.toString())
-  return Buffer.from(spawnSync('cat', [archivePath]).stdout)
+  return readFileSync(archivePath)
 }
 
 describe('ensureLycheeBinary', () => {
