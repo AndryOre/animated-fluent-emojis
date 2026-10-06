@@ -39,7 +39,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AndryOre/animated-fluent-emojis.git"
+    "url": "git+https://github.com/AndryOre/animated-fluent-emojis.git",
+    "directory": "packages/animated-fluent-emojis"
   },
   "homepage": "https://github.com/AndryOre/animated-fluent-emojis#readme",
   "bugs": "https://github.com/AndryOre/animated-fluent-emojis/issues",

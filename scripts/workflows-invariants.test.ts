@@ -507,6 +507,78 @@ describe('ci.yml eslint cache', () => {
   })
 })
 
+describe('release.yml library workspace', () => {
+  const verifySteps = readWorkflow('release.yml').jobs?.verify?.steps ?? []
+  const verifyScript = verifySteps.map((step) => step.run ?? '').join('\n')
+
+  test('checks the tag against the library package.json', () => {
+    expect(verifyScript).toContain(
+      'jq -r .version packages/animated-fluent-emojis/package.json',
+    )
+  })
+
+  test('packs from the library directory with its prepack enabled', () => {
+    expect(verifyScript).toContain(
+      'cd packages/animated-fluent-emojis && bun pm pack',
+    )
+    expect(verifyScript).not.toContain('--ignore-scripts')
+  })
+
+  test('verifies the tarball holds dist, README, LICENSE and package.json', () => {
+    for (const entry of [
+      'package/package.json',
+      'package/README.md',
+      'package/LICENSE',
+      'package/dist/',
+    ]) {
+      expect(verifyScript).toContain(entry)
+    }
+  })
+})
+
+describe('ci.yml turbo wiring', () => {
+  const workflow = readWorkflow('ci.yml')
+  const jobs = Object.entries(workflow.jobs ?? {})
+  const turboRuns = collectSteps(workflow).filter((step) =>
+    step.run?.includes('turbo run'),
+  )
+
+  test('every checkout that feeds turbo fetches full history', () => {
+    for (const [name, job] of jobs) {
+      if (!job.steps?.some((step) => step.run?.includes('turbo run'))) continue
+      const checkout = job.steps.find((step) =>
+        step.uses?.startsWith('actions/checkout@'),
+      )
+      expect(checkout?.with?.['fetch-depth'], name).toBe(0)
+    }
+  })
+
+  test('every job that runs turbo caches .turbo', () => {
+    for (const [name, job] of jobs) {
+      if (!job.steps?.some((step) => step.run?.includes('turbo run'))) continue
+      const cached = job.steps.some(
+        (step) => step.with?.path?.toString() === '.turbo',
+      )
+      expect(cached, name).toBe(true)
+    }
+  })
+
+  test('workspace runs are affected-only on pull requests and root tasks never are', () => {
+    for (const step of turboRuns) {
+      const isRootTask = /turbo run \S*:root\b/.test(step.run ?? '')
+      expect(step.run?.includes('--affected'), step.run).toBe(!isRootTask)
+    }
+  })
+
+  test('keeps the aggregate job name', () => {
+    const source = readFileSync(
+      new URL('../.github/workflows/ci.yml', import.meta.url),
+      'utf8',
+    )
+    expect(source).toContain('name: CI passed')
+  })
+})
+
 describe('renovate.json5 custom managers', () => {
   const config = readFileSync(
     new URL('../renovate.json5', import.meta.url),
