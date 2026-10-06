@@ -27,6 +27,7 @@ export default defineConfig({
           include: [
             'src/components/**/*.test.tsx',
             'src/hooks/**/*.test.{ts,tsx}',
+            'src/vanilla/**/*.test.ts',
           ],
           setupFiles: ['src/test/browser-setup.ts'],
           browser: {
