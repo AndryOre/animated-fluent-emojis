@@ -7,42 +7,69 @@ stylesheet. See [Core and adapters](#core-and-adapters). Terms such as fallback
 glyph, asset layout version and sprite generation are defined in
 [`CONTEXT.md`](../CONTEXT.md).
 
+The repository is a Bun workspaces monorepo
+([ADR 0016](adr/0016-bun-workspaces-monorepo.md)). Paths such as `src/core` in
+this document are relative to `packages/animated-fluent-emojis`; the asset
+pipeline paths are relative to `apps/assets`. See [Workspaces](#workspaces).
+
 ```text
-scripts/assets/         builds the manifests and sprites published to Pages
-scripts/lint-docs.ts    runs lychee over the docs
-scripts/lint-commits.ts runs commitlint over the branch
-scripts/workflow-files.ts  lists the workflow files for the linters
-src/
-  index.ts              root entry: configureEmojis, preloadEmojis, createEmoji,
-                        types
-  core/                 framework-free: normalization, playback gate, image wiring,
-                        environment signals
-  vanilla/              createEmoji, the DOM controller every non-React adapter uses
-  react/                the `/react` entry
-  vue/                  the `/vue` entry, defineComponent and h
-  svelte/               the `/svelte` entry, a Svelte 5 .svelte component
-  astro/                the `/astro` entry, a .astro component plus client script
-  element/              the `/element` entry, the <fluent-emoji> Web Component
-  lookup/index.ts       the `animated-fluent-emojis/lookup` entry, no React
-  components/
-    Emoji.tsx           the component
-    Emoji.module.css    the sprite keyframe and hover/focus rules (CSS modules)
-  hooks/
-    index.ts                      barrel for the hooks
-    use-emoji-style.ts            resolves an id to its manifest entry
-    use-emoji-animation.ts        animation state, playback gating, inline style, image ref
-    use-prefers-reduced-motion.ts tracks prefers-reduced-motion
-    use-document-hidden.ts        tracks document.hidden
-  utils/
-    emoji-manifest.ts   manifest store, asset site config, sprite URLs, preload
-    is-development.ts   development-only warning gate
-    visibility-observer.ts  one IntersectionObserver shared by every emoji
-    shared-subscription.ts  one listener fanned out to every subscriber
-    emoji-id.generated.ts  the generated EmojiId union
-    types.ts            manifest types and SkinTone; props live in each adapter
-  test/                 browser setup, fixtures, coverage-manifest guard
-playground/main.tsx     manual playground rendered by `bun run dev`
+apps/assets/             private asset pipeline: builds the manifests and sprites
+                         published to Pages
+eslint-rules/            local ESLint rules
+scripts/                 lint-docs, lint-commits, workflow-files and the
+                         workflow and coverage-manifest guards
+packages/animated-fluent-emojis/
+  src/
+    index.ts              root entry: configureEmojis, preloadEmojis, createEmoji,
+                          types
+    core/                 framework-free: normalization, playback gate, image wiring,
+                          environment signals
+    vanilla/              createEmoji, the DOM controller every non-React adapter uses
+    react/                the `/react` entry
+    vue/                  the `/vue` entry, defineComponent and h
+    svelte/               the `/svelte` entry, a Svelte 5 .svelte component
+    astro/                the `/astro` entry, a .astro component plus client script
+    element/              the `/element` entry, the <fluent-emoji> Web Component
+    lookup/index.ts       the `animated-fluent-emojis/lookup` entry, no React
+    components/
+      Emoji.tsx           the component
+      Emoji.module.css    the sprite keyframe and hover/focus rules (CSS modules)
+    hooks/
+      index.ts                      barrel for the hooks
+      use-emoji-style.ts            resolves an id to its manifest entry
+      use-emoji-animation.ts        animation state, playback gating, inline style, image ref
+      use-prefers-reduced-motion.ts tracks prefers-reduced-motion
+      use-document-hidden.ts        tracks document.hidden
+    utils/
+      emoji-manifest.ts   manifest store, asset site config, sprite URLs, preload
+      is-development.ts   development-only warning gate
+      visibility-observer.ts  one IntersectionObserver shared by every emoji
+      shared-subscription.ts  one listener fanned out to every subscriber
+      emoji-id.generated.ts  the generated EmojiId union
+      types.ts            manifest types and SkinTone; props live in each adapter
+    test/                 browser setup, fixtures, conformance suite
+  playground/main.tsx   manual playground rendered by `bun run dev`
 ```
+
+## Workspaces
+
+- **Root** (`animated-fluent-emojis-monorepo`, private) hosts the tooling only:
+  `eslint-rules/`, `scripts/`, `docs/` (guides, ADRs, the brand kit),
+  `turbo.json`, `bunfig.toml` and the root `vitest.config.ts`. It publishes
+  nothing.
+- **`packages/animated-fluent-emojis`** is the one published package: `src/`,
+  the playground, the Vite, Vitest and tsconfig build configs, `size-limit` and
+  `attw`. Its public API is unchanged by the monorepo.
+- **`apps/assets`** (`@animated-fluent-emojis/assets`, private) is the asset
+  pipeline: the `sync.ts` CLI, its modules and tests, and `public-slugs.json`.
+  It writes `dist-assets/`, `dist-files/` and `.cache/assets` under its own
+  directory, and depends on the library through
+  `animated-fluent-emojis: workspace:*`, so a library change invalidates its
+  Turborepo tasks. See [Asset site](#asset-site).
+
+Shared dependency versions live in the Bun catalog in the root `package.json`;
+`bunfig.toml` sets `linker = "isolated"`. Task orchestration is in
+[Development](development.md#workspaces).
 
 ## Core and adapters
 
@@ -304,15 +331,16 @@ cannot be loaded. It has its own `size-limit` entry.
 ## Emoji ids
 
 `EmojiId` is generated, not written by hand: `bun run assets:lists` renders
-`utils/emoji-id.generated.ts` next to the `docs/EMOJI_LIST_*.md` files from the
-built manifest. The `id` prop is typed `EmojiId | (string & {})`, an open union,
-so ids added by an asset site refresh compile before the types are regenerated.
-The same generator emits `DiverseEmojiId`, the ids that have skin tones, which
-types `skinTone` for those ids.
+`packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts` next to the
+`docs/EMOJI_LIST_*.md` files from the built manifest. The `id` prop is typed
+`EmojiId | (string & {})`, an open union, so ids added by an asset site refresh
+compile before the types are regenerated. The same generator emits
+`DiverseEmojiId`, the ids that have skin tones, which types `skinTone` for those
+ids.
 
 ## Asset site
 
-`scripts/assets` generates the site behind the asset site URL and
+`apps/assets` generates the site behind the asset site URL and
 `.github/workflows/sync-assets.yml` publishes it; nothing it produces is
 committed. See [ADR 0006](adr/0006-cloudflare-pages-asset-hosting.md),
 [ADR 0009](adr/0009-hd-sprite-sheets-and-strict-validation.md) and
@@ -354,9 +382,11 @@ committed. See [ADR 0006](adr/0006-cloudflare-pages-asset-hosting.md),
 - `public-files.ts` encodes one sprite sheet into a GIF, a WebP and a
   poster-frame PNG with sharp, with deterministic settings.
 - `files-site.ts` builds the files site (see [Files site](#files-site)).
-- `sync.ts` is the CLI behind `assets:detect`, `assets:build`, `assets:lists`
-  and `assets:verify-live`. Its `--cache` option defaults to `.cache/assets`,
-  the local directory that holds the sprites keyed by `etag`.
+- `sync.ts` is the CLI behind `assets:detect`, `assets:build`, `assets:lists`,
+  `assets:files` and `assets:verify-live`. The root `assets:*` scripts wrap the
+  `sync:*` scripts of `apps/assets`, which run from that directory. Its
+  `--cache` option defaults to `.cache/assets` under `apps/assets`, the local
+  directory that holds the sprites keyed by `etag`.
 
 ### Asset layout v1
 
@@ -441,10 +471,10 @@ sprite again, because the live site has no `/v1/` files to seed from.
 
 ## Files site
 
-`buildFilesSite()` in `scripts/assets/files-site.ts` reads `dist-assets/` and
-writes `dist-files/`, which `sync-assets.yml` deploys to a second Pages project
-after the asset deploy. Nothing it produces is committed. See
-[ADR 0015](adr/0015-public-files-site.md).
+`buildFilesSite()` in `apps/assets/files-site.ts` reads `dist-assets/` and
+writes `dist-files/` (both under `apps/assets`), which `sync-assets.yml` deploys
+to a second Pages project after the asset deploy. Nothing it produces is
+committed. See [ADR 0015](adr/0015-public-files-site.md).
 
 - Output: `/gif/<slug>.gif`, `/webp/<slug>.webp`, `/png/<slug>.png`,
   `/index.json` (the public index), `/version.json`, the license and notice

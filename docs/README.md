@@ -23,7 +23,7 @@ An index of every document in this repository.
 
 ## Development
 
-- [`development.md`](development.md): setup, scripts, git hooks, CI,
+- [`development.md`](development.md): setup, workspaces, scripts, git hooks, CI,
   conventions, testing, playground and repository settings.
 - [`architecture.md`](architecture.md): code map of the core, the adapters,
   manifest, animation, asset pipeline and CSS.
@@ -69,6 +69,8 @@ An index of every document in this repository.
 - [`adr/0012-brand-kit-in-docs-brand.md`](adr/0012-brand-kit-in-docs-brand.md)
 - [`adr/0013-relicense-to-mit.md`](adr/0013-relicense-to-mit.md)
 - [`adr/0014-multi-framework-support.md`](adr/0014-multi-framework-support.md)
+- [`adr/0015-public-files-site.md`](adr/0015-public-files-site.md)
+- [`adr/0016-bun-workspaces-monorepo.md`](adr/0016-bun-workspaces-monorepo.md)
 
 ## Brand
 
