@@ -225,7 +225,7 @@ describe('sync-assets.yml sync job', () => {
 
   test('the v1 smoke only compares builtAt when a local build exists', () => {
     const v1 = steps.find((step) => step.name === 'Smoke test the v1 layout')
-    expect(v1?.run).toContain('-f dist-assets/v1/version.json')
+    expect(v1?.run).toContain('-f apps/assets/dist-assets/v1/version.json')
   })
 
   test('pins an exact wrangler version', () => {
@@ -260,7 +260,9 @@ describe('sync-assets.yml sync job', () => {
       (step) => step.name === 'Deploy the files site to Cloudflare Pages',
     )
     expect(deploy?.uses).toMatch(/^cloudflare\/wrangler-action@[0-9a-f]{40}$/)
-    expect(String(deploy?.with?.command)).toContain('pages deploy dist-files')
+    expect(String(deploy?.with?.command)).toContain(
+      'pages deploy apps/assets/dist-files',
+    )
     expect(String(deploy?.with?.command)).toContain(
       '--project-name=animated-fluent-emojis-files',
     )
@@ -324,13 +326,14 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(runs).toContain(
       'animated-fluent-emojis-files.andryore.dev/index.json',
     )
-    expect(runs).toContain('--index index.json')
+    expect(runs).toContain('--index "${GITHUB_WORKSPACE}/index.json"')
+    expect(runs).toContain('--manifest "${GITHUB_WORKSPACE}/manifest.json"')
     expect(runs).toContain('"404"')
     expect(runs).toContain(
-      'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+      'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
     )
     expect(runs).toContain(
-      'git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+      'git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
     )
   })
 
@@ -504,6 +507,78 @@ describe('ci.yml eslint cache', () => {
 
   test('keys the cache on the local eslint rules too', () => {
     expect(String(cacheStep?.with?.key)).toContain('eslint-rules/**')
+  })
+})
+
+describe('release.yml library workspace', () => {
+  const verifySteps = readWorkflow('release.yml').jobs?.verify?.steps ?? []
+  const verifyScript = verifySteps.map((step) => step.run ?? '').join('\n')
+
+  test('checks the tag against the library package.json', () => {
+    expect(verifyScript).toContain(
+      'jq -r .version packages/animated-fluent-emojis/package.json',
+    )
+  })
+
+  test('packs from the library directory with its prepack enabled', () => {
+    expect(verifyScript).toContain(
+      'cd packages/animated-fluent-emojis && bun pm pack',
+    )
+    expect(verifyScript).not.toContain('--ignore-scripts')
+  })
+
+  test('verifies the tarball holds dist, README, LICENSE and package.json', () => {
+    for (const entry of [
+      'package/package.json',
+      'package/README.md',
+      'package/LICENSE',
+      'package/dist/',
+    ]) {
+      expect(verifyScript).toContain(entry)
+    }
+  })
+})
+
+describe('ci.yml turbo wiring', () => {
+  const workflow = readWorkflow('ci.yml')
+  const jobs = Object.entries(workflow.jobs ?? {})
+  const turboRuns = collectSteps(workflow).filter((step) =>
+    step.run?.includes('turbo run'),
+  )
+
+  test('every checkout that feeds turbo fetches full history', () => {
+    for (const [name, job] of jobs) {
+      if (!job.steps?.some((step) => step.run?.includes('turbo run'))) continue
+      const checkout = job.steps.find((step) =>
+        step.uses?.startsWith('actions/checkout@'),
+      )
+      expect(checkout?.with?.['fetch-depth'], name).toBe(0)
+    }
+  })
+
+  test('every job that runs turbo caches .turbo', () => {
+    for (const [name, job] of jobs) {
+      if (!job.steps?.some((step) => step.run?.includes('turbo run'))) continue
+      const cached = job.steps.some(
+        (step) => step.with?.path?.toString() === '.turbo',
+      )
+      expect(cached, name).toBe(true)
+    }
+  })
+
+  test('workspace runs are affected-only on pull requests and root tasks never are', () => {
+    for (const step of turboRuns) {
+      const isRootTask = /turbo run \S*:root\b/.test(step.run ?? '')
+      expect(step.run?.includes('--affected'), step.run).toBe(!isRootTask)
+    }
+  })
+
+  test('keeps the aggregate job name', () => {
+    const source = readFileSync(
+      new URL('../.github/workflows/ci.yml', import.meta.url),
+      'utf8',
+    )
+    expect(source).toContain('name: CI passed')
   })
 })
 

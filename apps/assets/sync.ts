@@ -44,6 +44,8 @@ import {
 const DEFAULT_PUBLISHED_URL = 'https://animated-fluent-emojis-cdn.andryore.dev'
 const DEFAULT_FILES_URL = 'https://animated-fluent-emojis-files.andryore.dev'
 const SLUG_REGISTRY_URL = new URL('public-slugs.json', import.meta.url)
+const WORKSPACE_DIRECTORY = import.meta.dirname
+const REPOSITORY_DIRECTORY = path.resolve(WORKSPACE_DIRECTORY, '..', '..')
 
 /**
  * Decides whether the published v1 layout is missing or was built by another
@@ -598,19 +600,36 @@ export async function runCommand(
     options: {
       'published-url': { type: 'string', default: DEFAULT_PUBLISHED_URL },
       'files-url': { type: 'string', default: DEFAULT_FILES_URL },
-      'files-out': { type: 'string', default: 'dist-files' },
+      'files-out': {
+        type: 'string',
+        default: path.join(WORKSPACE_DIRECTORY, 'dist-files'),
+      },
       registry: { type: 'string' },
       index: { type: 'string' },
       'teams-hash': { type: 'string' },
-      out: { type: 'string', default: 'dist-assets' },
-      cache: { type: 'string', default: '.cache/assets' },
+      out: {
+        type: 'string',
+        default: path.join(WORKSPACE_DIRECTORY, 'dist-assets'),
+      },
+      cache: {
+        type: 'string',
+        default: path.join(WORKSPACE_DIRECTORY, '.cache', 'assets'),
+      },
       limit: { type: 'string' },
-      manifest: { type: 'string', default: 'dist-assets/manifest.json' },
-      docs: { type: 'string', default: 'docs' },
+      manifest: {
+        type: 'string',
+        default: path.join(WORKSPACE_DIRECTORY, 'dist-assets', 'manifest.json'),
+      },
+      docs: {
+        type: 'string',
+        default: path.join(REPOSITORY_DIRECTORY, 'docs'),
+      },
       'emoji-id': {
         type: 'string',
-        default:
+        default: path.join(
+          REPOSITORY_DIRECTORY,
           'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts',
+        ),
       },
       rebuild: { type: 'boolean', default: false },
       'bypass-guards': { type: 'boolean', default: false },

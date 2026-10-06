@@ -21,12 +21,12 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Check tag matches package.json version
+      - name: Check tag matches the library package.json version
         run: |
           tag_version="${GITHUB_REF_NAME#v}"
-          pkg_version=$(jq -r .version package.json)
+          pkg_version=$(jq -r .version packages/animated-fluent-emojis/package.json)
           if [[ "${tag_version}" != "${pkg_version}" ]]; then
-            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${pkg_version}"
+            echo "Tag ${GITHUB_REF_NAME} does not match packages/animated-fluent-emojis/package.json version ${pkg_version}"
             exit 1
           fi
 
@@ -120,11 +120,26 @@ jobs:
             exit 1
           fi
 
-      - name: Pack the tarball
+      - name: Pack the tarball from the library workspace
         run: |
           mkdir release-artifact
-          bun pm pack --ignore-scripts --destination release-artifact --quiet
+          (cd packages/animated-fluent-emojis && bun pm pack --destination "${GITHUB_WORKSPACE}/release-artifact" --quiet)
           mv release-notes.md release-artifact/release-notes.md
+
+      - name: Verify the tarball contents
+        run: |
+          tarball=$(ls ./release-artifact/*.tgz)
+          listing=$(tar -tzf "${tarball}")
+          for required in package/package.json package/README.md package/LICENSE; do
+            if ! grep -qx "${required}" <<< "${listing}"; then
+              echo "Tarball is missing ${required}"
+              exit 1
+            fi
+          done
+          if ! grep -q '^package/dist/' <<< "${listing}"; then
+            echo "Tarball is missing dist"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

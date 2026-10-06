@@ -88,9 +88,9 @@
         "$TURBO_DEFAULT$",
         "!**/dist/**",
         "!**/coverage/**",
-        "!dist-assets/**",
-        "!dist-files/**",
-        "!.cache/**"
+        "!apps/assets/dist-assets/**",
+        "!apps/assets/dist-files/**",
+        "!apps/assets/.cache/**"
       ],
       "outputs": []
     },

@@ -120,6 +120,23 @@ test('fails when the v1 manifest is missing', async () => {
   )
 })
 
+test('fails when the v1 version file is missing', async () => {
+  await writeSite()
+  await rm(path.join(context.outputDirectory, 'v1/version.json'))
+  await expect(validate()).rejects.toThrow('v1/version.json is unreadable')
+})
+
+test('fails when the v1 manifest differs from the catalog', async () => {
+  await writeSite()
+  await writeFile(
+    path.join(context.outputDirectory, 'v1/manifest.slim.json'),
+    '{}',
+  )
+  await expect(validate()).rejects.toThrow(
+    'v1/manifest.slim.json does not match the manifest',
+  )
+})
+
 const entryWith = (
   overrides: Record<string, unknown>,
   animation: Record<string, unknown> = {},

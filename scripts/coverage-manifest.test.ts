@@ -6,6 +6,7 @@ const REPOSITORY_ROOT = path.resolve(import.meta.dirname, '..')
 
 const SOURCE_ROOTS = [
   'packages/animated-fluent-emojis/src',
+  'apps/assets',
   'scripts',
   'eslint-rules',
   'docs/brand/tools',
@@ -43,17 +44,19 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'packages/animated-fluent-emojis/src/utils/types.ts':
     'Type-only module with no runtime behavior to test.',
   'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts':
-    'Generated type-only union, produced and tested by scripts/assets.',
+    'Generated type-only union, produced and tested by apps/assets.',
   'packages/animated-fluent-emojis/src/svelte/Emoji.svelte':
     'Svelte component exercised end to end by svelte.conformance.test.ts and svelte.adapter.test.ts.',
   'packages/animated-fluent-emojis/src/svelte/FallbackHost.svelte':
     'Passthrough host mounted by Emoji.svelte for the fallback snippet and exercised by the fallback case in packages/animated-fluent-emojis/src/test/conformance/svelte.adapter.test.ts; v8 reports it at 0% because the template has no mapped statements.',
-  'scripts/assets/build-context.ts':
+  'apps/assets/build-context.ts':
     'Shared build context and constants consumed by build.ts, covered by build.test.ts and build-branches.test.ts.',
-  'scripts/assets/known-teams-versions.ts':
+  'apps/assets/known-teams-versions.ts':
     'Constants-only list of Teams hashes, consumed and checked by teams.test.ts.',
-  'scripts/assets/test-support.ts':
-    'Test-support helpers shared by the scripts/assets tests, with no behavior of their own.',
+  'apps/assets/test-support.ts':
+    'Test-support helpers shared by the apps/assets tests, with no behavior of their own.',
+  'apps/assets/vitest.config.ts':
+    'Vitest configuration for the pipeline workspace, with no behavior to test.',
   'scripts/workflow-files.ts':
     'Workflow loader used by workflows-invariants.test.ts, which exercises it against the real workflows.',
   'docs/brand/tools/export.mjs':
