@@ -176,9 +176,9 @@ Variations observed:
   Microsoft" (Source: LobeHub, in `competitors.md`). The category leader's
   framing, which is static.
 
-Every statement in the framework describes what ships today. A landing page is
-planned and stays out of copy until it exists. README-embeddable files ship from
-the files site and may be described, with Microsoft's attribution.
+Every statement in the framework describes what ships today. The landing page is
+shipped and follows the guidance below. README-embeddable files ship from the
+files site and may be described, with Microsoft's attribution.
 
 ### Key Message Pillars
 
@@ -236,7 +236,7 @@ Voice is constant. Tone flexes along three dimensions.
 | Dev warnings and error messages    | Medium     | Low         | High            | Say what happened and what to do; never cute         |
 | npm description and GitHub About   | Low-Medium | Medium      | Low             | One plain sentence with the searchable phrase        |
 | GitHub issue and PR replies        | Low        | Medium      | Medium-High     | Thank them, answer plainly, stay light               |
-| Landing page (future)              | Low        | High        | Low, no jargon  | Let the emoji lead; short lines; the fact under each |
+| Landing page                       | Low        | High        | Low, no jargon  | Let the emoji lead; short lines; the fact under each |
 | Social posts and captions (future) | Low        | High        | Low             | One emoji, one idea                                  |
 
 ### Context-Specific Guidelines
@@ -266,7 +266,7 @@ Voice is constant. Tone flexes along three dimensions.
 - **Example**: "Fixed: a finished run is no longer restarted by toggling
   `playing`."
 
-#### Landing page and social (future, Low confidence)
+#### Landing page (Medium confidence) and social (future, Low confidence)
 
 - **Overall tone**: playful, with the fact beside the joke, in everyday words.
 - **Do's**: lead with motion; keep the non-affiliation line near the install
@@ -381,7 +381,7 @@ Why it works: one playful line, then three facts that are all true today
 (playback options, reduced motion, placeholder of the final size), then the
 license split in plain words. It makes no claim about features that do not ship.
 
-For the landing page (future), the same facts in everyday words:
+For the landing page, the same facts in everyday words:
 
 > **Hover it. It waves back.** Microsoft's animated Fluent emojis, ready to drop
 > into your website. They never push your page around while they load, and if
@@ -403,13 +403,13 @@ and add the license sentence.
 
 ## Confidence Scores
 
-| Section             | Confidence                            | Basis                                                                                        | Sources |
-| ------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
-| Voice Attributes    | Medium                                | The precise side is demonstrated in shipped docs; the playful side comes only from the brief | 5       |
-| Messaging Framework | Medium                                | Pillars map to documented features; the positioning is inferred from `competitors.md`        | 4       |
-| Tone Matrix         | Medium for rows 1-6, Low for rows 7-8 | Docs and changelog are shipped; no landing page or social copy exists yet                    | 4       |
-| Terminology         | High                                  | An explicit glossary in `CONTEXT.md`, plus the brief's never-use rules                       | 3       |
-| Language Patterns   | Low                                   | No transcripts, issues or reviews; only the current README as an anti-pattern source         | 1       |
+| Section             | Confidence                         | Basis                                                                                        | Sources |
+| ------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------- | ------- |
+| Voice Attributes    | Medium                             | The precise side is demonstrated in shipped docs; the playful side comes only from the brief | 5       |
+| Messaging Framework | Medium                             | Pillars map to documented features; the positioning is inferred from `competitors.md`        | 4       |
+| Tone Matrix         | Medium for rows 1-7, Low for row 8 | Docs, changelog and the landing page are shipped; no social copy exists yet                  | 4       |
+| Terminology         | High                               | An explicit glossary in `CONTEXT.md`, plus the brief's never-use rules                       | 3       |
+| Language Patterns   | Low                                | No transcripts, issues or reviews; only the current README as an anti-pattern source         | 1       |
 
 Aggregate: 0.62, which is **Medium**, near the bottom of the band. The tone
 score is weighted by matrix rows: six rows at Medium (0.6) and two at Low (0.3)
@@ -466,8 +466,8 @@ language 0.03.
 
 - [ ] No user language: read GitHub issues and discussions after launch and add
       the words people use.
-- [ ] No landing or social copy exists, so those rows are provisional: revisit
-      this guide when the landing page is drafted.
+- [ ] No social copy exists, so that row is provisional. The landing page is
+      shipped; revisit its guidance once visitors have given feedback.
 - [ ] No tested accessibility claim: before any copy says "accessible", run an
       audit and cite it.
 - [ ] No verified catalog size: read the count from the live `manifest.json`

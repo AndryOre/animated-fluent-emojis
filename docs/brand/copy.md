@@ -3,8 +3,8 @@
 Draft v1 (2026-10-05). Status: applied; updated for 0.7. Written with
 [`voice.md`](voice.md) (README and npm vocabulary, one light line per surface).
 Every claim describes what ships today and is checked against the README, the
-changelog and `package.json` (see "Claims checked" below). Nothing here mentions
-a landing page, which does not exist yet.
+changelog and `package.json` (see "Claims checked" below). This file covers the
+README, npm and GitHub copy; the website's copy lives in `apps/site`.
 
 ## Tagline
 

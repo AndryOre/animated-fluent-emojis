@@ -10,11 +10,14 @@ glyph, asset layout version and sprite generation are defined in
 The repository is a Bun workspaces monorepo
 ([ADR 0016](adr/0016-bun-workspaces-monorepo.md)). Paths such as `src/core` in
 this document are relative to `packages/animated-fluent-emojis`; the asset
-pipeline paths are relative to `apps/assets`. See [Workspaces](#workspaces).
+pipeline paths are relative to `apps/assets` and the website paths to
+`apps/site`. See [Workspaces](#workspaces).
 
 ```text
 apps/assets/             private asset pipeline: builds the manifests and sprites
                          published to Pages
+apps/site/               private website: landing, gallery, emoji pages and
+                         docs (Astro, Starlight, Tailwind), ten locales
 eslint-rules/            local ESLint rules
 scripts/                 lint-docs, lint-commits, workflow-files and the
                          workflow and coverage-manifest guards
@@ -66,6 +69,12 @@ packages/animated-fluent-emojis/
   directory, and depends on the library through
   `animated-fluent-emojis: workspace:*`, so a library change invalidates its
   Turborepo tasks. See [Asset site](#asset-site).
+- **`apps/site`** (`@animated-fluent-emojis/site`, private) is the website, a
+  static Astro site with Starlight docs, Tailwind and React islands, built into
+  a container deployed through Coolify
+  ([ADR 0018](adr/0018-website-on-coolify-with-astro-and-starlight.md)). It
+  renders the published docs from `docs/` and keeps the translations in
+  `apps/site/src/content/translations/<locale>/`. See [Website](#website).
 
 Shared dependency versions live in the Bun catalog in the root `package.json`;
 `bunfig.toml` sets `linker = "isolated"`. Task orchestration is in
@@ -487,6 +496,22 @@ committed. See [ADR 0015](adr/0015-public-files-site.md).
   into it, so published URLs never change.
 - The file count is guarded by `MAX_OUTPUT_FILES`, kept under the Free plan cap
   of 20,000 files.
+
+## Website
+
+`apps/site/src` holds the website:
+
+- `i18n/`: the ten locales (`locales.ts`) and one UI string file per locale.
+- `docs/`: the docs catalog. `published.ts` lists the files of `docs/` that the
+  site renders, `translations.ts` hashes an English source and classifies a
+  translation as translated, missing or stale, and `i18n-status.ts` prints the
+  report behind `bun run i18n:status`.
+- `content/translations/<locale>/`: translated docs, one file per English doc.
+- `pages/`, `layouts/`, `components/`, `home/`, `gallery/`, `emoji-pages/`,
+  `seo/`: the routes and what they render.
+
+A missing or stale translation shows the English page. See
+[how to translate the website](how-to/translate-the-website.md).
 
 ## CSS
 

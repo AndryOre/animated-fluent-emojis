@@ -21,6 +21,7 @@ only) on top.
 | `.` (root)                        | `animated-fluent-emojis-monorepo` | Private host, tooling only: `eslint-rules/`, `scripts/`, `docs/`, the brand kit, `turbo.json`, `bunfig.toml`.                                   |
 | `packages/animated-fluent-emojis` | `animated-fluent-emojis`          | The one published package: `src/`, the playground, Vite, Vitest and tsconfig build configs, `size-limit` and `attw`.                            |
 | `apps/assets`                     | `@animated-fluent-emojis/assets`  | Private asset pipeline: `sync.ts`, its modules and tests, `public-slugs.json`. Outputs `dist-assets/`, `dist-files/`, `.cache/assets` under it. |
+| `apps/site`                       | `@animated-fluent-emojis/site`    | Private website: Astro, Starlight, Tailwind, ten locales, a container deployed through Coolify.                                                 |
 
 Shared dependency versions are in the Bun catalog in the root `package.json`
 (`catalog:`). `bunfig.toml` sets `linker = "isolated"` explicitly, and it works
@@ -76,6 +77,22 @@ any path passed through must be absolute.
 | `bun run brand:export`       | Regenerates the brand rasters from the logo SVGs; needs Chromium.                                                                                                         |
 | `bun run ci:local`           | Runs the CI pipeline locally: install, commits, docs, check, coverage, build, size.                                                                                       |
 
+### Website
+
+The site scripts live in `apps/site` and run with `bun run --cwd apps/site`,
+except `i18n:status`, which also has a root script:
+
+| Script                          | What it does                                                                 |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| `bun run --cwd apps/site dev`   | Starts the Astro dev server.                                                 |
+| `bun run --cwd apps/site check` | Runs `astro check` (also part of `bun run check`).                           |
+| `bun run --cwd apps/site test`  | Runs the site's Vitest suite (also part of `bun run test`).                  |
+| `bun run i18n:status`           | Lists the missing and stale translations of the published docs, with totals. |
+
+`astro build` and `preview` exist but are slow; the container build in
+`deploy-site.yml` is the build check. Translating:
+[`how-to/translate-the-website.md`](how-to/translate-the-website.md).
+
 ### Brand assets
 
 `bun run brand:export` regenerates the PNG marks, the social preview, the Open
@@ -129,6 +146,14 @@ before any conversion). The file-count guard is never bypassed. The v1 smoke
 test always runs. Setup:
 [`how-to/set-up-asset-hosting.md`](how-to/set-up-asset-hosting.md); recovery:
 [`how-to/roll-back-the-asset-site.md`](how-to/roll-back-the-asset-site.md).
+
+`deploy-site.yml` runs on pushes to `main` that touch `apps/site`, `docs`, the
+library or the deploy script. It builds the site container from
+`apps/site/Dockerfile` as a build check, then triggers a Coolify deploy through
+`.github/scripts/deploy-coolify.sh` and waits for the result. It needs the
+`COOLIFY_API_TOKEN` repository secret and the `SITE_COOLIFY_APP_UUID` repository
+variable; the script fails with a clear message when either is missing. See
+[ADR 0018](adr/0018-website-on-coolify-with-astro-and-starlight.md).
 
 Other workflows: `lint-docs.yml` (offline link and anchor check with lychee),
 `lint-workflows.yml` (workflow linting), `lint-pr.yml` (PR title), `labels.yml`

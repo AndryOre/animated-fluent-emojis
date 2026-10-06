@@ -14,6 +14,10 @@ The focus for the next year is maintenance rather than new surface area:
 - **Files site** — keeping the files site (the public GIF, WebP and PNG
   downloads) published and its URLs stable as the emoji catalog grows, alongside
   the asset site.
+- **Website** — keeping the website
+  (https://animated-fluent-emojis.andryore.dev) deployed, its docs in step with
+  `docs/`, and its translations fresh; see
+  [ADR 0018](docs/adr/0018-website-on-coolify-with-astro-and-starlight.md).
 - **Framework support** — keeping the React, Vue, Svelte, Astro and
   `<fluent-emoji>` adapters in step with their frameworks, with the library
   shipped as ESM-only.
