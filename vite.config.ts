@@ -12,6 +12,7 @@ export default defineConfig({
         'animated-fluent-emojis': path.resolve(rootDirectory, 'src/index.ts'),
         react: path.resolve(rootDirectory, 'src/react/index.ts'),
         element: path.resolve(rootDirectory, 'src/element/index.ts'),
+        vue: path.resolve(rootDirectory, 'src/vue/index.ts'),
         lookup: path.resolve(rootDirectory, 'src/lookup/index.ts'),
       },
       formats: ['es'],
@@ -19,7 +20,14 @@ export default defineConfig({
       cssFileName: 'style',
     },
     rolldownOptions: {
-      external: ['react', 'react-dom', /^react\//, /^react-dom\//],
+      external: [
+        'react',
+        'react-dom',
+        /^react\//,
+        /^react-dom\//,
+        'vue',
+        /^vue\//,
+      ],
       output: {
         chunkFileNames: 'chunks/[name]-[hash].js',
         advancedChunks: {
