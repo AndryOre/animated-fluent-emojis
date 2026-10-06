@@ -1,7 +1,11 @@
 ---
 import Emoji from 'animated-fluent-emojis/astro'
 
-import type { Locale } from '../i18n/locales'
+import { loadPublicIndex } from '../gallery/public-index'
+import { buildSnippetTabs, pickTeaserEmojis } from '../home/content'
+import DemoPlayground from '../home/DemoPlayground'
+import HeroEmoji from '../home/HeroEmoji'
+import { localePath, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
 
@@ -10,21 +14,272 @@ interface Props {
 }
 
 const { locale } = Astro.props
-const { home } = getUi(locale)
+const { home, meta } = getUi(locale)
+
+const galleryHref = localePath(locale, '/emojis/')
+const index = await loadPublicIndex()
+const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
+if (!snippetEmoji) throw new Error('The public index has no waving hand')
+const INSTALL_COMMAND = 'npm install animated-fluent-emojis'
+const TEASER_COUNT = 8
+const tabs = buildSnippetTabs(snippetEmoji)
+const teaser = pickTeaserEmojis(index, TEASER_COUNT)
+
+const pillars = [
+  { icon: '1f44b_wavinghand', ...home.pillars.alive },
+  { icon: 'feather', ...home.pillars.light },
+  { icon: '1f319_crescentmoon', ...home.pillars.considerate },
+  { icon: 'handshake', ...home.pillars.credit },
+]
+const faq = [home.faq.chat, home.faq.speed, home.faq.motion]
+
+const demoLabels = {
+  sizeLabel: home.demo.sizeLabel,
+  toneLabel: home.demo.toneLabel,
+  playsLabel: home.demo.playsLabel,
+  tones: home.demo.tones,
+  plays: home.demo.plays,
+  emojiLabel: home.hero.stageLabel,
+}
+
+const wrap = 'mx-auto w-full max-w-[1100px] px-4 min-[860px]:px-6'
+const section = `${wrap} py-14`
+const heading =
+  'text-[clamp(24px,4vw,36px)] leading-tight font-extrabold tracking-[-0.03em]'
+const primaryButton =
+  'inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-foreground hover:brightness-95'
+const copyButton =
+  'min-h-9 cursor-pointer rounded-full border border-border bg-card px-4 text-sm font-semibold text-card-foreground hover:border-primary'
 ---
 
-<Layout locale={locale} title={home.title}>
-  <main
-    id="main"
-    class="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-4 px-6 py-24 text-center"
-  >
-    <Emoji
-      id="1f44b_wavinghand"
-      size={96}
-      animationIterations="infinite"
-      alt=""
-    />
-    <h1 class="text-[40px] leading-tight font-extrabold">{home.title}</h1>
-    <p class="text-muted-foreground">{home.tagline}</p>
+<Layout locale={locale} title={meta.siteName} description={meta.description}>
+  <main id="main" class="flex-1">
+    <section class={`${wrap} pt-16 pb-12 max-[859px]:pt-10 max-[859px]:pb-10`}>
+      <div class="grid grid-cols-[minmax(0,1fr)] items-center gap-10 min-[860px]:grid-cols-[1.1fr_1fr]">
+        <div class="flex flex-col items-start gap-5">
+          <h1 class="text-[clamp(36px,6vw,60px)] leading-[1.02] font-extrabold tracking-[-0.04em]">
+            {home.tagline}
+          </h1>
+          <p class="text-xl text-muted-foreground">{home.hero.sub}</p>
+          <div class="flex w-full flex-col gap-3">
+            <div class="flex w-full max-w-lg items-center justify-between gap-3 rounded-full border border-border bg-card py-1.5 pr-1.5 pl-5">
+              <code
+                class="min-w-0 font-mono text-sm break-all"
+                id="install-command"
+                aria-label={home.hero.installLabel}
+              >
+                {INSTALL_COMMAND}
+              </code>
+              <button
+                type="button"
+                class={copyButton}
+                data-copy-text={INSTALL_COMMAND}
+                data-copied-label={home.hero.copied}
+              >
+                {home.hero.copy}
+              </button>
+            </div>
+            <p class="text-sm text-muted-foreground">{home.hero.attribution}</p>
+          </div>
+          <a href={galleryHref} class={primaryButton}>
+            {home.hero.browse}
+          </a>
+        </div>
+        <div class="flex aspect-[4/3] items-center justify-center rounded-2xl border border-border bg-card">
+          <HeroEmoji client:idle label={home.hero.stageLabel} />
+        </div>
+      </div>
+    </section>
+
+    <section class={section} aria-labelledby="demo-title">
+      <h2 id="demo-title" class={`${heading} mb-6`}>
+        {home.demo.title}
+      </h2>
+      <DemoPlayground client:visible labels={demoLabels} />
+    </section>
+
+    <section class={section} aria-labelledby="pillars-title">
+      <h2 id="pillars-title" class={`${heading} mb-6`}>
+        {home.pillars.title}
+      </h2>
+      <ul class="grid list-none gap-4 p-0 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+        {pillars.map((pillar) => (
+          <li class="flex flex-col gap-2 rounded-brand border border-border bg-card p-5">
+            <Emoji id={pillar.icon} size={40} alt="" />
+            <h3 class="text-lg font-extrabold">{pillar.title}</h3>
+            <p class="text-muted-foreground">{pillar.body}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class={section} aria-labelledby="snippets-title">
+      <h2 id="snippets-title" class={`${heading} mb-2`}>
+        {home.snippets.title}
+      </h2>
+      <p class="mb-6 text-muted-foreground">{home.snippets.body}</p>
+      <div
+        data-tabs
+        class="overflow-hidden rounded-brand border border-border bg-card"
+      >
+        <div class="flex items-center justify-between gap-2 border-b border-border pr-2">
+          <div
+            role="tablist"
+            aria-label={home.snippets.tabsLabel}
+            class="flex overflow-x-auto"
+          >
+            {tabs.map((tab, position) => (
+              <button
+                type="button"
+                role="tab"
+                id={`tab-${tab.kind}`}
+                aria-controls={`panel-${tab.kind}`}
+                aria-selected={position === 0 ? 'true' : 'false'}
+                tabindex={position === 0 ? 0 : -1}
+                data-tab
+                class="min-h-11 shrink-0 cursor-pointer border-b-2 border-transparent px-4 text-sm font-semibold text-muted-foreground aria-selected:border-primary aria-selected:text-foreground"
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            class={`${copyButton} shrink-0`}
+            data-copy-panel
+            data-copied-label={home.snippets.copied}
+          >
+            {home.snippets.copy}
+          </button>
+        </div>
+        {tabs.map((tab, position) => (
+          <div
+            role="tabpanel"
+            id={`panel-${tab.kind}`}
+            aria-labelledby={`tab-${tab.kind}`}
+            hidden={position !== 0}
+            data-panel
+          >
+            {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
+            <pre
+              tabindex="0"
+              class="m-0 max-h-80 overflow-auto p-5 font-mono text-sm leading-relaxed"
+            ><code>{tab.code}</code></pre>
+            {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class={section} aria-labelledby="no-code-title">
+      <div class="grid items-center gap-8 rounded-2xl border border-border bg-secondary p-6 min-[860px]:grid-cols-2 min-[860px]:p-10">
+        <div class="flex flex-col items-start gap-4">
+          <h2 id="no-code-title" class={heading}>
+            {home.noCode.title}
+          </h2>
+          <p class="text-muted-foreground">{home.noCode.body}</p>
+          <a href={galleryHref} class={primaryButton}>
+            {home.noCode.cta}
+          </a>
+        </div>
+        <ul
+          aria-label={home.noCode.teaserLabel}
+          class="m-0 grid list-none grid-cols-4 gap-3 p-0"
+        >
+          {teaser.map((emoji) => (
+            <li>
+              <a
+                href={galleryHref}
+                aria-label={emoji.description}
+                class="flex aspect-square items-center justify-center rounded-brand border border-border bg-card hover:border-primary"
+              >
+                <Emoji id={emoji.id} size={48} alt="" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class={section} aria-labelledby="faq-title">
+      <h2 id="faq-title" class={`${heading} mb-6`}>
+        {home.faq.title}
+      </h2>
+      <div class="flex max-w-3xl flex-col gap-3">
+        {faq.map((item) => (
+          <details class="rounded-brand border border-border bg-card p-4">
+            <summary class="cursor-pointer text-base font-bold">
+              {item.question}
+            </summary>
+            <p class="mt-3 text-muted-foreground">{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
   </main>
 </Layout>
+
+<script>
+  const COPIED_MS = 2000
+
+  async function copyWithFeedback(button: HTMLButtonElement, text: string) {
+    const original = button.textContent
+    const copied = button.dataset.copiedLabel
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      return
+    }
+    if (copied) button.textContent = copied
+    window.setTimeout(() => {
+      button.textContent = original
+    }, COPIED_MS)
+  }
+
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-copy-text]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        void copyWithFeedback(button, button.dataset.copyText ?? '')
+      })
+    })
+
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')]
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')]
+
+    function select(position: number) {
+      tabs.forEach((tab, tabPosition) => {
+        const active = tabPosition === position
+        tab.setAttribute('aria-selected', String(active))
+        tab.tabIndex = active ? 0 : -1
+        const panel = panels[tabPosition]
+        if (panel) panel.hidden = !active
+      })
+      tabs[position]?.focus()
+    }
+
+    tabs.forEach((tab, position) => {
+      tab.addEventListener('click', () => {
+        select(position)
+      })
+      tab.addEventListener('keydown', (event) => {
+        const step =
+          event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+        if (step === 0) return
+        event.preventDefault()
+        select((position + step + tabs.length) % tabs.length)
+      })
+    })
+
+    root
+      .querySelector<HTMLButtonElement>('[data-copy-panel]')
+      ?.addEventListener('click', (event) => {
+        const visible = panels.find((panel) => !panel.hidden)
+        const code = visible?.querySelector('code')?.textContent
+        if (code) {
+          void copyWithFeedback(event.currentTarget as HTMLButtonElement, code)
+        }
+      })
+  })
+</script>

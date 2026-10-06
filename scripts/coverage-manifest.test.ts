@@ -18,6 +18,9 @@ const ASTRO_PAGE_REASON =
 const ASTRO_PRESENTATION_REASON =
   'Presentational Astro component with no logic of its own; its inputs are tested in apps/site/src/i18n.'
 
+const GALLERY_ISLAND_REASON =
+  'Gallery React island with browser-only behavior, exercised in a real browser; its filtering, URL state, search and snippets are tested in apps/site/src/gallery.'
+
 const EXEMPTIONS: Readonly<Record<string, string>> = {
   'packages/animated-fluent-emojis/src/index.ts':
     'Public barrel that only re-exports createEmoji, configureEmojis, preloadEmojis and the public types, covered by root-exports.test.ts.',
@@ -70,6 +73,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/components/Footer.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/Header.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/HomePage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/HeroEmoji.tsx':
+    'Thin React island that renders the library Emoji with fixed props, verified in the browser through the landing page.',
+  'apps/site/src/home/DemoPlayground.tsx':
+    'React island that wires the demo chips to the library Emoji; its option-to-props mapping is tested in demo.test.ts.',
   'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/ThemeToggle.astro':
     'Presentational Astro component plus a small DOM script; the pure init logic is tested in theme-init.test.ts.',
@@ -99,6 +106,15 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/docs/sitemap.ts':
     'Docs sitemap source, exercised through the registered sources in seo/sources.test.ts.',
   'apps/site/src/pages/[...slug].md.ts': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/emojis/index.astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/[locale]/emojis/index.astro': ASTRO_PAGE_REASON,
+  'apps/site/src/pages/search-index/[locale].json.ts':
+    'Thin endpoint that feeds buildSearchIndex, tested in gallery/search.test.ts.',
+  'apps/site/src/components/GalleryPage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/gallery/Gallery.tsx': GALLERY_ISLAND_REASON,
+  'apps/site/src/components/gallery/EmojiDetail.tsx': GALLERY_ISLAND_REASON,
+  'apps/site/src/components/gallery/ChipGroup.tsx': GALLERY_ISLAND_REASON,
+  'apps/site/src/components/gallery/use-gallery-data.ts': GALLERY_ISLAND_REASON,
   'apps/site/src/docs/components/DocumentationHeader.astro':
     ASTRO_PRESENTATION_REASON,
   'apps/site/src/docs/components/DocumentationPageTitle.astro':
