@@ -1,0 +1,35 @@
+---
+import { localeSegment, type Locale } from '../i18n/locales'
+import { getUi } from '../i18n/ui'
+import Layout from '../layouts/Layout.astro'
+import { Gallery } from './gallery/Gallery'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const { gallery } = getUi(locale)
+---
+
+<Layout
+  locale={locale}
+  title={gallery.title}
+  description={gallery.description}
+  path="/emojis/"
+>
+  <main
+    id="main"
+    class="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 min-[860px]:px-6"
+  >
+    <h1 class="mb-6 text-[32px] leading-tight font-extrabold">
+      {gallery.title}
+    </h1>
+    <Gallery
+      client:only="react"
+      locale={locale}
+      searchIndexUrl={`/search-index/${localeSegment(locale)}.json`}
+      strings={gallery}
+    />
+  </main>
+</Layout>

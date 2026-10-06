@@ -13,7 +13,7 @@ interface Props {
 const { locale, path = '/' } = Astro.props
 const { header } = getUi(locale)
 const links = [
-  { href: localePath(locale, '/gallery/'), label: header.nav.gallery },
+  { href: localePath(locale, '/emojis/'), label: header.nav.gallery },
   { href: localePath(locale, '/docs/'), label: header.nav.docs },
   { href: REPOSITORY_URL, label: header.nav.github },
 ]
