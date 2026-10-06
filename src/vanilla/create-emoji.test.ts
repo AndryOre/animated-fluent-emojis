@@ -134,6 +134,38 @@ test('a failed sprite renders the Unicode glyph and reports the error', async ()
   expect(onError).toHaveBeenCalledTimes(1)
 })
 
+test('a failed sprite removes the root when the emoji has no Unicode character', async () => {
+  const manifest = structuredClone(FIXTURE_MANIFEST)
+  for (const category of manifest.categories) {
+    for (const emoticon of category.emoticons) delete emoticon.unicode
+  }
+  vi.stubGlobal('fetch', () => Promise.resolve(Response.json(manifest)))
+  configureEmojis({ assetSiteUrl: 'https://vanilla-no-unicode.test' })
+  mount({ id: 'cat' })
+
+  await expect
+    .poll(
+      () => {
+        host.querySelector('img')?.dispatchEvent(new Event('error'))
+        return host.childElementCount
+      },
+      { timeout: 5000 },
+    )
+    .toBe(0)
+})
+
+test('a failed sprite renders a custom fallback node', async () => {
+  const fallback = document.createElement('b')
+  fallback.textContent = '?'
+  mount({ id: 'cat', fallback })
+  const image = await waitForImage()
+
+  image.dispatchEvent(new Event('error'))
+
+  await expect.poll(() => host.querySelector('b')).toBe(fallback)
+  expect(host.querySelector('img')).toBeNull()
+})
+
 test('a failed sprite with a null fallback renders nothing and retries when online', async () => {
   mount({ id: 'cat', fallback: null })
   const image = await waitForImage()

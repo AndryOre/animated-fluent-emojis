@@ -59,6 +59,19 @@ test('renders the fallback slot when the sprite fails', async () => {
   expect(host.querySelector('[role="img"]')).toBeNull()
 })
 
+test('retries a failed sprite when the browser comes back online', async () => {
+  const host = mount(() => h(Emoji, { id: 'cat' }))
+  await expect.poll(() => host.querySelector('img')).not.toBeNull()
+
+  host.querySelector('img')?.dispatchEvent(new Event('error'))
+  await expect.poll(() => host.querySelector('[role="img"]')).not.toBeNull()
+  expect(host.querySelector('img')).toBeNull()
+
+  globalThis.dispatchEvent(new Event('online'))
+
+  await expect.poll(() => host.querySelector('img')).not.toBeNull()
+})
+
 test('renders the fallback slot for an unknown id', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => 0 as never)
   const host = mount(() =>

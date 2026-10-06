@@ -112,6 +112,35 @@ describe('astro client script', () => {
     stop()
   })
 
+  test('an unparsable config attribute is ignored without hydrating', async () => {
+    const container = await mountHtml({ id: 'cat' }, '<b class="slotted">?</b>')
+    container
+      .querySelector(ROOT_SELECTOR)
+      ?.setAttribute(ROOT_ATTRIBUTE, '{not valid json')
+    const onError = vi.fn()
+    container.addEventListener('emoji-error', onError)
+
+    const stop = hydrateEmojis(container)
+    container.querySelector('img')?.dispatchEvent(new Event('error'))
+
+    expect(onError).not.toHaveBeenCalled()
+    expect(container.querySelector('img')).not.toBeNull()
+    expect(container.querySelector('.slotted')).toBeNull()
+    expect(() => {
+      stop()
+    }).not.toThrow()
+  })
+
+  test('astro:page-load hydrates roots added after the first hydration', async () => {
+    const container = await mountHtml({ id: 'cat' }, '<b class="slotted">?</b>')
+
+    document.dispatchEvent(new Event('astro:page-load'))
+    container.querySelector('img')?.dispatchEvent(new Event('error'))
+
+    await expect.poll(() => container.querySelector('.slotted')).not.toBeNull()
+    expect(container.querySelector('img')).toBeNull()
+  })
+
   test('hydrating twice does not duplicate listeners', async () => {
     const container = await mountHtml({
       id: 'waving-hand',
