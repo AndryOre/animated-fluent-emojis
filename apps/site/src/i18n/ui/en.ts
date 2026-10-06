@@ -39,7 +39,83 @@ export const en = {
   },
   home: {
     title: 'Animated Fluent Emojis',
-    tagline: 'Microsoft Fluent animated emojis for the web.',
+    tagline: 'Fluent emojis, but they move.',
+    hero: {
+      sub: 'Hover it. It waves back.',
+      installLabel: 'Install command',
+      copy: 'Copy',
+      copied: 'Copied',
+      browse: 'Browse the emojis',
+      attribution:
+        "The emoji artwork is Microsoft's. Not affiliated with or endorsed by Microsoft.",
+      stageLabel: 'A waving hand emoji, playing on hover',
+    },
+    demo: {
+      title: 'Try one',
+      sizeLabel: 'Size',
+      toneLabel: 'Skin tone',
+      playsLabel: 'Plays',
+      tones: {
+        default: 'Default',
+        light: 'Light',
+        medium: 'Medium',
+        dark: 'Dark',
+      },
+      plays: {
+        hover: 'On hover',
+        load: 'On load',
+      },
+    },
+    pillars: {
+      title: 'Made to be easy to live with',
+      alive: {
+        title: 'Alive',
+        body: 'They wave back. Hover one and see.',
+      },
+      light: {
+        title: 'Light',
+        body: 'They never push your page around while they load.',
+      },
+      considerate: {
+        title: 'Considerate',
+        body: 'If someone asks their device for less motion, the emoji stays still.',
+      },
+      credit: {
+        title: 'Clear about what is whose',
+        body: "The emoji artwork is Microsoft's. The code is open source.",
+      },
+    },
+    snippets: {
+      title: 'One tag, any site',
+      body: 'Pick your framework, copy the code, and the emoji is on the page.',
+      tabsLabel: 'Framework',
+      copy: 'Copy code',
+      copied: 'Copied',
+    },
+    noCode: {
+      title: 'No code? No problem.',
+      body: 'Download any emoji as a GIF, an animated WebP or a still PNG, and drop it into a chat or a document.',
+      cta: 'Browse the emojis',
+      teaserLabel: 'A few emojis from the gallery',
+    },
+    faq: {
+      title: 'Questions',
+      chat: {
+        question: 'Can I use these in a chat or a document?',
+        answer:
+          'Yes. Download the emoji as a GIF, an animated WebP or a still PNG from the gallery, then add it to your message or file like any picture.',
+      },
+      speed: {
+        question: 'Will they slow my page down?',
+        answer:
+          'No. Each emoji holds its space while it loads, so nothing jumps, and the animation files are only fetched when an emoji is shown.',
+      },
+      motion: {
+        question: 'What happens if someone prefers less motion?',
+        answer:
+          'The emoji stays still on its first frame. It never moves unless the visitor has left motion switched on.',
+      },
+    },
   },
   docs: {
     howToGroup: 'How-to guides',
