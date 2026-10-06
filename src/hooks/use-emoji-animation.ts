@@ -65,10 +65,12 @@ export const useEmojiAnimation = (
   const [gateState, setGateState] = useState<PlaybackGateState>(
     createPlaybackGateState,
   )
-  if (trackedSource !== spriteSource) {
+  const hasSourceChanged = trackedSource !== spriteSource
+  if (hasSourceChanged) {
     setTrackedSource(spriteSource)
     setGateState(gateSourceChanged())
   }
+  const currentGateState = hasSourceChanged ? gateSourceChanged() : gateState
   const baseConfig: PlaybackGateConfig = {
     animation: emoji?.animation ?? null,
     playOnHover,
@@ -80,13 +82,14 @@ export const useEmojiAnimation = (
     size,
   }
   const isDocumentHidden = useDocumentHidden(
-    !resolvePlaybackGate(gateState, baseConfig).isInitialAnimationComplete,
+    !resolvePlaybackGate(currentGateState, baseConfig)
+      .isInitialAnimationComplete,
   )
-  const view = resolvePlaybackGate(gateState, {
+  const view = resolvePlaybackGate(currentGateState, {
     ...baseConfig,
     isDocumentHidden,
   })
-  if (view.state !== gateState) setGateState(view.state)
+  if (view.state !== currentGateState) setGateState(view.state)
 
   const imageRef = useRef<HTMLImageElement>(null)
   const latestRef = useRef({

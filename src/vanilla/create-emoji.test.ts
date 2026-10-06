@@ -171,7 +171,7 @@ test('onLoad and onPlaybackEnd are reported', async () => {
   mount({ id: 'cat', onLoad, onPlaybackEnd, animationIterations: 1 })
   const image = await waitForImage()
 
-  await expect.poll(() => onLoad.mock.calls.length).toBeGreaterThan(0)
+  await expect.poll(() => onLoad.mock.calls.length).toBe(1)
   image.dispatchEvent(new Event('animationend'))
   image.dispatchEvent(new Event('animationend'))
 

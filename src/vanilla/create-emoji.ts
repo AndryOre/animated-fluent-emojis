@@ -260,9 +260,11 @@ export const createEmoji = (
     element.draggable = false
     element.className = styles.emojiImage ?? ''
     element.addEventListener('load', (event) => {
+      if (element !== image) return
       current.onLoad?.(event)
     })
     element.addEventListener('error', (event) => {
+      if (element !== image) return
       failedSource = source
       render()
       current.onError?.(event)
@@ -292,8 +294,13 @@ export const createEmoji = (
     if (!currentImage) return
     currentImage.alt = current.alt ?? emoji.description
     const sourceSet = getSpriteSourceSet(emoji, current.skinTone)
-    currentImage.srcset = sourceSet ?? ''
-    currentImage.sizes = typeof size === 'number' ? cssSize : 'auto'
+    const nextSizes = typeof size === 'number' ? cssSize : 'auto'
+    if (currentImage.srcset !== (sourceSet ?? '')) {
+      currentImage.srcset = sourceSet ?? ''
+    }
+    if (currentImage.getAttribute('sizes') !== nextSizes) {
+      currentImage.sizes = nextSizes
+    }
     if (isNewImage) currentImage.src = source
 
     view = resolvePlaybackGate(gate, {
