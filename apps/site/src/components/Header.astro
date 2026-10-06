@@ -69,7 +69,7 @@ const linkClass =
 
       <details class="relative" data-menu>
         <summary
-          aria-label={header.languageLabel}
+          aria-label={`${LOCALE_NAMES[locale]} (${header.languageLabel})`}
           class="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border border-border bg-card px-3 text-sm font-medium [&::-webkit-details-marker]:hidden"
         >
           <span lang={locale}>{LOCALE_NAMES[locale]}</span>
