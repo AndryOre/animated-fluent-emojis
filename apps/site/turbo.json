@@ -6,6 +6,12 @@
       "dependsOn": ["transit", "^build", "^check"],
       "inputs": ["$TURBO_DEFAULT$", "!dist/**", "!.astro/**"]
     },
+    "test": {
+      "dependsOn": ["transit", "^build"]
+    },
+    "test:coverage": {
+      "dependsOn": ["transit", "^build"]
+    },
     "build": {
       "dependsOn": ["transit", "^build"],
       "inputs": ["$TURBO_DEFAULT$", "!dist/**", "!.astro/**"],
