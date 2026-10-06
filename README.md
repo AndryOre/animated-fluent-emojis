@@ -154,18 +154,19 @@ attribute are also accepted. Every prop, with edge cases, is in the
 
 ## Documentation
 
-| Doc                                        | Covers                                        |
-| ------------------------------------------ | --------------------------------------------- |
-| [Usage guide](docs/usage.md)               | Frameworks, props, playback, fallback, lookup |
-| [How-to guides](docs/how-to/README.md)     | Angular, Solid, Preact, Next.js and more      |
-| [Docs index](docs/README.md)               | Every document in this repository             |
-| [Troubleshooting](docs/troubleshooting.md) | Fixes for common problems, by symptom         |
-| [Security design](docs/security.md)        | Threat model and assurance case               |
-| [Changelog](CHANGELOG.md)                  | Release notes                                 |
-| [Roadmap](ROADMAP.md)                      | Project direction                             |
-| [Governance](GOVERNANCE.md)                | Decisions and project continuity              |
-| [Contributing](CONTRIBUTING.md)            | Setup, conventions and merging                |
-| [Code of Conduct](CODE_OF_CONDUCT.md)      | Community standards                           |
+| Doc                                                 | Covers                                        |
+| --------------------------------------------------- | --------------------------------------------- |
+| [Usage guide](docs/usage.md)                        | Frameworks, props, playback, fallback, lookup |
+| [How-to guides](docs/how-to/README.md)              | Angular, Solid, Preact, Next.js and more      |
+| [Use without code](docs/how-to/use-without-code.md) | Slack, Notion, Docs, email, a README          |
+| [Docs index](docs/README.md)                        | Every document in this repository             |
+| [Troubleshooting](docs/troubleshooting.md)          | Fixes for common problems, by symptom         |
+| [Security design](docs/security.md)                 | Threat model and assurance case               |
+| [Changelog](CHANGELOG.md)                           | Release notes                                 |
+| [Roadmap](ROADMAP.md)                               | Project direction                             |
+| [Governance](GOVERNANCE.md)                         | Decisions and project continuity              |
+| [Contributing](CONTRIBUTING.md)                     | Setup, conventions and merging                |
+| [Code of Conduct](CODE_OF_CONDUCT.md)               | Community standards                           |
 
 ## Migrating from 0.4
 
@@ -235,6 +236,13 @@ that Microsoft Teams publishes; the rest come from Microsoft's MIT-licensed
 sprites remain Microsoft's assets: this package's MIT license covers the code
 only. The MIT notice for Microsoft's repository is published at
 `/LICENSE-fluentui-emoji-animated.txt` on the asset site.
+
+Every emoji and skin tone is also a plain file (GIF, WebP and PNG) on the files
+site, `animated-fluent-emojis-files.andryore.dev`, for people who use them
+without the library; see [Use without code](docs/how-to/use-without-code.md).
+The artwork is Microsoft's and its use is subject to Microsoft's terms. The site
+publishes the notice for the emojis from Microsoft's MIT-licensed repository at
+`/LICENSE-fluentui-emoji-animated.txt` and the attribution at `/NOTICE.txt`.
 
 ## Acknowledgements
 

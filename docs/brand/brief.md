@@ -222,7 +222,7 @@ Rejected:
 - English only.
 - The kit lives in `docs/brand/`.
 - Scope follows Snug's process without YouTube, store tiles or app settings.
-- The landing page and README-embeddable files are not part of this work.
+- The landing page is not part of this work.
 - Nothing is published to npm, the repository is not renamed and no domain is
   bought without an explicit OK.
 

@@ -37,6 +37,8 @@ An index of every document in this repository.
 ## How-to guides
 
 - [`how-to/README.md`](how-to/README.md): index of the how-to guides.
+- [`how-to/use-without-code.md`](how-to/use-without-code.md): using the emojis
+  in Slack, Notion, Google Docs, email or a README from a link, with no code.
 - [`how-to/self-host-the-assets.md`](how-to/self-host-the-assets.md): serving
   the asset site from your own origin, with the CSP.
 - [`how-to/use-with-nextjs.md`](how-to/use-with-nextjs.md): the client boundary,

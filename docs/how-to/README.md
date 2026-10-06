@@ -20,6 +20,11 @@ Task-focused recipes. For the full API, see the [usage guide](../usage.md).
 Vue, Svelte, Astro and React are covered by the
 [usage guide](../usage.md#frameworks).
 
+## Using the files
+
+- [`use-without-code.md`](use-without-code.md): put an emoji in Slack, Notion,
+  Google Docs, email or a GitHub README from a link, with no code.
+
 ## Maintaining
 
 - [`cut-a-release.md`](cut-a-release.md): releasing and the npm trusted

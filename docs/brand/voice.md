@@ -94,8 +94,8 @@ care, not to replace it.
   library, at two levels of detail. README and npm: the artwork is Microsoft's,
   the code is MIT, the project is not affiliated with or endorsed by Microsoft.
   Landing page and social: "The emoji artwork is Microsoft's. The code is open
-  source. Not affiliated with or endorsed by Microsoft." Future features (a
-  landing page, README-embeddable files) are never described as available.
+  source. Not affiliated with or endorsed by Microsoft." A landing page is never
+  described as available until it exists.
 - **What to avoid**: "exclusive", "first time", "official", "powered by
   Microsoft"; any wording that suggests the Teams sprites are licensed or free
   to reuse.
@@ -176,8 +176,9 @@ Variations observed:
   Microsoft" (Source: LobeHub, in `competitors.md`). The category leader's
   framing, which is static.
 
-Every statement in the framework describes what ships today. A landing page and
-README-embeddable files are planned and stay out of copy until they exist.
+Every statement in the framework describes what ships today. A landing page is
+planned and stays out of copy until it exists. README-embeddable files ship from
+the files site and may be described, with Microsoft's attribution.
 
 ### Key Message Pillars
 
@@ -271,9 +272,9 @@ Voice is constant. Tone flexes along three dimensions.
 - **Do's**: lead with motion; keep the non-affiliation line near the install
   command or the download; keep any developer detail one click away (a link to
   the README), not above the fold.
-- **Don'ts**: claim README-embeddable files before they ship; use Microsoft's or
-  Teams' branding; name Microsoft's repository, the license or any pipeline term
-  in the hero, the pillars or the footer line.
+- **Don'ts**: describe the files as licensed to anyone or skip the attribution;
+  use Microsoft's or Teams' branding; name Microsoft's repository, the license
+  or any pipeline term in the hero, the pillars or the footer line.
 - **Example**: "Hover it. It waves back."
 
 ---
