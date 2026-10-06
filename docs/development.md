@@ -276,3 +276,13 @@ rulesets on `main` and `v*` tags, squash-only merges, linear history, signed
 commits, a single `CI passed` required check, private vulnerability reporting,
 immutable releases, `sha_pinning_required` and CodeQL default setup. Change the
 ADR together with any setting.
+
+Two more settings are part of the same posture:
+
+- The `LISTS_BOT_TOKEN` secret, a fine-grained personal access token that lets
+  the Sync Assets `emoji-lists` job open a pull request that CI runs on and that
+  auto-merges. Setup and rotation:
+  [Set up asset hosting](how-to/set-up-asset-hosting.md); rationale:
+  [ADR 0017](adr/0017-personal-token-for-the-emoji-lists-pr.md).
+- Actions cannot create or approve pull requests
+  (`can_approve_pull_request_reviews=false`). Auto-merge stays enabled.

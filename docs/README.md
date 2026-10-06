@@ -71,6 +71,7 @@ An index of every document in this repository.
 - [`adr/0014-multi-framework-support.md`](adr/0014-multi-framework-support.md)
 - [`adr/0015-public-files-site.md`](adr/0015-public-files-site.md)
 - [`adr/0016-bun-workspaces-monorepo.md`](adr/0016-bun-workspaces-monorepo.md)
+- [`adr/0017-personal-token-for-the-emoji-lists-pr.md`](adr/0017-personal-token-for-the-emoji-lists-pr.md)
 
 ## Brand
 
