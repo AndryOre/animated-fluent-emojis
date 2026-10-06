@@ -169,13 +169,18 @@ describe('committed public-slugs.json', () => {
     expect(Object.keys(resorted.slugs)).toEqual(Object.keys(committed.slugs))
   })
 
-  test('covers every tone variant of the live catalog', async (context) => {
-    const manifest = await loadLiveManifest()
-    if (manifest === undefined) return context.skip()
-    const keys = new Set(Object.keys(committed.slugs))
-    const missing = listRegistryKeys(manifest)
-      .map(({ key }) => key)
-      .filter((key) => !keys.has(key))
-    expect(missing).toEqual([])
-  })
+  test.skipIf(process.env.CHECK_LIVE_SLUGS !== '1')(
+    'covers every tone variant of the live catalog',
+    async () => {
+      const manifest = await loadLiveManifest()
+      if (manifest === undefined) {
+        throw new Error('The live manifest could not be loaded')
+      }
+      const keys = new Set(Object.keys(committed.slugs))
+      const missing = listRegistryKeys(manifest)
+        .map(({ key }) => key)
+        .filter((key) => !keys.has(key))
+      expect(missing).toEqual([])
+    },
+  )
 })
