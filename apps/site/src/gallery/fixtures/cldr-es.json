@@ -1,0 +1,31 @@
+{
+  "annotations": {
+    "identity": {
+      "language": "es"
+    },
+    "annotations": {
+      "😃": {
+        "default": [
+          "cara",
+          "cara sonriendo con ojos grandes",
+          "divertido",
+          "risa",
+          "sonriendo"
+        ],
+        "tts": ["cara sonriendo con ojos grandes"]
+      },
+      "👋": {
+        "default": ["agitar", "mano", "mano saludando", "saludar", "saludo"],
+        "tts": ["mano saludando"]
+      },
+      "👍": {
+        "default": ["arriba", "mano", "pulgar", "pulgar hacia arriba", "señal"],
+        "tts": ["pulgar hacia arriba"]
+      },
+      "🔥": {
+        "default": ["fuego", "llama"],
+        "tts": ["fuego"]
+      }
+    }
+  }
+}

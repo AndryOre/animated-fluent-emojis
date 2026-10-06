@@ -11,6 +11,7 @@
       "project": ["*.ts"],
     },
     "apps/site": {
+      "entry": ["src/gallery/index.ts"],
       "ignoreDependencies": ["@astrojs/starlight"],
     },
     "packages/animated-fluent-emojis": {

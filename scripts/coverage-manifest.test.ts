@@ -80,6 +80,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Thin endpoint that feeds route sources to buildSitemapXml, tested in seo/sitemap.test.ts.',
   'apps/site/src/scripts/theme-keys.ts':
     'Constants-only module shared by the init script and the toggle, exercised by theme-init.test.ts.',
+  'apps/site/src/gallery/index.ts':
+    'Barrel that only re-exports the gallery data API, each module tested in its own colocated test.',
   'apps/site/src/site-links.ts':
     'Constants-only list of external URLs, with no behavior to test.',
   ...Object.fromEntries(
