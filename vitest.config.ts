@@ -74,6 +74,7 @@ export default defineConfig({
             'eslint-rules/**/*.test.ts',
             'docs/adr/**/*.test.ts',
             'scripts/**/*.test.ts',
+            'docs/brand/tools/**/*.test.ts',
           ],
         },
       },
