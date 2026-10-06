@@ -333,8 +333,15 @@ describe('sync-assets.yml emoji-lists job', () => {
       'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
     )
     expect(runs).toContain(
-      'git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json',
+      'paths=(CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json)',
     )
+  })
+
+  test('commits through the API so GitHub signs the commit', () => {
+    expect(runs).toContain('createCommitOnBranch')
+    expect(runs).not.toContain('git commit')
+    expect(runs).not.toContain('git push')
+    expect(runs).not.toContain('x-access-token')
   })
 
   test('appends a changelog entry under Unreleased when EmojiId changes', () => {
@@ -342,7 +349,7 @@ describe('sync-assets.yml emoji-lists job', () => {
       'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts',
     )
     expect(runs).toContain(String.raw`## \[Unreleased\]`)
-    expect(runs).toContain('git add CHANGELOG.md')
+    expect(runs).toContain('CHANGELOG.md')
   })
 
   test('checks duplicates only inside the Unreleased section', () => {
