@@ -20,9 +20,10 @@
 
 **Fluent emojis, but they move.**
 
-Drop Microsoft's animated Fluent emojis into a React app: one import, one tag.
-They play on load or on hover, rest on a still frame when someone asks for less
-motion, and hold their space in the layout while they load.
+Drop Microsoft's animated Fluent emojis into a React, Vue, Svelte or Astro app,
+or any page through a web component: one import, one tag. They play on load or
+on hover, rest on a still frame when someone asks for less motion, and hold
+their space in the layout while they load.
 
 ```jsx
 <Emoji id="1f44b_wavinghand" />
@@ -37,6 +38,7 @@ affiliated with or endorsed by Microsoft. See
 
 - [Features](#features)
 - [Installation](#installation)
+- [Works with](#works-with)
 - [Usage](#usage)
 - [Props](#props)
 - [Documentation](#documentation)
@@ -62,12 +64,32 @@ affiliated with or endorsed by Microsoft. See
 
 ## Installation
 
-Install the package. It supports React 18 and 19 (`react` and `react-dom` are
-peer dependencies) and is ESM-only:
+Install the package. It is ESM-only. Until 0.7, `react` and `react-dom` (18
+or 19) are required peer dependencies; the Vue, Svelte, Astro, Solid and Preact
+peers are optional:
 
 ```sh
 bun add animated-fluent-emojis
 ```
+
+## Works with
+
+One package, one import path per framework. Each row links to its install and
+usage steps.
+
+| Framework    | Import                                      | Guide                                      |
+| ------------ | ------------------------------------------- | ------------------------------------------ |
+| React        | `animated-fluent-emojis/react`              | [Usage](docs/usage.md#react)               |
+| Vue          | `animated-fluent-emojis/vue`                | [Usage](docs/usage.md#vue)                 |
+| Svelte       | `animated-fluent-emojis/svelte`             | [Usage](docs/usage.md#svelte)              |
+| Astro        | `animated-fluent-emojis/astro`              | [Usage](docs/usage.md#astro)               |
+| Plain HTML   | `animated-fluent-emojis/element`            | [Usage](docs/usage.md#plain-html)          |
+| Angular      | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-angular.md)  |
+| Solid        | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-solid.md)    |
+| Preact       | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-preact.md)   |
+| No framework | `createEmoji` from `animated-fluent-emojis` | [Usage](docs/usage.md#without-a-framework) |
+
+Lit, Alpine and htmx use `<fluent-emoji>` too.
 
 ## Usage
 
@@ -95,6 +117,9 @@ and `preloadEmojis` from a client module, not a Server Component.
 
 ## Props
 
+These are the React props; the other adapters take the same set in their own
+spelling, see the [usage guide](docs/usage.md#frameworks).
+
 | Prop                | Type                 | Default     | Description                                     |
 | ------------------- | -------------------- | ----------- | ----------------------------------------------- |
 | id                  | `EmojiId` or string  | -           | The emoji to render; known ids autocomplete     |
@@ -116,7 +141,8 @@ attribute are also accepted. Every prop, with edge cases, is in the
 
 | Doc                                        | Covers                                        |
 | ------------------------------------------ | --------------------------------------------- |
-| [Usage guide](docs/usage.md)               | Props, playback, fallback, preloading, lookup |
+| [Usage guide](docs/usage.md)               | Frameworks, props, playback, fallback, lookup |
+| [How-to guides](docs/how-to/README.md)     | Angular, Solid, Preact, Next.js and more      |
 | [Docs index](docs/README.md)               | Every document in this repository             |
 | [Troubleshooting](docs/troubleshooting.md) | Fixes for common problems, by symptom         |
 | [Security design](docs/security.md)        | Threat model and assurance case               |

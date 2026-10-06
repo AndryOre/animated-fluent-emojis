@@ -10,6 +10,15 @@ Task-focused recipes. For the full API, see the [usage guide](../usage.md).
   stylesheet import and where to call `configureEmojis` and `preloadEmojis`.
 - [`preload-for-a-picker.md`](preload-for-a-picker.md): warm the manifest and
   sprite sheets before an emoji picker opens.
+- [`use-with-angular.md`](use-with-angular.md): register `<fluent-emoji>`, allow
+  the tag and bind properties and events in Angular.
+- [`use-with-solid.md`](use-with-solid.md): the typed `<fluent-emoji>` tag and
+  its events in Solid.
+- [`use-with-preact.md`](use-with-preact.md): `<fluent-emoji>`, or the React
+  adapter through `preact/compat`.
+
+Vue, Svelte, Astro and React are covered by the
+[usage guide](../usage.md#frameworks).
 
 ## Maintaining
 
