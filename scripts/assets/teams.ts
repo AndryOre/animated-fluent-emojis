@@ -1,4 +1,4 @@
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { fetchOk, fetchOkOrMissing, type FetchLike } from './http.js'
 
 const TEAMS_STATIC_ORIGIN = 'https://statics.teams.cdn.office.net'

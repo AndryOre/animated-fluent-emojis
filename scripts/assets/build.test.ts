@@ -11,7 +11,7 @@ import { availableParallelism, tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import {
   DOWNLOAD_CONCURRENCY,
   fileExists,

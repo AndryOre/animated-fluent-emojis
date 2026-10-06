@@ -1,7 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { getConversionConcurrency } from './build-context.js'
 import { buildHdOutputPath, buildOutputPath } from './catalog.js'
 import { HD_FRAME_SIZE, SPRITE_FRAME_SIZE } from './constants.js'

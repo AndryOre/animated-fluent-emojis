@@ -1,4 +1,4 @@
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 
 /**
  * One emoji entry of a manifest.

@@ -1,6 +1,6 @@
 import { expect, test, vi } from 'vitest'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { PIPELINE_VERSION } from './catalog.js'
 import type { PublishedVersion } from './site-writer.js'
 import {

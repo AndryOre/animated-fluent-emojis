@@ -1,5 +1,5 @@
 node_modules
-dist
+**/dist
 bun.lock
-coverage
+**/coverage
 .claude/worktrees

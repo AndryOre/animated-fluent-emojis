@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, expect, test } from 'vitest'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import type { SpriteTask } from './catalog.js'
 import { createSpritePng } from './test-support.js'
 import { findSpriteSheetProblem, validateCatalog } from './validate.js'
