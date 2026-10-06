@@ -1,8 +1,18 @@
-import { mkdir, readFile, stat } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import sharp from 'sharp'
+
+import {
+  assertSpec as assertImageSpec,
+  bannerHtml as buildBannerHtml,
+  COVER_SCALE,
+  KB,
+  MARK_SIZES,
+  MB,
+  WEBP_QUALITY,
+} from './brand-export-spec.mjs'
 
 /**
  * Regenerates the derived raster assets of the brand kit from the SVG sources in
@@ -23,31 +33,6 @@ const brandRoot = path.resolve(
 const repositoryRoot = path.resolve(brandRoot, '../..')
 const fontsRoot = path.join(brandRoot, 'brandbook/fonts')
 const assetsRoot = path.join(repositoryRoot, 'docs/assets')
-
-const THEMES = {
-  dark: {
-    ground: '#0D1715',
-    text: '#EAF4F1',
-    muted: '#9AB0AA',
-    accentRgb: '46,196,160',
-    glow: 0.22,
-  },
-  light: {
-    ground: 'oklch(0.983 0.003 174.5)',
-    text: 'oklch(0.228 0.023 176.5)',
-    muted: 'oklch(0.467 0.026 178.2)',
-    accentRgb: '46,196,160',
-    glow: 0.16,
-  },
-}
-const MARK_SIZES = [16, 32, 48, 128, 512]
-const KB = 1024
-const MB = 1024 * KB
-const COVER_SCALE = 1.5
-const WEBP_QUALITY = 86
-const TAGLINE = 'Fluent emojis,<br>but they move.'
-const SUBLINE = "Microsoft's animated Fluent emojis as one component."
-const NOTICE = 'Not affiliated with or endorsed by Microsoft.'
 
 const browser = await chromium.launch()
 
@@ -102,24 +87,14 @@ async function renderMark(size, outPath) {
 }
 
 function bannerHtml(width, height, theme) {
-  const { ground, text, muted, accentRgb, glow } = THEMES[theme]
-  const lockupSvg = lockupSvgs[theme]
-  const unit = width / 1280
-  const px = (value) => `${Math.round(value * unit)}px`
-  const emojiStyle = (size, rotate, left, top) =>
-    `position:absolute;left:${px(left)};top:${px(top)};width:${px(size)};height:${px(size)};transform:rotate(${rotate}deg)`
-  return `<html lang="en"><style>${fontFaces}svg{display:block;width:100%;height:auto}img{display:block}</style>
-    <body style="margin:0;width:${width}px;height:${height}px;position:relative;overflow:hidden;font-family:Figtree,system-ui,sans-serif;color:${text};background:radial-gradient(52% 78% at 78% 50%, rgba(${accentRgb},${glow}), transparent 70%), ${ground}">
-      <div style="position:absolute;left:${px(80)};top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;width:${px(640)}">
-        <div style="width:${px(500)}">${lockupSvg}</div>
-        <div style="font-weight:800;font-size:${px(62)};line-height:1.04;letter-spacing:-0.03em;margin-top:${px(52)}">${TAGLINE}</div>
-        <div style="font-weight:400;font-size:${px(24)};line-height:1.4;color:${muted};margin-top:${px(22)}">${SUBLINE}</div>
-      </div>
-      <div style="position:absolute;left:${px(80)};bottom:${px(40)};font-size:${px(15)};color:${muted};opacity:0.8">${NOTICE}</div>
-      <img src="${emojiUris[0]}" alt="" style="${emojiStyle(220, -7, 760, 118)}">
-      <img src="${emojiUris[1]}" alt="" style="${emojiStyle(168, 6, 984, 280)}">
-      <img src="${emojiUris[2]}" alt="" style="${emojiStyle(150, -4, 806, 360)}">
-    </body></html>`
+  return buildBannerHtml({
+    width,
+    height,
+    theme,
+    lockupSvg: lockupSvgs[theme],
+    fontFaces,
+    emojiUris,
+  })
 }
 
 async function renderBanner({ width, height, scale = 1, theme = 'dark' }) {
@@ -134,21 +109,8 @@ async function renderBanner({ width, height, scale = 1, theme = 'dark' }) {
   return buffer
 }
 
-async function assertSpec(outPath, { width, height, maxBytes }) {
-  const { size } = await stat(outPath)
-  const meta = await sharp(outPath).metadata()
-  const name = path.basename(outPath)
-  if (meta.width !== width || meta.height !== height) {
-    throw new Error(
-      `${name} is ${meta.width}x${meta.height}, expected ${width}x${height}`,
-    )
-  }
-  if (size > maxBytes) {
-    throw new Error(`${name} is ${size} bytes, over ${maxBytes}`)
-  }
-  console.log(
-    `${path.relative(repositoryRoot, outPath)} ${(size / KB).toFixed(0)} KB`,
-  )
+function assertSpec(outPath, spec) {
+  return assertImageSpec(outPath, spec, { repositoryRoot })
 }
 
 try {
