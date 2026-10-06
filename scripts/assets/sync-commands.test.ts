@@ -6,6 +6,7 @@ import { afterEach, expect, test, vi } from 'vitest'
 import type { BuildResult } from './build.js'
 import { PIPELINE_VERSION } from './catalog.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
+import { deriveRegistry } from './public-slugs.js'
 import type { PublishedVersion } from './site-writer.js'
 import {
   runBuild,
@@ -347,7 +348,130 @@ test('runCommand rejects an unknown command with the usage message', async () =>
   const dependencies = createDependencies({})
 
   await expect(runCommand(['nope'], dependencies)).rejects.toThrow(
-    'Usage: sync.ts <detect|build|verify-live|lists> [options]',
+    'Usage: sync.ts <detect|build|files|verify-live|lists> [options]',
   )
   await expect(runCommand([], dependencies)).rejects.toThrow('Usage:')
+})
+
+const FILES_SITE = 'https://files.test'
+
+const detectChanged = async (
+  filesRoutes: Parameters<typeof createFakeFetch>[0],
+  filesUrl: string | null = FILES_SITE,
+): Promise<boolean> => {
+  silence()
+  const scratch = await createScratch()
+  const outputFile = path.join(scratch, 'output')
+  await runDetect(
+    { ...detectOptions, ...(filesUrl !== null && { filesUrl }) },
+    createDependencies(
+      {
+        ...discoveryRoutes(),
+        [`GET ${SITE}/version.json`]: { body: published },
+        [`GET ${SITE}/v1/version.json`]: { body: published },
+        ...filesRoutes,
+      },
+      { GITHUB_OUTPUT: outputFile },
+    ),
+  )
+  const output = await readFile(outputFile, 'utf8')
+  return output.includes('changed=true\n')
+}
+
+test('runDetect reports a rebuild when the files site version is missing', async () => {
+  expect(await detectChanged({})).toBe(true)
+})
+
+test('runDetect reports a rebuild when the files site version request fails', async () => {
+  expect(
+    await detectChanged({
+      [`GET ${FILES_SITE}/version.json`]: { status: 500 },
+    }),
+  ).toBe(true)
+})
+
+test('runDetect reports a rebuild when the files site builtAt differs', async () => {
+  expect(
+    await detectChanged({
+      [`GET ${FILES_SITE}/version.json`]: {
+        body: { builtAt: '2020-01-01T00:00:00.000Z' },
+      },
+    }),
+  ).toBe(true)
+})
+
+test('runDetect reports no change when the files site matches the assets', async () => {
+  expect(
+    await detectChanged({
+      [`GET ${FILES_SITE}/version.json`]: {
+        body: { builtAt: published.builtAt },
+      },
+    }),
+  ).toBe(false)
+})
+
+test('runDetect ignores the files site when no files url is given', async () => {
+  expect(await detectChanged({}, null)).toBe(false)
+})
+
+test('runCommand files writes the files site tree', async () => {
+  const scratch = await createScratch()
+  const assetsDirectory = path.join(scratch, 'assets')
+  const outputDirectory = path.join(scratch, 'files')
+  const manifest = createTeamsManifest()
+  await mkdir(assetsDirectory, { recursive: true })
+  await writeFile(
+    path.join(assetsDirectory, 'manifest.json'),
+    JSON.stringify(manifest),
+  )
+  await writeFile(
+    path.join(assetsDirectory, 'version.json'),
+    JSON.stringify({ builtAt: published.builtAt, mitSha: SHA }),
+  )
+  await writeFile(
+    path.join(assetsDirectory, 'LICENSE-fluentui-emoji-animated.txt'),
+    'MIT text',
+  )
+  for (const sheet of [
+    'Smilies/1f603_grinningfacewithbigeyes.png',
+    ...['', '_s2', '_s3', '_s4', '_s5', '_s6'].map(
+      (suffix) => `Hand gestures/1f44b_wavinghand${suffix}.png`,
+    ),
+  ]) {
+    const target = path.join(assetsDirectory, 'sprites', sheet)
+    await mkdir(path.dirname(target), { recursive: true })
+    await writeFile(target, sheet)
+  }
+  const registryPath = path.join(scratch, 'slugs.json')
+  await writeFile(registryPath, JSON.stringify(deriveRegistry(manifest)))
+  const encodeFiles = vi.fn(() =>
+    Promise.resolve({
+      gif: Buffer.from('gif'),
+      webp: Buffer.from('webp'),
+      png: Buffer.from('png'),
+    }),
+  )
+
+  await runCommand(
+    [
+      'files',
+      '--out',
+      assetsDirectory,
+      '--files-out',
+      outputDirectory,
+      '--registry',
+      registryPath,
+    ],
+    { ...createDependencies({}), encodeFiles },
+  )
+
+  expect(encodeFiles).toHaveBeenCalled()
+  const versionText = await readFile(
+    path.join(outputDirectory, 'version.json'),
+    'utf8',
+  )
+  expect(JSON.parse(versionText)).toMatchObject({ builtAt: published.builtAt })
+  expect(
+    await readFile(path.join(outputDirectory, 'index.json'), 'utf8'),
+  ).toContain('slug')
 })

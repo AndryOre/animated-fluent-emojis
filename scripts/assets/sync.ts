@@ -12,6 +12,7 @@ import {
   renderEmojiIdModule,
   renderEmojiLists,
 } from './emoji-lists.js'
+import { buildFilesSite, type EncodeFiles } from './files-site.js'
 import {
   appendStepSummary,
   assertDiscoveryHealthy,
@@ -23,6 +24,7 @@ import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { V1_DIRECTORY } from './layout-v1.js'
 import { diffManifests } from './manifest-ops.js'
 import { fetchMitCommitSha } from './mit.js'
+import type { SlugRegistry } from './public-slugs.js'
 import type { PublishedVersion } from './site-writer.js'
 import {
   discoverTeamsVersion,
@@ -31,6 +33,8 @@ import {
 } from './teams.js'
 
 const DEFAULT_PUBLISHED_URL = 'https://animated-fluent-emojis-cdn.andryore.dev'
+const DEFAULT_FILES_URL = 'https://animated-fluent-emojis-files.andryore.dev'
+const SLUG_REGISTRY_URL = new URL('public-slugs.json', import.meta.url)
 
 /**
  * Decides whether the published v1 layout is missing or was built by another
@@ -108,6 +112,8 @@ export async function verifyLive(
  * @param latest.teamsHash The newest Teams metadata hash.
  * @param latest.mitSha The latest official repository commit.
  * @param rebuild Whether to rebuild regardless.
+ * @param filesCheck The files site marker to compare, or undefined when the files site is not checked.
+ * @param filesCheck.version The files site `version.json`, or undefined when it is missing or unreachable.
  * @returns Whether a new build is needed.
  */
 export function needsRebuild(
@@ -115,9 +121,12 @@ export function needsRebuild(
   publishedV1: PublishedVersion | undefined,
   latest: { teamsHash: string; mitSha: string },
   rebuild: boolean,
+  filesCheck?: { version: { builtAt?: string } | undefined },
 ): boolean {
   return (
     rebuild ||
+    (filesCheck !== undefined &&
+      filesCheck.version?.builtAt !== published?.builtAt) ||
     published?.teamsHash !== latest.teamsHash ||
     published.mitSha !== latest.mitSha ||
     hasUnfinishedBuild(published) ||
@@ -219,6 +228,7 @@ export interface SyncDependencies {
   readonly fetch: FetchLike
   readonly environment: Readonly<Record<string, string | undefined>>
   readonly buildAssets: typeof buildAssets
+  readonly encodeFiles?: EncodeFiles
 }
 
 /**
@@ -235,6 +245,25 @@ function buildGithubHeaders(
 ): Record<string, string> {
   const token = environment.GITHUB_TOKEN
   return token ? { authorization: `Bearer ${token}` } : {}
+}
+
+async function fetchFilesVersion(
+  fetchImplementation: FetchLike,
+  filesUrl: string,
+): Promise<{ builtAt?: string } | undefined> {
+  try {
+    return await fetchPublishedJson<{ builtAt?: string }>(
+      fetchImplementation,
+      filesUrl,
+      'version.json',
+      1,
+    )
+  } catch (error: unknown) {
+    console.warn(
+      `warning: could not read the files site version, treating it as missing\n${formatErrorChain(error)}`,
+    )
+    return undefined
+  }
 }
 
 function setOutputs(
@@ -270,10 +299,16 @@ function reportDiscovery(
  * @param options.publishedUrl The published site origin.
  * @param options.rebuild Whether to report a rebuild regardless.
  * @param options.bypassGuards Whether the discovery guard is bypassed.
+ * @param options.filesUrl The files site origin; when set, a missing or stale files site reports a rebuild.
  * @param dependencies The fetch and environment to use.
  */
 export async function runDetect(
-  options: { publishedUrl: string; rebuild: boolean; bypassGuards: boolean },
+  options: {
+    publishedUrl: string
+    rebuild: boolean
+    bypassGuards: boolean
+    filesUrl?: string
+  },
   dependencies: SyncDependencies = createDefaultDependencies(),
 ): Promise<void> {
   const { publishedUrl, rebuild, bypassGuards } = options
@@ -302,15 +337,27 @@ export async function runDetect(
     fetchImplementation,
     buildGithubHeaders(environment),
   )
+  const filesVersion =
+    options.filesUrl === undefined
+      ? undefined
+      : await fetchFilesVersion(fetchImplementation, options.filesUrl)
   const changed = needsRebuild(
     published,
     publishedV1,
     { teamsHash: discovery.version.hash, mitSha },
     rebuild,
+    options.filesUrl === undefined ? undefined : { version: filesVersion },
   )
   console.log(
     JSON.stringify(
-      { published, publishedV1, latest: discovery.version, mitSha, changed },
+      {
+        published,
+        publishedV1,
+        filesVersion,
+        latest: discovery.version,
+        mitSha,
+        changed,
+      },
       null,
       2,
     ),
@@ -426,6 +473,33 @@ export async function runBuild(
 }
 
 /**
+ * Builds the public files site from the built asset site.
+ * @param options The command options.
+ * @param options.assetsDirectory The built asset site to read.
+ * @param options.outputDirectory Where the files site is written.
+ * @param options.registryPath The slug registry to use, defaulting to the committed one.
+ * @param dependencies The encoder to use.
+ */
+export async function runFiles(
+  options: {
+    assetsDirectory: string
+    outputDirectory: string
+    registryPath?: string
+  },
+  dependencies: Pick<SyncDependencies, 'encodeFiles'> = {},
+): Promise<void> {
+  const registry = JSON.parse(
+    await readFile(options.registryPath ?? SLUG_REGISTRY_URL, 'utf8'),
+  ) as SlugRegistry
+  await buildFilesSite({
+    assetsDirectory: options.assetsDirectory,
+    outputDirectory: options.outputDirectory,
+    registry,
+    encode: dependencies.encodeFiles,
+  })
+}
+
+/**
  * Writes the per-category emoji lists and the emoji-id module from a manifest.
  * @param manifestPath The built `manifest.json`.
  * @param docsDirectory Where the `EMOJI_LIST_*.md` files go.
@@ -464,6 +538,9 @@ export async function runCommand(
     allowPositionals: true,
     options: {
       'published-url': { type: 'string', default: DEFAULT_PUBLISHED_URL },
+      'files-url': { type: 'string', default: DEFAULT_FILES_URL },
+      'files-out': { type: 'string', default: 'dist-files' },
+      registry: { type: 'string' },
       'teams-hash': { type: 'string' },
       out: { type: 'string', default: 'dist-assets' },
       cache: { type: 'string', default: '.cache/assets' },
@@ -486,6 +563,20 @@ export async function runCommand(
           publishedUrl: values['published-url'],
           rebuild: values.rebuild,
           bypassGuards: values['bypass-guards'],
+          filesUrl: values['files-url'],
+        },
+        dependencies,
+      )
+      break
+    }
+    case 'files': {
+      await runFiles(
+        {
+          assetsDirectory: values.out,
+          outputDirectory: values['files-out'],
+          ...(values.registry !== undefined && {
+            registryPath: values.registry,
+          }),
         },
         dependencies,
       )
@@ -515,7 +606,7 @@ export async function runCommand(
     }
     default: {
       throw new Error(
-        'Usage: sync.ts <detect|build|verify-live|lists> [options]',
+        'Usage: sync.ts <detect|build|files|verify-live|lists> [options]',
       )
     }
   }
