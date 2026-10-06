@@ -573,6 +573,15 @@ describe('ci.yml turbo wiring', () => {
     }
   })
 
+  test('affected runs resolve the pull request base ref', () => {
+    for (const step of turboRuns) {
+      if (!step.run?.includes('--affected')) continue
+      expect(step.env?.TURBO_SCM_BASE, step.run).toBe(
+        'origin/${{ github.base_ref }}',
+      )
+    }
+  })
+
   test('keeps the aggregate job name', () => {
     const source = readFileSync(
       new URL('../.github/workflows/ci.yml', import.meta.url),

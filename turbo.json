@@ -68,7 +68,7 @@
       "outputs": ["dist/**"]
     },
     "lint:package": {
-      "dependsOn": ["transit"],
+      "dependsOn": ["transit", "build"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "!dist/**",
