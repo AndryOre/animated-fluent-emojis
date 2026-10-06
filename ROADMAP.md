@@ -11,6 +11,9 @@ The focus for the next year is maintenance rather than new surface area:
 
 - **Maintenance** — keeping dependencies, tooling, and CI current as the
   supported frameworks and the bundler ecosystem evolve.
+- **Files site** — keeping the files site (the public GIF, WebP and PNG
+  downloads) published and its URLs stable as the emoji catalog grows, alongside
+  the asset site.
 - **Framework support** — keeping the React, Vue, Svelte, Astro and
   `<fluent-emoji>` adapters in step with their frameworks, with the library
   shipped as ESM-only.
