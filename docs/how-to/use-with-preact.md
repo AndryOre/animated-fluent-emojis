@@ -21,12 +21,35 @@ export function Greeting() {
 }
 ```
 
-The JSX types declare attributes only, not `children` or `ref`. A
-`<span slot="fallback">` child works at runtime but is rejected by a strict
-TypeScript check, as is a `ref` for calling `addEventListener` on `emoji-load`,
-`emoji-error` or `playback-end`. Add a local JSX augmentation or suppress those
-lines until the types cover them. Attributes, properties and events are listed
-in the [usage guide](../usage.md#plain-html).
+The fallback goes in as a child with `slot="fallback"`. To react to
+`emoji-load`, `emoji-error` or `playback-end`, call `addEventListener` on the
+element from a `ref`:
+
+```tsx
+import { useEffect, useRef } from 'preact/hooks'
+
+export function Greeting() {
+  const emoji = useRef<HTMLElementTagNameMap['fluent-emoji']>(null)
+
+  useEffect(() => {
+    const element = emoji.current
+    const onEnd = () => {
+      console.log('done')
+    }
+    element?.addEventListener('playback-end', onEnd)
+    return () => element?.removeEventListener('playback-end', onEnd)
+  }, [])
+
+  return (
+    <fluent-emoji id="1f44b_wavinghand" ref={emoji}>
+      <span slot="fallback">👋</span>
+    </fluent-emoji>
+  )
+}
+```
+
+Attributes, properties and events are listed in the
+[usage guide](../usage.md#plain-html).
 
 ## The React adapter
 

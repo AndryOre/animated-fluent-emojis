@@ -3,7 +3,11 @@ import type { JSX as SolidJsx } from 'solid-js'
 import { expectTypeOf, test } from 'vitest'
 import type { DefineComponent, GlobalComponents } from 'vue'
 
-import type { FluentEmojiAttributes, FluentEmojiElement } from './index.js'
+import type {
+  FluentEmojiAttributes,
+  FluentEmojiElement,
+  FluentEmojiJsxAttributes,
+} from './index.js'
 
 test('the tag name map resolves the element type', () => {
   expectTypeOf<
@@ -23,14 +27,22 @@ test('Vue global components accept the attributes', () => {
 test('Solid and Preact JSX accept the attributes', () => {
   expectTypeOf<
     SolidJsx.IntrinsicElements['fluent-emoji']
-  >().toEqualTypeOf<FluentEmojiAttributes>()
+  >().toEqualTypeOf<FluentEmojiJsxAttributes>()
   expectTypeOf<
     PreactJsx.IntrinsicElements['fluent-emoji']
-  >().toEqualTypeOf<FluentEmojiAttributes>()
+  >().toEqualTypeOf<FluentEmojiJsxAttributes>()
   expectTypeOf<{
     id: 'cat'
     size: 24
     'play-on-hover': true
   }>().toExtend<FluentEmojiAttributes>()
   expectTypeOf<{ size: boolean }>().not.toExtend<FluentEmojiAttributes>()
+  expectTypeOf<{
+    children: string
+    ref: (element: FluentEmojiElement) => void
+  }>().toExtend<FluentEmojiJsxAttributes>()
+  expectTypeOf<{
+    ref: { current: FluentEmojiElement | null }
+  }>().toExtend<FluentEmojiJsxAttributes>()
+  expectTypeOf<{ children: string }>().not.toExtend<FluentEmojiAttributes>()
 })
