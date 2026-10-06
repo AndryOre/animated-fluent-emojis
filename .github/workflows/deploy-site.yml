@@ -1,0 +1,39 @@
+name: Deploy Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/site/**'
+      - 'docs/**'
+      - 'packages/animated-fluent-emojis/**'
+      - '.github/scripts/deploy-coolify.sh'
+      - '.github/workflows/deploy-site.yml'
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build container and deploy via Coolify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build container
+        run:
+          docker build -f apps/site/Dockerfile -t animated-fluent-emojis-site:ci
+          .
+
+      - name: Trigger Coolify deploy and wait for the result
+        env:
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          SITE_COOLIFY_APP_UUID: ${{ vars.SITE_COOLIFY_APP_UUID }}
+        run: bash .github/scripts/deploy-coolify.sh
