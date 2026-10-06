@@ -344,6 +344,16 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(runs).not.toContain('x-access-token')
   })
 
+  test('opens the pull request with the personal token, not GITHUB_TOKEN', () => {
+    const openStep = job?.steps?.find((step) =>
+      step.run?.includes('createCommitOnBranch'),
+    )
+    expect(openStep?.env?.GH_TOKEN).toBe('${{ secrets.LISTS_BOT_TOKEN }}')
+    expect(job?.permissions).toEqual({ contents: 'read' })
+    expect(runs).not.toContain('gh workflow run')
+    expect(runs).toContain('gh pr merge')
+  })
+
   test('appends a changelog entry under Unreleased when EmojiId changes', () => {
     expect(runs).toContain(
       'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts',
