@@ -85,7 +85,8 @@ test always runs. Setup:
 
 Other workflows: `lint-docs.yml` (offline link and anchor check with lychee),
 `lint-workflows.yml` (workflow linting), `lint-pr.yml` (PR title), `labels.yml`
-(label sync), `scorecard.yml` (OpenSSF Scorecard) and `release.yml` (see
+(label sync), `scorecard.yml` (OpenSSF Scorecard) and `release.yml` (which waits
+for the `CI passed` check of the tagged commit to succeed before publishing; see
 [`how-to/cut-a-release.md`](how-to/cut-a-release.md) and
 [ADR 0005](adr/0005-npm-trusted-publishing.md)). All third-party actions are
 pinned to a commit SHA.
