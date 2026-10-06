@@ -44,7 +44,7 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'src/svelte/Emoji.svelte':
     'Svelte component exercised end to end by svelte.conformance.test.ts and svelte.adapter.test.ts.',
   'src/svelte/FallbackHost.svelte':
-    'Passthrough host that mounts a fallback snippet, covered by the fallback case in svelte.adapter.test.ts.',
+    'Passthrough host mounted by Emoji.svelte for the fallback snippet and exercised by the fallback case in src/test/conformance/svelte.adapter.test.ts; v8 reports it at 0% because the template has no mapped statements.',
   'scripts/assets/build-context.ts':
     'Shared build context and constants consumed by build.ts, covered by build.test.ts and build-branches.test.ts.',
   'scripts/assets/known-teams-versions.ts':
