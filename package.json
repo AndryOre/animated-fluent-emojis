@@ -1,104 +1,48 @@
 {
-  "name": "animated-fluent-emojis",
-  "version": "0.8.0",
   "description": "Microsoft's animated Fluent emojis as one component. They play on load or hover, rest under reduced motion and hold their space while they load.",
   "author": "Andry Orellana",
   "license": "MIT",
-  "private": false,
-  "sideEffects": [
-    "**/*.css",
-    "./dist/element.js",
-    "./dist/astro/client.js"
-  ],
+  "name": "animated-fluent-emojis-monorepo",
+  "private": true,
   "type": "module",
-  "keywords": [
-    "react",
-    "react-component",
-    "vue",
-    "vue-component",
-    "svelte",
-    "svelte-component",
-    "astro-component",
-    "web-component",
-    "custom-element",
-    "angular",
-    "solid",
-    "preact",
-    "emoji",
-    "emojis",
-    "animated",
-    "animated-emoji",
-    "animated-emojis",
-    "fluent",
-    "fluent-emoji",
-    "fluent-emojis",
-    "microsoft",
-    "animation",
-    "emoticons",
-    "typescript"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AndryOre/animated-fluent-emojis.git"
-  },
-  "homepage": "https://github.com/AndryOre/animated-fluent-emojis#readme",
-  "bugs": "https://github.com/AndryOre/animated-fluent-emojis/issues",
-  "module": "./dist/animated-fluent-emojis.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/animated-fluent-emojis.js"
-    },
-    "./react": {
-      "types": "./dist/react/index.d.ts",
-      "import": "./dist/react.js"
-    },
-    "./astro": {
-      "types": "./dist/astro/index.d.ts",
-      "default": "./dist/astro/Emoji.astro"
-    },
-    "./element": {
-      "types": "./dist/element/index.d.ts",
-      "import": "./dist/element.js"
-    },
-    "./vue": {
-      "types": "./dist/vue/index.d.ts",
-      "import": "./dist/vue.js"
-    },
-    "./svelte": {
-      "types": "./dist/svelte/index.d.ts",
-      "svelte": "./dist/svelte/index.js",
-      "import": "./dist/svelte/index.js"
-    },
-    "./lookup": {
-      "types": "./dist/lookup/index.d.ts",
-      "import": "./dist/lookup.js"
-    },
-    "./style.css": "./dist/style.css",
-    "./dist/style.css": "./dist/style.css",
-    "./package.json": "./package.json"
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "@vitest/browser-playwright": "^5",
+      "@vitest/coverage-v8": "^5",
+      "astro": "^7.3.5",
+      "react": "^19.3.0",
+      "react-dom": "^19.3.0",
+      "svelte": "^5.57.1",
+      "typescript": "~6.0.3",
+      "vite": "^8.3.2",
+      "vitest": "^5",
+      "vue": "^3.5.43"
+    }
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "bun run --cwd packages/animated-fluent-emojis dev",
+    "build": "turbo run build",
     "lint": "eslint . --max-warnings=0 --cache --cache-strategy content",
     "lint:fix": "eslint . --fix --cache --cache-strategy content",
-    "typecheck": "tsc -b",
+    "typecheck": "turbo run typecheck && tsc --noEmit",
     "knip": "knip",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,json5,md,css,yml,yaml}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,json5,md,css,yml,yaml}\" --cache",
-    "lint:package": "bun run build && publint --strict && attw --pack . --profile esm-only",
-    "check": "bun run format:check && bun run lint && bun run typecheck && bun run knip && bun run lint:package",
+    "check:root": "bun run format:check && bun run lint && tsc --noEmit && bun run knip",
+    "lint:package": "turbo run lint:package",
+    "check": "turbo run check check:root",
     "fix": "bun run format:write && bun run lint:fix && bun run typecheck",
-    "size": "size-limit",
+    "size": "turbo run size",
     "prepare": "husky",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "turbo run test test:root",
+    "test:root": "vitest run",
+    "test:watch": "bun run --cwd packages/animated-fluent-emojis test:watch",
+    "test:coverage": "turbo run test:coverage test:coverage:root",
+    "test:coverage:root": "vitest run --coverage",
     "lint:docs": "bun scripts/lint-docs.ts",
     "lint:commits": "bun scripts/lint-commits.ts",
     "assets:detect": "bun scripts/assets/sync.ts detect",
@@ -109,55 +53,13 @@
     "brand:export": "bun docs/brand/tools/export.mjs",
     "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },
-  "peerDependencies": {
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "vue": "^3.3.0",
-    "astro": "^5.0.0 || ^6.0.0 || ^7.0.0",
-    "solid-js": "^1.0.0",
-    "preact": "^10.0.0 || ^11.0.0",
-    "svelte": "^5.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    },
-    "vue": {
-      "optional": true
-    },
-    "astro": {
-      "optional": true
-    },
-    "solid-js": {
-      "optional": true
-    },
-    "preact": {
-      "optional": true
-    },
-    "svelte": {
-      "optional": true
-    }
-  },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.5",
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
     "@eslint-react/eslint-plugin": "^5.24.4",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@size-limit/file": "^14.1.0",
-    "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@types/node": "^24",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react-swc": "^4.3.3",
-    "@vitest/browser-playwright": "^5",
-    "@vitest/coverage-v8": "^5",
-    "astro": "^7.3.5",
-    "axe-core": "^4.13.0",
     "eslint": "^10",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^65.1.0",
@@ -167,93 +69,15 @@
     "husky": "^9.1.7",
     "knip": "^6.39.0",
     "lint-staged": "^17.6.0",
-    "msw": "^3",
     "playwright": "^1.63.0",
-    "preact": "^11.0.0",
     "prettier": "^3.9.9",
-    "publint": "^0.3.25",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
     "sharp": "^0.35.5",
-    "size-limit": "^14.1.0",
-    "solid-js": "^1.9.15",
-    "svelte": "^5.57.1",
-    "typescript": "~6.0.3",
+    "turbo": "^2.11.7",
+    "typescript": "catalog:",
     "typescript-eslint": "^8.71.0",
-    "vite": "^8.3.2",
-    "vite-plugin-dts": "^5.1.2",
-    "vitest": "^5",
-    "vitest-browser-react": "^2.3.0",
-    "vue": "^3.5.43",
+    "@vitest/coverage-v8": "catalog:",
+    "vitest": "catalog:",
     "yaml": "^2.9.1"
   },
-  "size-limit": [
-    {
-      "name": "ESM bundle",
-      "path": [
-        "dist/animated-fluent-emojis.js",
-        "dist/react.js",
-        "dist/chunks/manifest-*.js"
-      ],
-      "limit": "4.5 kB"
-    },
-    {
-      "name": "React bundle",
-      "path": [
-        "dist/react.js",
-        "dist/chunks/manifest-*.js"
-      ],
-      "limit": "4.5 kB"
-    },
-    {
-      "name": "Element bundle",
-      "path": [
-        "dist/element.js",
-        "dist/chunks/manifest-*.js"
-      ],
-      "limit": "5 kB"
-    },
-    {
-      "name": "Vue bundle",
-      "path": [
-        "dist/vue.js",
-        "dist/chunks/manifest-*.js"
-      ],
-      "limit": "4.5 kB"
-    },
-    {
-      "name": "Svelte bundle",
-      "path": [
-        "dist/svelte/runtime.js",
-        "dist/svelte/Emoji.svelte",
-        "dist/svelte/FallbackHost.svelte",
-        "dist/chunks/manifest-*.js"
-      ],
-      "limit": "6 kB"
-    },
-    {
-      "name": "Astro client script",
-      "path": [
-        "dist/astro/client.js",
-        "dist/chunks/environment-signals-*.js",
-        "dist/chunks/markup-*.js",
-        "dist/chunks/playback-gate-*.js"
-      ],
-      "limit": "4 kB"
-    },
-    {
-      "name": "Lookup bundle",
-      "path": [
-        "dist/lookup.js",
-        "dist/chunks/manifest-*.js"
-      ],
-      "limit": "2.8 kB"
-    },
-    {
-      "name": "Stylesheet",
-      "path": "dist/style.css",
-      "limit": "170 B"
-    }
-  ],
   "packageManager": "bun@1.4.2"
 }

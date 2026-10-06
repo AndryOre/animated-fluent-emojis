@@ -1,4 +1,4 @@
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 
 /**
  * The runtime-facing subset of an emoji entry: no shortcuts, keywords or

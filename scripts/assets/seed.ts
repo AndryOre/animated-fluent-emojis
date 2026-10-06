@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import {
   DOWNLOAD_CONCURRENCY,
   fileExists,

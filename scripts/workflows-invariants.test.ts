@@ -327,15 +327,17 @@ describe('sync-assets.yml emoji-lists job', () => {
     expect(runs).toContain('--index index.json')
     expect(runs).toContain('"404"')
     expect(runs).toContain(
-      'git status --porcelain -- docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+      'git status --porcelain -- docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
     )
     expect(runs).toContain(
-      'git add CHANGELOG.md docs src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
+      'git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts scripts/assets/public-slugs.json',
     )
   })
 
   test('appends a changelog entry under Unreleased when EmojiId changes', () => {
-    expect(runs).toContain('src/utils/emoji-id.generated.ts')
+    expect(runs).toContain(
+      'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts',
+    )
     expect(runs).toContain(String.raw`## \[Unreleased\]`)
     expect(runs).toContain('git add CHANGELOG.md')
   })

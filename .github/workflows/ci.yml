@@ -107,6 +107,7 @@ jobs:
           name: test-report
           path: |
             coverage/
+            packages/animated-fluent-emojis/coverage/
             .vitest-attachments/
           if-no-files-found: ignore
           retention-days: 7
@@ -150,10 +151,10 @@ jobs:
       - name: Report package size
         run: |
           tarball_dir=$(mktemp -d)
-          bun pm pack --ignore-scripts --destination "$tarball_dir" --quiet
+          (cd packages/animated-fluent-emojis && bun pm pack --ignore-scripts --destination "$tarball_dir" --quiet)
           tarball=$(ls "$tarball_dir"/*.tgz)
           tarball_size=$(du -h "$tarball" | cut -f1)
-          dist_size=$(du -sh dist | cut -f1)
+          dist_size=$(du -sh packages/animated-fluent-emojis/dist | cut -f1)
           {
             echo "**Package tarball size:** \`${tarball_size}\` (\`$(basename "$tarball")\`)"
             echo ""

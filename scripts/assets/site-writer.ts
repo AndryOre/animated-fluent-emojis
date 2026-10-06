@@ -1,7 +1,7 @@
 import { cp, mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { DOWNLOAD_CONCURRENCY } from './build-context.js'
 import type { SpriteTask } from './catalog.js'
 import { indexEmoticons } from './constants.js'

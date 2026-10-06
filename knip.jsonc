@@ -1,24 +1,25 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "entry": [
-    "src/index.ts",
-    "src/react/index.ts",
-    "src/lookup/index.ts",
-    "src/vanilla/create-emoji.ts",
-    "src/element/index.ts",
-    "src/vue/index.ts",
-    "src/svelte/index.ts",
-    "src/svelte/runtime.ts",
-    "src/svelte/Emoji.d.svelte.ts",
-    "src/astro/index.ts",
-    "src/astro/client.ts",
-    "src/astro/server.ts",
-  ],
   "ignoreBinaries": ["ffmpeg", "ffprobe"],
-  "ignore": [
-    "playground/**",
-    "eslint-rules/*.d.mts",
-    "docs/brand/tools/*.d.mts",
-    "coverage/**",
-  ],
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/**/*.ts", "eslint-rules/index.mjs"],
+    },
+    "packages/animated-fluent-emojis": {
+      "entry": [
+        "src/index.ts",
+        "src/react/index.ts",
+        "src/lookup/index.ts",
+        "src/vanilla/create-emoji.ts",
+        "src/element/index.ts",
+        "src/vue/index.ts",
+        "src/svelte/index.ts",
+        "src/svelte/runtime.ts",
+        "src/svelte/Emoji.d.svelte.ts",
+        "src/astro/index.ts",
+        "src/astro/client.ts",
+        "src/astro/server.ts",
+      ],
+    },
+  },
 }

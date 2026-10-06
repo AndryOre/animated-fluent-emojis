@@ -2,49 +2,52 @@ import { readdirSync } from 'node:fs'
 import path from 'node:path'
 import { expect, test } from 'vitest'
 
-const REPOSITORY_ROOT = path.resolve(import.meta.dirname, '../..')
+const REPOSITORY_ROOT = path.resolve(import.meta.dirname, '..')
 
 const SOURCE_ROOTS = [
-  'src',
+  'packages/animated-fluent-emojis/src',
   'scripts',
   'eslint-rules',
   'docs/brand/tools',
 ] as const
 
 const EXEMPTIONS: Readonly<Record<string, string>> = {
-  'src/index.ts':
+  'packages/animated-fluent-emojis/src/index.ts':
     'Public barrel that only re-exports createEmoji, configureEmojis, preloadEmojis and the public types, covered by root-exports.test.ts.',
-  'src/hooks/index.ts': 'Barrel re-exporting hooks that have their own tests.',
-  'src/utils/index.ts':
+  'packages/animated-fluent-emojis/src/hooks/index.ts':
+    'Barrel re-exporting hooks that have their own tests.',
+  'packages/animated-fluent-emojis/src/utils/index.ts':
     'Barrel re-exporting utils, covered by emoji-manifest.test.ts.',
-  'src/utils/is-development.ts':
+  'packages/animated-fluent-emojis/src/utils/is-development.ts':
     'Covered through the development warnings in emoji-manifest.store.test.ts and Emoji.correctness.test.tsx.',
-  'src/element/index.ts':
+  'packages/animated-fluent-emojis/src/element/index.ts':
     'Entry that registers the element and re-exports its types, covered by fluent-emoji.test.ts.',
-  'src/element/types.ts':
+  'packages/animated-fluent-emojis/src/element/types.ts':
     'Type-only module with global and framework typings, checked by element.types.test.ts.',
-  'src/vue/index.ts':
+  'packages/animated-fluent-emojis/src/vue/index.ts':
     'Entry that re-exports the Vue Emoji and its types, covered by emoji.test.ts and the Vue conformance suite.',
-  'src/svelte/index.ts':
+  'packages/animated-fluent-emojis/src/svelte/index.ts':
     'Entry that re-exports the Svelte Emoji and its types, covered by svelte.conformance.test.ts and svelte.adapter.test.ts.',
-  'src/svelte/runtime.ts':
+  'packages/animated-fluent-emojis/src/svelte/runtime.ts':
     'Re-export seam between the shipped Svelte source and the shared chunks, covered by svelte.conformance.test.ts.',
-  'src/svelte/Emoji.d.svelte.ts':
+  'packages/animated-fluent-emojis/src/svelte/Emoji.d.svelte.ts':
     'Declaration file for the shipped Emoji.svelte, with no runtime behavior to test.',
-  'src/svelte/types.ts':
+  'packages/animated-fluent-emojis/src/svelte/types.ts':
     'Type-only module with the Svelte Emoji props, no runtime behavior to test.',
-  'src/astro/index.ts':
+  'packages/animated-fluent-emojis/src/astro/index.ts':
     'Type-only declaration of the .astro component, checked by the container render test in Emoji.test.ts.',
-  'src/astro/types.ts': 'Type-only module with no runtime behavior to test.',
-  'src/react/types.ts':
+  'packages/animated-fluent-emojis/src/astro/types.ts':
+    'Type-only module with no runtime behavior to test.',
+  'packages/animated-fluent-emojis/src/react/types.ts':
     'Type-only module with the React Emoji props, no runtime behavior to test.',
-  'src/utils/types.ts': 'Type-only module with no runtime behavior to test.',
-  'src/utils/emoji-id.generated.ts':
+  'packages/animated-fluent-emojis/src/utils/types.ts':
+    'Type-only module with no runtime behavior to test.',
+  'packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts':
     'Generated type-only union, produced and tested by scripts/assets.',
-  'src/svelte/Emoji.svelte':
+  'packages/animated-fluent-emojis/src/svelte/Emoji.svelte':
     'Svelte component exercised end to end by svelte.conformance.test.ts and svelte.adapter.test.ts.',
-  'src/svelte/FallbackHost.svelte':
-    'Passthrough host mounted by Emoji.svelte for the fallback snippet and exercised by the fallback case in src/test/conformance/svelte.adapter.test.ts; v8 reports it at 0% because the template has no mapped statements.',
+  'packages/animated-fluent-emojis/src/svelte/FallbackHost.svelte':
+    'Passthrough host mounted by Emoji.svelte for the fallback snippet and exercised by the fallback case in packages/animated-fluent-emojis/src/test/conformance/svelte.adapter.test.ts; v8 reports it at 0% because the template has no mapped statements.',
   'scripts/assets/build-context.ts':
     'Shared build context and constants consumed by build.ts, covered by build.test.ts and build-branches.test.ts.',
   'scripts/assets/known-teams-versions.ts':
@@ -67,7 +70,8 @@ const isSourceModule = (file: string) =>
 
 const isIgnoredDirectory = (root: string, absolute: string, name: string) =>
   name === 'node_modules' ||
-  (root === 'src' && absolute === path.join(REPOSITORY_ROOT, 'src', 'test'))
+  (root === 'packages/animated-fluent-emojis/src' &&
+    absolute === path.join(REPOSITORY_ROOT, root, 'test'))
 
 const listFiles = (root: string, directory: string): string[] =>
   readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {

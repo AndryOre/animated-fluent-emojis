@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 
-import type { Manifest } from '../../src/utils/types.js'
+import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { glyphToCodepoints } from './codepoints.js'
 import { indexEmoticons, TONE_SUFFIXES, type Emoticon } from './constants.js'
 import type { MitEmoji } from './mit.js'
