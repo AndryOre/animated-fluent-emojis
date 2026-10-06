@@ -234,9 +234,6 @@ jobs:
             exit 0
           fi
           branch="docs/update-emoji-list"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B "${branch}"
           if [[ -n "$(git status --porcelain -- packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts)" ]]; then
             entry="- Updated the \`EmojiId\` union from the published emoji catalog."
             unreleased="$(awk '/^## \[Unreleased\]/ { inside = 1; next } /^## \[/ { inside = 0 } inside { print }' CHANGELOG.md)"
@@ -253,13 +250,30 @@ jobs:
               mv CHANGELOG.md.tmp CHANGELOG.md
             fi
           fi
-          git add CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json
-          git commit \
-            --message "docs: 📝 update emoji list" \
-            --message "- Regenerated the emoji lists from the published manifest"
-          git push --force \
-            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" \
-            "${branch}"
+          paths=(CHANGELOG.md docs packages/animated-fluent-emojis/src/utils/emoji-id.generated.ts apps/assets/public-slugs.json)
+          base_sha="$(git rev-parse HEAD)"
+          additions="$(mktemp)"
+          deletions="$(mktemp)"
+          payload="$(mktemp)"
+          while IFS= read -r file; do
+            jq --null-input --arg path "${file}" --rawfile contents "${file}" '{path: $path, contents: ($contents | @base64)}'
+          done < <(git ls-files --modified --others --exclude-standard -- "${paths[@]}") | jq --slurp '.' > "${additions}"
+          git ls-files --deleted -- "${paths[@]}" | jq --raw-input '{path: .}' | jq --slurp '.' > "${deletions}"
+          if gh api "repos/${REPOSITORY}/git/ref/heads/${branch}" --silent 2>/dev/null; then
+            gh api "repos/${REPOSITORY}/git/refs/heads/${branch}" --method PATCH --field sha="${base_sha}" --field force=true --silent
+          else
+            gh api "repos/${REPOSITORY}/git/refs" --method POST --field ref="refs/heads/${branch}" --field sha="${base_sha}" --silent
+          fi
+          jq --null-input \
+            --arg repository "${REPOSITORY}" \
+            --arg branch "${branch}" \
+            --arg head "${base_sha}" \
+            --slurpfile additions "${additions}" \
+            --slurpfile deletions "${deletions}" \
+            '{query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }", variables: {input: {branch: {repositoryNameWithOwner: $repository, branchName: $branch}, message: {headline: "docs: 📝 update emoji list", body: "- Regenerated the emoji lists from the published manifest"}, expectedHeadOid: $head, fileChanges: {additions: $additions[0], deletions: $deletions[0]}}}}' \
+            > "${payload}"
+          response="$(gh api graphql --input "${payload}")"
+          jq --exit-status '.data.createCommitOnBranch.commit.oid' <<< "${response}"
           open_pull_requests="$(gh pr list --head "${branch}" --state open --json number --jq length)"
           if [[ "${open_pull_requests}" == "0" ]]; then
             gh pr create \
