@@ -11,6 +11,7 @@ export default defineConfig({
       entry: {
         'animated-fluent-emojis': path.resolve(rootDirectory, 'src/index.ts'),
         react: path.resolve(rootDirectory, 'src/react/index.ts'),
+        element: path.resolve(rootDirectory, 'src/element/index.ts'),
         lookup: path.resolve(rootDirectory, 'src/lookup/index.ts'),
       },
       formats: ['es'],

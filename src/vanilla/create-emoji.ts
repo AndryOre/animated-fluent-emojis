@@ -121,12 +121,12 @@ const resolveFallback = (fallback: Node | (() => Node)): Node =>
  * structure and options as the React `Emoji`. It follows the shared manifest
  * store, shows a sized placeholder while the manifest loads and plays through
  * the framework-free playback core. Importing this module touches no DOM.
- * @param host - The element the emoji is appended to.
+ * @param host - The element, document fragment or shadow root the emoji is appended to.
  * @param options - Id, size, playback, accessibility and fallback settings.
  * @returns A controller: `update` merges new options, `destroy` removes the emoji and releases every subscription.
  */
 export const createEmoji = (
-  host: Element,
+  host: ParentNode,
   options: EmojiOptions,
 ): EmojiController => {
   let current: EmojiOptions = options
