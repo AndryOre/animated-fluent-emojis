@@ -41,7 +41,7 @@ machine instead, build and upload the site directly:
 
 ```sh
 bun run assets:build
-CLOUDFLARE_API_TOKEN=<token> bunx wrangler pages deploy dist-assets \
+CLOUDFLARE_API_TOKEN=<token> bunx wrangler pages deploy apps/assets/dist-assets \
   --project-name animated-fluent-emojis --branch main
 ```
 
@@ -50,7 +50,7 @@ and upload the files site:
 
 ```sh
 bun run assets:files
-CLOUDFLARE_API_TOKEN=<token> bunx wrangler pages deploy dist-files \
+CLOUDFLARE_API_TOKEN=<token> bunx wrangler pages deploy apps/assets/dist-files \
   --project-name animated-fluent-emojis-files --branch main
 ```
 
@@ -63,12 +63,13 @@ uses the committed slug registry alone.
 - The workflow runs every Monday and rebuilds only when a new Teams manifest or
   a new commit of Microsoft's repository is found.
 - `bun run assets:detect` shows what it would do without changing anything.
-- `bun run assets:build -- --limit 20` builds a small sample into `dist-assets/`
-  for a quick local check. Building needs `ffmpeg` and `ffprobe` installed.
-- `bun run assets:files` builds the files site into `dist-files/` from
-  `dist-assets/`. The weekly run also rebuilds it when its `version.json` is
-  missing or stale.
+- `bun run assets:build -- --limit 20` builds a small sample into
+  `apps/assets/dist-assets/` for a quick local check. Building needs `ffmpeg`
+  and `ffprobe` installed.
+- `bun run assets:files` builds the files site into `apps/assets/dist-files/`
+  from `apps/assets/dist-assets/`. The weekly run also rebuilds it when its
+  `version.json` is missing or stale.
 - `bun run assets:lists` regenerates `docs/EMOJI_LIST_*.md` from
-  `dist-assets/manifest.json`.
+  `apps/assets/dist-assets/manifest.json`.
 - A new Teams manifest hash that the web client does not advertise yet can be
-  added to `scripts/assets/known-teams-versions.ts`.
+  added to `apps/assets/known-teams-versions.ts`.

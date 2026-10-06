@@ -3,7 +3,8 @@
 Releases are manual and tag-driven. Pushing a signed `v*` tag publishes the
 package to npm and creates the GitHub Release.
 
-1. Bump the `version` field in `package.json` to the new version number.
+1. Bump the `version` field in `packages/animated-fluent-emojis/package.json` to
+   the new version number.
 
 2. In `CHANGELOG.md`, rename the `[Unreleased]` heading content into a new
    `## [x.y.z] - YYYY-MM-DD` section, leave an empty `## [Unreleased]` above it,
@@ -23,7 +24,8 @@ Pushing the tag triggers `.github/workflows/release.yml`, which has two jobs.
 
 The `verify` job has `contents: read` and `checks: read` only. It:
 
-1. Fails unless the tag matches the `package.json` version.
+1. Fails unless the tag matches the
+   `packages/animated-fluent-emojis/package.json` version.
 2. Fails unless the tagged commit is on `main`.
 3. Waits up to 20 minutes (polling every 30 seconds) for the `CI passed` check
    run of the tagged commit and fails unless it concludes `success`. It also
