@@ -24,7 +24,7 @@ import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
 import { V1_DIRECTORY } from './layout-v1.js'
 import { diffManifests } from './manifest-ops.js'
 import { fetchMitCommitSha } from './mit.js'
-import type { SlugRegistry } from './public-slugs.js'
+import { deriveRegistry, type SlugRegistry } from './public-slugs.js'
 import type { PublishedVersion } from './site-writer.js'
 import {
   discoverTeamsVersion,
@@ -477,7 +477,7 @@ export async function runBuild(
  * @param options The command options.
  * @param options.assetsDirectory The built asset site to read.
  * @param options.outputDirectory Where the files site is written.
- * @param options.registryPath The slug registry to use, defaulting to the committed one.
+ * @param options.registryPath The frozen slug registry, defaulting to the committed one; emoji it lacks get new slugs.
  * @param dependencies The encoder to use.
  */
 export async function runFiles(
@@ -488,9 +488,13 @@ export async function runFiles(
   },
   dependencies: Pick<SyncDependencies, 'encodeFiles'> = {},
 ): Promise<void> {
-  const registry = JSON.parse(
+  const frozen = JSON.parse(
     await readFile(options.registryPath ?? SLUG_REGISTRY_URL, 'utf8'),
   ) as SlugRegistry
+  const manifest = JSON.parse(
+    await readFile(path.join(options.assetsDirectory, 'manifest.json'), 'utf8'),
+  ) as Manifest
+  const registry = deriveRegistry(manifest, frozen)
   await buildFilesSite({
     assetsDirectory: options.assetsDirectory,
     outputDirectory: options.outputDirectory,

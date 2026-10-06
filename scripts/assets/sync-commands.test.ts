@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, expect, test, vi } from 'vitest'
 
+import type { Manifest } from '../../src/utils/types.js'
 import type { BuildResult } from './build.js'
 import { PIPELINE_VERSION } from './catalog.js'
 import { KNOWN_TEAMS_HASHES } from './known-teams-versions.js'
@@ -414,7 +415,12 @@ test('runDetect ignores the files site when no files url is given', async () => 
   expect(await detectChanged({}, null)).toBe(false)
 })
 
-test('runCommand files writes the files site tree', async () => {
+async function createFilesFixture(): Promise<{
+  scratch: string
+  assetsDirectory: string
+  outputDirectory: string
+  manifest: Manifest
+}> {
   const scratch = await createScratch()
   const assetsDirectory = path.join(scratch, 'assets')
   const outputDirectory = path.join(scratch, 'files')
@@ -442,6 +448,12 @@ test('runCommand files writes the files site tree', async () => {
     await mkdir(path.dirname(target), { recursive: true })
     await writeFile(target, sheet)
   }
+  return { scratch, assetsDirectory, outputDirectory, manifest }
+}
+
+test('runCommand files writes the files site tree', async () => {
+  const { scratch, assetsDirectory, outputDirectory, manifest } =
+    await createFilesFixture()
   const registryPath = path.join(scratch, 'slugs.json')
   await writeFile(registryPath, JSON.stringify(deriveRegistry(manifest)))
   const encodeFiles = vi.fn(() =>
@@ -474,4 +486,35 @@ test('runCommand files writes the files site tree', async () => {
   expect(
     await readFile(path.join(outputDirectory, 'index.json'), 'utf8'),
   ).toContain('slug')
+})
+
+test('runCommand files gives new slugs to emoji missing from the registry', async () => {
+  const { scratch, assetsDirectory, outputDirectory } =
+    await createFilesFixture()
+  const registryPath = path.join(scratch, 'slugs.json')
+  await writeFile(registryPath, JSON.stringify({ version: 1, slugs: {} }))
+  const encodeFiles = vi.fn(() =>
+    Promise.resolve({
+      gif: Buffer.from('gif'),
+      webp: Buffer.from('webp'),
+      png: Buffer.from('png'),
+    }),
+  )
+
+  await runCommand(
+    [
+      'files',
+      '--out',
+      assetsDirectory,
+      '--files-out',
+      outputDirectory,
+      '--registry',
+      registryPath,
+    ],
+    { ...createDependencies({}), encodeFiles },
+  )
+
+  expect(
+    await readFile(path.join(outputDirectory, 'index.json'), 'utf8'),
+  ).toContain('grinning-face-with-big-eyes')
 })
