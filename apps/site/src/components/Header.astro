@@ -28,7 +28,7 @@ const linkClass =
   >
     {header.skipLink}
   </a>
-  <div class="flex items-center justify-between gap-3 px-4 py-4 min-[860px]:px-6 min-[860px]:py-3.5">
+  <div class="relative flex items-center justify-between gap-3 px-4 py-4 min-[860px]:px-6 min-[860px]:py-3.5">
     <a
       href={localePath(locale)}
       aria-label={header.homeLabel}
@@ -51,8 +51,8 @@ const linkClass =
 
     <div class="flex items-center gap-2">
       <slot name="search" />
-      <details class="relative" data-menu>
-        <summary class="inline-flex h-10 cursor-pointer list-none items-center rounded-full border border-border bg-card px-3 text-sm font-medium min-[860px]:hidden [&::-webkit-details-marker]:hidden">
+      <details class="relative max-[860px]:static" data-menu>
+        <summary class="inline-flex h-10 cursor-pointer list-none items-center rounded-full border border-border bg-card px-3 max-[400px]:px-2 text-sm font-medium min-[860px]:hidden [&::-webkit-details-marker]:hidden">
           {header.menu}
         </summary>
         <nav
@@ -67,12 +67,17 @@ const linkClass =
         </nav>
       </details>
 
-      <details class="relative" data-menu>
+      <details class="relative max-[860px]:static" data-menu>
         <summary
           aria-label={`${LOCALE_NAMES[locale]} (${header.languageLabel})`}
-          class="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border border-border bg-card px-3 text-sm font-medium [&::-webkit-details-marker]:hidden"
+          class="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border border-border bg-card px-3 max-[400px]:px-2 text-sm font-medium [&::-webkit-details-marker]:hidden"
         >
-          <span lang={locale}>{LOCALE_NAMES[locale]}</span>
+          <span
+            lang={locale}
+            class="max-[480px]:max-w-24 max-[400px]:max-w-16 max-[480px]:truncate"
+          >
+            {LOCALE_NAMES[locale]}
+          </span>
         </summary>
         <ul class="absolute right-0 z-40 mt-2 max-h-80 w-56 overflow-auto rounded-brand border border-border bg-card p-2 shadow-lg">
           {LOCALES.map((code) => (
