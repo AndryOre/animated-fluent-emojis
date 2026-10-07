@@ -3,6 +3,7 @@ import logoMark from '../../../../docs/brand/logo/mark-animated.svg?url'
 import { LOCALE_NAMES, localePath, LOCALES, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { REPOSITORY_URL } from '../site-links'
+import HeaderMenus from './HeaderMenus'
 import ThemeToggle from './ThemeToggle.astro'
 
 interface Props {
@@ -17,6 +18,11 @@ const links = [
   { href: localePath(locale, '/docs/'), label: header.nav.docs },
   { href: REPOSITORY_URL, label: header.nav.github },
 ]
+const localeOptions = LOCALES.map((code) => ({
+  code,
+  name: LOCALE_NAMES[code],
+  href: localePath(code, path),
+}))
 const linkClass =
   'rounded-full px-3 py-2 text-sm font-medium text-foreground hover:text-primary-text'
 ---
@@ -51,54 +57,42 @@ const linkClass =
 
     <div class="flex items-center gap-2">
       <slot name="search" />
-      <details class="relative max-[860px]:static" data-menu>
-        <summary class="inline-flex h-10 cursor-pointer list-none items-center rounded-full border border-border bg-card px-3 max-[400px]:px-2 text-sm font-medium min-[860px]:hidden [&::-webkit-details-marker]:hidden">
-          {header.menu}
-        </summary>
-        <nav
-          aria-label={header.navLabel}
-          class="absolute right-0 z-40 mt-2 flex w-48 flex-col rounded-brand border border-border bg-card p-2 shadow-lg min-[860px]:hidden"
-        >
+      <HeaderMenus
+        client:idle
+        menuLabel={header.menu}
+        navLabel={header.navLabel}
+        links={links}
+        languageLabel={header.languageLabel}
+        currentLocale={locale}
+        currentLocaleName={LOCALE_NAMES[locale]}
+        locales={localeOptions}
+      />
+      <noscript>
+        <ul class="flex flex-wrap gap-1 min-[860px]:hidden">
           {links.map((link) => (
-            <a href={link.href} class={linkClass}>
-              {link.label}
-            </a>
-          ))}
-        </nav>
-      </details>
-
-      <details class="relative max-[860px]:static" data-menu>
-        <summary
-          aria-label={`${LOCALE_NAMES[locale]} (${header.languageLabel})`}
-          class="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border border-border bg-card px-3 max-[400px]:px-2 text-sm font-medium [&::-webkit-details-marker]:hidden"
-        >
-          <span
-            lang={locale}
-            class="max-[480px]:max-w-24 max-[400px]:max-w-16 max-[480px]:truncate"
-          >
-            {LOCALE_NAMES[locale]}
-          </span>
-        </summary>
-        <ul class="absolute right-0 z-40 mt-2 max-h-80 w-56 overflow-auto rounded-brand border border-border bg-card p-2 shadow-lg">
-          {LOCALES.map((code) => (
             <li>
-              <a
-                href={localePath(code, path)}
-                lang={code}
-                hreflang={code}
-                aria-current={code === locale ? 'true' : undefined}
-                class:list={[
-                  linkClass,
-                  'block',
-                  code === locale && 'bg-accent',
-                ]}
-              >
-                {LOCALE_NAMES[code]}
+              <a href={link.href} class={linkClass}>
+                {link.label}
               </a>
             </li>
           ))}
         </ul>
-      </details>
+        <ul class="flex flex-wrap gap-1">
+          {localeOptions.map((option) => (
+            <li>
+              <a
+                href={option.href}
+                lang={option.code}
+                hreflang={option.code}
+                aria-current={option.code === locale ? 'true' : undefined}
+                class={linkClass}
+              >
+                {option.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </noscript>
 
       <ThemeToggle locale={locale} />
     </div>

@@ -73,6 +73,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/components/Footer.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/Header.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/HomePage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/HeaderMenus.tsx':
+    'Header menu React island with no logic of its own, exercised in a real browser by the accessibility and mobile-overflow e2e specs.',
+  'apps/site/src/components/ui/dropdown-menu.tsx':
+    'Styled wrapper over the Base UI menu, exercised in a real browser through the header menus.',
   'apps/site/src/home/HeroEmoji.tsx':
     'Thin React island that renders the library Emoji with fixed props, verified in the browser through the landing page.',
   'apps/site/src/home/DemoPlayground.tsx':

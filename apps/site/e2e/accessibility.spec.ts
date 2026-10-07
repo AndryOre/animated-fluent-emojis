@@ -22,3 +22,24 @@ for (const colorScheme of ['light', 'dark'] as const) {
     }
   })
 }
+
+test('the language menu opens by keyboard and navigates to the Japanese site', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(
+    page.locator('astro-island[component-url*="HeaderMenus"]'),
+  ).not.toHaveAttribute('ssr', /.*/)
+  const trigger = page.getByRole('button', { name: /English/ })
+  await trigger.focus()
+  await page.keyboard.press('Enter')
+  const menu = page.getByRole('menu')
+  await expect(menu).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(menu).toBeHidden()
+  await expect(trigger).toBeFocused()
+
+  await trigger.click()
+  await page.getByRole('menuitem', { name: '日本語' }).click()
+  await expect(page).toHaveURL(/\/ja\/$/)
+})
