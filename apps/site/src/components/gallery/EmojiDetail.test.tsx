@@ -2,7 +2,11 @@ import { renderToString } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 
 import fixture from '../../gallery/fixtures/public-index.json'
-import { parsePublicIndex, type PublicEmoji } from '../../gallery/public-index'
+import {
+  fileUrl,
+  parsePublicIndex,
+  type PublicEmoji,
+} from '../../gallery/public-index'
 import { getUi } from '../../i18n/ui'
 import { EmojiDetail } from './EmojiDetail'
 
@@ -38,6 +42,27 @@ describe('emoji detail on a page', () => {
   it('puts the chosen tone in the snippet', () => {
     expect(render('light')).toContain('light')
     expect(render('light')).not.toBe(render(undefined))
+  })
+
+  it('server-renders a static poster of the current tone as the preview', () => {
+    const html = render('light')
+    const light = emoji.tones.find((variant) => variant.tone === 'light')
+    expect(html).toContain(`src="${fileUrl(light?.urls.png ?? '')}"`)
+    expect(html).toContain('fetchPriority="high"')
+    expect(html).toContain('alt=""')
+  })
+
+  it('renders no poster outside a page', () => {
+    const html = renderToString(
+      <EmojiDetail
+        emoji={emoji}
+        name="Waving hand"
+        tone={undefined}
+        size={200}
+        strings={strings}
+      />,
+    )
+    expect(html).not.toContain(fileUrl(emoji.urls.png))
   })
 
   it('leaves the name heading to the page', () => {
