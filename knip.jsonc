@@ -11,7 +11,11 @@
       "project": ["*.ts"],
     },
     "apps/site": {
-      "entry": ["src/gallery/index.ts"],
+      "entry": [
+        "src/gallery/index.ts",
+        "playwright.visual.config.ts",
+        "e2e-visual/*.spec.ts",
+      ],
     },
     "packages/animated-fluent-emojis": {
       "entry": [
