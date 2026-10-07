@@ -6,6 +6,8 @@ import { buttonVariants } from '@/components/ui/button'
 import { loadPublicIndex } from '../gallery/public-index'
 import { buildSnippetTabs, pickTeaserEmojis } from '../home/content'
 import DemoPlayground from '../home/DemoPlayground'
+import FaqAccordion from '../home/FaqAccordion'
+import SnippetTabs from '../home/SnippetTabs'
 import { localePath, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
@@ -116,57 +118,15 @@ const copyButton = buttonVariants({
         {home.snippets.title}
       </h2>
       <p class="mb-6 text-muted-foreground">{home.snippets.body}</p>
-      <div
-        data-tabs
-        class="overflow-hidden rounded-brand border border-border bg-card"
-      >
-        <div class="flex items-center justify-between gap-2 border-b border-border pr-2">
-          <div
-            role="tablist"
-            aria-label={home.snippets.tabsLabel}
-            class="flex overflow-x-auto"
-          >
-            {tabs.map((tab, position) => (
-              <button
-                type="button"
-                role="tab"
-                id={`tab-${tab.kind}`}
-                aria-controls={`panel-${tab.kind}`}
-                aria-selected={position === 0 ? 'true' : 'false'}
-                tabindex={position === 0 ? 0 : -1}
-                data-tab
-                class="min-h-11 shrink-0 cursor-pointer border-b-2 border-transparent px-4 text-sm font-semibold text-muted-foreground aria-selected:border-primary aria-selected:text-foreground"
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            class={`${copyButton} shrink-0`}
-            data-copy-panel
-            data-copied-label={home.snippets.copied}
-          >
-            {home.snippets.copy}
-          </button>
-        </div>
-        {tabs.map((tab, position) => (
-          <div
-            role="tabpanel"
-            id={`panel-${tab.kind}`}
-            aria-labelledby={`tab-${tab.kind}`}
-            hidden={position !== 0}
-            data-panel
-          >
-            {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
-            <pre
-              tabindex="0"
-              class="m-0 max-h-80 overflow-auto p-5 font-mono text-sm leading-relaxed"
-            ><code>{tab.code}</code></pre>
-            {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
-          </div>
-        ))}
-      </div>
+      <SnippetTabs
+        client:visible
+        tabs={tabs}
+        labels={{
+          tabsLabel: home.snippets.tabsLabel,
+          copy: home.snippets.copy,
+          copied: home.snippets.copied,
+        }}
+      />
     </section>
 
     <section class={section} aria-labelledby="no-code-title">
@@ -203,81 +163,23 @@ const copyButton = buttonVariants({
       <h2 id="faq-title" class={`${heading} mb-6`}>
         {home.faq.title}
       </h2>
-      <div class="flex max-w-3xl flex-col gap-3">
-        {faq.map((item) => (
-          <details class="rounded-brand border border-border bg-card p-4">
-            <summary class="cursor-pointer text-base font-bold">
-              {item.question}
-            </summary>
-            <p class="mt-3 text-muted-foreground">{item.answer}</p>
-          </details>
-        ))}
-      </div>
+      <FaqAccordion client:visible items={faq} />
     </section>
   </main>
 </Layout>
 
 <script>
-  const COPIED_MS = 2000
-
-  async function copyWithFeedback(button: HTMLButtonElement, text: string) {
-    const original = button.textContent
-    const copied = button.dataset.copiedLabel
-    try {
-      await navigator.clipboard.writeText(text)
-    } catch {
-      return
-    }
-    if (copied) button.textContent = copied
-    window.setTimeout(() => {
-      button.textContent = original
-    }, COPIED_MS)
-  }
+  import { copyWithFeedback } from '../lib/copy-feedback'
 
   document
     .querySelectorAll<HTMLButtonElement>('[data-copy-text]')
     .forEach((button) => {
+      const original = button.textContent
+      const copiedLabel = button.dataset.copiedLabel ?? original
       button.addEventListener('click', () => {
-        void copyWithFeedback(button, button.dataset.copyText ?? '')
+        void copyWithFeedback(button.dataset.copyText ?? '', (copied) => {
+          button.textContent = copied ? copiedLabel : original
+        })
       })
     })
-
-  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
-    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')]
-    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')]
-
-    function select(position: number) {
-      tabs.forEach((tab, tabPosition) => {
-        const active = tabPosition === position
-        tab.setAttribute('aria-selected', String(active))
-        tab.tabIndex = active ? 0 : -1
-        const panel = panels[tabPosition]
-        if (panel) panel.hidden = !active
-      })
-      tabs[position]?.focus()
-    }
-
-    tabs.forEach((tab, position) => {
-      tab.addEventListener('click', () => {
-        select(position)
-      })
-      tab.addEventListener('keydown', (event) => {
-        const step =
-          event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
-        if (step === 0) return
-        event.preventDefault()
-        select((position + step + tabs.length) % tabs.length)
-      })
-    })
-
-    root
-      .querySelector<HTMLButtonElement>('[data-copy-panel]')
-      ?.addEventListener('click', (event) => {
-        const visible = panels.find((panel) => !panel.hidden)
-        const code = visible?.querySelector('code')?.textContent
-        if (code) {
-          void copyWithFeedback(event.currentTarget as HTMLButtonElement, code)
-        }
-      })
-  })
 </script>

@@ -83,6 +83,12 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Styled wrapper over the Base UI dialog, exercised in a real browser through the gallery mobile sheet.',
   'apps/site/src/components/ui/tabs.tsx':
     'Styled wrapper over the Base UI tabs, covered by EmojiDetail.test.tsx and the gallery e2e spec.',
+  'apps/site/src/components/ui/accordion.tsx':
+    'Styled wrapper over the Base UI accordion, exercised in a real browser through the landing FAQ.',
+  'apps/site/src/home/FaqAccordion.tsx':
+    'FAQ React island with no logic of its own, exercised in a real browser by the accessibility e2e spec.',
+  'apps/site/src/home/SnippetTabs.tsx':
+    'Snippet tabs React island that wires Base UI tabs to the copy helper, which is tested in copy-feedback.test.ts.',
   'apps/site/src/home/DemoPlayground.tsx':
     'React island that wires the demo toggles to the library Emoji; its option-to-props mapping is tested in demo.test.ts.',
   'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
