@@ -1,8 +1,194 @@
-import { en } from './en'
 import type { UiStrings } from './en'
 
 /**
- * UI strings for `zh-CN`. Seeded with the English strings; the translation pass
- * (T29-T37) replaces them.
+ * Simplified Chinese UI strings. Landing and social copy uses the plain
+ * vocabulary of the brand voice guide; the docs notices use the technical one.
  */
-export const zh_CN: UiStrings = en
+export const zh_CN: UiStrings = {
+  meta: {
+    siteName: 'Animated Fluent Emojis',
+    description:
+      'Microsoft Fluent 动画 emoji，提供适用于 React、Vue、Svelte、Astro 和纯 HTML 的库。',
+  },
+  header: {
+    skipLink: '跳到正文',
+    homeLabel: 'Animated Fluent Emojis，首页',
+    navLabel: '主导航',
+    menu: '菜单',
+    nav: {
+      gallery: '图库',
+      docs: '文档',
+      github: 'GitHub',
+    },
+    languageLabel: '语言',
+    themeLabel: '主题',
+    theme: {
+      system: '跟随系统',
+      light: '浅色',
+      dark: '深色',
+    },
+  },
+  footer: {
+    attribution:
+      'emoji 图稿归 Microsoft 所有，代码是开源的。与 Microsoft 无关联，也未获其认可。',
+    navLabel: '页脚',
+    links: {
+      gallery: '图库',
+      docs: '文档',
+      github: 'GitHub',
+      npm: 'npm',
+    },
+  },
+  home: {
+    title: 'Animated Fluent Emojis',
+    tagline: 'Fluent emoji，会动的那种。',
+    hero: {
+      sub: '把鼠标移上去，它会向你挥手。',
+      installLabel: '安装命令',
+      copy: '复制',
+      copied: '已复制',
+      browse: '浏览 emoji',
+      attribution:
+        'emoji 图稿归 Microsoft 所有。与 Microsoft 无关联，也未获其认可。',
+      stageLabel: '一个挥手 emoji，悬停时播放',
+    },
+    demo: {
+      title: '试试看',
+      sizeLabel: '大小',
+      toneLabel: '肤色',
+      playsLabel: '播放时机',
+      tones: {
+        default: '默认',
+        light: '浅色',
+        medium: '中等',
+        dark: '深色',
+      },
+      plays: {
+        hover: '悬停时',
+        load: '加载时',
+      },
+    },
+    pillars: {
+      title: '用起来省心',
+      alive: {
+        title: '灵动',
+        body: '它们会向你挥手。把鼠标移上去看看。',
+      },
+      light: {
+        title: '轻盈',
+        body: '加载时绝不会把你的页面顶来顶去。',
+      },
+      considerate: {
+        title: '体贴',
+        body: '如果有人在设备上选择减少动态效果，emoji 就会保持静止。',
+      },
+      credit: {
+        title: '归属清楚',
+        body: 'emoji 图稿归 Microsoft 所有，代码是开源的。',
+      },
+    },
+    snippets: {
+      title: '一个标签，任何网站',
+      body: '选好框架，复制代码，emoji 就出现在页面上了。',
+      tabsLabel: '框架',
+      copy: '复制代码',
+      copied: '已复制',
+    },
+    noCode: {
+      title: '不写代码？没问题。',
+      body: '把任意 emoji 下载为 GIF、动画 WebP 或静态 PNG，放进聊天或文档里就行。',
+      cta: '浏览 emoji',
+      teaserLabel: '图库中的几个 emoji',
+    },
+    faq: {
+      title: '常见问题',
+      chat: {
+        question: '可以在聊天或文档里用吗？',
+        answer:
+          '可以。从图库里把 emoji 下载为 GIF、动画 WebP 或静态 PNG，然后像添加普通图片一样加进消息或文件即可。',
+      },
+      speed: {
+        question: '会拖慢我的页面吗？',
+        answer:
+          '不会。每个 emoji 在加载时都会先占好位置，所以页面不会跳动，动画文件也只在 emoji 显示时才会加载。',
+      },
+      motion: {
+        question: '如果有人想减少动态效果，会怎么样？',
+        answer:
+          'emoji 会停在第一帧，保持静止。只有访客保持开启动态效果时，它才会动。',
+      },
+    },
+  },
+  docs: {
+    howToGroup: '操作指南',
+    copyMarkdown: '复制本页 Markdown',
+    copiedMarkdown: '已复制',
+    notices: {
+      missing: '本页暂无你所用语言的版本，当前显示英文版。',
+      stale: '本页的翻译已过期，当前显示英文版。',
+    },
+  },
+  gallery: {
+    title: 'Emoji 图库',
+    description:
+      '搜索 Fluent 动画 emoji，选择肤色，并复制适用于 React、Vue、Svelte、Astro 或纯 HTML 的代码。',
+    searchLabel: '搜索 emoji',
+    searchPlaceholder: '在 {count} 个 emoji 中搜索，例如“fire”或“wave”',
+    categoryLabel: '分类',
+    categoryAll: '全部',
+    toneLabel: '肤色',
+    toneDefault: '默认',
+    toneLight: '浅色',
+    toneMediumLight: '中浅色',
+    toneMedium: '中等',
+    toneMediumDark: '中深色',
+    toneDark: '深色',
+    noSkinTones: '无肤色选项',
+    sizeLabel: '大小',
+    resultsLabel: 'Emoji',
+    resultsCount: '{count} 个 emoji',
+    showMore: '显示更多',
+    detailLabel: 'Emoji 详情',
+    detailEmpty: '选择一个 emoji 查看它的代码。',
+    closeDetail: '关闭',
+    idLabel: 'ID',
+    snippetLabel: '代码',
+    tabReact: 'React',
+    tabVue: 'Vue',
+    tabSvelte: 'Svelte',
+    tabAstro: 'Astro',
+    tabHtml: 'HTML',
+    tabNoCode: '无代码',
+    copySnippet: '复制代码片段',
+    copyUrl: '复制 URL',
+    copyId: '复制 id',
+    downloadGif: '下载 GIF',
+    downloadWebp: '下载 WebP',
+    downloadPng: '下载 PNG',
+    downloadFailed: '下载失败，请重试。',
+    copied: '已复制',
+    noResultsTitle: '没有匹配“{query}”的 emoji',
+    noResultsHint: '请检查拼写，或换一个更短的词。',
+    clearSearch: '清除搜索',
+    errorTitle: '无法加载 emoji 列表。',
+    errorHint: '请检查网络连接后重试。文档和网站的其他部分仍可正常使用。',
+    retry: '重试',
+    loading: '正在加载 emoji',
+  },
+  emojiPage: {
+    title: '{name}，动画 emoji · Animated Fluent Emojis',
+    description:
+      'Microsoft Fluent 的动画 {name} emoji。复制适用于 React、Vue、Svelte、Astro 或 HTML 的代码，或将其下载为 GIF、WebP 或 PNG。',
+    breadcrumbLabel: '面包屑导航',
+    breadcrumbHome: '首页',
+    breadcrumbEmojis: 'Emoji',
+    keywordsLabel: '关键词',
+    relatedTitle: '相关 emoji',
+  },
+  notFound: {
+    title: '找不到这个页面。',
+    body: '链接可能已过期，或者这个 emoji 已经搬家了。',
+    home: '回到首页',
+    gallery: '浏览 emoji',
+  },
+}
