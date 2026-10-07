@@ -31,3 +31,4 @@ column.
 | 0016   | [Bun-workspaces monorepo](0016-bun-workspaces-monorepo.md)                                                     | Accepted | -                        |
 | 0017   | [Personal token for the emoji-lists pull request](0017-personal-token-for-the-emoji-lists-pr.md)               | Accepted | -                        |
 | 0018   | [Website on Coolify with Astro and Starlight](0018-website-on-coolify-with-astro-and-starlight.md)             | Accepted | -                        |
+| 0019   | [shadcn on Base UI for the website](0019-shadcn-on-base-ui-for-the-website.md)                                 | Accepted | -                        |

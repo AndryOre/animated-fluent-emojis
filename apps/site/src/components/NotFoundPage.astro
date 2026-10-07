@@ -1,6 +1,8 @@
 ---
 import Emoji from 'animated-fluent-emojis/astro'
 
+import { buttonVariants } from '@/components/ui/button'
+
 import { localePath, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
@@ -11,8 +13,15 @@ interface Props {
 
 const { locale } = Astro.props
 const { notFound } = getUi(locale)
-const buttonClass =
-  'inline-flex h-11 items-center rounded-full px-6 text-sm font-semibold'
+const primaryClass = buttonVariants({
+  shape: 'pill',
+  className: 'h-11 px-6 font-semibold',
+})
+const secondaryClass = buttonVariants({
+  variant: 'outline',
+  shape: 'pill',
+  className: 'h-11 px-6 font-semibold hover:bg-card',
+})
 ---
 
 <Layout
@@ -29,16 +38,10 @@ const buttonClass =
     <h1 class="text-[40px] leading-tight font-extrabold">{notFound.title}</h1>
     <p class="text-muted-foreground">{notFound.body}</p>
     <div class="flex flex-wrap justify-center gap-3">
-      <a
-        href={localePath(locale)}
-        class={`${buttonClass} bg-primary text-primary-foreground`}
-      >
+      <a href={localePath(locale)} class={primaryClass}>
         {notFound.home}
       </a>
-      <a
-        href={localePath(locale, '/emojis/')}
-        class={`${buttonClass} border border-border bg-card`}
-      >
+      <a href={localePath(locale, '/emojis/')} class={secondaryClass}>
         {notFound.gallery}
       </a>
     </div>
