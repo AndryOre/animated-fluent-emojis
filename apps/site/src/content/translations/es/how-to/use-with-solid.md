@@ -3,8 +3,6 @@ title: Usa con Solid
 sourceHash: 497090a31bbee052
 ---
 
-# Usa con Solid
-
 Renderiza emojis en Solid mediante el elemento `<fluent-emoji>`. No hay un
 adaptador nativo de Solid.
 

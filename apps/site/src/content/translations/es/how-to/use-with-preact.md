@@ -3,8 +3,6 @@ title: Usa con Preact
 sourceHash: 6b3cb25c61754474
 ---
 
-# Usa con Preact
-
 Hay dos formas de usar emojis en Preact: el elemento `<fluent-emoji>`, o el
 adaptador de React mediante `preact/compat`.
 
