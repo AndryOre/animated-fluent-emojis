@@ -59,3 +59,13 @@ test.describe('reduced motion', () => {
     expect(await shimmerAnimation(page, 'no-preference')).toBe('shimmer')
   })
 })
+
+test('the header logo uses the animated mark inlined by the bundler', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(page.locator('header img[width="28"]').first()).toHaveAttribute(
+    'src',
+    /keyframes%20hop.*prefers-reduced-motion/,
+  )
+})
