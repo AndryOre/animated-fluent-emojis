@@ -69,6 +69,11 @@ asset="$(curl -s "$base/" | grep -Eo '/_astro/[A-Za-z0-9._-]+' | head -n1 || tru
 [ -n "$asset" ] || fail "no /_astro/ asset referenced from /"
 [ "$(header_of cache-control "$base$asset")" = "public, max-age=31536000, immutable" ] || fail "$asset is not immutable"
 
+for icon in favicon.svg favicon.ico apple-touch-icon.png; do
+  [ "$(status "$base/$icon")" = 200 ] || fail "/$icon is not 200"
+  [ "$(header_of cache-control "$base/$icon")" = "public, max-age=86400" ] || fail "/$icon lacks its cache header"
+done
+
 [ "$(status "$base/nope/")" = 404 ] || fail "missing page is not 404"
 grep -q '<html lang="en"' <<<"$(curl -s "$base/nope/")" || fail "root 404 is not English"
 [ "$(header_of cache-control "$base/nope/")" = no-cache ] || fail "404 lacks no-cache"
