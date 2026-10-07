@@ -42,7 +42,7 @@ export function ChipGroup<Value extends string | number>(
         )
         if (chip && !disabled) onSelect(chip.value)
       }}
-      className="overflow-x-auto min-[860px]:flex-wrap"
+      className="max-w-full overflow-x-auto min-[860px]:flex-wrap"
     >
       <span className="shrink-0 text-xs font-semibold text-muted-foreground">
         {label}
