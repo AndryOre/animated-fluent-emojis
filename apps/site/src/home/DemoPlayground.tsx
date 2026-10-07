@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import 'animated-fluent-emojis/style.css'
 
+import { Button } from '@/components/ui/button'
+
 import {
   DEMO_PLAYS,
   DEMO_SIZES,
@@ -40,17 +42,19 @@ function ChipGroup<Value extends string | number>({
         {label}
       </legend>
       {options.map((option) => (
-        <button
+        <Button
           key={option.value}
           type="button"
+          variant="outline"
+          shape="pill"
           aria-pressed={option.value === selected}
           onClick={() => {
             onSelect(option.value)
           }}
-          className="min-h-10 cursor-pointer rounded-full border border-border bg-card px-4 text-sm font-medium text-card-foreground aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+          className="h-auto min-h-10 px-4 hover:bg-card hover:text-card-foreground aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary aria-pressed:hover:text-primary-foreground"
         >
           {option.text}
-        </button>
+        </Button>
       ))}
     </fieldset>
   )

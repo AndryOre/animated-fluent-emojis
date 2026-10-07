@@ -30,6 +30,12 @@ adapter.
   `bun run i18n:status` and refresh what it lists as stale. Code blocks stay
   byte-identical to English. Workflow:
   [`docs/how-to/translate-the-website.md`](../../docs/how-to/translate-the-website.md).
+- UI primitives come from `src/components/ui` (shadcn on Base UI,
+  [ADR 0019](../../docs/adr/0019-shadcn-on-base-ui-for-the-website.md)). Add
+  them with `bunx shadcn@latest add <name>`, never hand-roll them, then strip
+  `//` comments, add TSDoc, and revert any CSS the CLI injects into
+  `global.css`. In static `.astro` files use `buttonVariants` instead of
+  repeating classes.
 - `.astro` files follow the same TSDoc-only comment rule as `.ts` and `.tsx`.
 - Visual snapshots (`e2e-visual/`) are only valid when generated inside the
   pinned Playwright container. Run `bun run test:visual` to compare and
