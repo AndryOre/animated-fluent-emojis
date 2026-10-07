@@ -129,6 +129,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Starlight override rendering the translation notice and the copy button, verified through the site build output.',
   'apps/site/src/docs/components/DocumentationThemeProvider.astro':
     ASTRO_PRESENTATION_REASON,
+  'apps/site/src/docs/components/DocumentationThemeSelect.astro':
+    'Starlight override that renders nothing, so the docs use the site theme toggle only; the accessibility spec covers the docs pages.',
   ...Object.fromEntries(
     ['en', 'es', 'de', 'fr', 'it', 'ja', 'ko', 'pt-br', 'ru', 'zh-cn'].map(
       (locale) => [

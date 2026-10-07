@@ -31,7 +31,7 @@
   --sl-color-hairline-shade: var(--border);
   --sl-color-text: var(--foreground);
   --sl-color-text-accent: var(--primary-text);
-  --sl-color-text-invert: var(--primary-foreground);
+  --sl-color-text-invert: var(--background);
   --sl-color-accent: var(--primary);
   --sl-color-accent-low: var(--secondary);
   --sl-color-accent-high: var(--primary-text);
@@ -43,6 +43,7 @@
 
 :root.dark {
   color-scheme: dark;
+  --sl-color-text-invert: var(--primary-foreground);
 }
 
 .sl-markdown-content pre,

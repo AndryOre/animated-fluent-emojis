@@ -18,6 +18,8 @@ An index of every document in this repository.
 - [`ROADMAP.md`](../ROADMAP.md): project direction.
 - [`SECURITY.md`](../.github/SECURITY.md): how to report vulnerabilities.
 - [`security.md`](security.md): the security design and assurance case.
+- Website: <https://animated-fluent-emojis.andryore.dev>, the landing page,
+  emoji gallery and docs in ten languages (`apps/site`).
 - [`AGENTS.md`](../AGENTS.md): instructions for coding agents (`CLAUDE.md`
   imports it).
 
@@ -33,6 +35,8 @@ An index of every document in this repository.
   the Cloudflare Pages project and the secrets behind the asset site.
 - [`how-to/roll-back-the-asset-site.md`](how-to/roll-back-the-asset-site.md):
   restoring an earlier asset site deployment.
+- [`how-to/translate-the-website.md`](how-to/translate-the-website.md): adding
+  or refreshing a website translation.
 
 ## How-to guides
 
@@ -72,6 +76,7 @@ An index of every document in this repository.
 - [`adr/0015-public-files-site.md`](adr/0015-public-files-site.md)
 - [`adr/0016-bun-workspaces-monorepo.md`](adr/0016-bun-workspaces-monorepo.md)
 - [`adr/0017-personal-token-for-the-emoji-lists-pr.md`](adr/0017-personal-token-for-the-emoji-lists-pr.md)
+- [`adr/0018-website-on-coolify-with-astro-and-starlight.md`](adr/0018-website-on-coolify-with-astro-and-starlight.md)
 
 ## Brand
 

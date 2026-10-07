@@ -154,19 +154,20 @@ attribute are also accepted. Every prop, with edge cases, is in the
 
 ## Documentation
 
-| Doc                                                 | Covers                                        |
-| --------------------------------------------------- | --------------------------------------------- |
-| [Usage guide](docs/usage.md)                        | Frameworks, props, playback, fallback, lookup |
-| [How-to guides](docs/how-to/README.md)              | Angular, Solid, Preact, Next.js and more      |
-| [Use without code](docs/how-to/use-without-code.md) | Slack, Notion, Docs, email, a README          |
-| [Docs index](docs/README.md)                        | Every document in this repository             |
-| [Troubleshooting](docs/troubleshooting.md)          | Fixes for common problems, by symptom         |
-| [Security design](docs/security.md)                 | Threat model and assurance case               |
-| [Changelog](CHANGELOG.md)                           | Release notes                                 |
-| [Roadmap](ROADMAP.md)                               | Project direction                             |
-| [Governance](GOVERNANCE.md)                         | Decisions and project continuity              |
-| [Contributing](CONTRIBUTING.md)                     | Setup, conventions and merging                |
-| [Code of Conduct](CODE_OF_CONDUCT.md)               | Community standards                           |
+| Doc                                                    | Covers                                        |
+| ------------------------------------------------------ | --------------------------------------------- |
+| [Website](https://animated-fluent-emojis.andryore.dev) | Gallery, docs in ten languages, emoji pages   |
+| [Usage guide](docs/usage.md)                           | Frameworks, props, playback, fallback, lookup |
+| [How-to guides](docs/how-to/README.md)                 | Angular, Solid, Preact, Next.js and more      |
+| [Use without code](docs/how-to/use-without-code.md)    | Slack, Notion, Docs, email, a README          |
+| [Docs index](docs/README.md)                           | Every document in this repository             |
+| [Troubleshooting](docs/troubleshooting.md)             | Fixes for common problems, by symptom         |
+| [Security design](docs/security.md)                    | Threat model and assurance case               |
+| [Changelog](CHANGELOG.md)                              | Release notes                                 |
+| [Roadmap](ROADMAP.md)                                  | Project direction                             |
+| [Governance](GOVERNANCE.md)                            | Decisions and project continuity              |
+| [Contributing](CONTRIBUTING.md)                        | Setup, conventions and merging                |
+| [Code of Conduct](CODE_OF_CONDUCT.md)                  | Community standards                           |
 
 ## Migrating from 0.4
 

@@ -18,9 +18,9 @@ GitHub API. Downloads are the last 30 days.
   emoji from an asset site; lazy slim manifest, HD sprite sheets, ESM only
 - **Name:** generic and literal. It is also the name of other GitHub repos (see
   below)
-- **Gaps:** no landing or docs site (the Pages domain returns 404 at `/`), no
-  logo or visual identity beyond the Microsoft artwork, a long generic
-  description
+- **Gaps:** no landing or docs site when this was researched (the Pages domain
+  returned 404 at `/`), no logo or visual identity beyond the Microsoft artwork,
+  a long generic description
 
 ## Direct and adjacent options
 
@@ -70,5 +70,6 @@ GitHub API. Downloads are the last 30 days.
   wants the README and profile emoji (Tarikul's audience)? The package serves
   the first; the search results serve the second.
 - Is the Pages site meant to become a browsable gallery (the LobeHub model), or
-  stay an asset host? Decided for now: no landing page, so the gallery question
-  is parked.
+  stay an asset host? Decided: the website now has a landing page, a gallery and
+  docs; see
+  [ADR 0018](../adr/0018-website-on-coolify-with-astro-and-starlight.md).
