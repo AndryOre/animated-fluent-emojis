@@ -53,7 +53,6 @@ export const pt_BR: UiStrings = {
       stageLabel: 'Emoji acenando, que anima ao passar o mouse',
     },
     demo: {
-      title: 'Experimente',
       sizeLabel: 'Tamanho',
       toneLabel: 'Tom de pele',
       playsLabel: 'Animar',

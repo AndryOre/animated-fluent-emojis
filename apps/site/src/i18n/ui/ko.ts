@@ -53,7 +53,6 @@ export const ko: UiStrings = {
       stageLabel: '마우스를 올리면 재생되는 손 흔드는 이모지',
     },
     demo: {
-      title: '직접 해 보세요',
       sizeLabel: '크기',
       toneLabel: '피부색',
       playsLabel: '재생',

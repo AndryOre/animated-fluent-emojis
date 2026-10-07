@@ -1,5 +1,4 @@
-import { Button as ButtonPrimitive } from '@base-ui/react/button'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 
 import { cn } from '@/lib/utilities'
 
@@ -39,7 +38,7 @@ const buttonStyles = cva(
 /**
  * Class names for a button, resolved from `variant`, `size` and `shape`
  * (`pill` is the brand `rounded-full` shape) and merged with any `className`.
- * Use it on static Astro elements that need button styling without shipping
+ * Used on static Astro elements that need button styling without shipping
  * React.
  * @param props - The variant selection and an optional `className`.
  * @returns The merged class string.
@@ -48,23 +47,4 @@ function buttonVariants(props?: Parameters<typeof buttonStyles>[0]): string {
   return cn(buttonStyles(props))
 }
 
-/**
- * The shadcn button on Base UI. Renders a native `<button>` styled through
- * {@link buttonVariants}.
- * @param props - Base UI button props plus `variant`, `size` and `shape`.
- * @returns The styled button element.
- */
-function Button(
-  props: ButtonPrimitive.Props & VariantProps<typeof buttonStyles>,
-) {
-  const { className, variant, size, shape, ...rest } = props
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={buttonVariants({ variant, size, shape, className })}
-      {...rest}
-    />
-  )
-}
-
-export { Button, buttonVariants }
+export { buttonVariants }
