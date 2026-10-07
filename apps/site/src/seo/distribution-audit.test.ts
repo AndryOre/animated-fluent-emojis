@@ -20,14 +20,22 @@ function sha256Source(script: string): string {
   return `sha256-${createHash('sha256').update(script).digest('base64')}`
 }
 
-function pageHtml(route: string, extraHead = '', csp = CSP): string {
+const ICON_LINKS =
+  '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="32x32"><link rel="apple-touch-icon" href="/apple-touch-icon.png">'
+
+function pageHtml(
+  route: string,
+  extraHead = '',
+  csp = CSP,
+  iconLinks = ICON_LINKS,
+): string {
   const alternates = [...LOCALES, 'x-default']
     .map((hreflang) => {
       const locale = hreflang === 'x-default' ? 'en' : hreflang
       return `<link rel="alternate" hreflang="${hreflang}" href="${localeUrl(locale as 'en', route)}">`
     })
     .join('')
-  return `<!doctype html><html><head>${csp}<link rel="canonical" href="${localeUrl('en', route)}">${alternates}${extraHead}</head><body>ok</body></html>`
+  return `<!doctype html><html><head>${csp}${iconLinks}<link rel="canonical" href="${localeUrl('en', route)}">${alternates}${extraHead}</head><body>ok</body></html>`
 }
 
 function sitemapXml(routes: readonly string[]): string {
@@ -51,6 +59,9 @@ describe('auditDistribution', () => {
     write('index.html', pageHtml('/'))
     write('emojis/fire/index.html', pageHtml('/emojis/fire/'))
     write('sitemap.xml', sitemapXml(['/', '/emojis/fire/']))
+    for (const icon of ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png']) {
+      write(icon, 'icon')
+    }
   })
 
   afterEach(() => {
@@ -59,6 +70,39 @@ describe('auditDistribution', () => {
 
   it('passes a clean build', () => {
     expect(auditDistribution(distribution)).toEqual([])
+  })
+
+  it('flags a page without favicon links', () => {
+    write('emojis/fire/index.html', pageHtml('/emojis/fire/', '', CSP, ''))
+    const problems = auditDistribution(distribution)
+    expect(problems).toEqual([
+      'emojis/fire/index.html: missing favicon link',
+      'emojis/fire/index.html: missing favicon fallback link',
+      'emojis/fire/index.html: missing apple touch icon link',
+    ])
+  })
+
+  it('accepts the shortcut icon relation Starlight emits', () => {
+    write(
+      'index.html',
+      pageHtml(
+        '/',
+        '',
+        CSP,
+        ICON_LINKS.replace(
+          'rel="icon" href="/favicon.svg"',
+          'rel="shortcut icon" href="/favicon.svg"',
+        ),
+      ),
+    )
+    expect(auditDistribution(distribution)).toEqual([])
+  })
+
+  it('flags a missing icon file', () => {
+    rmSync(path.join(distribution, 'favicon.ico'))
+    expect(auditDistribution(distribution)).toEqual([
+      'favicon.ico: missing from the build output',
+    ])
   })
 
   it('reports a missing dist folder', () => {

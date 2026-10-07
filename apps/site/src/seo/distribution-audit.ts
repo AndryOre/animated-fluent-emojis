@@ -5,6 +5,7 @@ import path from 'node:path'
 import { LOCALES, SITE_ORIGIN } from '../i18n/locales'
 
 const FIRST_PARTY_HOST_PATTERN = /(^|\.)andryore\.dev$/
+const ICON_FILES = ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png']
 const LOADING_LINK_RELATIONS = new Set([
   'stylesheet',
   'preload',
@@ -155,6 +156,23 @@ function auditPage(
   } else if (!sitemapLocations.has(canonical)) {
     problems.push(`${route}: ${canonical} is not listed in the sitemap`)
   }
+  const hasIcon = (predicate: (tag: string) => boolean) =>
+    links.some((tag) => {
+      const relations = (attribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/)
+      return (
+        predicate(tag) &&
+        relations.some((r) => r === 'icon' || r === 'apple-touch-icon')
+      )
+    })
+  if (!hasIcon((tag) => attribute(tag, 'href') === '/favicon.svg')) {
+    problems.push(`${route}: missing favicon link`)
+  }
+  if (!hasIcon((tag) => attribute(tag, 'href') === '/favicon.ico')) {
+    problems.push(`${route}: missing favicon fallback link`)
+  }
+  if (!hasIcon((tag) => attribute(tag, 'href') === '/apple-touch-icon.png')) {
+    problems.push(`${route}: missing apple touch icon link`)
+  }
   const alternates = new Set(
     links
       .filter((tag) => attribute(tag, 'rel') === 'alternate')
@@ -170,8 +188,9 @@ function auditPage(
 
 /**
  * Audits a built site folder. Every indexable page needs a content security
- * policy, a canonical link listed in the sitemap, and hreflang alternates for
- * every locale plus `x-default`; no page or stylesheet may request a resource
+ * policy, a canonical link listed in the sitemap, favicon, ICO fallback and
+ * apple touch icon links, and hreflang alternates for every locale plus
+ * `x-default`; no page or stylesheet may request a resource
  * from a host outside `andryore.dev`.
  * @param distribution - The build output folder.
  * @returns One message per problem, empty when the build is clean.
@@ -187,6 +206,11 @@ export function auditDistribution(distribution: string): string[] {
     sitemap.matchAll(/<loc>([^<]+)<\/loc>/g).map((match) => match[1] ?? ''),
   )
   const problems = sitemap === '' ? ['sitemap.xml: missing or empty'] : []
+  for (const icon of ICON_FILES) {
+    if (!existsSync(path.join(distribution, icon))) {
+      problems.push(`${icon}: missing from the build output`)
+    }
+  }
   for (const file of walk(distribution)) {
     const route = path.relative(distribution, file)
     if (file.endsWith('.html')) {

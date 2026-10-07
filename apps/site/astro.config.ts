@@ -82,6 +82,17 @@ export default defineConfig({
       customCss: ['./src/styles/docs.css'],
       editLink: { baseUrl: `${REPOSITORY_URL}/edit/main/` },
       lastUpdated: false,
+      favicon: '/favicon.svg',
+      head: [
+        {
+          tag: 'link',
+          attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
+        },
+        {
+          tag: 'link',
+          attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+        },
+      ],
       components: {
         Header: './src/docs/components/DocumentationHeader.astro',
         PageTitle: './src/docs/components/DocumentationPageTitle.astro',
