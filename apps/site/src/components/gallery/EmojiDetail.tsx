@@ -1,5 +1,7 @@
 import { Emoji } from 'animated-fluent-emojis/react'
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { effectiveTone } from '../../gallery/filter'
 import {
@@ -80,7 +82,6 @@ export function EmojiDetail(props: EmojiDetailProps) {
   const [status, setStatus] = useState('')
   const [loadedKey, setLoadedKey] = useState<string>()
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const tabsRef = useRef(new Map<SnippetKind, HTMLButtonElement>())
 
   useEffect(
     () => () => {
@@ -119,23 +120,6 @@ export function EmojiDetail(props: EmojiDetailProps) {
     } catch {
       announce(strings.downloadFailed)
     }
-  }
-
-  function moveTab(event: KeyboardEvent, current: number) {
-    const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key]
-    const target =
-      event.key === 'Home'
-        ? 0
-        : event.key === 'End'
-          ? TABS.length - 1
-          : step === undefined
-            ? undefined
-            : (current + step + TABS.length) % TABS.length
-    const next = target === undefined ? undefined : TABS[target]
-    if (!next) return
-    event.preventDefault()
-    setKind(next.kind)
-    tabsRef.current.get(next.kind)?.focus()
   }
 
   return (
@@ -183,49 +167,29 @@ export function EmojiDetail(props: EmojiDetailProps) {
           {emoji.id}
         </p>
       </div>
-      <div>
-        <div
-          role="tablist"
-          aria-label={strings.snippetLabel}
-          className="flex gap-1 overflow-x-auto"
-        >
-          {TABS.map((tab, position) => (
-            <button
-              key={tab.kind}
-              ref={(node) => {
-                if (node) tabsRef.current.set(tab.kind, node)
-                else tabsRef.current.delete(tab.kind)
-              }}
-              type="button"
-              role="tab"
-              id={`snippet-tab-${tab.kind}`}
-              aria-selected={kind === tab.kind}
-              aria-controls="snippet-panel"
-              tabIndex={kind === tab.kind ? 0 : -1}
-              onClick={() => {
-                setKind(tab.kind)
-              }}
-              onKeyDown={(event) => {
-                moveTab(event, position)
-              }}
-              className="h-8 shrink-0 rounded-full px-3 text-xs font-semibold aria-selected:bg-primary aria-selected:text-primary-foreground"
-            >
+      <Tabs
+        value={kind}
+        onValueChange={(value: SnippetKind) => {
+          setKind(value)
+        }}
+      >
+        <TabsList activateOnFocus aria-label={strings.snippetLabel}>
+          {TABS.map((tab) => (
+            <TabsTrigger key={tab.kind} value={tab.kind}>
               {strings[tab.label]}
-            </button>
+            </TabsTrigger>
           ))}
-        </div>
-        <div
-          role="tabpanel"
-          id="snippet-panel"
-          aria-labelledby={`snippet-tab-${kind}`}
+        </TabsList>
+        <TabsContent
+          value={kind}
           tabIndex={0}
           className="mt-2 max-h-56 overflow-auto rounded-xl bg-secondary p-3"
         >
           <pre className="font-mono text-xs whitespace-pre">
             <code>{snippet}</code>
           </pre>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"

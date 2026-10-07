@@ -1,3 +1,5 @@
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+
 interface Chip<Value extends string | number> {
   value: Value
   label: string
@@ -14,7 +16,8 @@ interface ChipGroupProps<Value extends string | number> {
 
 /**
  * A labelled row of single-choice chips. It scrolls horizontally on narrow
- * screens and wraps on wide ones.
+ * screens and wraps on wide ones. When disabled, chips stay focusable and
+ * report `aria-disabled` but ignore changes.
  * @param props - Chip list, selected value, change handler and disabled state.
  * @returns The labelled row of chip buttons.
  */
@@ -30,29 +33,32 @@ export function ChipGroup<Value extends string | number>(
     disabledHint,
   } = props
   return (
-    <div
-      role="group"
+    <ToggleGroup
       aria-label={label}
-      className="flex items-center gap-2 overflow-x-auto min-[860px]:flex-wrap"
+      value={[String(selected)]}
+      onValueChange={(next) => {
+        const chip = chips.find(
+          (candidate) => String(candidate.value) === next[0],
+        )
+        if (chip && !disabled) onSelect(chip.value)
+      }}
+      className="max-w-full overflow-x-auto min-[860px]:flex-wrap"
     >
       <span className="shrink-0 text-xs font-semibold text-muted-foreground">
         {label}
       </span>
       {chips.map((chip) => (
-        <button
+        <ToggleGroupItem
           key={chip.value}
-          type="button"
-          aria-pressed={selected === chip.value}
+          value={String(chip.value)}
+          variant="outline"
+          className="h-7 shrink-0 cursor-pointer rounded-full border-border bg-transparent px-3 text-xs font-semibold hover:bg-secondary aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
           aria-disabled={disabled}
           title={disabled ? disabledHint : undefined}
-          onClick={() => {
-            if (!disabled) onSelect(chip.value)
-          }}
-          className="h-7 shrink-0 rounded-full border border-border px-3 text-xs font-semibold hover:bg-secondary aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground"
         >
           {chip.label}
-        </button>
+        </ToggleGroupItem>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }

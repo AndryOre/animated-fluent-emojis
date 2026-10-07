@@ -53,7 +53,6 @@ export const zh_CN: UiStrings = {
       stageLabel: '一个挥手 emoji，悬停时播放',
     },
     demo: {
-      title: '试试看',
       sizeLabel: '大小',
       toneLabel: '肤色',
       playsLabel: '播放时机',

@@ -8,6 +8,10 @@ import {
   type KeyboardEvent,
 } from 'react'
 
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet'
+
 import {
   effectiveTone,
   filterEmojis,
@@ -125,7 +129,6 @@ export function Gallery(props: GalleryProps) {
   const [focusedSlug, setFocusedSlug] = useState<string | undefined>()
   const isDesktop = useIsDesktop()
   const gridRef = useRef<HTMLDivElement>(null)
-  const sheetRef = useRef<HTMLDivElement>(null)
   const lastTriggerRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -136,10 +139,6 @@ export function Gallery(props: GalleryProps) {
       `${globalThis.location.pathname}${query}${globalThis.location.hash}`,
     )
   }, [filters])
-
-  useEffect(() => {
-    if (sheetOpen && !isDesktop) sheetRef.current?.focus()
-  }, [sheetOpen, isDesktop])
 
   const data = state.status === 'ready' ? state.data : undefined
   const categories = useMemo(
@@ -180,11 +179,6 @@ export function Gallery(props: GalleryProps) {
     setSheetOpen(true)
   }
 
-  function closeSheet() {
-    setSheetOpen(false)
-    lastTriggerRef.current?.focus()
-  }
-
   function moveFocus(event: KeyboardEvent<HTMLElement>, position: number) {
     const grid = gridRef.current
     if (!grid) return
@@ -208,32 +202,6 @@ export function Gallery(props: GalleryProps) {
     grid
       .querySelector<HTMLElement>(`[data-slug="${CSS.escape(next.slug)}"]`)
       ?.focus()
-  }
-
-  function trapSheetKeys(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Escape') {
-      closeSheet()
-      return
-    }
-    if (event.key !== 'Tab') return
-    const focusable = [
-      ...event.currentTarget.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), [tabindex="0"]',
-      ),
-    ]
-    const first = focusable[0]
-    const last = focusable.at(-1)
-    const active = document.activeElement
-    if (
-      event.shiftKey &&
-      (active === first || active === event.currentTarget)
-    ) {
-      event.preventDefault()
-      last?.focus()
-    } else if (active === last && !event.shiftKey) {
-      event.preventDefault()
-      first?.focus()
-    }
   }
 
   if (state.status === 'loading') return <Skeleton label={strings.loading} />
@@ -266,7 +234,7 @@ export function Gallery(props: GalleryProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <input
+      <Input
         type="search"
         value={filters.query}
         onChange={(event) => {
@@ -274,7 +242,6 @@ export function Gallery(props: GalleryProps) {
         }}
         aria-label={strings.searchLabel}
         placeholder={placeholder}
-        className="h-12 w-full rounded-full border border-border bg-card px-5 text-base"
       />
       <ChipGroup
         label={strings.categoryLabel}
@@ -387,34 +354,24 @@ export function Gallery(props: GalleryProps) {
               {detail}
             </aside>
           ) : (
-            sheetOpen &&
-            detail && (
-              <>
-                <div
-                  aria-hidden="true"
-                  className="fixed inset-0 z-40 bg-foreground/40"
-                />
-                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the dialog handles Escape and the focus loop */}
-                <div
-                  ref={sheetRef}
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="gallery-detail-heading"
-                  tabIndex={-1}
-                  onKeyDown={trapSheetKeys}
-                  className="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-y-auto rounded-t-brand border border-border bg-card p-5"
+            <Sheet
+              open={sheetOpen && Boolean(detail)}
+              onOpenChange={setSheetOpen}
+            >
+              <SheetContent
+                side="bottom"
+                aria-labelledby="gallery-detail-heading"
+                finalFocus={lastTriggerRef}
+              >
+                <SheetClose
+                  render={<Button variant="ghost" shape="pill" />}
+                  className="mb-2 ml-auto flex h-8 px-3 font-semibold"
                 >
-                  <button
-                    type="button"
-                    onClick={closeSheet}
-                    className="mb-2 ml-auto block h-8 rounded-full px-3 text-sm font-semibold hover:bg-secondary"
-                  >
-                    {strings.closeDetail}
-                  </button>
-                  {detail}
-                </div>
-              </>
-            )
+                  {strings.closeDetail}
+                </SheetClose>
+                {detail}
+              </SheetContent>
+            </Sheet>
           )}
         </div>
       )}

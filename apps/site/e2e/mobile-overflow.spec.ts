@@ -81,22 +81,28 @@ for (const width of VIEWPORT_WIDTHS) {
         page,
       }) => {
         await page.goto(path)
-        const menus = page.locator('header details[data-menu]')
-        const menuCount = await menus.count()
-        for (let index = 0; index < menuCount; index += 1) {
-          const menu = menus.nth(index)
-          const summary = menu.locator('summary')
-          if (!(await summary.isVisible())) continue
-          await summary.click()
-          const box = await menu
-            .locator('> :not(summary)')
-            .first()
-            .boundingBox()
+        const triggers = page.locator(
+          'header [data-slot="dropdown-menu-trigger"]',
+        )
+        await expect(
+          page.locator('astro-island[component-url*="HeaderMenus"]'),
+        ).not.toHaveAttribute('ssr', /.*/)
+        await expect(triggers.first()).toBeVisible()
+        const triggerCount = await triggers.count()
+        for (let index = 0; index < triggerCount; index += 1) {
+          const trigger = triggers.nth(index)
+          if (!(await trigger.isVisible())) continue
+          await trigger.click()
+          const popup = page.locator('[data-slot="dropdown-menu-content"]')
+          await expect(popup).toBeVisible()
+          const box = await popup.boundingBox()
           const left = box?.x ?? -Infinity
           const right = left + (box?.width ?? Infinity)
           expect(left).toBeGreaterThanOrEqual(-OVERFLOW_TOLERANCE_PX)
           expect(right).toBeLessThanOrEqual(width + OVERFLOW_TOLERANCE_PX)
-          await summary.click()
+          await page.keyboard.press('Escape')
+          await expect(popup).toBeHidden()
+          await expect(trigger).toBeFocused()
         }
       })
     }

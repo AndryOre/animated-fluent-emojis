@@ -53,7 +53,6 @@ export const de: UiStrings = {
         'Ein winkendes Hand-Emoji, das beim Darüberfahren abgespielt wird',
     },
     demo: {
-      title: 'Probier eins aus',
       sizeLabel: 'Größe',
       toneLabel: 'Hautfarbe',
       playsLabel: 'Wiedergabe',

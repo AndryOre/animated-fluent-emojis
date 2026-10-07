@@ -53,7 +53,6 @@ export const ja: UiStrings = {
       stageLabel: 'ホバーで再生される、手を振る絵文字',
     },
     demo: {
-      title: '試してみる',
       sizeLabel: 'サイズ',
       toneLabel: '肌の色',
       playsLabel: '再生',

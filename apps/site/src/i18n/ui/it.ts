@@ -53,7 +53,6 @@ export const it: UiStrings = {
         "Un'emoji di mano che saluta, animata al passaggio del cursore",
     },
     demo: {
-      title: 'Provane una',
       sizeLabel: 'Dimensione',
       toneLabel: 'Tono della pelle',
       playsLabel: 'Si anima',
