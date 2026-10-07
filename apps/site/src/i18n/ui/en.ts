@@ -51,7 +51,6 @@ export const en = {
       stageLabel: 'A waving hand emoji, playing on hover',
     },
     demo: {
-      title: 'Try one',
       sizeLabel: 'Size',
       toneLabel: 'Skin tone',
       playsLabel: 'Plays',

@@ -52,7 +52,6 @@ export const es: UiStrings = {
       stageLabel: 'Un emoji de mano saludando, que se anima al pasar el cursor',
     },
     demo: {
-      title: 'Prueba uno',
       sizeLabel: 'Tamaño',
       toneLabel: 'Tono de piel',
       playsLabel: 'Se anima',

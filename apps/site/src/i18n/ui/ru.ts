@@ -53,7 +53,6 @@ export const ru: UiStrings = {
       stageLabel: 'Машущее эмодзи, воспроизводится при наведении',
     },
     demo: {
-      title: 'Попробуйте сами',
       sizeLabel: 'Размер',
       toneLabel: 'Тон кожи',
       playsLabel: 'Воспроизведение',

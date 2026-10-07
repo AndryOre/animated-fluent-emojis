@@ -52,7 +52,6 @@ export const fr: UiStrings = {
       stageLabel: 'Un emoji de main qui salue, animé au survol',
     },
     demo: {
-      title: 'Essayez-en un',
       sizeLabel: 'Taille',
       toneLabel: 'Teinte de peau',
       playsLabel: "S'anime",
