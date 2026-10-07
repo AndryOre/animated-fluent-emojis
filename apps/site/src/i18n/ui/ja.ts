@@ -1,8 +1,196 @@
-import { en } from './en'
 import type { UiStrings } from './en'
 
 /**
- * UI strings for `ja`. Seeded with the English strings; the translation pass
- * (T29-T37) replaces them.
+ * Japanese UI strings. Landing and social copy uses the plain vocabulary of
+ * the brand voice guide; the docs notices use the technical one.
  */
-export const ja: UiStrings = en
+export const ja: UiStrings = {
+  meta: {
+    siteName: 'Animated Fluent Emojis',
+    description:
+      'Microsoft の Fluent アニメーション絵文字を、React、Vue、Svelte、Astro、素の HTML で使えるライブラリです。',
+  },
+  header: {
+    skipLink: '本文へスキップ',
+    homeLabel: 'Animated Fluent Emojis、ホーム',
+    navLabel: 'メイン',
+    menu: 'メニュー',
+    nav: {
+      gallery: 'ギャラリー',
+      docs: 'ドキュメント',
+      github: 'GitHub',
+    },
+    languageLabel: '言語',
+    themeLabel: 'テーマ',
+    theme: {
+      system: 'システム',
+      light: 'ライト',
+      dark: 'ダーク',
+    },
+  },
+  footer: {
+    attribution:
+      '絵文字のアートワークは Microsoft のものです。コードはオープンソースです。Microsoft とは提携しておらず、承認も受けていません。',
+    navLabel: 'フッター',
+    links: {
+      gallery: 'ギャラリー',
+      docs: 'ドキュメント',
+      github: 'GitHub',
+      npm: 'npm',
+    },
+  },
+  home: {
+    title: 'Animated Fluent Emojis',
+    tagline: 'Fluent 絵文字が、動きだす。',
+    hero: {
+      sub: 'ホバーすると、手を振り返します。',
+      installLabel: 'インストールコマンド',
+      copy: 'コピー',
+      copied: 'コピーしました',
+      browse: '絵文字を見る',
+      attribution:
+        '絵文字のアートワークは Microsoft のものです。Microsoft とは提携しておらず、承認も受けていません。',
+      stageLabel: 'ホバーで再生される、手を振る絵文字',
+    },
+    demo: {
+      title: '試してみる',
+      sizeLabel: 'サイズ',
+      toneLabel: '肌の色',
+      playsLabel: '再生',
+      tones: {
+        default: 'デフォルト',
+        light: '明るい',
+        medium: '普通',
+        dark: '濃い',
+      },
+      plays: {
+        hover: 'ホバー時',
+        load: '読み込み時',
+      },
+    },
+    pillars: {
+      title: '気持ちよく使えるように',
+      alive: {
+        title: '生きている',
+        body: '手を振り返してくれます。ホバーして確かめてください。',
+      },
+      light: {
+        title: '軽い',
+        body: '読み込み中もページがずれません。',
+      },
+      considerate: {
+        title: '思いやり',
+        body: '端末で動きを減らす設定にしていれば、絵文字は静止したままです。',
+      },
+      credit: {
+        title: '誰のものか、はっきり',
+        body: '絵文字のアートワークは Microsoft のものです。コードはオープンソースです。',
+      },
+    },
+    snippets: {
+      title: 'タグ一つで、どのサイトにも',
+      body: 'フレームワークを選んでコードをコピーすれば、絵文字がページに現れます。',
+      tabsLabel: 'フレームワーク',
+      copy: 'コードをコピー',
+      copied: 'コピーしました',
+    },
+    noCode: {
+      title: 'コードなしでも大丈夫。',
+      body: '好きな絵文字を GIF、アニメーション WebP、静止画 PNG でダウンロードして、チャットや文書に貼り付けられます。',
+      cta: '絵文字を見る',
+      teaserLabel: 'ギャラリーの絵文字から一部',
+    },
+    faq: {
+      title: 'よくある質問',
+      chat: {
+        question: 'チャットや文書でも使えますか？',
+        answer:
+          'はい。ギャラリーから絵文字を GIF、アニメーション WebP、静止画 PNG でダウンロードして、ふつうの画像と同じようにメッセージやファイルに追加してください。',
+      },
+      speed: {
+        question: 'ページが重くなりませんか？',
+        answer:
+          'いいえ。各絵文字は読み込み中も場所を確保するのでページがずれず、アニメーションのファイルは絵文字が表示されるときにだけ取得されます。',
+      },
+      motion: {
+        question: '動きを減らす設定の人にはどうなりますか？',
+        answer:
+          '絵文字は最初のフレームで静止したままです。訪問者が動きをオンにしていない限り、動きません。',
+      },
+    },
+  },
+  docs: {
+    howToGroup: 'ハウツーガイド',
+    copyMarkdown: 'ページを Markdown でコピー',
+    copiedMarkdown: 'コピーしました',
+    notices: {
+      missing:
+        'このページはまだお使いの言語では利用できません。英語版を表示しています。',
+      stale: 'このページの翻訳は古くなっています。英語版を表示しています。',
+    },
+  },
+  gallery: {
+    title: '絵文字ギャラリー',
+    description:
+      'Fluent アニメーション絵文字を検索し、肌の色を選んで、React、Vue、Svelte、Astro、素の HTML 用のコードをコピーできます。',
+    searchLabel: '絵文字を検索',
+    searchPlaceholder: '{count} 個の絵文字から検索（「fire」や「wave」など）',
+    categoryLabel: 'カテゴリ',
+    categoryAll: 'すべて',
+    toneLabel: '肌の色',
+    toneDefault: 'デフォルト',
+    toneLight: '明るい',
+    toneMediumLight: 'やや明るい',
+    toneMedium: '普通',
+    toneMediumDark: 'やや濃い',
+    toneDark: '濃い',
+    noSkinTones: '肌の色なし',
+    sizeLabel: 'サイズ',
+    resultsLabel: '絵文字',
+    resultsCount: '{count} 個の絵文字',
+    showMore: 'もっと見る',
+    detailLabel: '絵文字の詳細',
+    detailEmpty: '絵文字を選ぶと、コードが表示されます。',
+    closeDetail: '閉じる',
+    idLabel: 'ID',
+    snippetLabel: 'コード',
+    tabReact: 'React',
+    tabVue: 'Vue',
+    tabSvelte: 'Svelte',
+    tabAstro: 'Astro',
+    tabHtml: 'HTML',
+    tabNoCode: 'コードなし',
+    copySnippet: 'スニペットをコピー',
+    copyUrl: 'URL をコピー',
+    copyId: 'ID をコピー',
+    downloadGif: 'GIF をダウンロード',
+    downloadWebp: 'WebP をダウンロード',
+    downloadPng: 'PNG をダウンロード',
+    downloadFailed: 'ダウンロードに失敗しました。もう一度お試しください。',
+    copied: 'コピーしました',
+    noResultsTitle: '「{query}」に一致する絵文字はありません',
+    noResultsHint: '綴りを確認するか、短い言葉でお試しください。',
+    clearSearch: '検索をクリア',
+    errorTitle: '絵文字の一覧を読み込めませんでした。',
+    errorHint:
+      '接続を確認して、もう一度お試しください。ドキュメントとサイトのほかの部分は使えます。',
+    retry: 'もう一度試す',
+    loading: '絵文字を読み込み中',
+  },
+  emojiPage: {
+    title: '{name}、アニメーション絵文字 · Animated Fluent Emojis',
+    description:
+      'Microsoft Fluent のアニメーション絵文字「{name}」。React、Vue、Svelte、Astro、HTML 用のコードをコピーするか、GIF、WebP、PNG でダウンロードできます。',
+    breadcrumbLabel: 'パンくずリスト',
+    breadcrumbHome: 'ホーム',
+    breadcrumbEmojis: '絵文字',
+    keywordsLabel: 'キーワード',
+    relatedTitle: '関連する絵文字',
+  },
+  notFound: {
+    title: 'ページが見つかりません。',
+    body: 'リンクが古いか、絵文字が移動したのかもしれません。',
+    home: 'ホームへ',
+    gallery: '絵文字を見る',
+  },
+}
