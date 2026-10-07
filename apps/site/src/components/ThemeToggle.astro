@@ -1,4 +1,6 @@
 ---
+import { buttonVariants } from '@/components/ui/button'
+
 import type { Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 
@@ -8,6 +10,11 @@ interface Props {
 
 const { header } = getUi(Astro.props.locale)
 const { theme } = header
+const toggleClass = buttonVariants({
+  variant: 'outline',
+  shape: 'pill',
+  className: 'h-10 min-w-10 gap-2 px-3 text-foreground',
+})
 ---
 
 <button
@@ -15,7 +22,7 @@ const { theme } = header
   data-theme-toggle
   data-labels={JSON.stringify(theme)}
   title={header.themeLabel}
-  class="inline-flex h-10 min-w-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground hover:bg-accent"
+  class={toggleClass}
 >
   <span aria-hidden="true" data-theme-icon>
     ◐
