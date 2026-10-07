@@ -51,3 +51,46 @@ test('download saves the emoji file under its slug', async ({ page }) => {
   const file = await download
   expect(file.suggestedFilename()).toBe(`${slug ?? ''}.png`)
 })
+
+test('size chips switch by role and keep one pressed', async ({ page }) => {
+  const size = page.getByRole('group', { name: 'Size' })
+  await size.getByRole('button', { name: '96' }).click()
+  await expect(size.getByRole('button', { name: '96' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(size.getByRole('button', { name: '64' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  )
+})
+
+test('snippet tabs switch with the arrow keys', async ({ page }) => {
+  await page.locator('[data-slug]').first().click()
+  await page.getByRole('tab', { name: 'React' }).focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('tab', { name: 'Vue' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  )
+  await expect(page.getByRole('tabpanel')).toBeVisible()
+})
+
+test.describe('mobile sheet', () => {
+  test.use({ viewport: { width: 390, height: 800 } })
+
+  test('traps focus and returns it to the cell on Escape', async ({ page }) => {
+    await page.goto('/emojis/')
+    const cell = page.locator('[data-slug]').first()
+    await cell.click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+    for (let press = 0; press < 40; press++) {
+      await page.keyboard.press('Tab')
+      await expect(dialog.locator(':focus')).toHaveCount(1)
+    }
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+    await expect(cell).toBeFocused()
+  })
+})

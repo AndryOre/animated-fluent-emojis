@@ -10,7 +10,9 @@ import { cn } from '@/lib/utilities'
  * @param props - Base UI toggle group props.
  * @returns The toggle group element.
  */
-function ToggleGroup(props: ToggleGroupPrimitive.Props) {
+function ToggleGroup<Value extends string>(
+  props: ToggleGroupPrimitive.Props<Value>,
+) {
   const { className, ...rest } = props
   return (
     <ToggleGroupPrimitive
@@ -27,7 +29,9 @@ function ToggleGroup(props: ToggleGroupPrimitive.Props) {
  * @param props - Base UI toggle props plus `variant` and `size`.
  * @returns The toggle button.
  */
-function ToggleGroupItem(props: TogglePrimitive.Props & ToggleStyleProps) {
+function ToggleGroupItem<Value extends string>(
+  props: TogglePrimitive.Props<Value> & ToggleStyleProps,
+) {
   const { className, variant, size, ...rest } = props
   return (
     <TogglePrimitive
