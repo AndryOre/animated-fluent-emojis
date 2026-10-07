@@ -77,6 +77,12 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Header menu React island with no logic of its own, exercised in a real browser by the accessibility and mobile-overflow e2e specs.',
   'apps/site/src/components/ui/dropdown-menu.tsx':
     'Styled wrapper over the Base UI menu, exercised in a real browser through the header menus.',
+  'apps/site/src/components/ui/input.tsx':
+    'Styled wrapper over the Base UI input, exercised in a real browser through the gallery search.',
+  'apps/site/src/components/ui/sheet.tsx':
+    'Styled wrapper over the Base UI dialog, exercised in a real browser through the gallery mobile sheet.',
+  'apps/site/src/components/ui/tabs.tsx':
+    'Styled wrapper over the Base UI tabs, covered by EmojiDetail.test.tsx and the gallery e2e spec.',
   'apps/site/src/home/DemoPlayground.tsx':
     'React island that wires the demo toggles to the library Emoji; its option-to-props mapping is tested in demo.test.ts.',
   'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
