@@ -5,9 +5,12 @@ import sharp from 'sharp'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import {
+  APPLE_TOUCH_SIZE,
   assertSpec,
   bannerHtml,
   COVER_SCALE,
+  encodeIco,
+  ICO_SIZES,
   KB,
   MARK_SIZES,
   MB,
@@ -33,6 +36,34 @@ describe('constants', () => {
     expect(MB).toBe(1024 * KB)
     expect(COVER_SCALE).toBe(1.5)
     expect(WEBP_QUALITY).toBe(86)
+  })
+})
+
+describe('favicon constants', () => {
+  it('exposes the apple touch and ico sizes', () => {
+    expect(APPLE_TOUCH_SIZE).toBe(180)
+    expect(ICO_SIZES).toEqual([16, 32, 48])
+  })
+})
+
+describe('encodeIco', () => {
+  it('packs PNG payloads behind a directory', () => {
+    const first = Buffer.from('aaaa')
+    const second = Buffer.from('bb')
+    const ico = encodeIco([
+      { size: 16, data: first },
+      { size: 32, data: second },
+    ])
+    expect(ico.readUInt16LE(2)).toBe(1)
+    expect(ico.readUInt16LE(4)).toBe(2)
+    expect(ico.readUInt8(6)).toBe(16)
+    expect(ico.readUInt32LE(14)).toBe(4)
+    expect(ico.readUInt32LE(18)).toBe(38)
+    expect(ico.readUInt8(22)).toBe(32)
+    expect(ico.readUInt32LE(30)).toBe(2)
+    expect(ico.readUInt32LE(34)).toBe(42)
+    expect(ico.subarray(38, 42)).toEqual(first)
+    expect(ico.subarray(42)).toEqual(second)
   })
 })
 

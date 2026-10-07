@@ -78,6 +78,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
   const { emoji, name, tone, size, strings, headingId, page = false } = props
   const [kind, setKind] = useState<SnippetKind>('react')
   const [status, setStatus] = useState('')
+  const [loadedKey, setLoadedKey] = useState<string>()
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const tabsRef = useRef(new Map<SnippetKind, HTMLButtonElement>())
 
@@ -91,6 +92,8 @@ export function EmojiDetail(props: EmojiDetailProps) {
   const appliedTone = effectiveTone(emoji, tone)
   const files =
     emoji.tones.find((variant) => variant.tone === appliedTone) ?? emoji
+  const previewKey = `${emoji.id}-${appliedTone ?? 'default'}`
+  const animated = loadedKey === previewKey
   const snippet = generateSnippet(emoji, kind, { size, tone: appliedTone })
 
   function announce(message: string) {
@@ -144,14 +147,30 @@ export function EmojiDetail(props: EmojiDetailProps) {
             : 'flex h-44 items-center justify-center rounded-brand bg-secondary'
         }
       >
-        <Emoji
-          key={`${emoji.id}-${appliedTone ?? 'default'}`}
-          id={emoji.id}
-          size={size}
-          skinTone={appliedTone}
-          animationIterations="infinite"
-          alt={name}
-        />
+        <div className="relative" style={{ width: size, height: size }}>
+          {page && !animated && (
+            <img
+              src={fileUrl(files.urls.png)}
+              alt=""
+              width={size}
+              height={size}
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0"
+            />
+          )}
+          <Emoji
+            key={previewKey}
+            id={emoji.id}
+            size={size}
+            skinTone={appliedTone}
+            animationIterations="infinite"
+            alt={name}
+            onLoad={() => {
+              setLoadedKey(previewKey)
+            }}
+          />
+        </div>
       </div>
       <div>
         {!page && (

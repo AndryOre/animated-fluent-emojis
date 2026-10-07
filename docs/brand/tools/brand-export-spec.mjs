@@ -20,6 +20,8 @@ const THEMES = {
 }
 
 export const MARK_SIZES = [16, 32, 48, 128, 512]
+export const APPLE_TOUCH_SIZE = 180
+export const ICO_SIZES = [16, 32, 48]
 export const KB = 1024
 export const MB = 1024 * KB
 export const COVER_SCALE = 1.5
@@ -99,4 +101,32 @@ export async function assertSpec(
     throw new Error(`${name} is ${size} bytes, over ${maxBytes}`)
   }
   log(`${path.relative(repositoryRoot, outPath)} ${(size / KB).toFixed(0)} KB`)
+}
+
+const ICO_HEADER_BYTES = 6
+const ICO_ENTRY_BYTES = 16
+
+/**
+ * Packs PNG images into one `.ico` container. Every entry keeps its PNG
+ * payload as is, which every browser that requests `/favicon.ico` accepts.
+ * @param images PNG buffers with their square pixel size, at most 256.
+ * @returns The `.ico` file bytes.
+ */
+export function encodeIco(images) {
+  const header = Buffer.alloc(ICO_HEADER_BYTES)
+  header.writeUInt16LE(1, 2)
+  header.writeUInt16LE(images.length, 4)
+  let offset = ICO_HEADER_BYTES + ICO_ENTRY_BYTES * images.length
+  const entries = images.map(({ size, data }) => {
+    const entry = Buffer.alloc(ICO_ENTRY_BYTES)
+    entry.writeUInt8(size, 0)
+    entry.writeUInt8(size, 1)
+    entry.writeUInt16LE(1, 4)
+    entry.writeUInt16LE(32, 6)
+    entry.writeUInt32LE(data.length, 8)
+    entry.writeUInt32LE(offset, 12)
+    offset += data.length
+    return entry
+  })
+  return Buffer.concat([header, ...entries, ...images.map(({ data }) => data)])
 }

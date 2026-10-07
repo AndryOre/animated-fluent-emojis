@@ -1,13 +1,16 @@
-import { mkdir, readFile } from 'node:fs/promises'
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import sharp from 'sharp'
 
 import {
+  APPLE_TOUCH_SIZE,
   assertSpec as assertImageSpec,
   bannerHtml as buildBannerHtml,
   COVER_SCALE,
+  encodeIco,
+  ICO_SIZES,
   KB,
   MARK_SIZES,
   MB,
@@ -17,7 +20,8 @@ import {
 /**
  * Regenerates the derived raster assets of the brand kit from the SVG sources in
  * `docs/brand/logo`: the PNG marks, the README covers (`docs/assets/Cover.webp` and `Cover-light.webp`),
- * the GitHub social preview and the Open Graph image (`docs/brand/og/`). Run with
+ * the GitHub social preview, the Open Graph image (`docs/brand/og/`) and the
+ * site favicon set in `apps/site/public` (SVG, ICO and apple touch icon). Run with
  * `bun run brand:export`.
  *
  * Fonts are embedded from `docs/brand/brandbook/fonts`, so output does not
@@ -31,6 +35,7 @@ const brandRoot = path.resolve(
   '..',
 )
 const repositoryRoot = path.resolve(brandRoot, '../..')
+const siteIconsRoot = path.join(repositoryRoot, 'apps/site/public')
 const fontsRoot = path.join(brandRoot, 'brandbook/fonts')
 const assetsRoot = path.join(repositoryRoot, 'docs/assets')
 
@@ -117,6 +122,23 @@ try {
   for (const size of MARK_SIZES) {
     await renderMark(size, path.join(brandRoot, 'logo/png', `mark-${size}.png`))
   }
+
+  await mkdir(siteIconsRoot, { recursive: true })
+  await copyFile(
+    path.join(brandRoot, 'logo/mark.svg'),
+    path.join(siteIconsRoot, 'favicon.svg'),
+  )
+  const appleTouchPath = path.join(siteIconsRoot, 'apple-touch-icon.png')
+  await renderMark(APPLE_TOUCH_SIZE, appleTouchPath)
+  const icoImages = await Promise.all(
+    ICO_SIZES.map(async (size) => ({
+      size,
+      data: await readFile(
+        path.join(brandRoot, 'logo/png', `mark-${size}.png`),
+      ),
+    })),
+  )
+  await writeFile(path.join(siteIconsRoot, 'favicon.ico'), encodeIco(icoImages))
 
   const ogRoot = path.join(brandRoot, 'og')
   await mkdir(ogRoot, { recursive: true })

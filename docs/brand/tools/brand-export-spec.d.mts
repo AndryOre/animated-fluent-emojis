@@ -4,6 +4,8 @@
  * types across a `.ts` -> `.mjs` import without one.
  */
 export declare const MARK_SIZES: number[]
+export declare const APPLE_TOUCH_SIZE: number
+export declare const ICO_SIZES: number[]
 export declare const KB: number
 export declare const MB: number
 export declare const COVER_SCALE: number
@@ -36,3 +38,10 @@ export declare function assertSpec(
   spec: ImageSpec,
   options?: AssertSpecOptions,
 ): Promise<void>
+
+export interface IcoImage {
+  size: number
+  data: Buffer
+}
+
+export declare function encodeIco(images: readonly IcoImage[]): Buffer
