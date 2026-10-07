@@ -66,6 +66,9 @@ jobs:
         working-directory: apps/site
         run: bun run test:e2e
 
+      - name: Run the visual regression snapshots
+        run: bash apps/site/scripts/visual.sh
+
       - name: Enforce the Lighthouse budget
         working-directory: apps/site
         run: |

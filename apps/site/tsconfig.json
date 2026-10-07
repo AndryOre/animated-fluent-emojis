@@ -11,7 +11,9 @@
     "astro.config.ts",
     "playwright.config.ts",
     "vitest.config.ts",
+    "playwright.visual.config.ts",
     "e2e/**/*",
+    "e2e-visual/**/*",
     "src/**/*"
   ],
   "exclude": ["node_modules", "dist"]

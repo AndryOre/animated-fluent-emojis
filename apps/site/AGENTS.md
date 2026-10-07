@@ -31,3 +31,7 @@ adapter.
   byte-identical to English. Workflow:
   [`docs/how-to/translate-the-website.md`](../../docs/how-to/translate-the-website.md).
 - `.astro` files follow the same TSDoc-only comment rule as `.ts` and `.tsx`.
+- Visual snapshots (`e2e-visual/`) are only valid when generated inside the
+  pinned Playwright container. Run `bun run test:visual` to compare and
+  `bun run test:visual:update` to regenerate; never commit baselines produced
+  outside `scripts/visual.sh`.

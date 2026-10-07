@@ -17,6 +17,8 @@
     "test:coverage": "vitest run --coverage --passWithNoTests",
     "test:dist": "SITE_DIST_REQUIRED=1 vitest run src/seo/distribution-output.test.ts",
     "test:e2e": "playwright test",
+    "test:visual": "bash scripts/visual.sh",
+    "test:visual:update": "bash scripts/visual.sh update",
     "lighthouse": "bash scripts/lighthouse-budget.sh"
   },
   "dependencies": {
