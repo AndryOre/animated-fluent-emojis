@@ -46,16 +46,26 @@ export const de: UiStrings = {
       installLabel: 'Installationsbefehl',
       copy: 'Kopieren',
       copied: 'Kopiert',
+      eyebrow: 'Open Source',
+      docs: 'Dokumentation lesen',
       browse: 'Emojis durchstöbern',
       attribution:
         'Die Emoji-Grafiken gehören Microsoft. Keine Verbindung zu Microsoft und keine Billigung durch Microsoft.',
-      stageLabel:
-        'Ein winkendes Hand-Emoji, das beim Darüberfahren abgespielt wird',
     },
     demo: {
       sizeLabel: 'Größe',
       toneLabel: 'Hautfarbe',
       playsLabel: 'Wiedergabe',
+      emojiLabel: 'Emoji',
+      reset: 'Zurücksetzen',
+      emojis: {
+        wave: 'Winkende Hand',
+        fire: 'Feuer',
+        party: 'Konfettikanone',
+        heart: 'Rotes Herz',
+        rocket: 'Rakete',
+        grin: 'Grinsendes Gesicht',
+      },
       tones: {
         default: 'Standard',
         light: 'Hell',

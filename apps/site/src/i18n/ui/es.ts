@@ -46,15 +46,26 @@ export const es: UiStrings = {
       installLabel: 'Comando de instalación',
       copy: 'Copiar',
       copied: 'Copiado',
+      eyebrow: 'Código abierto',
+      docs: 'Lee la documentación',
       browse: 'Explorar los emojis',
       attribution:
         'Las ilustraciones de los emojis son de Microsoft. No está afiliado a Microsoft ni cuenta con su respaldo.',
-      stageLabel: 'Un emoji de mano saludando, que se anima al pasar el cursor',
     },
     demo: {
       sizeLabel: 'Tamaño',
       toneLabel: 'Tono de piel',
       playsLabel: 'Se anima',
+      emojiLabel: 'Emoji',
+      reset: 'Restablecer',
+      emojis: {
+        wave: 'Mano saludando',
+        fire: 'Fuego',
+        party: 'Cañón de confeti',
+        heart: 'Corazón rojo',
+        rocket: 'Cohete',
+        grin: 'Cara sonriente',
+      },
       tones: {
         default: 'Predeterminado',
         light: 'Claro',

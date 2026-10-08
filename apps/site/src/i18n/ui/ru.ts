@@ -47,15 +47,26 @@ export const ru: UiStrings = {
       installLabel: 'Команда установки',
       copy: 'Копировать',
       copied: 'Скопировано',
+      eyebrow: 'Открытый код',
+      docs: 'Читать документацию',
       browse: 'Смотреть эмодзи',
       attribution:
         'Графика эмодзи принадлежит Microsoft. Проект не связан с Microsoft и не одобрен ею.',
-      stageLabel: 'Машущее эмодзи, воспроизводится при наведении',
     },
     demo: {
       sizeLabel: 'Размер',
       toneLabel: 'Тон кожи',
       playsLabel: 'Воспроизведение',
+      emojiLabel: 'Эмодзи',
+      reset: 'Сбросить',
+      emojis: {
+        wave: 'Машущая рука',
+        fire: 'Огонь',
+        party: 'Хлопушка',
+        heart: 'Красное сердце',
+        rocket: 'Ракета',
+        grin: 'Ухмыляющееся лицо',
+      },
       tones: {
         default: 'По умолчанию',
         light: 'Светлый',

@@ -47,15 +47,26 @@ export const pt_BR: UiStrings = {
       installLabel: 'Comando de instalação',
       copy: 'Copiar',
       copied: 'Copiado',
+      eyebrow: 'Código aberto',
+      docs: 'Ler a documentação',
       browse: 'Ver os emojis',
       attribution:
         'A arte dos emojis é da Microsoft. Não temos afiliação nem aprovação da Microsoft.',
-      stageLabel: 'Emoji acenando, que anima ao passar o mouse',
     },
     demo: {
       sizeLabel: 'Tamanho',
       toneLabel: 'Tom de pele',
       playsLabel: 'Animar',
+      emojiLabel: 'Emoji',
+      reset: 'Redefinir',
+      emojis: {
+        wave: 'Mão acenando',
+        fire: 'Fogo',
+        party: 'Cone de festa',
+        heart: 'Coração vermelho',
+        rocket: 'Foguete',
+        grin: 'Rosto sorridente',
+      },
       tones: {
         default: 'Padrão',
         light: 'Claro',

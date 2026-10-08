@@ -47,15 +47,26 @@ export const zh_CN: UiStrings = {
       installLabel: '安装命令',
       copy: '复制',
       copied: '已复制',
+      eyebrow: '开源',
+      docs: '阅读文档',
       browse: '浏览 emoji',
       attribution:
         'emoji 图稿归 Microsoft 所有。与 Microsoft 无关联，也未获其认可。',
-      stageLabel: '一个挥手 emoji，悬停时播放',
     },
     demo: {
       sizeLabel: '大小',
       toneLabel: '肤色',
       playsLabel: '播放时机',
+      emojiLabel: '表情',
+      reset: '重置',
+      emojis: {
+        wave: '挥手',
+        fire: '火',
+        party: '拉炮',
+        heart: '红心',
+        rocket: '火箭',
+        grin: '咧嘴笑脸',
+      },
       tones: {
         default: '默认',
         light: '浅色',

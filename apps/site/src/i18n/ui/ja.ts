@@ -47,15 +47,26 @@ export const ja: UiStrings = {
       installLabel: 'インストールコマンド',
       copy: 'コピー',
       copied: 'コピーしました',
+      eyebrow: 'オープンソース',
+      docs: 'ドキュメントを読む',
       browse: '絵文字を見る',
       attribution:
         '絵文字のアートワークは Microsoft のものです。Microsoft とは提携しておらず、承認も受けていません。',
-      stageLabel: 'ホバーで再生される、手を振る絵文字',
     },
     demo: {
       sizeLabel: 'サイズ',
       toneLabel: '肌の色',
       playsLabel: '再生',
+      emojiLabel: '絵文字',
+      reset: 'リセット',
+      emojis: {
+        wave: '手を振る',
+        fire: '炎',
+        party: 'クラッカー',
+        heart: '赤いハート',
+        rocket: 'ロケット',
+        grin: 'にっこり笑顔',
+      },
       tones: {
         default: 'デフォルト',
         light: '明るい',

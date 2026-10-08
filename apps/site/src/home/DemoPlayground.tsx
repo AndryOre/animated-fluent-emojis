@@ -1,51 +1,80 @@
 import { Emoji } from 'animated-fluent-emojis/react'
-import { useState } from 'react'
+import { RotateCcwIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
 import 'animated-fluent-emojis/style.css'
 
+import CodeBlock, {
+  type CodeBlockLabels,
+  type CodeBlockTab,
+} from '@/components/CodeBlock'
+import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
+import type { PublicEmoji } from '../gallery/public-index'
+import type { SnippetKind } from '../gallery/snippets'
 import {
+  DEMO_EMOJIS,
   DEMO_PLAYS,
   DEMO_SIZES,
   DEMO_TONES,
   demoEmojiProps,
+  demoSlotValues,
+  demoSnippetCode,
+  demoTone,
   INITIAL_DEMO_STATE,
+  isInitialDemoState,
+  type DemoEmojiName,
   type DemoState,
 } from './demo'
 
-export interface DemoLabels {
+interface DemoLabels {
+  emojiLabel: string
   sizeLabel: string
   toneLabel: string
   playsLabel: string
+  reset: string
+  emojis: Record<DemoEmojiName, string>
   tones: Record<'default' | 'light' | 'medium' | 'dark', string>
   plays: Record<'hover' | 'load', string>
-  emojiLabel: string
+  code: CodeBlockLabels
 }
 
-interface PillGroupProps<Value extends string | number> {
+export interface DemoPlaygroundProps {
+  emojis: readonly PublicEmoji[]
+  plainTabs: readonly CodeBlockTab[]
+  tonedTabs: readonly CodeBlockTab[]
+  labels: DemoLabels
+}
+
+interface SegmentedProps<Value extends string | number> {
   label: string
-  options: readonly { value: Value; text: string }[]
+  options: readonly { value: Value; text: string; name?: string }[]
   selected: Value
   onSelect: (value: Value) => void
+  disabled?: boolean
+  className?: string
 }
 
-function PillGroup<Value extends string | number>({
+function Segmented<Value extends string | number>({
   label,
   options,
   selected,
   onSelect,
-}: PillGroupProps<Value>) {
+  disabled = false,
+  className = '',
+}: SegmentedProps<Value>) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className={`flex min-w-0 flex-col gap-1.5 ${className}`}>
       <span
         aria-hidden="true"
-        className="text-sm font-semibold text-muted-foreground"
+        className="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase"
       >
         {label}
       </span>
       <ToggleGroup
         aria-label={label}
+        disabled={disabled}
         value={[String(selected)]}
         onValueChange={(groupValue: string[]) => {
           const next = options.find(
@@ -53,14 +82,15 @@ function PillGroup<Value extends string | number>({
           )
           if (next) onSelect(next.value)
         }}
-        className="flex-wrap"
+        className="w-full gap-0.5 rounded-lg border border-border bg-background p-0.5"
       >
         {options.map((option) => (
           <ToggleGroupItem
             key={option.value}
             value={String(option.value)}
-            variant="outline"
-            className="h-8 cursor-pointer rounded-full border-border bg-card px-3.5 text-card-foreground hover:bg-card aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
+            size="compact"
+            aria-label={option.name}
+            className="flex-1 cursor-pointer aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
           >
             {option.text}
           </ToggleGroupItem>
@@ -71,28 +101,91 @@ function PillGroup<Value extends string | number>({
 }
 
 /**
- * The hero playground: one live emoji on a fixed-height stage with pill
- * toggles below for size, skin tone and when it plays. A React island hydrated
- * when the browser is idle.
+ * The hero customizer: one live emoji on a fixed-height dot-grid stage, compact
+ * segmented controls for emoji, size, skin tone and playback, and the shared
+ * code block below, which follows the controls by swapping its placeholder
+ * tokens. A React island hydrated when the browser is idle.
  * @param props - Component props.
- * @param props.labels - Localized toggle and emoji labels.
- * @returns The playground card.
+ * @param props.emojis - The curated emojis, in display order.
+ * @param props.plainTabs - Highlighted snippets without a tone attribute.
+ * @param props.tonedTabs - Highlighted snippets with a tone attribute.
+ * @param props.labels - Localized control, emoji and code block labels.
+ * @returns The customizer card.
  */
-export default function DemoPlayground({ labels }: { labels: DemoLabels }) {
+export default function DemoPlayground({
+  emojis,
+  plainTabs,
+  tonedTabs,
+  labels,
+}: DemoPlaygroundProps) {
   const [state, setState] = useState<DemoState>(INITIAL_DEMO_STATE)
-  const props = demoEmojiProps(state)
+  const emoji = emojis.find((candidate) => candidate.id === state.emojiId)
+  const initialEmoji = emojis.find(
+    (candidate) => candidate.id === INITIAL_DEMO_STATE.emojiId,
+  )
+  const current = emoji ?? initialEmoji
+  const hasTones = (current?.tones.length ?? 0) > 0
+  const slotValues = useMemo(
+    () => (current ? demoSlotValues(current, state) : undefined),
+    [current, state],
+  )
+  if (!current) return null
+
+  const toned = demoTone(current, state) !== undefined
+  const tabs = (toned ? tonedTabs : plainTabs).map((tab) => ({
+    ...tab,
+    code: demoSnippetCode(current, tab.id as SnippetKind, state),
+  }))
+  const name =
+    labels.emojis[
+      DEMO_EMOJIS.find((candidate) => candidate.id === current.id)?.name ??
+        'wave'
+    ]
+
   return (
-    <div className="overflow-hidden rounded-brand border border-border bg-card">
-      <div className="flex h-[260px] items-center justify-center max-[859px]:h-48">
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-border bg-card">
+      <div
+        className="relative flex h-[260px] items-center justify-center border-b border-border bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-[length:16px_16px]"
+        data-testid="demo-stage"
+      >
         <Emoji
-          key={`${state.play}-${state.tone}-${String(state.size)}`}
-          id="1f44b_wavinghand"
-          alt={labels.emojiLabel}
-          {...props}
+          key={`${state.emojiId}-${state.play}-${state.tone}-${String(state.size)}`}
+          id={current.id}
+          alt={name}
+          {...demoEmojiProps(current, state)}
         />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-2 right-2"
+          disabled={isInitialDemoState(state)}
+          onClick={() => {
+            setState(INITIAL_DEMO_STATE)
+          }}
+        >
+          <RotateCcwIcon aria-hidden="true" />
+          {labels.reset}
+        </Button>
       </div>
-      <div className="flex flex-wrap gap-x-5 gap-y-3 border-t border-border px-4 py-3.5">
-        <PillGroup
+      <div className="grid gap-3 p-4 sm:grid-cols-2">
+        <Segmented
+          className="sm:col-span-2"
+          label={labels.emojiLabel}
+          options={DEMO_EMOJIS.filter((option) =>
+            emojis.some((candidate) => candidate.id === option.id),
+          ).map((option) => ({
+            value: option.id,
+            text:
+              emojis.find((candidate) => candidate.id === option.id)?.unicode ??
+              '',
+            name: labels.emojis[option.name],
+          }))}
+          selected={state.emojiId}
+          onSelect={(emojiId) => {
+            setState((previous) => ({ ...previous, emojiId }))
+          }}
+        />
+        <Segmented
           label={labels.sizeLabel}
           options={DEMO_SIZES.map((size) => ({
             value: size,
@@ -100,21 +193,10 @@ export default function DemoPlayground({ labels }: { labels: DemoLabels }) {
           }))}
           selected={state.size}
           onSelect={(size) => {
-            setState((current) => ({ ...current, size }))
+            setState((previous) => ({ ...previous, size }))
           }}
         />
-        <PillGroup
-          label={labels.toneLabel}
-          options={DEMO_TONES.map((tone) => ({
-            value: tone.id,
-            text: labels.tones[tone.id],
-          }))}
-          selected={state.tone}
-          onSelect={(tone) => {
-            setState((current) => ({ ...current, tone }))
-          }}
-        />
-        <PillGroup
+        <Segmented
           label={labels.playsLabel}
           options={DEMO_PLAYS.map((play) => ({
             value: play.id,
@@ -122,9 +204,25 @@ export default function DemoPlayground({ labels }: { labels: DemoLabels }) {
           }))}
           selected={state.play}
           onSelect={(play) => {
-            setState((current) => ({ ...current, play }))
+            setState((previous) => ({ ...previous, play }))
           }}
         />
+        <Segmented
+          className="sm:col-span-2"
+          label={labels.toneLabel}
+          disabled={!hasTones}
+          options={DEMO_TONES.map((tone) => ({
+            value: tone.id,
+            text: labels.tones[tone.id],
+          }))}
+          selected={state.tone}
+          onSelect={(tone) => {
+            setState((previous) => ({ ...previous, tone }))
+          }}
+        />
+      </div>
+      <div className="px-4 pb-4">
+        <CodeBlock tabs={tabs} labels={labels.code} slotValues={slotValues} />
       </div>
     </div>
   )
