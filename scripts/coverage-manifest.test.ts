@@ -89,6 +89,8 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Install block React island that wires Base UI tabs to the package manager store, which is tested in apps/site/src/highlight.',
   'apps/site/src/docs/components/DocumentationPagination.astro':
     'Presentational Astro override with no logic of its own, exercised in a real browser by the accessibility e2e spec.',
+  'apps/site/src/docs/code-focus.ts':
+    'Browser-only DOM tweak that adds a tab stop to code frames, exercised in a real browser by the accessibility e2e spec.',
   'apps/site/src/docs/install-block-client.ts':
     'Browser-only tab switcher over the package manager store, which is tested in apps/site/src/highlight.',
   'apps/site/src/home/DemoPlayground.tsx':

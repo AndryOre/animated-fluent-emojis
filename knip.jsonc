@@ -11,10 +11,10 @@
       "project": ["*.ts"],
     },
     "apps/site": {
-      "ignoreDependencies": ["@lucide/astro"],
       "entry": [
         "src/gallery/index.ts",
         "src/docs/install-block-client.ts",
+        "src/docs/code-focus.ts",
         "playwright.visual.config.ts",
         "e2e-visual/*.spec.ts",
       ],

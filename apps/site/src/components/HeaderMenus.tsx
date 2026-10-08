@@ -118,7 +118,7 @@ function ThemeMenu(props: { label: string; names: Record<Theme, string> }) {
           {THEME_ORDER.map((name) => {
             const Icon = THEME_ICONS[name]
             return (
-              <DropdownMenuRadioItem key={name} value={name}>
+              <DropdownMenuRadioItem key={name} value={name} closeOnClick>
                 <Icon className="size-4 text-muted-foreground" />
                 <span className="flex-1">{names[name]}</span>
               </DropdownMenuRadioItem>

@@ -22,6 +22,7 @@ async function chooseTheme(page: Page, name: 'System' | 'Light' | 'Dark') {
   ).not.toHaveAttribute('ssr', /.*/)
   await page.getByRole('button', { name: 'Theme' }).click()
   await page.getByRole('menuitemradio', { name }).click()
+  await expect(page.getByRole('menu')).toBeHidden()
 }
 
 test('the theme menu selects light and dark and remembers the choice', async ({
@@ -81,8 +82,9 @@ test('a stored theme is applied before the body is parsed', async ({
       ) {
         sessionStorage.setItem('dark-before-body', 'yes')
       }
-    }).observe(document.documentElement, {
+    }).observe(document, {
       attributes: true,
+      subtree: true,
       attributeFilter: ['class'],
     })
   })
