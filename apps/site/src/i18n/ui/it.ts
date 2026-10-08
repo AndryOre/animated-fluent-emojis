@@ -28,6 +28,7 @@ export const it: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Creato da {name}',
     attribution:
       'Le illustrazioni delle emoji sono di Microsoft. Il codice è open source. Non affiliato a Microsoft né approvato da Microsoft.',
     navLabel: 'Piè di pagina',
@@ -190,6 +191,11 @@ export const it: UiStrings = {
     copyId: "Copia l'id",
     copyName: 'Copia il nome',
     zoomLabel: 'Zoom',
+    keywordsLabel: 'Parole chiave',
+    openPage: 'Apri la pagina',
+    snippetMenuLabel: 'Altri formati di codice',
+    copySnippetAs: 'Copia {adapter}',
+    filesError: 'Impossibile caricare i file.',
     fileActionGroupDownload: 'Scarica',
     fileActionGroupCopy: 'Copia URL',
     fileActionKindAnimated: 'animato',

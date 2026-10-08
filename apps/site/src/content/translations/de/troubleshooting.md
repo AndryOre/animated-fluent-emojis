@@ -1,6 +1,6 @@
 ---
 title: Fehlerbehebung
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 Probleme, gruppiert nach dem, was du siehst, jeweils mit der Ursache im Code und
@@ -73,13 +73,13 @@ genannten Zeilen.
 
 - Unbekannte ID: Verwende eine bekannte ID. `EmojiId` vervollständigt sie
   automatisch, und der Export `lookup` kann sie durchsuchen (siehe
-  [Lookup](usage.md#lookup)).
+  [Lookup](guide/lookup.md)).
 - Fehlgeschlagenes Manifest: Prüfe, dass `<asset site>/v1/manifest.slim.json`
   vom Browser aus mit 200 antwortet. Ein fehlgeschlagener Ladevorgang wird beim
   nächsten Mount, bei `preloadEmojis` und beim Wiederverbinden des Browsers
   erneut versucht.
 - Übergib einen `fallback`, wenn das Emoji nie eine Lücke im Layout hinterlassen
-  darf. Siehe [Fallback](usage.md#fallback).
+  darf. Siehe [Fallback](guide/behavior.md#fallback).
 
 ## Das Manifest wird von der CSP blockiert oder der Browser ist offline
 
@@ -101,7 +101,8 @@ der Fetch abgelehnt und der Store wechselt in `error`. Sobald der Browser
 `img-src`. Die genauen Direktiven stehen unter
 [CSP-Anforderungen](security.md#csp-requirements). Wenn du selbst hostest,
 erlaube stattdessen deinen eigenen Origin und rufe `configureEmojis` auf, bevor
-das erste `Emoji` gerendert wird. Siehe [Asset site](usage.md#asset-site).
+das erste `Emoji` gerendert wird. Siehe
+[Asset site](guide/assets.md#asset-site).
 
 ## Next.js meldet einen Fehler bei configureEmojis oder Emoji
 

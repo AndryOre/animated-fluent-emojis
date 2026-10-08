@@ -29,6 +29,7 @@ export const pt_BR: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Criado por {name}',
     attribution:
       'A arte dos emojis é da Microsoft. O código é aberto. Não temos afiliação nem aprovação da Microsoft.',
     navLabel: 'Rodapé',
@@ -191,6 +192,11 @@ export const pt_BR: UiStrings = {
     copyId: 'Copiar ID',
     copyName: 'Copiar nome',
     zoomLabel: 'Zoom',
+    keywordsLabel: 'Palavras-chave',
+    openPage: 'Abrir página',
+    snippetMenuLabel: 'Mais formatos de código',
+    copySnippetAs: 'Copiar {adapter}',
+    filesError: 'Não foi possível carregar os arquivos.',
     fileActionGroupDownload: 'Baixar',
     fileActionGroupCopy: 'Copiar URL',
     fileActionKindAnimated: 'animado',

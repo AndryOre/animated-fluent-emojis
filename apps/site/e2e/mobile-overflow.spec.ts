@@ -77,6 +77,34 @@ for (const width of VIEWPORT_WIDTHS) {
         expect(metrics.offenders).toEqual([])
       })
 
+      if (path.endsWith('/emojis/')) {
+        test(`${path} emoji sheet stays inside the viewport`, async ({
+          page,
+        }) => {
+          await page.goto(path)
+          await page.locator('[data-slug]').first().click()
+          const sheet = page.locator(
+            '[role="region"][aria-labelledby="emoji-sheet-heading"]',
+          )
+          await expect(sheet).toBeVisible()
+          const box = await sheet.boundingBox()
+          expect(box?.x ?? Infinity).toBeGreaterThanOrEqual(
+            -OVERFLOW_TOLERANCE_PX,
+          )
+          expect((box?.x ?? 0) + (box?.width ?? Infinity)).toBeLessThanOrEqual(
+            width + OVERFLOW_TOLERANCE_PX,
+          )
+          const scrollWidth = await page.evaluate(
+            'document.documentElement.scrollWidth',
+          )
+          expect(scrollWidth).toBeLessThanOrEqual(width)
+          const sheetScrollWidth = await sheet.evaluate(
+            (element) => element.scrollWidth - element.clientWidth,
+          )
+          expect(sheetScrollWidth).toBeLessThanOrEqual(OVERFLOW_TOLERANCE_PX)
+        })
+      }
+
       test(`${path} header menus stay inside the viewport`, async ({
         page,
       }) => {

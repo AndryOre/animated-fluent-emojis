@@ -8,9 +8,10 @@ import HeaderMenus from './HeaderMenus'
 interface Props {
   locale: Locale
   path?: string
+  skipTarget?: string
 }
 
-const { locale, path = '/' } = Astro.props
+const { locale, path = '/', skipTarget = '#main' } = Astro.props
 const { header } = getUi(locale)
 const links = [
   { href: localePath(locale, '/emojis/'), label: header.nav.gallery },
@@ -28,7 +29,7 @@ const linkClass =
 
 <header class="relative z-10 border-b border-border">
   <a
-    href="#main"
+    href={skipTarget}
     class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
   >
     {header.skipLink}

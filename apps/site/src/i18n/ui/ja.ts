@@ -29,6 +29,7 @@ export const ja: UiStrings = {
     },
   },
   footer: {
+    builtBy: '制作: {name}',
     attribution:
       '絵文字のアートワークは Microsoft のものです。コードはオープンソースです。Microsoft とは提携しておらず、承認も受けていません。',
     navLabel: 'フッター',
@@ -190,6 +191,11 @@ export const ja: UiStrings = {
     copyId: 'ID をコピー',
     copyName: '名前をコピー',
     zoomLabel: 'ズーム',
+    keywordsLabel: 'キーワード',
+    openPage: 'ページを開く',
+    snippetMenuLabel: 'その他のコード形式',
+    copySnippetAs: '{adapter} をコピー',
+    filesError: 'ファイルを読み込めませんでした。',
     fileActionGroupDownload: 'ダウンロード',
     fileActionGroupCopy: 'URL をコピー',
     fileActionKindAnimated: 'アニメーション',

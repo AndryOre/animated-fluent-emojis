@@ -29,6 +29,7 @@ export const ko: UiStrings = {
     },
   },
   footer: {
+    builtBy: '제작: {name}',
     attribution:
       '이모지 아트워크는 Microsoft의 것입니다. 코드는 오픈 소스입니다. Microsoft와 제휴하거나 승인받은 프로젝트가 아닙니다.',
     navLabel: '푸터',
@@ -191,6 +192,11 @@ export const ko: UiStrings = {
     copyId: 'ID 복사',
     copyName: '이름 복사',
     zoomLabel: '확대',
+    keywordsLabel: '키워드',
+    openPage: '페이지 열기',
+    snippetMenuLabel: '다른 코드 형식',
+    copySnippetAs: '{adapter} 복사',
+    filesError: '파일을 불러오지 못했습니다.',
     fileActionGroupDownload: '내려받기',
     fileActionGroupCopy: 'URL 복사',
     fileActionKindAnimated: '애니메이션',

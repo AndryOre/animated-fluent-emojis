@@ -134,15 +134,114 @@ test('Ctrl+K focuses the search and typing updates the URL', async ({
   await expect(page).toHaveURL(/[?&]q=fire/)
 })
 
-test('snippet tabs switch with the arrow keys', async ({ page }) => {
+test('the snippet adapter persists across reloads', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.locator('[data-slug]').first().click()
-  await page.getByRole('tab', { name: 'React' }).focus()
-  await page.keyboard.press('ArrowRight')
-  await expect(page.getByRole('tab', { name: 'Vue' })).toHaveAttribute(
-    'aria-selected',
-    'true',
+  await page.getByRole('button', { name: 'Copy React' }).waitFor()
+  await page.getByRole('button', { name: 'More snippet formats' }).click()
+  await page.getByRole('menuitem', { name: 'Vue' }).click()
+  await expect(page.getByRole('button', { name: 'Copy Vue' })).toBeVisible()
+  const copied = await page.evaluate<string>('navigator.clipboard.readText()')
+  expect(copied).toContain('animated-fluent-emojis/vue')
+  expect(
+    await page.evaluate<string | null>(
+      "localStorage.getItem('afe:snippet-adapter')",
+    ),
+  ).toBe('vue')
+  await page.reload()
+  await page.locator('[data-slug]').first().click()
+  await expect(page.getByRole('button', { name: 'Copy Vue' })).toBeVisible()
+})
+
+test('Open page links to the emoji page', async ({ page }) => {
+  const cell = page.locator('[data-slug]').first()
+  const slug = await cell.getAttribute('data-slug')
+  await cell.click()
+  await expect(page.getByRole('link', { name: 'Open page' })).toHaveAttribute(
+    'href',
+    `/emojis/${slug ?? ''}/`,
   )
-  await expect(page.getByRole('tabpanel')).toBeVisible()
+})
+
+test.describe('emoji sheet on a wide screen', () => {
+  test.use({ viewport: { width: 1920, height: 900 } })
+
+  test('the grid spans the container and the sheet docks at the bottom', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    const grid = page.getByRole('group', { name: 'Emojis' })
+    const container = page.locator('main.site-container')
+    await expect(grid).toBeVisible()
+    const gridBox = await grid.boundingBox()
+    const mainBox = await container.boundingBox()
+    expect(gridBox?.width ?? 0).toBeGreaterThan(1100)
+    expect(gridBox?.width ?? 0).toBeGreaterThan((mainBox?.width ?? 0) * 0.7)
+
+    await page.locator('[data-slug]').first().click()
+    const sheet = page.locator(
+      '[role="region"][aria-labelledby="emoji-sheet-heading"]',
+    )
+    await expect(sheet).toBeVisible()
+    const sheetBox = await sheet.boundingBox()
+    expect((sheetBox?.y ?? 0) + (sheetBox?.height ?? 0)).toBeCloseTo(900, 0)
+    expect(sheetBox?.width).toBe(1920)
+
+    const second = page.locator('[data-slug]').nth(1)
+    await second.click()
+    await expect(second).toHaveAttribute('aria-pressed', 'true')
+    await expect(sheet).toBeVisible()
+  })
+
+  test('Escape closes the sheet and focus stays on the tile', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    const cell = page.locator('[data-slug]').first()
+    await cell.click()
+    const sheet = page.locator(
+      '[role="region"][aria-labelledby="emoji-sheet-heading"]',
+    )
+    await expect(sheet).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(sheet).toBeHidden()
+    await expect(cell).toBeFocused()
+  })
+
+  test('the close button closes the sheet and returns focus to the tile', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    const cell = page.locator('[data-slug]').first()
+    await cell.click()
+    await page.getByRole('button', { name: 'Close', exact: true }).click()
+    await expect(
+      page.locator('[role="region"][aria-labelledby="emoji-sheet-heading"]'),
+    ).toBeHidden()
+    await expect(cell).toBeFocused()
+  })
+
+  test('the last row stays reachable while the sheet is open', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    await page.locator('[data-slug]').first().click()
+    const sheet = page.locator(
+      '[role="region"][aria-labelledby="emoji-sheet-heading"]',
+    )
+    await expect(sheet).toBeVisible()
+    const last = page.locator('[data-slug]').last()
+    await last.scrollIntoViewIfNeeded()
+    await page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+    const lastBox = await last.boundingBox()
+    const sheetBox = await sheet.boundingBox()
+    expect((lastBox?.y ?? 0) + (lastBox?.height ?? 0)).toBeLessThanOrEqual(
+      (sheetBox?.y ?? 0) + 1,
+    )
+  })
 })
 
 test.describe('mobile sheet', () => {
@@ -166,18 +265,27 @@ test.describe('mobile sheet', () => {
     await expect(trigger).toBeFocused()
   })
 
-  test('traps focus and returns it to the cell on Escape', async ({ page }) => {
+  test('the emoji sheet stacks its columns inside 80vh and closes on Escape', async ({
+    page,
+  }) => {
     await page.goto('/emojis/')
     const cell = page.locator('[data-slug]').first()
     await cell.click()
-    const dialog = page.getByRole('dialog')
-    await expect(dialog).toBeVisible()
-    for (let press = 0; press < 40; press++) {
-      await page.keyboard.press('Tab')
-      await expect(dialog.locator(':focus')).toHaveCount(1)
-    }
+    const sheet = page.locator(
+      '[role="region"][aria-labelledby="emoji-sheet-heading"]',
+    )
+    await expect(sheet).toBeVisible()
+    const box = await sheet.boundingBox()
+    expect(box?.height ?? Infinity).toBeLessThanOrEqual(800 * 0.8 + 1)
+    const copyId = await page
+      .getByRole('button', { name: 'Copy id' })
+      .boundingBox()
+    const download = await page
+      .getByRole('button', { name: 'Download WebP' })
+      .boundingBox()
+    expect(download?.y ?? 0).toBeGreaterThan(copyId?.y ?? Infinity)
     await page.keyboard.press('Escape')
-    await expect(dialog).toBeHidden()
+    await expect(sheet).toBeHidden()
     await expect(cell).toBeFocused()
   })
 })

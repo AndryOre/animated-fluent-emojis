@@ -1,6 +1,6 @@
 ---
 title: Auto-héberger les assets
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 Servez le manifest et les sprite sheets depuis une origine que vous contrôlez,
@@ -37,7 +37,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 
 L'appeler après la requête du manifest réinitialise le manifest et émet un
 avertissement en développement. Voir la section
-[asset site](../usage.md#asset-site) du guide d'utilisation.
+[asset site](../guide/assets.md#asset-site) du guide d'utilisation.
 
 ## Définir la Content Security Policy
 
@@ -63,4 +63,4 @@ Ouvrez la page avec le panneau réseau et vérifiez que la requête du manifest 
 vers `/v1/manifest.slim.json` sur votre origine, et qu'aucune requête ne va vers
 `animated-fluent-emojis-cdn.andryore.dev`. Une requête bloquée apparaît comme
 une violation de CSP dans la console, et l'emoji rend son fallback ; voir
-[fallback](../usage.md#fallback).
+[fallback](../guide/behavior.md#fallback).

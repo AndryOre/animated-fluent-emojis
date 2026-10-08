@@ -1,6 +1,6 @@
 ---
 title: Utiliser avec Preact
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 Il y a deux façons d'utiliser des emojis dans Preact : l'élément
@@ -52,10 +52,10 @@ export function Greeting() {
 ```
 
 Les attributs, propriétés et événements sont listés dans le
-[guide d'utilisation](../usage.md#plain-html).
+[guide d'utilisation](../guide/frameworks.md#plain-html).
 
 ## L'adaptateur React
 
 Faites de `react` et `react-dom` des alias de `preact/compat` dans votre
 bundler, puis utilisez l'adaptateur React comme documenté dans le
-[guide d'utilisation](../usage.md#react).
+[guide d'utilisation](../guide/frameworks.md#react).

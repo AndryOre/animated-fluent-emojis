@@ -27,6 +27,7 @@ export const en = {
     },
   },
   footer: {
+    builtBy: 'Built by {name}',
     attribution:
       "The emoji artwork is Microsoft's. The code is open source. Not affiliated with or endorsed by Microsoft.",
     navLabel: 'Footer',
@@ -189,6 +190,11 @@ export const en = {
     copyId: 'Copy id',
     copyName: 'Copy name',
     zoomLabel: 'Zoom',
+    keywordsLabel: 'Keywords',
+    openPage: 'Open page',
+    snippetMenuLabel: 'More snippet formats',
+    copySnippetAs: 'Copy {adapter}',
+    filesError: 'The files could not load.',
     fileActionGroupDownload: 'Download',
     fileActionGroupCopy: 'Copy URL',
     fileActionKindAnimated: 'animated',

@@ -29,6 +29,7 @@ export const ru: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Автор: {name}',
     attribution:
       'Графика эмодзи принадлежит Microsoft. Код с открытым исходным кодом. Проект не связан с Microsoft и не одобрен ею.',
     navLabel: 'Подвал',
@@ -190,6 +191,11 @@ export const ru: UiStrings = {
     copyId: 'Копировать ID',
     copyName: 'Копировать название',
     zoomLabel: 'Масштаб',
+    keywordsLabel: 'Ключевые слова',
+    openPage: 'Открыть страницу',
+    snippetMenuLabel: 'Другие форматы кода',
+    copySnippetAs: 'Копировать {adapter}',
+    filesError: 'Не удалось загрузить файлы.',
     fileActionGroupDownload: 'Скачать',
     fileActionGroupCopy: 'Копировать URL',
     fileActionKindAnimated: 'анимация',

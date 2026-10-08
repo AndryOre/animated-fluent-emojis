@@ -15,6 +15,14 @@
     border-bottom: 0;
   }
 
+  @media (max-width: 49.99rem) {
+    [data-has-sidebar] .header {
+      padding-inline-end: calc(
+        var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
+      );
+    }
+  }
+
   .header > header {
     display: flex;
     flex-direction: column;

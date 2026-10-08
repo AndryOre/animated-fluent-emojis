@@ -28,6 +28,7 @@ export const de: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Entwickelt von {name}',
     attribution:
       'Die Emoji-Grafiken gehören Microsoft. Der Code ist Open Source. Keine Verbindung zu Microsoft und keine Billigung durch Microsoft.',
     navLabel: 'Fußbereich',
@@ -191,6 +192,11 @@ export const de: UiStrings = {
     copyId: 'ID kopieren',
     copyName: 'Namen kopieren',
     zoomLabel: 'Zoom',
+    keywordsLabel: 'Stichwörter',
+    openPage: 'Seite öffnen',
+    snippetMenuLabel: 'Weitere Snippet-Formate',
+    copySnippetAs: '{adapter} kopieren',
+    filesError: 'Die Dateien konnten nicht geladen werden.',
     fileActionGroupDownload: 'Herunterladen',
     fileActionGroupCopy: 'URL kopieren',
     fileActionKindAnimated: 'animiert',

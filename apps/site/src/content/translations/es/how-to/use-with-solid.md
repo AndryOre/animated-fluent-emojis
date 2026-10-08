@@ -1,6 +1,6 @@
 ---
 title: Usa con Solid
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 Renderiza emojis en Solid mediante el elemento `<fluent-emoji>`. No hay un
@@ -50,4 +50,4 @@ El fallback se pasa como hijo con `slot="fallback"`, y `ref` te da el elemento:
 ```
 
 Los atributos, propiedades y eventos están listados en la
-[guía de uso](../usage.md#plain-html).
+[guía de uso](../guide/frameworks.md#plain-html).

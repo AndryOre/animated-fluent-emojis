@@ -1,6 +1,6 @@
 ---
 title: Für einen Picker vorladen
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 Wärme das Manifest und die Sprite Sheets auf, bevor sich ein Emoji-Picker
@@ -53,5 +53,5 @@ dann vergeudet.
 Die Manifest-Anfrage gibt nach 15 Sekunden auf. Ein fehlgeschlagenes Manifest
 wird beim nächsten Aufruf von `preloadEmojis`, beim nächsten Mount oder beim
 Wiederverbinden des Browsers erneut versucht, ein erneuter Aufruf vom Auslöser
-aus ist also unbedenklich. Siehe [Preloading](../usage.md#preloading) und
-[Fallback](../usage.md#fallback).
+aus ist also unbedenklich. Siehe [Preloading](../guide/assets.md#preloading) und
+[Fallback](../guide/behavior.md#fallback).

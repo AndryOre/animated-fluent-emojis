@@ -2,6 +2,7 @@
 import { localePath, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { NPM_URL, REPOSITORY_URL } from '../site-links'
+import FooterCredit from './FooterCredit.astro'
 
 interface Props {
   locale: Locale
@@ -18,9 +19,12 @@ const links = [
 ---
 
 <footer class="border-t border-border text-sm text-muted-foreground">
-  <div class="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-6 md:px-6">
+  <div class="site-container flex flex-col gap-3 py-5 min-[640px]:flex-row min-[640px]:flex-wrap min-[640px]:items-center min-[640px]:justify-between min-[640px]:gap-x-6">
     <p class="max-w-prose">{footer.attribution}</p>
-    <nav aria-label={footer.navLabel} class="flex flex-wrap gap-x-4 gap-y-2">
+    <nav
+      aria-label={footer.navLabel}
+      class="flex flex-wrap gap-x-4 gap-y-2 text-[13px] font-semibold"
+    >
       {links.map((link) => (
         <a
           href={link.href}
@@ -30,5 +34,6 @@ const links = [
         </a>
       ))}
     </nav>
+    <FooterCredit locale={locale} />
   </div>
 </footer>

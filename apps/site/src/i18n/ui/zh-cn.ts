@@ -29,6 +29,7 @@ export const zh_CN: UiStrings = {
     },
   },
   footer: {
+    builtBy: '由 {name} 构建',
     attribution:
       'emoji 图稿归 Microsoft 所有，代码是开源的。与 Microsoft 无关联，也未获其认可。',
     navLabel: '页脚',
@@ -188,6 +189,11 @@ export const zh_CN: UiStrings = {
     copyId: '复制 id',
     copyName: '复制名称',
     zoomLabel: '缩放',
+    keywordsLabel: '关键词',
+    openPage: '打开页面',
+    snippetMenuLabel: '更多代码格式',
+    copySnippetAs: '复制 {adapter}',
+    filesError: '文件无法加载。',
     fileActionGroupDownload: '下载',
     fileActionGroupCopy: '复制 URL',
     fileActionKindAnimated: '动画',

@@ -1,6 +1,6 @@
 ---
 title: Mit Solid verwenden
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 Binde Emojis in Solid über das Element `<fluent-emoji>` ein. Es gibt keinen
@@ -51,4 +51,4 @@ Element:
 ```
 
 Attribute, Properties und Events sind im
-[Nutzungsleitfaden](../usage.md#plain-html) aufgeführt.
+[Nutzungsleitfaden](../guide/frameworks.md#plain-html) aufgeführt.

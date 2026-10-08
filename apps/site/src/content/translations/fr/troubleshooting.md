@@ -1,6 +1,6 @@
 ---
 title: Dépannage
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 Les problèmes sont regroupés selon ce que vous voyez, chacun avec la cause dans
@@ -74,12 +74,12 @@ qui se trouve dans l'un de ces quatre états :
 ci-dessus.
 
 - Id inconnu : utilisez un id connu. `EmojiId` les autocomplète, et l'export
-  `lookup` permet de les rechercher (voir [Lookup](usage.md#lookup)).
+  `lookup` permet de les rechercher (voir [Lookup](guide/lookup.md)).
 - Manifest en échec : confirmez que `<asset site>/v1/manifest.slim.json` répond
   200 depuis le navigateur. Un chargement échoué est retenté au prochain
   montage, sur `preloadEmojis` et lorsque le navigateur revient en ligne.
 - Passez un `fallback` si l'emoji ne doit jamais laisser un trou dans la mise en
-  page. Voir [Fallback](usage.md#fallback).
+  page. Voir [Fallback](guide/behavior.md#fallback).
 
 ## Le manifest est bloqué par la CSP ou le navigateur est hors ligne
 
@@ -101,7 +101,7 @@ réessaie lorsque le navigateur déclenche `online`. `configureEmojis` avec un
 `img-src`. Les directives exactes se trouvent dans
 [exigences CSP](security.md#csp-requirements). Si vous auto-hébergez, autorisez
 plutôt votre propre origine et appelez `configureEmojis` avant le premier rendu
-d'un `Emoji`. Voir [Asset site](usage.md#asset-site).
+d'un `Emoji`. Voir [Asset site](guide/assets.md#asset-site).
 
 ## Next.js signale une erreur pour configureEmojis ou Emoji
 
