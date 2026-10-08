@@ -195,6 +195,7 @@ export function Gallery(props: GalleryProps) {
 
   function updateFilters(change: Partial<typeof filters>) {
     setFilters((current) => ({ ...current, ...change }))
+    if ('query' in change || 'category' in change) setSheetOpen(false)
     setVisibleCount(PAGE_SIZE)
   }
 
