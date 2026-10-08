@@ -1,6 +1,6 @@
 ---
 title: Preact で使う
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 Preact で絵文字を使う方法は二つあります。`<fluent-emoji>`
@@ -50,9 +50,9 @@ export function Greeting() {
 }
 ```
 
-属性、プロパティ、イベントは[使い方ガイド](../usage.md#plain-html)に一覧があります。
+属性、プロパティ、イベントは[使い方ガイド](../guide/frameworks.md#plain-html)に一覧があります。
 
 ## React アダプター
 
 バンドラーで `react` と `react-dom` を `preact/compat`
-のエイリアスにしてから、[使い方ガイド](../usage.md#react)の説明どおりに React アダプターを使います。
+のエイリアスにしてから、[使い方ガイド](../guide/frameworks.md#react)の説明どおりに React アダプターを使います。

@@ -1,6 +1,6 @@
 ---
 title: Ospitare gli asset in autonomia
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 Servi il manifest e gli sprite sheet da un'origin che controlli, e punta `Emoji`
@@ -34,7 +34,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 
 Se la chiami dopo che il manifest è stato richiesto, il manifest viene
 reimpostato e in sviluppo compare un avviso. Vedi la sezione
-[asset site](../usage.md#asset-site) della guida all'uso.
+[asset site](../guide/assets.md#asset-site) della guida all'uso.
 
 ## Imposta la Content Security Policy
 
@@ -59,4 +59,4 @@ Apri la pagina con il pannello di rete e controlla che la richiesta del manifest
 vada a `/v1/manifest.slim.json` sulla tua origin, e che nessuna richiesta vada a
 `animated-fluent-emojis-cdn.andryore.dev`. Una richiesta bloccata compare come
 violazione CSP nella console, e l'emoji renderizza il suo fallback; vedi
-[fallback](../usage.md#fallback).
+[fallback](../guide/behavior.md#fallback).

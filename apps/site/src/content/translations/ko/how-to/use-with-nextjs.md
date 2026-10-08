@@ -1,6 +1,6 @@
 ---
 title: Next.js에서 사용하기
-sourceHash: 4a0c3dc179e6b339
+sourceHash: 6f92dff657703a74
 ---
 
 App Router에서 `Emoji`를 렌더링합니다. Server Component에서도 동작합니다.
@@ -70,4 +70,4 @@ export function EmojiSetup() {
 
 `animated-fluent-emojis/lookup`에는 React도 `"use client"` 배너도 없으므로
 Server Component와 route handler에서도 동작합니다.
-[lookup](../usage.md#lookup)을 참고하세요.
+[lookup](../guide/lookup.md)을 참고하세요.

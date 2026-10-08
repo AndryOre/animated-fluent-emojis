@@ -1,6 +1,6 @@
 ---
 title: トラブルシューティング
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 問題は目に見える症状ごとにまとめ、それぞれにコード上の原因と対処法を載せています。APIの全体像は[使い方ガイド](usage.md)を参照してください。
@@ -69,12 +69,12 @@ import 'animated-fluent-emojis/style.css'
 **対処法:** コンソールとネットワークタブを開き、上記の行を探します。
 
 - 不明な id: 有効な id を使います。`EmojiId` が候補を補完し、`lookup`
-  エクスポートで検索できます（[Lookup](usage.md#lookup)を参照）。
+  エクスポートで検索できます（[Lookup](guide/lookup.md)を参照）。
 - マニフェストの失敗: ブラウザから `<asset site>/v1/manifest.slim.json`
   が 200 を返すことを確認します。失敗した読み込みは、次のマウント時、`preloadEmojis`
   の呼び出し時、ブラウザがオンラインに戻ったときに再試行されます。
 - 絵文字がレイアウトに穴を空けてはならない場合は、`fallback` を渡します。
-  [Fallback](usage.md#fallback)を参照してください。
+  [Fallback](guide/behavior.md#fallback)を参照してください。
 
 ## マニフェストが CSP にブロックされる、またはブラウザがオフラインである
 
@@ -96,7 +96,7 @@ import 'animated-fluent-emojis/style.css'
 `img-src` で許可します。正確なディレクティブは
 [CSP の要件](security.md#csp-requirements)にあります。セルフホストする場合は、代わりに自分のオリジンを許可し、最初の
 `Emoji` がレンダリングされる前に `configureEmojis`
-を呼び出してください。[Asset site](usage.md#asset-site)を参照してください。
+を呼び出してください。[Asset site](guide/assets.md#asset-site)を参照してください。
 
 ## Next.js が configureEmojis または Emoji でエラーを報告する
 

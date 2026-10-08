@@ -1,6 +1,6 @@
 ---
 title: 문제 해결
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 보이는 증상별로 문제를 묶고, 각각 코드상의 원인과 해결 방법을 적었습니다. 전체
@@ -70,12 +70,12 @@ import 'animated-fluent-emojis/style.css'
 **해결:** 콘솔과 네트워크 탭을 열고 위의 로그를 찾아보세요.
 
 - 알 수 없는 id: 알려진 id를 사용하세요. `EmojiId`가 자동 완성해 주며, `lookup`
-  export로 검색할 수도 있습니다([Lookup](usage.md#lookup) 참고).
+  export로 검색할 수도 있습니다([Lookup](guide/lookup.md) 참고).
 - manifest 실패: 브라우저에서 `<asset site>/v1/manifest.slim.json`이 200으로
   응답하는지 확인하세요. 실패한 로드는 다음 마운트, `preloadEmojis`, 그리고
   브라우저가 다시 온라인이 될 때 재시도됩니다.
 - emoji가 레이아웃에 빈 공간을 남기면 안 된다면 `fallback`을 전달하세요.
-  [Fallback](usage.md#fallback)을 참고하세요.
+  [Fallback](guide/behavior.md#fallback)을 참고하세요.
 
 ## CSP가 manifest를 차단하거나 브라우저가 오프라인일 때
 
@@ -96,7 +96,7 @@ fetch가 reject되어 스토어가 `error` 상태가 되고, 브라우저가 `on
 `img-src`에서 허용하세요. 정확한 지시문은
 [CSP 요구 사항](security.md#csp-requirements)에 있습니다. 자체 호스팅한다면 대신
 자신의 origin을 허용하고, 첫 `Emoji`가 렌더링되기 전에 `configureEmojis`를
-호출하세요. [Asset site](usage.md#asset-site)를 참고하세요.
+호출하세요. [Asset site](guide/assets.md#asset-site)를 참고하세요.
 
 ## Next.js가 configureEmojis 또는 Emoji에서 오류를 보고할 때
 

@@ -1,6 +1,6 @@
 ---
 title: 피커를 위해 프리로드하기
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 emoji 피커가 열리기 전에 manifest와 sprite sheet를 미리 준비해 두면, 눈에 띄는
@@ -48,5 +48,5 @@ site를 바꾸면 manifest가 초기화되어, 미리 준비한 요청이 낭비
 
 manifest 요청은 15초 후에 포기합니다. 실패한 manifest는 다음 `preloadEmojis`
 호출, 다음 마운트, 또는 브라우저가 다시 온라인이 될 때 재시도되므로, 트리거에서
-다시 호출해도 안전합니다. [프리로드](../usage.md#preloading)와
-[fallback](../usage.md#fallback)을 참고하세요.
+다시 호출해도 안전합니다. [프리로드](../guide/assets.md#preloading)와
+[fallback](../guide/behavior.md#fallback)을 참고하세요.

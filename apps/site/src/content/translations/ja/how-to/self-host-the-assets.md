@@ -1,6 +1,6 @@
 ---
 title: アセットをセルフホストする
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 マニフェストとスプライトシートを自分で管理するオリジンから配信し、`Emoji`
@@ -33,7 +33,7 @@ import { configureEmojis } from 'animated-fluent-emojis'
 configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 ```
 
-マニフェストがリクエストされた後に呼び出すと、マニフェストがリセットされ、開発中は警告が出ます。使い方ガイドの[アセットサイト](../usage.md#asset-site)のセクションを参照してください。
+マニフェストがリクエストされた後に呼び出すと、マニフェストがリセットされ、開発中は警告が出ます。使い方ガイドの[アセットサイト](../guide/assets.md#asset-site)のセクションを参照してください。
 
 ## Content Security Policy を設定する
 
@@ -57,4 +57,4 @@ img-src https://emojis.example.com
 `/v1/manifest.slim.json` に送られていること、そして
 `animated-fluent-emojis-cdn.andryore.dev`
 へのリクエストがないことを確認します。ブロックされたリクエストはコンソールに CSP 違反として表示され、絵文字はフォールバックをレンダリングします。
-[フォールバック](../usage.md#fallback)を参照してください。
+[フォールバック](../guide/behavior.md#fallback)を参照してください。
