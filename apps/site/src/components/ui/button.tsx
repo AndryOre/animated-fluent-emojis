@@ -12,16 +12,18 @@ const buttonStyles = cva(
         outline:
           'border border-border bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground hover:brightness-95',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        ghost:
+          'hover:bg-muted hover:text-foreground active:scale-[0.97] ease-(--ease-out-strong)',
         destructive:
           'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:ring-destructive/20',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-8 gap-1.5 px-2.5',
-        sm: 'h-7 gap-1 px-2.5 text-[0.8rem]',
+        sm: 'h-8 gap-1 px-2.5 text-[0.8rem]',
         lg: 'h-9 gap-1.5 px-2.5',
         icon: 'size-8',
+        'icon-sm': 'size-8',
       },
       shape: {
         default: 'rounded-lg',

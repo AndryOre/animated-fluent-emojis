@@ -11,6 +11,7 @@
       "project": ["*.ts"],
     },
     "apps/site": {
+      "ignoreDependencies": ["@lucide/astro"],
       "entry": [
         "src/gallery/index.ts",
         "playwright.visual.config.ts",
