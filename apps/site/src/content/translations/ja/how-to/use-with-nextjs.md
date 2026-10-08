@@ -1,6 +1,6 @@
 ---
 title: Next.js で使う
-sourceHash: 4a0c3dc179e6b339
+sourceHash: 6f92dff657703a74
 ---
 
 App Router で `Emoji` をレンダリングします。Server Component からも使えます。
@@ -69,4 +69,4 @@ Policy は[アセットをセルフホストする](self-host-the-assets.md)、�
 
 `animated-fluent-emojis/lookup` には React も `"use client"`
 バナーもないため、Server
-Component やルートハンドラーでも動作します。[lookup](../usage.md#lookup)を参照してください。
+Component やルートハンドラーでも動作します。[lookup](../guide/lookup.md)を参照してください。

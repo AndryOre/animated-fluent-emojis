@@ -1,6 +1,6 @@
 ---
 title: Angular에서 사용하기
-sourceHash: fe6f60a9eefc53a0
+sourceHash: 45537066a981f484
 ---
 
 Angular에서는 `<fluent-emoji>` 요소로 emoji를 렌더링합니다. Angular 전용
@@ -52,6 +52,7 @@ export class GreetingComponent {}
 ```
 
 attribute, property, 이벤트의 전체 목록은
-[사용 가이드](../usage.md#plain-html)에 있습니다. 요소가 업그레이드되기 전에
-공간을 확보하려면 전역 CSS에 `FLUENT_EMOJI_PRE_UPGRADE_CSS`를 추가하세요. 로딩,
-fallback, 재생 동작은 [사용 가이드](../usage.md)의 나머지 부분을 참고하세요.
+[사용 가이드](../guide/frameworks.md#plain-html)에 있습니다. 요소가
+업그레이드되기 전에 공간을 확보하려면 전역 CSS에
+`FLUENT_EMOJI_PRE_UPGRADE_CSS`를 추가하세요. 로딩, fallback, 재생 동작은
+[사용 가이드](../usage.md)의 나머지 부분을 참고하세요.

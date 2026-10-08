@@ -1,6 +1,6 @@
 ---
 title: コードなしで絵文字を使う
-sourceHash: 1a25330011d80c02
+sourceHash: 040399c5bc04b224
 ---
 
 アニメーション付きの Fluent 絵文字を、Slack、Notion、Google

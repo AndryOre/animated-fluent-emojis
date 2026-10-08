@@ -1,6 +1,6 @@
 ---
 title: asset 자체 호스팅하기
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 직접 관리하는 origin에서 manifest와 sprite sheet를 제공하고, `Emoji`가 그곳을
@@ -33,7 +33,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 ```
 
 manifest가 이미 요청된 뒤에 호출하면 manifest가 초기화되고, 개발 중에는 경고가
-표시됩니다. 사용 가이드의 [asset site](../usage.md#asset-site) 섹션을
+표시됩니다. 사용 가이드의 [asset site](../guide/assets.md#asset-site) 섹션을
 참고하세요.
 
 ## Content Security Policy 설정하기
@@ -59,4 +59,4 @@ sprite sheet는 확장자 앞에 `@2x`가 붙습니다. 따라서 하나의 orig
 `/v1/manifest.slim.json`으로 가는지, 그리고
 `animated-fluent-emojis-cdn.andryore.dev`로 가는 요청이 없는지 확인합니다.
 차단된 요청은 콘솔에 CSP 위반으로 표시되고, emoji는 fallback을 렌더링합니다.
-[fallback](../usage.md#fallback)을 참고하세요.
+[fallback](../guide/behavior.md#fallback)을 참고하세요.

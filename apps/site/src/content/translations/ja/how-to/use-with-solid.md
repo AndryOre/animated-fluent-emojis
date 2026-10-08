@@ -1,6 +1,6 @@
 ---
 title: Solid で使う
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 Solid では `<fluent-emoji>`
@@ -50,4 +50,4 @@ export function Greeting() {
 </fluent-emoji>
 ```
 
-属性、プロパティ、イベントは[使い方ガイド](../usage.md#plain-html)に一覧があります。
+属性、プロパティ、イベントは[使い方ガイド](../guide/frameworks.md#plain-html)に一覧があります。

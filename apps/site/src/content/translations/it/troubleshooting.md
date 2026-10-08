@@ -1,6 +1,6 @@
 ---
 title: Risoluzione dei problemi
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 I problemi sono raggruppati in base a ciò che vedi, ciascuno con la causa nel
@@ -73,12 +73,12 @@ indicate.
 
 - Id sconosciuto: usa un id noto. `EmojiId` li suggerisce con
   l'autocompletamento e l'export `lookup` permette di cercarli (vedi
-  [Lookup](usage.md#lookup)).
+  [Lookup](guide/lookup.md)).
 - Manifest non caricato: verifica che `<asset site>/v1/manifest.slim.json`
   risponda 200 dal browser. Un caricamento fallito viene ritentato al mount
   successivo, con `preloadEmojis` e quando il browser torna online.
 - Passa un `fallback` se l'emoji non deve mai lasciare un buco nel layout. Vedi
-  [Fallback](usage.md#fallback).
+  [Fallback](guide/behavior.md#fallback).
 
 ## Il manifest è bloccato dalla CSP o il browser è offline
 
@@ -99,7 +99,8 @@ cambia l'origin che devi autorizzare.
 `https://animated-fluent-emojis-cdn.andryore.dev`, in `connect-src` e `img-src`.
 Le direttive esatte sono in [requisiti CSP](security.md#csp-requirements). Se
 fai self-hosting, autorizza invece la tua origin e chiama `configureEmojis`
-prima del rendering del primo `Emoji`. Vedi [Asset site](usage.md#asset-site).
+prima del rendering del primo `Emoji`. Vedi
+[Asset site](guide/assets.md#asset-site).
 
 ## Next.js segnala un errore per configureEmojis o Emoji
 

@@ -1,6 +1,6 @@
 ---
 title: Precaricare per un picker
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 Scalda il manifest e gli sprite sheet prima che si apra un picker di emoji, così
@@ -53,4 +53,5 @@ sprecate.
 La richiesta del manifest si arrende dopo 15 secondi. Un manifest fallito viene
 ritentato alla successiva chiamata a `preloadEmojis`, al mount successivo o
 quando il browser torna online, quindi richiamarla dal pulsante è sicuro. Vedi
-[precaricamento](../usage.md#preloading) e [fallback](../usage.md#fallback).
+[precaricamento](../guide/assets.md#preloading) e
+[fallback](../guide/behavior.md#fallback).

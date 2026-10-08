@@ -1,6 +1,6 @@
 ---
 title: Usare con Solid
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 Mostra le emoji in Solid tramite l'elemento `<fluent-emoji>`. Non esiste un
@@ -51,4 +51,4 @@ l'elemento:
 ```
 
 Attributi, proprietà ed eventi sono elencati nella
-[guida all'uso](../usage.md#plain-html).
+[guida all'uso](../guide/frameworks.md#plain-html).

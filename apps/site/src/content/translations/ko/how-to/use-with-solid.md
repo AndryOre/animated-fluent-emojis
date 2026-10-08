@@ -1,6 +1,6 @@
 ---
 title: Solid에서 사용하기
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 Solid에서는 `<fluent-emoji>` 요소로 emoji를 렌더링합니다. Solid 전용 adapter는
@@ -50,4 +50,4 @@ fallback은 `slot="fallback"`이 지정된 자식으로 전달하고, `ref`로 �
 ```
 
 attribute, property, 이벤트의 전체 목록은
-[사용 가이드](../usage.md#plain-html)에 있습니다.
+[사용 가이드](../guide/frameworks.md#plain-html)에 있습니다.
