@@ -23,6 +23,25 @@
     height: 100%;
   }
 
+  .header .site-container {
+    width: 100%;
+    max-width: var(--afe-container);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .header .site-container {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .header .site-container {
+      padding-inline: 2rem;
+    }
+  }
+
   .header :where(button:not([data-open-modal]), [role='menuitem']) {
     border: 0 solid;
   }
