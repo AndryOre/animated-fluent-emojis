@@ -1,6 +1,7 @@
 import type { Loader, LoaderContext } from 'astro/loaders'
 
 import { loadCatalog } from './catalog'
+import { transformInstallBlocks } from './install-block'
 import { rewriteMarkdownLinks } from './markdown'
 import { DOCS_DIR, TRANSLATIONS_DIR } from './paths'
 
@@ -20,7 +21,7 @@ async function loadPages(context: LoaderContext): Promise<void> {
         translationStatus: page.status,
       },
     })
-    const body = rewriteMarkdownLinks(page.body, page)
+    const body = transformInstallBlocks(rewriteMarkdownLinks(page.body, page))
     context.store.set({
       id: page.id,
       data,
