@@ -68,6 +68,7 @@ export const it: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: 'Caratteristiche',
       title: 'Pensate per essere facili da usare',
       alive: {
         title: 'Vive',
@@ -94,12 +95,19 @@ export const it: UiStrings = {
       copied: 'Copiato',
     },
     noCode: {
+      eyebrow: 'Senza codice',
+      formats: {
+        gif: 'Funziona in qualsiasi chat',
+        webp: 'Animata, più leggera',
+        png: "Un'immagine statica",
+      },
       title: 'Niente codice? Nessun problema.',
       body: 'Scarica qualsiasi emoji come GIF, WebP animata o PNG statica e inseriscila in una chat o in un documento.',
       cta: 'Sfoglia le emoji',
       teaserLabel: 'Alcune emoji della galleria',
     },
     faq: {
+      eyebrow: 'FAQ',
       title: 'Domande',
       chat: {
         question: 'Posso usarle in una chat o in un documento?',

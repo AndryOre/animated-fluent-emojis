@@ -68,6 +68,7 @@ export const ja: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: '特長',
       title: '気持ちよく使えるように',
       alive: {
         title: '生きている',
@@ -94,12 +95,19 @@ export const ja: UiStrings = {
       copied: 'コピーしました',
     },
     noCode: {
+      eyebrow: 'ノーコード',
+      formats: {
+        gif: 'どのチャットでも使える',
+        webp: 'アニメーション、より軽量',
+        png: '静止画',
+      },
       title: 'コードなしでも大丈夫。',
       body: '好きな絵文字を GIF、アニメーション WebP、静止画 PNG でダウンロードして、チャットや文書に貼り付けられます。',
       cta: '絵文字を見る',
       teaserLabel: 'ギャラリーの絵文字から一部',
     },
     faq: {
+      eyebrow: 'よくある質問',
       title: 'よくある質問',
       chat: {
         question: 'チャットや文書でも使えますか？',

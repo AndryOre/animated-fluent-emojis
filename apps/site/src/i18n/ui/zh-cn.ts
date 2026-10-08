@@ -68,6 +68,7 @@ export const zh_CN: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: '特性',
       title: '用起来省心',
       alive: {
         title: '灵动',
@@ -94,12 +95,19 @@ export const zh_CN: UiStrings = {
       copied: '已复制',
     },
     noCode: {
+      eyebrow: '无需代码',
+      formats: {
+        gif: '适用于任何聊天',
+        webp: '动画，体积更小',
+        png: '静态图片',
+      },
       title: '不写代码？没问题。',
       body: '把任意 emoji 下载为 GIF、动画 WebP 或静态 PNG，放进聊天或文档里就行。',
       cta: '浏览 emoji',
       teaserLabel: '图库中的几个 emoji',
     },
     faq: {
+      eyebrow: '常见问题',
       title: '常见问题',
       chat: {
         question: '可以在聊天或文档里用吗？',

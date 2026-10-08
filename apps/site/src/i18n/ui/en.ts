@@ -66,6 +66,7 @@ export const en = {
       },
     },
     pillars: {
+      eyebrow: 'Features',
       title: 'Made to be easy to live with',
       alive: {
         title: 'Alive',
@@ -92,12 +93,19 @@ export const en = {
       copied: 'Copied',
     },
     noCode: {
+      eyebrow: 'No code',
+      formats: {
+        gif: 'Works in any chat',
+        webp: 'Animated, smaller',
+        png: 'A still picture',
+      },
       title: 'No code? No problem.',
       body: 'Download any emoji as a GIF, an animated WebP or a still PNG, and drop it into a chat or a document.',
       cta: 'Browse the emojis',
       teaserLabel: 'A few emojis from the gallery',
     },
     faq: {
+      eyebrow: 'FAQ',
       title: 'Questions',
       chat: {
         question: 'Can I use these in a chat or a document?',
