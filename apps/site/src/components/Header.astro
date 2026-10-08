@@ -98,3 +98,11 @@ const linkClass =
     </div>
   </div>
 </header>
+
+<script>
+  import { applyTheme, readStoredTheme } from '../scripts/theme'
+
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (readStoredTheme() === 'system') applyTheme('system', false)
+  })
+</script>

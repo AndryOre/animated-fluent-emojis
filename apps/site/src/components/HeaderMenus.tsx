@@ -6,7 +6,7 @@ import {
   MoonIcon,
   SunIcon,
 } from 'lucide-react'
-import { useEffect, useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from 'react'
 
 import { buttonVariants } from '@/components/ui/button'
 import {
@@ -99,17 +99,6 @@ function ThemeMenu(props: { label: string; names: Record<Theme, string> }) {
     readStoredTheme,
     () => 'system',
   )
-
-  useEffect(() => {
-    const query = matchMedia('(prefers-color-scheme: dark)')
-    const follow = () => {
-      if (readStoredTheme() === 'system') applyTheme('system', false)
-    }
-    query.addEventListener('change', follow)
-    return () => {
-      query.removeEventListener('change', follow)
-    }
-  }, [])
 
   const ActiveIcon = THEME_ICONS[theme]
   return (
