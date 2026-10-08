@@ -6,6 +6,7 @@
 @import '@fontsource-variable/figtree';
 @import '@fontsource-variable/geist-mono';
 @import './theme.css';
+@import './docs-chrome.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -36,8 +37,6 @@
   --sl-color-accent-low: var(--secondary);
   --sl-color-accent-high: var(--primary-text);
   --sl-nav-height: 4.5rem;
-  --sl-sidebar-width: 220px;
-  --sl-content-width: 72ch;
   --sl-content-pad-x: 1rem;
 }
 

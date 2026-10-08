@@ -1,5 +1,9 @@
 ---
 import PageTitle from '@astrojs/starlight/components/PageTitle.astro'
+import Check from '@lucide/astro/icons/check'
+import Copy from '@lucide/astro/icons/copy'
+
+import { buttonVariants } from '@/components/ui/button'
 
 import { splitLocalePath } from '../../i18n/locales'
 import { getUi } from '../../i18n/ui'
@@ -8,6 +12,11 @@ const { locale } = splitLocalePath(Astro.url.pathname)
 const { translationStatus } = Astro.locals.starlightRoute.entry.data
 const { notices, copyMarkdown, copiedMarkdown } = getUi(locale).docs
 const markdownPath = `${Astro.url.pathname.replace(/\/$/, '')}.md`
+const copyButtonClass = buttonVariants({
+  variant: 'outline',
+  size: 'sm',
+  className: 'mt-3',
+})
 ---
 
 {translationStatus !== 'translated' && (
@@ -22,27 +31,39 @@ const markdownPath = `${Astro.url.pathname.replace(/\/$/, '')}.md`
 <PageTitle />
 <button
   type="button"
-  class="copy-markdown"
+  class={copyButtonClass}
   data-copy-markdown={markdownPath}
   data-copied-label={copiedMarkdown}
 >
-  {copyMarkdown}
+  <Copy aria-hidden="true" data-icon="copy" />
+  <Check aria-hidden="true" data-icon="check" class="hidden" />
+  <span data-label>{copyMarkdown}</span>
 </button>
 
 <script>
   document
     .querySelectorAll<HTMLButtonElement>('[data-copy-markdown]')
     .forEach((button) => {
-      const label = button.textContent
+      const labelElement = button.querySelector<HTMLElement>('[data-label]')
+      const copyIcon = button.querySelector<SVGElement>('[data-icon="copy"]')
+      const checkIcon = button.querySelector<SVGElement>('[data-icon="check"]')
+      const label = labelElement?.textContent ?? ''
+      const showCopied = (copied: boolean) => {
+        if (labelElement) {
+          labelElement.textContent = copied
+            ? (button.dataset.copiedLabel ?? label)
+            : label
+        }
+        copyIcon?.classList.toggle('hidden', copied)
+        checkIcon?.classList.toggle('hidden', !copied)
+      }
       button.addEventListener('click', async () => {
         try {
           const response = await fetch(button.dataset.copyMarkdown ?? '')
           if (!response.ok) throw new Error(String(response.status))
           await navigator.clipboard.writeText(await response.text())
-          button.textContent = button.dataset.copiedLabel ?? label
-          setTimeout(() => {
-            button.textContent = label
-          }, 2000)
+          showCopied(true)
+          setTimeout(() => showCopied(false), 2000)
         } catch {
           button.dataset.failed = 'true'
         }
@@ -69,21 +90,5 @@ const markdownPath = `${Astro.url.pathname.replace(/\/$/, '')}.md`
   .stale {
     --afe-notice-border: var(--primary-text);
     --afe-notice-background: var(--secondary);
-  }
-
-  .copy-markdown {
-    margin-top: 0.75rem;
-    padding: 0.375rem 0.875rem;
-    border: 1px solid var(--sl-color-hairline);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--sl-color-text);
-    font: inherit;
-    font-size: var(--sl-text-sm);
-    cursor: pointer;
-  }
-
-  .copy-markdown:hover {
-    background: var(--sl-color-gray-6);
   }
 </style>
