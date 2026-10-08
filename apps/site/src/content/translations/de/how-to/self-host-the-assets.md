@@ -36,7 +36,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 
 Wird es aufgerufen, nachdem das Manifest angefordert wurde, setzt es das
 Manifest zurück und warnt in der Entwicklung. Siehe den Abschnitt
-[Asset site](../usage.md#asset-site) im Nutzungsleitfaden.
+[Asset site](../guide/assets.md#asset-site) im Nutzungsleitfaden.
 
 ## Die Content Security Policy festlegen
 
@@ -62,4 +62,4 @@ Root ein und braucht sie. Das Design und seine Grenzen stehen in
 `/v1/manifest.slim.json` auf deinem Origin geht und dass keine Anfrage an
 `animated-fluent-emojis-cdn.andryore.dev` geht. Eine blockierte Anfrage
 erscheint in der Konsole als CSP-Verletzung, und das Emoji rendert seinen
-Fallback; siehe [Fallback](../usage.md#fallback).
+Fallback; siehe [Fallback](../guide/behavior.md#fallback).

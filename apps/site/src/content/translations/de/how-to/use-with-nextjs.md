@@ -73,4 +73,4 @@ IDs.
 
 `animated-fluent-emojis/lookup` enthält weder React noch ein
 `"use client"`-Banner und funktioniert daher auch in Server Components und Route
-Handlern. Siehe [Lookup](../usage.md#lookup).
+Handlern. Siehe [Lookup](../guide/lookup.md).

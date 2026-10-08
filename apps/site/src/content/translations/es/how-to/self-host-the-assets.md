@@ -35,7 +35,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 
 Si se llama después de que se solicitó el manifest, este se reinicia y se emite
 una advertencia en desarrollo. Consulta la sección
-[asset site](../usage.md#asset-site) de la guía de uso.
+[asset site](../guide/assets.md#asset-site) de la guía de uso.
 
 ## Define la Content Security Policy
 
@@ -60,4 +60,4 @@ Abre la página con el panel de red y comprueba que la solicitud del manifest va
 a `/v1/manifest.slim.json` en tu origen, y que ninguna solicitud va a
 `animated-fluent-emojis-cdn.andryore.dev`. Una solicitud bloqueada aparece como
 una violación de CSP en la consola, y el emoji renderiza su fallback; consulta
-[fallback](../usage.md#fallback).
+[fallback](../guide/behavior.md#fallback).

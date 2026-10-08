@@ -52,10 +52,10 @@ export function Greeting() {
 ```
 
 Los atributos, propiedades y eventos están listados en la
-[guía de uso](../usage.md#plain-html).
+[guía de uso](../guide/frameworks.md#plain-html).
 
 ## El adaptador de React
 
 Define `react` y `react-dom` como alias de `preact/compat` en tu bundler y luego
 usa el adaptador de React como se documenta en la
-[guía de uso](../usage.md#react).
+[guía de uso](../guide/frameworks.md#react).

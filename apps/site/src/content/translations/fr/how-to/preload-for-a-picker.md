@@ -53,5 +53,5 @@ gaspillées.
 La requête du manifest abandonne après 15 secondes. Un manifest en échec est
 retenté lors du prochain appel à `preloadEmojis`, au prochain montage ou lorsque
 le navigateur revient en ligne ; l'appeler à nouveau depuis le déclencheur est
-donc sans risque. Voir [préchargement](../usage.md#preloading) et
-[fallback](../usage.md#fallback).
+donc sans risque. Voir [préchargement](../guide/assets.md#preloading) et
+[fallback](../guide/behavior.md#fallback).

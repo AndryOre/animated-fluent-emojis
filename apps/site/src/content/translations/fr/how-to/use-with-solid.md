@@ -52,4 +52,4 @@ l'élément :
 ```
 
 Les attributs, propriétés et événements sont listés dans le
-[guide d'utilisation](../usage.md#plain-html).
+[guide d'utilisation](../guide/frameworks.md#plain-html).
