@@ -145,7 +145,7 @@ export default function DemoPlayground({
   return (
     <div className="min-w-0 overflow-hidden rounded-2xl border border-border bg-card">
       <div
-        className="relative flex h-[260px] items-center justify-center border-b border-border bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-[length:16px_16px]"
+        className="relative flex h-[180px] items-center justify-center border-b border-border bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-[length:16px_16px]"
         data-testid="demo-stage"
       >
         <Emoji
@@ -167,9 +167,9 @@ export default function DemoPlayground({
           {labels.reset}
         </Button>
       </div>
-      <div className="grid gap-3 p-4 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 p-3">
         <Segmented
-          className="sm:col-span-2"
+          className="col-span-2"
           label={labels.emojiLabel}
           options={DEMO_EMOJIS.filter((option) =>
             emojis.some((candidate) => candidate.id === option.id),
@@ -208,7 +208,7 @@ export default function DemoPlayground({
           }}
         />
         <Segmented
-          className="sm:col-span-2"
+          className="col-span-2"
           label={labels.toneLabel}
           disabled={!hasTones}
           options={DEMO_TONES.map((tone) => ({
@@ -221,7 +221,7 @@ export default function DemoPlayground({
           }}
         />
       </div>
-      <div className="px-4 pb-4">
+      <div className="demo-code px-3 pb-3">
         <CodeBlock tabs={tabs} labels={labels.code} slotValues={slotValues} />
       </div>
     </div>

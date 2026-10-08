@@ -53,3 +53,18 @@ test('the customizer starts untouched, so Reset is disabled', () => {
   expect(html).toContain('aria-label="Framework"')
   expect(html).toContain('aria-label="Waving hand"')
 })
+
+test('the stage is compact and the code block sits in the capped wrapper', () => {
+  const html = renderToString(
+    <DemoPlayground
+      emojis={[wave]}
+      plainTabs={tabs}
+      tonedTabs={tabs}
+      labels={labels}
+    />,
+  )
+
+  expect(html).toContain('h-[180px]')
+  expect(html).not.toContain('h-[260px]')
+  expect(html).toMatch(/class="demo-code[^"]*"/)
+})

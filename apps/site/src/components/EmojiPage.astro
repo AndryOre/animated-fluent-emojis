@@ -39,10 +39,7 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
   image={`${SITE_ORIGIN}${ogImagePath(slug)}`}
   jsonLd={imageObjectJsonLd(emoji, localized.name, locale)}
 >
-  <main
-    id="main"
-    class="mx-auto w-full max-w-[1100px] flex-1 px-4 py-8 min-[860px]:px-6"
-  >
+  <main id="main" class="site-container flex-1 py-8">
     <div class="grid grid-cols-1 gap-8 min-[860px]:grid-cols-2">
       <div class="min-[860px]:order-2">
         <EmojiPageDetail
