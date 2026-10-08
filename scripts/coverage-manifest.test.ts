@@ -85,8 +85,12 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Styled wrapper over the Base UI accordion, exercised in a real browser through the landing FAQ.',
   'apps/site/src/home/FaqAccordion.tsx':
     'FAQ React island with no logic of its own, exercised in a real browser by the accessibility e2e spec.',
-  'apps/site/src/home/SnippetTabs.tsx':
-    'Snippet tabs React island that wires Base UI tabs to the copy helper, which is tested in copy-feedback.test.ts.',
+  'apps/site/src/components/InstallBlock.tsx':
+    'Install block React island that wires Base UI tabs to the package manager store, which is tested in apps/site/src/highlight.',
+  'apps/site/src/docs/components/DocumentationPagination.astro':
+    'Presentational Astro override with no logic of its own, exercised in a real browser by the accessibility e2e spec.',
+  'apps/site/src/docs/install-block-client.ts':
+    'Browser-only tab switcher over the package manager store, which is tested in apps/site/src/highlight.',
   'apps/site/src/home/DemoPlayground.tsx':
     'React island that wires the demo toggles to the library Emoji; its option-to-props mapping is tested in demo.test.ts.',
   'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
