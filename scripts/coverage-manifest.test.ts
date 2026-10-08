@@ -93,8 +93,6 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Browser-only DOM tweak that adds a tab stop to code frames, exercised in a real browser by the accessibility e2e spec.',
   'apps/site/src/docs/install-block-client.ts':
     'Browser-only tab switcher over the package manager store, which is tested in apps/site/src/highlight.',
-  'apps/site/src/home/DemoPlayground.tsx':
-    'React island that wires the demo toggles to the library Emoji; its option-to-props mapping is tested in demo.test.ts.',
   'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/layouts/Layout.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/pages/robots.txt.ts':
@@ -138,6 +136,9 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/emoji-pages/data.ts':
     'Memoized join of the public index and annotations, both tested in gallery/, and exercised by the emoji-pages build-output test.',
   'apps/site/src/components/gallery/ChipGroup.tsx': GALLERY_ISLAND_REASON,
+  'apps/site/src/components/gallery/GallerySidebar.tsx': GALLERY_ISLAND_REASON,
+  'apps/site/src/components/gallery/SegmentedControl.tsx':
+    GALLERY_ISLAND_REASON,
   'apps/site/src/components/gallery/use-gallery-data.ts': GALLERY_ISLAND_REASON,
   'apps/site/src/docs/components/DocumentationHeader.astro':
     ASTRO_PRESENTATION_REASON,
