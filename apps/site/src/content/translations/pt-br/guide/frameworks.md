@@ -145,10 +145,10 @@ deslocamento de layout.
 ## Angular, Solid e Preact
 
 Eles usam o `<fluent-emoji>` por meio da sintaxe de template de cada um; veja os
-guias práticos para [Angular](how-to/use-with-angular.md),
-[Solid](how-to/use-with-solid.md) e [Preact](how-to/use-with-preact.md). O mesmo
-vale para Lit, Alpine e htmx: importe `animated-fluent-emojis/element` e escreva
-a tag.
+guias práticos para [Angular](../how-to/use-with-angular.md),
+[Solid](../how-to/use-with-solid.md) e [Preact](../how-to/use-with-preact.md). O
+mesmo vale para Lit, Alpine e htmx: importe `animated-fluent-emojis/element` e
+escreva a tag.
 
 <a id="without-a-framework"></a>
 

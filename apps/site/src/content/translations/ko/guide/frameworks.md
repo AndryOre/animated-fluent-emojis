@@ -110,6 +110,8 @@ props는 아래에 나온 것과 같지만 콜백은 없고, `class`와 문자�
 `astro:page-load`에서도 다시 실행되므로 뷰 전환(view transitions)도 계속
 동작합니다.
 
+<a id="plain-html"></a>
+
 ## 일반 HTML
 
 `animated-fluent-emojis/element`를 import하면 `<fluent-emoji>`가 등록됩니다.

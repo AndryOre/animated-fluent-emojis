@@ -10,6 +10,8 @@ sheet(200px 프레임)가 있는 emoji에는 너비 기반 `srcSet`(`100w`와 `2
 추가되며 `sizes`는 렌더링된 크기(문자열 `size`는 `auto`)로 설정되므로,
 브라우저는 고밀도 디스플레이에서 `@2x` sheet를 선택합니다.
 
+<a id="preloading"></a>
+
 ## 프리로드
 
 `preloadEmojis`는 어떤 `Emoji`가 렌더링되기 전에 manifest 가져오기를 시작하고,

@@ -143,10 +143,10 @@ composed-события.
 ## Angular, Solid и Preact
 
 Они используют `<fluent-emoji>` через собственный синтаксис шаблонов; см. how-to
-руководства для [Angular](how-to/use-with-angular.md),
-[Solid](how-to/use-with-solid.md) и [Preact](how-to/use-with-preact.md). То же
-относится к Lit, Alpine и htmx: импортируйте `animated-fluent-emojis/element` и
-пишите тег.
+руководства для [Angular](../how-to/use-with-angular.md),
+[Solid](../how-to/use-with-solid.md) и [Preact](../how-to/use-with-preact.md).
+То же относится к Lit, Alpine и htmx: импортируйте
+`animated-fluent-emojis/element` и пишите тег.
 
 <a id="without-a-framework"></a>
 

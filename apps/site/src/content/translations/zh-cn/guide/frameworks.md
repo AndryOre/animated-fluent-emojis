@@ -135,8 +135,8 @@ props 与下面列出的相同，但不含回调，并带有 `class` 和字符�
 ## Angular、Solid 和 Preact
 
 它们通过各自的模板语法使用 `<fluent-emoji>`；请参阅 how-to 指南：
-[Angular](how-to/use-with-angular.md)、[Solid](how-to/use-with-solid.md) 和
-[Preact](how-to/use-with-preact.md)。Lit、Alpine 和 htmx 同理：导入
+[Angular](../how-to/use-with-angular.md)、[Solid](../how-to/use-with-solid.md)
+和 [Preact](../how-to/use-with-preact.md)。Lit、Alpine 和 htmx 同理：导入
 `animated-fluent-emojis/element`，然后写上该标签即可。
 
 <a id="without-a-framework"></a>
