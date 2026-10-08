@@ -11,6 +11,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "sync": "astro sync",
     "check": "astro check",
     "i18n:status": "bun src/docs/i18n-status.ts",
     "test": "vitest run --passWithNoTests",

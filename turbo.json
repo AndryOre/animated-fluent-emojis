@@ -55,6 +55,10 @@
       ],
       "outputs": ["coverage/**"]
     },
+    "sync": {
+      "dependsOn": ["transit"],
+      "outputs": [".astro/**"]
+    },
     "build": {
       "dependsOn": ["transit"],
       "inputs": [
@@ -84,6 +88,10 @@
       "outputs": []
     },
     "//#check:root": {
+      "dependsOn": [
+        "animated-fluent-emojis#build",
+        "@animated-fluent-emojis/site#sync"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "!**/dist/**",
