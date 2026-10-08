@@ -19,14 +19,14 @@ export interface FaqEntry {
  */
 export default function FaqAccordion({ items }: { items: FaqEntry[] }) {
   return (
-    <Accordion multiple hiddenUntilFound className="max-w-3xl gap-3">
+    <Accordion multiple hiddenUntilFound className="max-w-3xl">
       {items.map((item) => (
         <AccordionItem
           key={item.question}
           value={item.question}
-          className="rounded-brand border border-border bg-card px-4 py-1"
+          className="border-b border-border first:border-t"
         >
-          <AccordionTrigger className="text-base font-bold">
+          <AccordionTrigger className="py-4 text-base font-bold">
             {item.question}
           </AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">

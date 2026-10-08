@@ -68,6 +68,7 @@ export const ko: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: '특징',
       title: '쓰기 편하게 만들었어요',
       alive: {
         title: '살아 있어요',
@@ -94,12 +95,19 @@ export const ko: UiStrings = {
       copied: '복사했어요',
     },
     noCode: {
+      eyebrow: '노코드',
+      formats: {
+        gif: '모든 채팅에서 작동',
+        webp: '애니메이션, 더 작은 용량',
+        png: '정지 이미지',
+      },
       title: '코드 없이도 괜찮아요.',
       body: '마음에 드는 이모지를 GIF, 애니메이션 WebP, 정지 PNG로 내려받아 채팅과 문서에 붙여 넣으세요.',
       cta: '이모지 둘러보기',
       teaserLabel: '갤러리에서 고른 이모지 몇 개',
     },
     faq: {
+      eyebrow: '자주 묻는 질문',
       title: '자주 묻는 질문',
       chat: {
         question: '채팅이나 문서에서도 쓸 수 있나요?',
