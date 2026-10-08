@@ -1,6 +1,6 @@
 ---
 title: Usar com Next.js
-sourceHash: 4a0c3dc179e6b339
+sourceHash: 6f92dff657703a74
 ---
 
 Renderize `Emoji` no App Router, inclusive a partir de Server Components.
@@ -72,4 +72,4 @@ específicos.
 
 `animated-fluent-emojis/lookup` não tem React nem o banner `"use client"`, então
 também funciona em Server Components e route handlers. Veja
-[lookup](../usage.md#lookup).
+[lookup](../guide/lookup.md).

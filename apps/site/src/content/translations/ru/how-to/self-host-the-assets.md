@@ -1,6 +1,6 @@
 ---
 title: Размещение ресурсов у себя
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 Раздавайте manifest и sprite sheets с origin, который вы контролируете, и
@@ -34,7 +34,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 
 Если вызвать его после запроса manifest, manifest сбрасывается, а в режиме
 разработки появляется предупреждение. См. раздел
-[Asset site](../usage.md#asset-site) руководства по использованию.
+[Asset site](../guide/assets.md#asset-site) руководства по использованию.
 
 ## Настройте Content Security Policy
 
@@ -60,4 +60,4 @@ root, и ему оно нужно. Дизайн и его ограничения
 `/v1/manifest.slim.json` вашего origin и ни один запрос не уходит на
 `animated-fluent-emojis-cdn.andryore.dev`. Заблокированный запрос виден в
 консоли как нарушение CSP, а эмодзи показывает свой fallback; см.
-[Fallback](../usage.md#fallback).
+[Fallback](../guide/behavior.md#fallback).

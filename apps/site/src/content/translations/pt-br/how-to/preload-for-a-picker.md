@@ -1,6 +1,6 @@
 ---
 title: Pré-carregue para um seletor
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 Aqueça o manifest e os sprite sheets antes de um seletor de emojis abrir, para
@@ -51,5 +51,5 @@ preload reinicia o manifest, então as requisições aquecidas são desperdiçad
 A requisição do manifest desiste após 15 segundos. Um manifest com falha é
 repetido na próxima chamada de `preloadEmojis`, na próxima montagem ou quando o
 navegador volta a ficar online, então chamá-lo de novo a partir do botão é
-seguro. Consulte [preloading](../usage.md#preloading) e
-[fallback](../usage.md#fallback).
+seguro. Consulte [preloading](../guide/assets.md#preloading) e
+[fallback](../guide/behavior.md#fallback).

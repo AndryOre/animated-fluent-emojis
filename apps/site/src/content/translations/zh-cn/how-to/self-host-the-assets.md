@@ -1,6 +1,6 @@
 ---
 title: 自行托管资源
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 从你自己控制的源提供 manifest 和 sprite sheet，并让 `Emoji`
@@ -30,7 +30,7 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 ```
 
 如果在 manifest 已被请求之后才调用它，manifest 会被重置，并在开发环境中给出警告。参见使用指南的
-[asset site](../usage.md#asset-site) 一节。
+[asset site](../guide/assets.md#asset-site) 一节。
 
 ## 设置内容安全策略
 
@@ -52,4 +52,4 @@ root 中添加一个，所以需要。设计思路及其限制见[安全](../sec
 打开页面并查看网络面板，确认 manifest 请求发往你的源上的
 `/v1/manifest.slim.json`，并且没有任何请求发往
 `animated-fluent-emojis-cdn.andryore.dev`。被拦截的请求会在控制台中显示为 CSP 违规，此时 emoji 会渲染其后备内容；参见
-[fallback](../usage.md#fallback)。
+[fallback](../guide/behavior.md#fallback)。

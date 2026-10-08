@@ -1,6 +1,6 @@
 ---
 title: 为选择器预加载
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 在 emoji 选择器打开之前预热 manifest 和 sprite
@@ -46,5 +46,5 @@ site 会重置 manifest，已预热的请求就白费了。
 ## 网络失败时
 
 manifest 请求在 15 秒后放弃。失败的 manifest 会在下一次调用
-`preloadEmojis`、下一次挂载，或浏览器重新联网时重试，所以从触发按钮再次调用它是安全的。参见[预加载](../usage.md#preloading)和
-[fallback](../usage.md#fallback)。
+`preloadEmojis`、下一次挂载，或浏览器重新联网时重试，所以从触发按钮再次调用它是安全的。参见[预加载](../guide/assets.md#preloading)和
+[fallback](../guide/behavior.md#fallback)。

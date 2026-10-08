@@ -1,6 +1,6 @@
 ---
 title: Использование с Preact
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 В Preact эмодзи можно использовать двумя способами: через элемент
@@ -51,10 +51,10 @@ export function Greeting() {
 ```
 
 Атрибуты, свойства и события перечислены в
-[руководстве по использованию](../usage.md#plain-html).
+[руководстве по использованию](../guide/frameworks.md#plain-html).
 
 ## Адаптер React
 
 Настройте в сборщике алиасы `react` и `react-dom` на `preact/compat`, затем
 используйте адаптер React, как описано в
-[руководстве по использованию](../usage.md#react).
+[руководстве по использованию](../guide/frameworks.md#react).

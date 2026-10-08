@@ -1,6 +1,6 @@
 ---
 title: 在 Solid 中使用
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 在 Solid 中通过 `<fluent-emoji>` 元素渲染 emoji。Solid 没有原生适配器。
@@ -46,4 +46,4 @@ fallback 作为带有 `slot="fallback"` 的子元素传入，`ref` 可以拿到�
 </fluent-emoji>
 ```
 
-attribute、属性和事件的完整列表见[使用指南](../usage.md#plain-html)。
+attribute、属性和事件的完整列表见[使用指南](../guide/frameworks.md#plain-html)。
