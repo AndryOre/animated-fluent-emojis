@@ -1,6 +1,6 @@
 ---
 title: Usa los emojis sin código
-sourceHash: 1a25330011d80c02
+sourceHash: 040399c5bc04b224
 ---
 
 Pon un emoji animado de Fluent en Slack, Notion, Google Docs, un correo o un

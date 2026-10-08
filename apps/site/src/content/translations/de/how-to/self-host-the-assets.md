@@ -1,6 +1,6 @@
 ---
 title: Die Assets selbst hosten
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 Liefere das Manifest und die Sprite Sheets von einem Origin aus, den du

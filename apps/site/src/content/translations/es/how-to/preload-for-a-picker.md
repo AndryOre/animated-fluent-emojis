@@ -1,6 +1,6 @@
 ---
 title: Precargar para un selector
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 Calienta el manifest y los sprite sheets antes de que se abra un selector de

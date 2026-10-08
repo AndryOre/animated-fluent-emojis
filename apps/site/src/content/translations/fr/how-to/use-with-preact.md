@@ -1,6 +1,6 @@
 ---
 title: Utiliser avec Preact
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 Il y a deux façons d'utiliser des emojis dans Preact : l'élément

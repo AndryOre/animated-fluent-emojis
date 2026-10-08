@@ -1,6 +1,6 @@
 ---
 title: Auto-héberger les assets
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 Servez le manifest et les sprite sheets depuis une origine que vous contrôlez,
