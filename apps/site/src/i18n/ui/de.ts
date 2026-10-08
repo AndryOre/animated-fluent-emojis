@@ -28,6 +28,7 @@ export const de: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Entwickelt von {name}',
     attribution:
       'Die Emoji-Grafiken gehören Microsoft. Der Code ist Open Source. Keine Verbindung zu Microsoft und keine Billigung durch Microsoft.',
     navLabel: 'Fußbereich',

@@ -29,6 +29,7 @@ export const ja: UiStrings = {
     },
   },
   footer: {
+    builtBy: '制作: {name}',
     attribution:
       '絵文字のアートワークは Microsoft のものです。コードはオープンソースです。Microsoft とは提携しておらず、承認も受けていません。',
     navLabel: 'フッター',

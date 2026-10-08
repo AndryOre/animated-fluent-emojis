@@ -29,6 +29,7 @@ export const pt_BR: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Criado por {name}',
     attribution:
       'A arte dos emojis é da Microsoft. O código é aberto. Não temos afiliação nem aprovação da Microsoft.',
     navLabel: 'Rodapé',
