@@ -53,10 +53,20 @@ function escapeText(text: string): string {
   return text.replaceAll('&', '&#x26;').replaceAll('<', '&#x3C;')
 }
 
+function stripTags(html: string): string {
+  let previous: string
+  let result = html.replaceAll('\n', '')
+  do {
+    previous = result
+    result = result.replaceAll(/<[^>]*>/g, '')
+  } while (result !== previous)
+  return result
+}
+
 function textOf(html: string): string {
   return html
     .matchAll(CODE_LINE_PATTERN)
-    .map(([, line = '']) => decodeEntities(line.replaceAll(/<[^>]+>|\n/g, '')))
+    .map(([, line = '']) => decodeEntities(stripTags(line)))
     .toArray()
     .join('\n')
 }

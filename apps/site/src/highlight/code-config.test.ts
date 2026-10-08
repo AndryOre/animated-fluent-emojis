@@ -35,6 +35,7 @@ describe('shared code configuration', () => {
     expect(styles).toContain('--ec-brdCol:var(--border)')
     expect(styles).toContain('--ec-codeBg:var(--card)')
     expect(styles).toContain('--ec-codeFontFml:var(--font-mono)')
+    expect(styles).toContain('--ec-lineNumbers-fg:var(--muted-foreground)')
   })
 
   it('numbers lines in code but not in shell commands', async () => {

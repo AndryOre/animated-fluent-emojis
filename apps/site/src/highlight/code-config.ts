@@ -26,6 +26,10 @@ export const sharedCodeConfig = {
     codeBackground: 'var(--card)',
     codeFontFamily: 'var(--font-mono)',
     uiFontFamily: 'var(--font-sans)',
+    lineNumbers: {
+      foreground: 'var(--muted-foreground)',
+      highlightForeground: 'var(--foreground)',
+    },
     frames: {
       frameBoxShadowCssValue: 'none',
     },
