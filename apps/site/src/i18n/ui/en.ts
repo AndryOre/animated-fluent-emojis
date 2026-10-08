@@ -45,15 +45,26 @@ export const en = {
       installLabel: 'Install command',
       copy: 'Copy',
       copied: 'Copied',
+      eyebrow: 'Open source',
+      docs: 'Read the docs',
       browse: 'Browse the emojis',
       attribution:
         "The emoji artwork is Microsoft's. Not affiliated with or endorsed by Microsoft.",
-      stageLabel: 'A waving hand emoji, playing on hover',
     },
     demo: {
       sizeLabel: 'Size',
       toneLabel: 'Skin tone',
       playsLabel: 'Plays',
+      emojiLabel: 'Emoji',
+      reset: 'Reset',
+      emojis: {
+        wave: 'Waving hand',
+        fire: 'Fire',
+        party: 'Party popper',
+        heart: 'Red heart',
+        rocket: 'Rocket',
+        grin: 'Grinning face',
+      },
       tones: {
         default: 'Default',
         light: 'Light',

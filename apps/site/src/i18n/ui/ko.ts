@@ -47,15 +47,26 @@ export const ko: UiStrings = {
       installLabel: '설치 명령어',
       copy: '복사',
       copied: '복사했어요',
+      eyebrow: '오픈 소스',
+      docs: '문서 읽기',
       browse: '이모지 둘러보기',
       attribution:
         '이모지 아트워크는 Microsoft의 것입니다. Microsoft와 제휴하거나 승인받은 프로젝트가 아닙니다.',
-      stageLabel: '마우스를 올리면 재생되는 손 흔드는 이모지',
     },
     demo: {
       sizeLabel: '크기',
       toneLabel: '피부색',
       playsLabel: '재생',
+      emojiLabel: '이모지',
+      reset: '초기화',
+      emojis: {
+        wave: '손 흔들기',
+        fire: '불',
+        party: '파티 폭죽',
+        heart: '빨간 하트',
+        rocket: '로켓',
+        grin: '활짝 웃는 얼굴',
+      },
       tones: {
         default: '기본',
         light: '밝은',

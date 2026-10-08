@@ -1,6 +1,10 @@
 import type { CodeBlockTab } from '../components/CodeBlock'
-import type { PublicEmoji } from '../gallery/public-index'
-import { generateSnippet, type SnippetKind } from '../gallery/snippets'
+import type { PublicEmoji, SkinTone } from '../gallery/public-index'
+import {
+  generateSnippet,
+  type SnippetKind,
+  type SnippetOptions,
+} from '../gallery/snippets'
 import { fillSnippetSlots } from '../highlight/snippet-html'
 import {
   createSnippetRenderer,
@@ -33,12 +37,16 @@ export const SNIPPET_TABS: readonly SnippetTab[] = [
 /**
  * Builds the landing page snippet tabs from the snippet generator.
  * @param emoji - The emoji shown in every snippet.
+ * @param options - Size and skin tone passed to the generator.
  * @returns One entry per tab with its code.
  */
-export function buildSnippetTabs(emoji: PublicEmoji): SnippetTabContent[] {
+export function buildSnippetTabs(
+  emoji: PublicEmoji,
+  options: SnippetOptions = {},
+): SnippetTabContent[] {
   return SNIPPET_TABS.map((tab) => ({
     ...tab,
-    code: generateSnippet(emoji, tab.kind),
+    code: generateSnippet(emoji, tab.kind, options),
   }))
 }
 
@@ -59,28 +67,35 @@ function sharedRenderer(): Promise<SnippetRenderer> {
  * highlighted once and its placeholders are filled with the emoji at build
  * time, so the HTML needs no client work to show the right snippet.
  * @param emoji - The emoji shown in every snippet.
+ * @param tone - A skin tone to include in every snippet; none by default.
+ * @param size - The size shown in every snippet.
  * @returns One code block tab per framework.
  */
 export async function buildCodeBlockTabs(
   emoji: PublicEmoji,
+  tone?: SkinTone,
+  size: number = SHOWN_SIZE,
 ): Promise<CodeBlockTab[]> {
   const renderer = await sharedRenderer()
   return Promise.all(
-    buildSnippetTabs(emoji).map(async (tab) => {
-      const templated = TEMPLATE_KINDS.find((kind) => kind === tab.kind)
-      if (!templated) throw new Error(`no template for ${tab.kind}`)
-      const rendered = await renderer.render(templated, false)
-      return {
-        id: tab.kind,
-        label: tab.label,
-        code: tab.code,
-        html: fillSnippetSlots(rendered.html, {
-          id: emoji.id,
-          size: String(SHOWN_SIZE),
-          unicode: emoji.unicode,
-        }),
-      }
-    }),
+    buildSnippetTabs(emoji, { size, ...(tone && { tone }) }).map(
+      async (tab) => {
+        const templated = TEMPLATE_KINDS.find((kind) => kind === tab.kind)
+        if (!templated) throw new Error(`no template for ${tab.kind}`)
+        const rendered = await renderer.render(templated, tone !== undefined)
+        return {
+          id: tab.kind,
+          label: tab.label,
+          code: tab.code,
+          html: fillSnippetSlots(rendered.html, {
+            id: emoji.id,
+            size: String(size),
+            unicode: emoji.unicode,
+            ...(tone && { tone }),
+          }),
+        }
+      },
+    ),
   )
 }
 

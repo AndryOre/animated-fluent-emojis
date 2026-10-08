@@ -46,15 +46,26 @@ export const fr: UiStrings = {
       installLabel: "Commande d'installation",
       copy: 'Copier',
       copied: 'Copié',
+      eyebrow: 'Open source',
+      docs: 'Lire la documentation',
       browse: 'Parcourir les emojis',
       attribution:
         "Les illustrations des emojis appartiennent à Microsoft. Ce projet n'est ni affilié à Microsoft ni approuvé par Microsoft.",
-      stageLabel: 'Un emoji de main qui salue, animé au survol',
     },
     demo: {
       sizeLabel: 'Taille',
       toneLabel: 'Teinte de peau',
       playsLabel: "S'anime",
+      emojiLabel: 'Emoji',
+      reset: 'Réinitialiser',
+      emojis: {
+        wave: 'Main qui salue',
+        fire: 'Feu',
+        party: 'Cotillon',
+        heart: 'Cœur rouge',
+        rocket: 'Fusée',
+        grin: 'Visage souriant',
+      },
       tones: {
         default: 'Par défaut',
         light: 'Claire',

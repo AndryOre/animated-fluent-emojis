@@ -3,12 +3,14 @@ import Emoji from 'animated-fluent-emojis/astro'
 
 import { buttonVariants } from '@/components/ui/button'
 
+import libraryPackage from '../../../../packages/animated-fluent-emojis/package.json'
 import { loadPublicIndex } from '../gallery/public-index'
 import {
   buildCodeBlockTabs,
   buildInstallHtml,
   pickTeaserEmojis,
 } from '../home/content'
+import { DEMO_EMOJIS, INITIAL_DEMO_STATE } from '../home/demo'
 import DemoPlayground from '../home/DemoPlayground'
 import FaqAccordion from '../home/FaqAccordion'
 import { localePath, type Locale } from '../i18n/locales'
@@ -30,6 +32,19 @@ const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
 if (!snippetEmoji) throw new Error('The public index has no waving hand')
 const TEASER_COUNT = 8
 const tabs = await buildCodeBlockTabs(snippetEmoji)
+const demoEmojis = index.filter((emoji) =>
+  DEMO_EMOJIS.some(({ id }) => id === emoji.id),
+)
+const demoPlainTabs = await buildCodeBlockTabs(
+  snippetEmoji,
+  undefined,
+  INITIAL_DEMO_STATE.size,
+)
+const demoTonedTabs = await buildCodeBlockTabs(
+  snippetEmoji,
+  'light',
+  INITIAL_DEMO_STATE.size,
+)
 const installHtml = await buildInstallHtml()
 const teaser = pickTeaserEmojis(index, TEASER_COUNT)
 
@@ -42,18 +57,31 @@ const pillars = [
 const faq = [home.faq.chat, home.faq.speed, home.faq.motion]
 
 const demoLabels = {
+  emojiLabel: home.demo.emojiLabel,
   sizeLabel: home.demo.sizeLabel,
   toneLabel: home.demo.toneLabel,
   playsLabel: home.demo.playsLabel,
+  reset: home.demo.reset,
+  emojis: home.demo.emojis,
   tones: home.demo.tones,
   plays: home.demo.plays,
-  emojiLabel: home.hero.stageLabel,
+  code: {
+    tabsLabel: home.snippets.tabsLabel,
+    copy: home.snippets.copy,
+    copied: home.snippets.copied,
+  },
 }
 
 const wrap = 'mx-auto w-full max-w-[1100px] px-4 min-[860px]:px-6'
 const section = `${wrap} py-14`
 const heading =
   'text-[clamp(24px,4vw,36px)] leading-tight font-extrabold tracking-[-0.03em]'
+const docsHref = localePath(locale, '/docs/')
+const secondaryButton = buttonVariants({
+  variant: 'outline',
+  shape: 'pill',
+  className: 'h-auto min-h-11 px-6 text-base font-bold',
+})
 const primaryButton = buttonVariants({
   shape: 'pill',
   className: 'h-auto min-h-11 px-6 text-base font-bold',
@@ -62,13 +90,30 @@ const primaryButton = buttonVariants({
 
 <Layout locale={locale} title={meta.siteName} description={meta.description}>
   <main id="main" class="flex-1">
-    <section class={`${wrap} pt-16 pb-12 max-[859px]:pt-10 max-[859px]:pb-10`}>
-      <div class="grid grid-cols-[minmax(0,1fr)] items-center gap-10 min-[860px]:grid-cols-[1.1fr_1fr]">
-        <div class="flex flex-col items-start gap-5">
+    <section
+      class={`${wrap} relative -mt-[65px] pt-[calc(65px+4rem)] pb-12 max-[859px]:pt-[calc(65px+2.5rem)] max-[859px]:pb-10`}
+    >
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-x-0 top-0 h-[560px] [background:radial-gradient(60%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_70%),radial-gradient(50%_70%_at_100%_0%,color-mix(in_oklab,var(--primary)_6%,transparent),transparent_70%)]"
+      ></div>
+      <div class="relative grid grid-cols-[minmax(0,1fr)] items-center gap-10 min-[960px]:grid-cols-[1fr_1.05fr]">
+        <div class="flex min-w-0 flex-col items-start gap-5">
+          <p class="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase">
+            v{libraryPackage.version} · {home.hero.eyebrow}
+          </p>
           <h1 class="text-[clamp(36px,6vw,60px)] leading-[1.02] font-extrabold tracking-[-0.04em]">
             {home.tagline}
           </h1>
           <p class="text-xl text-muted-foreground">{home.hero.sub}</p>
+          <div class="flex flex-wrap gap-3">
+            <a href={galleryHref} class={primaryButton}>
+              {home.hero.browse}
+            </a>
+            <a href={docsHref} class={secondaryButton}>
+              {home.hero.docs}
+            </a>
+          </div>
           <div class="flex w-full flex-col gap-3">
             <div class="w-full max-w-lg">
               <InstallBlock
@@ -83,11 +128,14 @@ const primaryButton = buttonVariants({
             </div>
             <p class="text-sm text-muted-foreground">{home.hero.attribution}</p>
           </div>
-          <a href={galleryHref} class={primaryButton}>
-            {home.hero.browse}
-          </a>
         </div>
-        <DemoPlayground client:idle labels={demoLabels} />
+        <DemoPlayground
+          client:idle
+          emojis={demoEmojis}
+          plainTabs={demoPlainTabs}
+          tonedTabs={demoTonedTabs}
+          labels={demoLabels}
+        />
       </div>
     </section>
 

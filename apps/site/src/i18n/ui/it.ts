@@ -46,16 +46,26 @@ export const it: UiStrings = {
       installLabel: 'Comando di installazione',
       copy: 'Copia',
       copied: 'Copiato',
+      eyebrow: 'Open source',
+      docs: 'Leggi la documentazione',
       browse: 'Sfoglia le emoji',
       attribution:
         'Le illustrazioni delle emoji sono di Microsoft. Non affiliato a Microsoft né approvato da Microsoft.',
-      stageLabel:
-        "Un'emoji di mano che saluta, animata al passaggio del cursore",
     },
     demo: {
       sizeLabel: 'Dimensione',
       toneLabel: 'Tono della pelle',
       playsLabel: 'Si anima',
+      emojiLabel: 'Emoji',
+      reset: 'Ripristina',
+      emojis: {
+        wave: 'Mano che saluta',
+        fire: 'Fuoco',
+        party: 'Spara coriandoli',
+        heart: 'Cuore rosso',
+        rocket: 'Razzo',
+        grin: 'Faccina sorridente',
+      },
       tones: {
         default: 'Predefinito',
         light: 'Chiaro',
