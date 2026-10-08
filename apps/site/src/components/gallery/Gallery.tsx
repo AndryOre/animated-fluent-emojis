@@ -27,7 +27,8 @@ import {
 import { fillTemplate } from '../../gallery/template'
 import { parseGalleryUrl, serializeGalleryUrl } from '../../gallery/url-state'
 import type { Locale } from '../../i18n/locales'
-import { EmojiDetail, type GalleryStrings } from './EmojiDetail'
+import type { UiStrings } from '../../i18n/ui'
+import { EmojiSheet } from './EmojiSheet'
 import { GallerySidebar, type GallerySize } from './GallerySidebar'
 import { useGalleryData } from './use-gallery-data'
 
@@ -36,7 +37,6 @@ import 'animated-fluent-emojis/style.css'
 const PAGE_SIZE = 96
 const SKELETON_CELLS = 24
 const DESKTOP_QUERY = '(min-width: 860px)'
-const LARGE_QUERY = '(min-width: 1100px)'
 const TOOLTIP_DELAY = 300
 
 /**
@@ -45,7 +45,7 @@ const TOOLTIP_DELAY = 300
 export interface GalleryProps {
   locale: Locale
   searchIndexUrl: string
-  strings: GalleryStrings
+  strings: UiStrings['gallery']
 }
 
 function useMediaQuery(query: string): boolean {
@@ -74,20 +74,17 @@ function readInitialFilters() {
 
 function Skeleton({ label }: { label: string }) {
   return (
-    <div className="grid gap-5 min-[1100px]:grid-cols-[1fr_340px]">
-      <div
-        role="status"
-        aria-label={label}
-        className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2"
-      >
-        {Array.from({ length: SKELETON_CELLS }, (_, position) => (
-          <div
-            key={position}
-            className="shimmer aspect-square rounded-[10px] bg-secondary"
-          />
-        ))}
-      </div>
-      <div className="shimmer hidden h-[480px] rounded-brand bg-secondary min-[1100px]:block" />
+    <div
+      role="status"
+      aria-label={label}
+      className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2"
+    >
+      {Array.from({ length: SKELETON_CELLS }, (_, position) => (
+        <div
+          key={position}
+          className="shimmer aspect-square rounded-[10px] bg-secondary"
+        />
+      ))}
     </div>
   )
 }
@@ -116,12 +113,12 @@ function Message({ title, hint, action, onAction }: MessageProps) {
 }
 
 /**
- * The emoji gallery island: search, filters, grid and the detail panel.
+ * The emoji gallery island: search, filters, grid and the emoji sheet.
  * @param props - Where to load the search index from, and the localized UI strings.
- * @returns The search controls, results grid and detail panel.
+ * @returns The search controls, results grid and emoji sheet.
  */
 export function Gallery(props: GalleryProps) {
-  const { searchIndexUrl, strings } = props
+  const { locale, searchIndexUrl, strings } = props
   const { state, retry } = useGalleryData(searchIndexUrl)
   const [filters, setFilters] = useState(readInitialFilters)
   const [size, setSize] = useState<GallerySize>(64)
@@ -131,7 +128,7 @@ export function Gallery(props: GalleryProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [focusedSlug, setFocusedSlug] = useState<string | undefined>()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
-  const isLargeScreen = useMediaQuery(LARGE_QUERY)
+  const [sheetHeight, setSheetHeight] = useState(0)
   const searchRef = useRef<HTMLInputElement>(null)
   const filtersButtonRef = useRef<HTMLButtonElement>(null)
   const shortcutHint = useMemo(() => getShortcutHint(), [])
@@ -192,9 +189,7 @@ export function Gallery(props: GalleryProps) {
   )
 
   const shown = results.slice(0, visibleCount)
-  const selected =
-    results.find((emoji) => emoji.slug === selectedSlug) ??
-    (isLargeScreen ? results[0] : undefined)
+  const selected = results.find((emoji) => emoji.slug === selectedSlug)
   const tabStop = shown.find((emoji) => emoji.slug === focusedSlug) ?? shown[0]
   const tone = filters.tone
 
@@ -252,17 +247,6 @@ export function Gallery(props: GalleryProps) {
     'count',
     data.emojis.length.toLocaleString(),
   )
-  const detail = selected && (
-    <EmojiDetail
-      emoji={selected}
-      name={names.get(selected.slug) ?? selected.description}
-      tone={tone}
-      size={size}
-      strings={strings}
-      headingId="gallery-detail-heading"
-    />
-  )
-
   const sidebar = (
     <GallerySidebar
       strings={strings}
@@ -354,103 +338,91 @@ export function Gallery(props: GalleryProps) {
               }}
             />
           ) : (
-            <div className="grid items-start gap-5 min-[1100px]:grid-cols-[1fr_340px]">
-              <div className="flex flex-col items-center gap-4">
-                <div
-                  ref={gridRef}
-                  role="group"
-                  aria-label={strings.resultsLabel}
-                  className="grid w-full grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2"
-                >
-                  {shown.map((emoji) => {
-                    const name = names.get(emoji.slug) ?? emoji.description
-                    const isSelected = selected?.slug === emoji.slug
-                    return (
-                      <Tooltip key={emoji.slug}>
-                        <TooltipTrigger
-                          render={
-                            <button
-                              type="button"
-                              data-slug={emoji.slug}
-                              aria-pressed={isSelected}
-                              aria-label={name}
-                              tabIndex={tabStop?.slug === emoji.slug ? 0 : -1}
-                              onClick={(event) => {
-                                select(emoji.slug, event.currentTarget)
-                              }}
-                              onFocus={() => {
-                                setFocusedSlug(emoji.slug)
-                              }}
-                              onKeyDown={(event) => {
-                                moveFocus(event, shown.indexOf(emoji))
-                              }}
-                              className="flex aspect-square cursor-pointer items-center justify-center rounded-[10px] border border-transparent p-1 transition-colors hover:bg-muted aria-pressed:border-primary"
-                            />
-                          }
-                        >
-                          <span
-                            style={{
-                              viewTransitionName: `emoji-${emoji.slug}`,
+            <div
+              className="flex flex-col items-center gap-4"
+              style={{ paddingBottom: sheetOpen ? sheetHeight : 0 }}
+            >
+              <div
+                ref={gridRef}
+                role="group"
+                aria-label={strings.resultsLabel}
+                className="grid w-full grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2"
+              >
+                {shown.map((emoji) => {
+                  const name = names.get(emoji.slug) ?? emoji.description
+                  const isSelected = sheetOpen && selected?.slug === emoji.slug
+                  return (
+                    <Tooltip key={emoji.slug}>
+                      <TooltipTrigger
+                        render={
+                          <button
+                            type="button"
+                            data-slug={emoji.slug}
+                            aria-pressed={isSelected}
+                            aria-label={name}
+                            tabIndex={tabStop?.slug === emoji.slug ? 0 : -1}
+                            onClick={(event) => {
+                              select(emoji.slug, event.currentTarget)
                             }}
-                          >
-                            <Emoji
-                              id={emoji.id}
-                              size={48}
-                              skinTone={effectiveTone(emoji, tone)}
-                              autoPlay={false}
-                              playOnHover
-                              alt=""
-                            />
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>{name}</TooltipContent>
-                      </Tooltip>
-                    )
-                  })}
-                </div>
-                {shown.length < results.length && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => {
-                      setVisibleCount((count) => count + PAGE_SIZE)
-                    }}
-                  >
-                    {strings.showMore}
-                  </Button>
-                )}
+                            onFocus={() => {
+                              setFocusedSlug(emoji.slug)
+                            }}
+                            onKeyDown={(event) => {
+                              moveFocus(event, shown.indexOf(emoji))
+                            }}
+                            className="flex aspect-square cursor-pointer items-center justify-center rounded-[10px] border border-transparent p-1 transition-colors hover:bg-muted aria-pressed:border-primary"
+                          />
+                        }
+                      >
+                        <span
+                          style={{
+                            viewTransitionName: `emoji-${emoji.slug}`,
+                          }}
+                        >
+                          <Emoji
+                            id={emoji.id}
+                            size={48}
+                            skinTone={effectiveTone(emoji, tone)}
+                            autoPlay={false}
+                            playOnHover
+                            alt=""
+                          />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>{name}</TooltipContent>
+                    </Tooltip>
+                  )
+                })}
               </div>
-              {isLargeScreen ? (
-                <aside
-                  aria-labelledby="gallery-detail-heading"
-                  className="sticky top-[72px] rounded-brand border border-border bg-card p-5"
+              {shown.length < results.length && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => {
+                    setVisibleCount((count) => count + PAGE_SIZE)
+                  }}
                 >
-                  {detail}
-                </aside>
-              ) : (
-                <Sheet
-                  open={sheetOpen && Boolean(detail)}
-                  onOpenChange={setSheetOpen}
-                >
-                  <SheetContent
-                    side="bottom"
-                    aria-labelledby="gallery-detail-heading"
-                    finalFocus={lastTriggerRef}
-                  >
-                    <SheetClose
-                      render={<Button variant="ghost" shape="pill" />}
-                      className="mb-2 ml-auto flex h-8 px-3 font-semibold"
-                    >
-                      {strings.closeDetail}
-                    </SheetClose>
-                    {detail}
-                  </SheetContent>
-                </Sheet>
+                  {strings.showMore}
+                </Button>
               )}
             </div>
           )}
         </div>
       </div>
+      {selected && (
+        <EmojiSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          emoji={selected}
+          name={names.get(selected.slug) ?? selected.description}
+          tone={tone}
+          size={size}
+          locale={locale}
+          strings={strings}
+          finalFocus={lastTriggerRef}
+          onHeightChange={setSheetHeight}
+        />
+      )}
       {!isDesktop && (
         <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
           <SheetContent
