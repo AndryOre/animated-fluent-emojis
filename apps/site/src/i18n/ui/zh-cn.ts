@@ -29,6 +29,7 @@ export const zh_CN: UiStrings = {
     },
   },
   footer: {
+    builtBy: '由 {name} 构建',
     attribution:
       'emoji 图稿归 Microsoft 所有，代码是开源的。与 Microsoft 无关联，也未获其认可。',
     navLabel: '页脚',

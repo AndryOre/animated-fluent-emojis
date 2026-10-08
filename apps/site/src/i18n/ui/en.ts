@@ -27,6 +27,7 @@ export const en = {
     },
   },
   footer: {
+    builtBy: 'Built by {name}',
     attribution:
       "The emoji artwork is Microsoft's. The code is open source. Not affiliated with or endorsed by Microsoft.",
     navLabel: 'Footer',

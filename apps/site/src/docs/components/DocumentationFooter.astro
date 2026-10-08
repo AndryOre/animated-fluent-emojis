@@ -1,0 +1,15 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro'
+
+import FooterCredit from '../../components/FooterCredit.astro'
+import type { Locale } from '../../i18n/locales'
+
+const locale = Astro.locals.starlightRoute.lang as Locale
+---
+
+<Default {...Astro.props}>
+  <slot />
+</Default>
+<div class="mt-8 border-t border-border py-5">
+  <FooterCredit locale={locale} />
+</div>

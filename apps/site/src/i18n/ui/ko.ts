@@ -29,6 +29,7 @@ export const ko: UiStrings = {
     },
   },
   footer: {
+    builtBy: '제작: {name}',
     attribution:
       '이모지 아트워크는 Microsoft의 것입니다. 코드는 오픈 소스입니다. Microsoft와 제휴하거나 승인받은 프로젝트가 아닙니다.',
     navLabel: '푸터',

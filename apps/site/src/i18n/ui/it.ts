@@ -28,6 +28,7 @@ export const it: UiStrings = {
     },
   },
   footer: {
+    builtBy: 'Creato da {name}',
     attribution:
       'Le illustrazioni delle emoji sono di Microsoft. Il codice è open source. Non affiliato a Microsoft né approvato da Microsoft.',
     navLabel: 'Piè di pagina',
