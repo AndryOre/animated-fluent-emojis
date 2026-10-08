@@ -52,5 +52,5 @@ una precarga reinicia el manifest, y las solicitudes calentadas se desperdician.
 La solicitud del manifest se rinde tras 15 segundos. Un manifest fallido se
 reintenta en la siguiente llamada a `preloadEmojis`, en el siguiente montaje o
 cuando el navegador vuelve a estar en línea, así que es seguro volver a llamarlo
-desde el botón. Consulta [precarga](../usage.md#preloading) y
-[fallback](../usage.md#fallback).
+desde el botón. Consulta [precarga](../guide/assets.md#preloading) y
+[fallback](../guide/behavior.md#fallback).

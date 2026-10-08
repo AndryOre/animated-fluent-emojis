@@ -52,8 +52,8 @@ des Elements setzt, statt Attribute neu zu schreiben. Die Events sind
 ```
 
 Attribute, Properties und Events sind im
-[Nutzungsleitfaden](../usage.md#plain-html) aufgeführt. Um den Platzbedarf zu
-reservieren, bevor das Element aktualisiert wird, füge
+[Nutzungsleitfaden](../guide/frameworks.md#plain-html) aufgeführt. Um den
+Platzbedarf zu reservieren, bevor das Element aktualisiert wird, füge
 `FLUENT_EMOJI_PRE_UPGRADE_CSS` zu deinem globalen CSS hinzu. Zum Verhalten beim
 Laden, zum Fallback und zur Wiedergabe siehe den Rest des
 [Nutzungsleitfadens](../usage.md).

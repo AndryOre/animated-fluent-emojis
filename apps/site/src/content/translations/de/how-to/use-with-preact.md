@@ -52,10 +52,10 @@ export function Greeting() {
 ```
 
 Attribute, Properties und Events sind im
-[Nutzungsleitfaden](../usage.md#plain-html) aufgeführt.
+[Nutzungsleitfaden](../guide/frameworks.md#plain-html) aufgeführt.
 
 ## Der React-Adapter
 
 Lege in deinem Bundler `react` und `react-dom` als Alias auf `preact/compat`
 fest und verwende dann den React-Adapter wie im
-[Nutzungsleitfaden](../usage.md#react) beschrieben.
+[Nutzungsleitfaden](../guide/frameworks.md#react) beschrieben.

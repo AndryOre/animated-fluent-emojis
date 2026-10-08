@@ -52,7 +52,7 @@ las propiedades del elemento en lugar de reescribir atributos. Los eventos son
 ```
 
 Los atributos, propiedades y eventos están listados en la
-[guía de uso](../usage.md#plain-html). Para reservar el espacio antes de que el
-elemento se actualice, agrega `FLUENT_EMOJI_PRE_UPGRADE_CSS` a tu CSS global.
-Para el comportamiento de carga, fallback y reproducción, consulta el resto de
-la [guía de uso](../usage.md).
+[guía de uso](../guide/frameworks.md#plain-html). Para reservar el espacio antes
+de que el elemento se actualice, agrega `FLUENT_EMOJI_PRE_UPGRADE_CSS` a tu CSS
+global. Para el comportamiento de carga, fallback y reproducción, consulta el
+resto de la [guía de uso](../usage.md).

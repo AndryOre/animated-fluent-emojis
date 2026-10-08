@@ -74,4 +74,4 @@ précis.
 
 `animated-fluent-emojis/lookup` n'embarque ni React ni bannière `"use client"` ;
 il fonctionne donc aussi dans les Server Components et les route handlers.
-Consultez [lookup](../usage.md#lookup).
+Consultez [lookup](../guide/lookup.md).

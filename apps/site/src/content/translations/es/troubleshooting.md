@@ -70,12 +70,12 @@ termina en uno de cuatro estados:
 anteriores.
 
 - Id desconocido: usa un id conocido. `EmojiId` los autocompleta, y la
-  exportación `lookup` puede buscarlos (consulta [Lookup](usage.md#lookup)).
+  exportación `lookup` puede buscarlos (consulta [Lookup](guide/lookup.md)).
 - Manifest fallido: confirma que `<asset site>/v1/manifest.slim.json` responde
   200 desde el navegador. Una carga fallida se reintenta en el siguiente
   montaje, en `preloadEmojis` y cuando el navegador vuelve a estar en línea.
 - Pasa un `fallback` si el emoji nunca debe dejar un hueco en el diseño.
-  Consulta [Fallback](usage.md#fallback).
+  Consulta [Fallback](guide/behavior.md#fallback).
 
 ## El manifest está bloqueado por la CSP o el navegador está sin conexión
 
@@ -97,7 +97,7 @@ el origen que necesitas permitir.
 Las directivas exactas están en
 [requisitos de CSP](security.md#csp-requirements). Si alojas tú mismo los
 assets, permite tu propio origen y llama a `configureEmojis` antes de que se
-renderice el primer `Emoji`. Consulta [Asset site](usage.md#asset-site).
+renderice el primer `Emoji`. Consulta [Asset site](guide/assets.md#asset-site).
 
 ## Next.js informa un error para configureEmojis o Emoji
 
