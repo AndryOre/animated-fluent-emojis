@@ -90,8 +90,6 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/home/DemoPlayground.tsx':
     'React island that wires the demo toggles to the library Emoji; its option-to-props mapping is tested in demo.test.ts.',
   'apps/site/src/components/NotFoundPage.astro': ASTRO_PRESENTATION_REASON,
-  'apps/site/src/components/ThemeToggle.astro':
-    'Presentational Astro component plus a small DOM script; the pure init logic is tested in theme-init.test.ts.',
   'apps/site/src/layouts/Layout.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/pages/robots.txt.ts':
     'Thin endpoint that feeds contributions to buildRobotsTxt, tested in seo/robots.test.ts.',
