@@ -85,10 +85,11 @@ export function createPackageManagerStore(
 
   return {
     get: () => {
+      if (current !== undefined) {
+        return current
+      }
       const stored = readStored()
-      return isPackageManager(stored)
-        ? stored
-        : (current ?? DEFAULT_PACKAGE_MANAGER)
+      return isPackageManager(stored) ? stored : DEFAULT_PACKAGE_MANAGER
     },
     set: (manager) => {
       current = manager
