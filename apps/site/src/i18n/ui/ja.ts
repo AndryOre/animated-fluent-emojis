@@ -138,6 +138,8 @@ export const ja: UiStrings = {
     },
   },
   docs: {
+    guideGroup: 'ガイド',
+    helpGroup: 'ヘルプ',
     howToGroup: 'ハウツーガイド',
     copyMarkdown: 'ページを Markdown でコピー',
     copiedMarkdown: 'コピーしました',

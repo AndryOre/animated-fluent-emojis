@@ -67,4 +67,4 @@ Content Security Policy that goes with a custom origin, and
 
 `animated-fluent-emojis/lookup` has no React and no `"use client"` banner, so it
 also works in Server Components and route handlers. See
-[lookup](../usage.md#lookup).
+[lookup](../guide/lookup.md).

@@ -137,6 +137,8 @@ export const de: UiStrings = {
     },
   },
   docs: {
+    guideGroup: 'Leitfaden',
+    helpGroup: 'Hilfe',
     howToGroup: 'Anleitungen',
     copyMarkdown: 'Seite als Markdown kopieren',
     copiedMarkdown: 'Kopiert',

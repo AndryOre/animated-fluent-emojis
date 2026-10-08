@@ -107,4 +107,4 @@ from Microsoft's MIT-licensed repository; the notice that applies to them is at
 `/LICENSE-fluentui-emoji-animated.txt`. The attribution is at `/NOTICE.txt`.
 Check the terms that apply to the artwork before you use it in your own work.
 
-Building a website or app? The [usage guide](../usage.md) covers the library.
+Building a website or app? The [guide](../usage.md) covers the library.

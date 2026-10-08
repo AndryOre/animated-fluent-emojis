@@ -92,17 +92,17 @@ bun add animated-fluent-emojis
 One package, one import path per framework. Each row links to its install and
 usage steps.
 
-| Framework    | Import                                      | Guide                                      |
-| ------------ | ------------------------------------------- | ------------------------------------------ |
-| React        | `animated-fluent-emojis/react`              | [Usage](docs/usage.md#react)               |
-| Vue          | `animated-fluent-emojis/vue`                | [Usage](docs/usage.md#vue)                 |
-| Svelte       | `animated-fluent-emojis/svelte`             | [Usage](docs/usage.md#svelte)              |
-| Astro        | `animated-fluent-emojis/astro`              | [Usage](docs/usage.md#astro)               |
-| Plain HTML   | `animated-fluent-emojis/element`            | [Usage](docs/usage.md#plain-html)          |
-| Angular      | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-angular.md)  |
-| Solid        | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-solid.md)    |
-| Preact       | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-preact.md)   |
-| No framework | `createEmoji` from `animated-fluent-emojis` | [Usage](docs/usage.md#without-a-framework) |
+| Framework    | Import                                      | Guide                                                 |
+| ------------ | ------------------------------------------- | ----------------------------------------------------- |
+| React        | `animated-fluent-emojis/react`              | [Guide](docs/guide/frameworks.md#react)               |
+| Vue          | `animated-fluent-emojis/vue`                | [Guide](docs/guide/frameworks.md#vue)                 |
+| Svelte       | `animated-fluent-emojis/svelte`             | [Guide](docs/guide/frameworks.md#svelte)              |
+| Astro        | `animated-fluent-emojis/astro`              | [Guide](docs/guide/frameworks.md#astro)               |
+| Plain HTML   | `animated-fluent-emojis/element`            | [Guide](docs/guide/frameworks.md#plain-html)          |
+| Angular      | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-angular.md)             |
+| Solid        | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-solid.md)               |
+| Preact       | `animated-fluent-emojis/element`            | [How-to](docs/how-to/use-with-preact.md)              |
+| No framework | `createEmoji` from `animated-fluent-emojis` | [Guide](docs/guide/frameworks.md#without-a-framework) |
 
 Lit, Alpine and htmx use `<fluent-emoji>` too.
 
@@ -121,7 +121,7 @@ import 'animated-fluent-emojis/style.css'
 ```
 
 The manifest is fetched on first render, never at import; see the
-[usage guide](docs/usage.md#fallback) for loading and failure behavior.
+[guide](docs/guide/behavior.md#fallback) for loading and failure behavior.
 
 ### Next.js and server components
 
@@ -133,7 +133,7 @@ and `preloadEmojis` from a client module, not a Server Component.
 ## Props
 
 These are the React props; the other adapters take the same set in their own
-spelling, see the [usage guide](docs/usage.md#frameworks).
+spelling, see the [guide](docs/guide/frameworks.md).
 
 | Prop                | Type                 | Default     | Description                                                    |
 | ------------------- | -------------------- | ----------- | -------------------------------------------------------------- |
@@ -150,14 +150,14 @@ spelling, see the [usage guide](docs/usage.md#frameworks).
 
 `className`, `style`, `ref`, `onLoad`, `onError` and any other `<span>`
 attribute are also accepted. Every prop, with edge cases, is in the
-[usage guide](docs/usage.md#props).
+[guide](docs/guide/props.md).
 
 ## Documentation
 
 | Doc                                                    | Covers                                        |
 | ------------------------------------------------------ | --------------------------------------------- |
 | [Website](https://animated-fluent-emojis.andryore.dev) | Gallery, docs in ten languages, emoji pages   |
-| [Usage guide](docs/usage.md)                           | Frameworks, props, playback, fallback, lookup |
+| [Guide](docs/usage.md)                                 | Frameworks, props, playback, fallback, lookup |
 | [How-to guides](docs/how-to/README.md)                 | Angular, Solid, Preact, Next.js and more      |
 | [Use without code](docs/how-to/use-without-code.md)    | Slack, Notion, Docs, email, a README          |
 | [Docs index](docs/README.md)                           | Every document in this repository             |
@@ -178,7 +178,7 @@ attribute are also accepted. Every prop, with edge cases, is in the
 - A failed manifest load is retried on the next mount, `preloadEmojis` call or
   `online` event, and `onError` now reports it.
 - Autoplay waits for the image, the viewport and a visible tab; see
-  [Playback](docs/usage.md#playback).
+  [Playback](docs/guide/behavior.md#playback).
 - The runtime reads the versioned asset layout (`/v1/`) with a compact manifest.
   If you mirror the asset site, publish that layout with the 0.5 pipeline; see
   the [changelog](CHANGELOG.md),

@@ -48,7 +48,7 @@ properties rather than rewriting attributes. Events are `emoji-load`,
 ```
 
 Attributes, properties and events are listed in the
-[usage guide](../usage.md#plain-html). To reserve the footprint before the
+[guide](../guide/frameworks.md#plain-html). To reserve the footprint before the
 element upgrades, add `FLUENT_EMOJI_PRE_UPGRADE_CSS` to your global CSS. For
 loading, fallback and playback behavior see the rest of the
-[usage guide](../usage.md).
+[guide](../usage.md).

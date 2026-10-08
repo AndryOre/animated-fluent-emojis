@@ -20,13 +20,38 @@ describe('rewriteDocumentLink', () => {
     ).toBe('/docs/how-to/use-with-angular/')
   })
 
-  it('maps the usage guide to the docs home and keeps the fragment', () => {
+  it('maps the overview to the docs home', () => {
     expect(
-      rewriteDocumentLink('../usage.md#plain-html', {
+      rewriteDocumentLink('../usage.md', {
         docPath: 'how-to/use-with-preact.md',
         locale: 'en',
       }),
-    ).toBe('/docs/#plain-html')
+    ).toBe('/docs/')
+  })
+
+  it('keeps the fragment on a guide page', () => {
+    expect(
+      rewriteDocumentLink('../guide/frameworks.md#plain-html', {
+        docPath: 'how-to/use-with-preact.md',
+        locale: 'en',
+      }),
+    ).toBe('/docs/guide/frameworks/#plain-html')
+  })
+
+  it.each([
+    ['../usage.md#plain-html', '/docs/guide/frameworks/#plain-html'],
+    ['../usage.md#frameworks', '/docs/guide/frameworks/'],
+    ['../usage.md#fallback', '/docs/guide/behavior/#fallback'],
+    ['../usage.md#asset-site', '/docs/guide/assets/#asset-site'],
+    ['../usage.md#lookup', '/docs/guide/lookup/'],
+    ['../usage.md#unknown', '/docs/#unknown'],
+  ])('sends the legacy anchor link %s to its guide page', (href, route) => {
+    expect(
+      rewriteDocumentLink(href, {
+        docPath: 'how-to/use-with-preact.md',
+        locale: 'en',
+      }),
+    ).toBe(route)
   })
 
   it('is locale aware', () => {
@@ -93,6 +118,7 @@ describe('rewriteDocumentLink', () => {
 describe('published docs', () => {
   it('derives slugs and routes', () => {
     expect(docSlug('usage.md')).toBe('docs')
+    expect(docSlug('guide/props.md')).toBe('docs/guide/props')
     expect(docSlug('troubleshooting.md')).toBe('docs/troubleshooting')
     expect(docRoute('zh-CN', 'troubleshooting.md')).toBe(
       '/zh-cn/docs/troubleshooting/',

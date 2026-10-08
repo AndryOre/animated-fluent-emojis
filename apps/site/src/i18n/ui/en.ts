@@ -136,6 +136,8 @@ export const en = {
     },
   },
   docs: {
+    guideGroup: 'Guide',
+    helpGroup: 'Help',
     howToGroup: 'How-to guides',
     copyMarkdown: 'Copy page as Markdown',
     copiedMarkdown: 'Copied',

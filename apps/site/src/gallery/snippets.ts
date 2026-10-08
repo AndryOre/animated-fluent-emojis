@@ -51,7 +51,7 @@ function resolveFiles(
 
 /**
  * Generates the usage snippet for one adapter, the `<fluent-emoji>` element or
- * plain file URLs, following the API in `docs/usage.md`.
+ * plain file URLs, following the API in `docs/guide/`.
  * @param emoji - The emoji to show.
  * @param kind - Which snippet to produce.
  * @param options - Size in pixels and an optional skin tone.
