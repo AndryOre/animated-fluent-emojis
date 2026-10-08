@@ -177,6 +177,8 @@ export const de: UiStrings = {
       'Prüfe deine Verbindung und versuch es noch einmal. Die Doku und der Rest der Website funktionieren weiterhin.',
     retry: 'Noch einmal versuchen',
     loading: 'Emojis werden geladen',
+    filtersButton: 'Filter',
+    customizeTitle: 'Anpassen',
   },
   emojiPage: {
     title: '{name}, animiertes Emoji · Animated Fluent Emojis',

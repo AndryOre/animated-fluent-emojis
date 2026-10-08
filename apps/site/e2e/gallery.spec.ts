@@ -52,7 +52,7 @@ test('download saves the emoji file under its slug', async ({ page }) => {
   expect(file.suggestedFilename()).toBe(`${slug ?? ''}.png`)
 })
 
-test('size chips switch by role and keep one pressed', async ({ page }) => {
+test('size segments switch by role and keep one pressed', async ({ page }) => {
   const size = page.getByRole('group', { name: 'Size' })
   await size.getByRole('button', { name: '96' }).click()
   await expect(size.getByRole('button', { name: '96' })).toHaveAttribute(
@@ -63,6 +63,33 @@ test('size chips switch by role and keep one pressed', async ({ page }) => {
     'aria-pressed',
     'false',
   )
+})
+
+test('categories filter the grid and are pressed by role', async ({ page }) => {
+  const categories = page.getByRole('group', { name: 'Category' })
+  const all = categories.getByRole('button').first()
+  await expect(all).toHaveAttribute('aria-pressed', 'true')
+  const second = categories.getByRole('button').nth(1)
+  const label = await second.innerText()
+  const count = label.trim().split(/\s+/).pop() ?? ''
+  await second.click()
+  await expect(second).toHaveAttribute('aria-pressed', 'true')
+  await expect(all).toHaveAttribute('aria-pressed', 'false')
+  await expect(
+    page.getByRole('status').filter({ hasText: 'emojis' }),
+  ).toHaveText(`${count} emojis`)
+  await expect(page).toHaveURL(/[?&]c=/)
+})
+
+test('Ctrl+K focuses the search and typing updates the URL', async ({
+  page,
+}) => {
+  const search = page.getByRole('searchbox', { name: 'Search emojis' })
+  await page.locator('[data-slug]').first().focus()
+  await page.keyboard.press('Control+k')
+  await expect(search).toBeFocused()
+  await page.keyboard.type('fire')
+  await expect(page).toHaveURL(/[?&]q=fire/)
 })
 
 test('snippet tabs switch with the arrow keys', async ({ page }) => {
@@ -78,6 +105,24 @@ test('snippet tabs switch with the arrow keys', async ({ page }) => {
 
 test.describe('mobile sheet', () => {
   test.use({ viewport: { width: 390, height: 800 } })
+
+  test('filters sheet traps focus and returns it to the Filters button on Escape', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    const trigger = page.getByRole('button', { name: 'Filters' })
+    await trigger.click()
+    const dialog = page.getByRole('dialog', { name: 'Filters' })
+    await expect(dialog).toBeVisible()
+    await expect(dialog.getByRole('group', { name: 'Category' })).toBeVisible()
+    for (let press = 0; press < 40; press++) {
+      await page.keyboard.press('Tab')
+      await expect(dialog.locator(':focus')).toHaveCount(1)
+    }
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+    await expect(trigger).toBeFocused()
+  })
 
   test('traps focus and returns it to the cell on Escape', async ({ page }) => {
     await page.goto('/emojis/')

@@ -176,6 +176,8 @@ export const fr: UiStrings = {
       'Vérifiez votre connexion et réessayez. La documentation et le reste du site fonctionnent toujours.',
     retry: 'Réessayer',
     loading: 'Chargement des emojis',
+    filtersButton: 'Filtres',
+    customizeTitle: 'Personnaliser',
   },
   emojiPage: {
     title: '{name}, emoji animé · Animated Fluent Emojis',

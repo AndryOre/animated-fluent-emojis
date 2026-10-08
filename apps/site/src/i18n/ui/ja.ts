@@ -175,6 +175,8 @@ export const ja: UiStrings = {
       '接続を確認して、もう一度お試しください。ドキュメントとサイトのほかの部分は使えます。',
     retry: 'もう一度試す',
     loading: '絵文字を読み込み中',
+    filtersButton: 'フィルター',
+    customizeTitle: 'カスタマイズ',
   },
   emojiPage: {
     title: '{name}、アニメーション絵文字 · Animated Fluent Emojis',
