@@ -4,7 +4,6 @@ import { LOCALE_NAMES, localePath, LOCALES, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { REPOSITORY_URL } from '../site-links'
 import HeaderMenus from './HeaderMenus'
-import ThemeToggle from './ThemeToggle.astro'
 
 interface Props {
   locale: Locale
@@ -24,7 +23,7 @@ const localeOptions = LOCALES.map((code) => ({
   href: localePath(code, path),
 }))
 const linkClass =
-  'rounded-full px-3 py-2 text-sm font-medium text-foreground hover:text-primary-text'
+  'inline-flex h-8 items-center rounded-md px-2.5 text-sm font-medium text-foreground hover:bg-muted'
 ---
 
 <header class="border-b border-border bg-background">
@@ -63,8 +62,11 @@ const linkClass =
         navLabel={header.navLabel}
         links={links}
         languageLabel={header.languageLabel}
+        themeLabel={header.themeLabel}
+        themeNames={header.theme}
+        repositoryLabel={header.nav.github}
+        repositoryHref={REPOSITORY_URL}
         currentLocale={locale}
-        currentLocaleName={LOCALE_NAMES[locale]}
         locales={localeOptions}
       />
       <noscript>
@@ -93,8 +95,14 @@ const linkClass =
           ))}
         </ul>
       </noscript>
-
-      <ThemeToggle locale={locale} />
     </div>
   </div>
 </header>
+
+<script>
+  import { applyTheme, readStoredTheme } from '../scripts/theme'
+
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (readStoredTheme() === 'system') applyTheme('system', false)
+  })
+</script>

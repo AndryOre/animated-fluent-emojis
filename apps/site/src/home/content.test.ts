@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import publicIndexFixture from '../gallery/fixtures/public-index.json'
 import { parsePublicIndex } from '../gallery/public-index'
-import { buildSnippetTabs, pickTeaserEmojis, SNIPPET_TABS } from './content'
+import {
+  buildCodeBlockTabs,
+  buildInstallHtml,
+  buildSnippetTabs,
+  pickTeaserEmojis,
+  SNIPPET_TABS,
+} from './content'
 
 const emojis = parsePublicIndex(publicIndexFixture)
 
@@ -24,6 +30,33 @@ describe('snippet tabs', () => {
     expect(tabs).toHaveLength(5)
     expect(tabs[0]?.code).toContain(emoji.id)
     expect(tabs[4]?.code).toContain('<fluent-emoji')
+  })
+})
+
+describe('highlighted blocks', () => {
+  it('fills the placeholders of every framework tab at build time', async () => {
+    const emoji = emojis[0]
+    if (!emoji) throw new Error('fixture is empty')
+    const tabs = await buildCodeBlockTabs(emoji)
+    expect(tabs.map((tab) => tab.id)).toEqual([
+      'react',
+      'vue',
+      'svelte',
+      'astro',
+      'element',
+    ])
+    for (const tab of tabs) {
+      expect(tab.html).toContain(emoji.id)
+      expect(tab.html).not.toContain('EMOJIID')
+      expect(tab.html).not.toContain('99999')
+    }
+  })
+
+  it('highlights the install command of every package manager', async () => {
+    const html = await buildInstallHtml()
+    expect(Object.keys(html)).toEqual(['bun', 'npm', 'pnpm', 'yarn'])
+    expect(html.npm).toContain('install')
+    expect(html.bun).not.toContain('class="gutter"')
   })
 })
 

@@ -71,3 +71,69 @@
     animation: none;
   }
 }
+
+.afe-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.afe-code pre {
+  margin: 0;
+}
+
+.afe-code code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  padding-block: 0.75rem;
+}
+
+.afe-code .ec-line {
+  display: flex;
+  min-height: 1.5rem;
+  white-space: pre;
+}
+
+.afe-code .gutter {
+  position: sticky;
+  left: 0;
+  flex: none;
+  width: 2.5rem;
+  padding-right: 0.75rem;
+  background: var(--card);
+  color: var(--muted-foreground);
+  text-align: right;
+  user-select: none;
+}
+
+.afe-code[data-line-numbers='false'] .gutter {
+  display: none;
+}
+
+.afe-code .code {
+  padding-inline: 1rem;
+}
+
+.afe-code .gutter + .code {
+  padding-left: 0.25rem;
+}
+
+.afe-code .code span[style] {
+  color: var(--0);
+}
+
+.dark .afe-code .code span[style] {
+  color: var(--1);
+}
+
+.afe-code .ec-line-highlight {
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+.afe-code .ec-line-highlight .gutter {
+  background: color-mix(in oklab, var(--primary) 10%, var(--card));
+  color: var(--foreground);
+}
