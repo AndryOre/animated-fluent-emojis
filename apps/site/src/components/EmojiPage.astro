@@ -8,10 +8,11 @@ import {
   relatedEmojis,
 } from '../emoji-pages/emoji-page'
 import { fileUrl } from '../gallery/public-index'
+import { buildEmojiPageTabs } from '../home/content'
 import { localePath, SITE_ORIGIN, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
-import { EmojiPageDetail } from './gallery/EmojiPageDetail'
+import { EmojiPageDetail, PREVIEW_SIZE } from './gallery/EmojiPageDetail'
 
 interface Props {
   locale: Locale
@@ -24,6 +25,8 @@ const { emojis, names } = await loadEmojiPageData(locale)
 const emoji = emojis.find((candidate) => candidate.slug === slug)
 const localized = names.get(slug)
 if (!emoji || !localized) throw new Error(`Unknown emoji "${slug}"`)
+
+const snippetTabs = await buildEmojiPageTabs(emoji, PREVIEW_SIZE)
 
 const related = relatedEmojis(emoji, emojis).map((item) => ({
   emoji: item,
@@ -47,6 +50,7 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
           emoji={emoji}
           name={localized.name}
           strings={gallery}
+          snippetTabs={snippetTabs}
         />
       </div>
       <div class="min-[860px]:order-1">
