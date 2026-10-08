@@ -176,6 +176,8 @@ export const pt_BR: UiStrings = {
       'Verifique sua conexão e tente novamente. A documentação e o resto do site continuam funcionando.',
     retry: 'Tentar novamente',
     loading: 'Carregando emojis',
+    filtersButton: 'Filtros',
+    customizeTitle: 'Personalizar',
   },
   emojiPage: {
     title: '{name}, emoji animado · Animated Fluent Emojis',

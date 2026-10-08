@@ -1,0 +1,64 @@
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+
+interface Segment<Value extends string | number> {
+  value: Value
+  label: string
+}
+
+interface SegmentedControlProps<Value extends string | number> {
+  label: string
+  segments: readonly Segment<Value>[]
+  selected: Value
+  onSelect: (value: Value) => void
+  disabled?: boolean
+  disabledHint?: string
+}
+
+/**
+ * A labelled, wrapping group of single-choice segments for the gallery
+ * sidebar. When disabled, segments stay focusable and report `aria-disabled`
+ * but ignore changes.
+ * @param props - Segment list, selected value, change handler and disabled state.
+ * @returns The labelled group of segment buttons.
+ */
+export function SegmentedControl<Value extends string | number>(
+  props: SegmentedControlProps<Value>,
+) {
+  const {
+    label,
+    segments,
+    selected,
+    onSelect,
+    disabled = false,
+    disabledHint,
+  } = props
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      <ToggleGroup
+        aria-label={label}
+        value={[String(selected)]}
+        onValueChange={(next) => {
+          const segment = segments.find(
+            (candidate) => String(candidate.value) === next[0],
+          )
+          if (segment && !disabled) onSelect(segment.value)
+        }}
+        className="flex-wrap gap-1"
+      >
+        {segments.map((segment) => (
+          <ToggleGroupItem
+            key={segment.value}
+            value={String(segment.value)}
+            variant="outline"
+            className="h-8 shrink-0 cursor-pointer rounded-lg border-border bg-transparent px-2.5 text-xs font-medium hover:bg-muted aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-muted aria-pressed:text-foreground"
+            aria-disabled={disabled}
+            title={disabled ? disabledHint : undefined}
+          >
+            {segment.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
+  )
+}

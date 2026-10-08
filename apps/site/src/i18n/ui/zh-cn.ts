@@ -173,6 +173,8 @@ export const zh_CN: UiStrings = {
     errorHint: '请检查网络连接后重试。文档和网站的其他部分仍可正常使用。',
     retry: '重试',
     loading: '正在加载 emoji',
+    filtersButton: '筛选',
+    customizeTitle: '自定义',
   },
   emojiPage: {
     title: '{name}，动画 emoji · Animated Fluent Emojis',

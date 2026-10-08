@@ -175,6 +175,8 @@ export const ru: UiStrings = {
       'Проверьте подключение и попробуйте ещё раз. Документация и остальные разделы сайта работают.',
     retry: 'Повторить',
     loading: 'Загрузка эмодзи',
+    filtersButton: 'Фильтры',
+    customizeTitle: 'Настройка',
   },
   emojiPage: {
     title: '{name}, анимированное эмодзи · Animated Fluent Emojis',

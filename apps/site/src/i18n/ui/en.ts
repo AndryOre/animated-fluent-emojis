@@ -174,6 +174,8 @@ export const en = {
       'Check your connection and try again. The docs and the rest of the site still work.',
     retry: 'Try again',
     loading: 'Loading emojis',
+    filtersButton: 'Filters',
+    customizeTitle: 'Customize',
   },
   emojiPage: {
     title: '{name}, animated emoji · Animated Fluent Emojis',

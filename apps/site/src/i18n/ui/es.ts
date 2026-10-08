@@ -175,6 +175,8 @@ export const es: UiStrings = {
       'Revisa tu conexión e inténtalo de nuevo. La documentación y el resto del sitio siguen funcionando.',
     retry: 'Reintentar',
     loading: 'Cargando emojis',
+    filtersButton: 'Filtros',
+    customizeTitle: 'Personalizar',
   },
   emojiPage: {
     title: '{name}, emoji animado · Animated Fluent Emojis',

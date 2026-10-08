@@ -176,6 +176,8 @@ export const ko: UiStrings = {
       '연결을 확인하고 다시 시도해 주세요. 문서와 사이트의 다른 부분은 계속 사용할 수 있습니다.',
     retry: '다시 시도',
     loading: '이모지를 불러오는 중',
+    filtersButton: '필터',
+    customizeTitle: '사용자 지정',
   },
   emojiPage: {
     title: '{name}, 애니메이션 이모지 · Animated Fluent Emojis',
