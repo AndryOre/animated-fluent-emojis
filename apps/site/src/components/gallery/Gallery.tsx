@@ -388,14 +388,20 @@ export function Gallery(props: GalleryProps) {
                             />
                           }
                         >
-                          <Emoji
-                            id={emoji.id}
-                            size={48}
-                            skinTone={effectiveTone(emoji, tone)}
-                            autoPlay={false}
-                            playOnHover
-                            alt=""
-                          />
+                          <span
+                            style={{
+                              viewTransitionName: `emoji-${emoji.slug}`,
+                            }}
+                          >
+                            <Emoji
+                              id={emoji.id}
+                              size={48}
+                              skinTone={effectiveTone(emoji, tone)}
+                              autoPlay={false}
+                              playOnHover
+                              alt=""
+                            />
+                          </span>
                         </TooltipTrigger>
                         <TooltipContent>{name}</TooltipContent>
                       </Tooltip>

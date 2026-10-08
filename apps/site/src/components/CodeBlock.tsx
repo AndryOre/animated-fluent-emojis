@@ -92,7 +92,7 @@ export default function CodeBlock({
             <TabsList
               activateOnFocus
               aria-label={labels.tabsLabel}
-              className="gap-1"
+              className="min-w-0 gap-1 pr-5 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.id} value={tab.id}>

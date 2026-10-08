@@ -62,10 +62,40 @@ describe('emoji detail on a page', () => {
         strings={strings}
       />,
     )
-    expect(html).not.toContain(fileUrl(emoji.urls.png))
+    expect(html).not.toContain(`src="${fileUrl(emoji.urls.png)}"`)
   })
 
   it('leaves the name heading to the page', () => {
     expect(render(undefined)).not.toContain('<h2')
+  })
+
+  it('offers the id and URL copy actions and a download menu by name', () => {
+    const html = render(undefined)
+    expect(html).toContain(`aria-label="${strings.copyId}"`)
+    expect(html).toContain(`aria-label="${strings.copyUrl}"`)
+    expect(html).toContain(strings.download)
+  })
+
+  it('puts "No code" as the last snippet tab', () => {
+    const html = render(undefined)
+    expect(html.lastIndexOf(strings.tabNoCode)).toBeGreaterThan(
+      html.indexOf(strings.tabHtml),
+    )
+  })
+
+  it('names the stage after the emoji slug on a page only', () => {
+    expect(render(undefined)).toContain(
+      `view-transition-name:emoji-${emoji.slug}`,
+    )
+    const outside = renderToString(
+      <EmojiDetail
+        emoji={emoji}
+        name="Waving hand"
+        tone={undefined}
+        size={200}
+        strings={strings}
+      />,
+    )
+    expect(outside).not.toContain('view-transition-name')
   })
 })

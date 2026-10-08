@@ -141,6 +141,22 @@ function DropdownMenuRadioItem(props: MenuPrimitive.RadioItem.Props) {
 }
 
 /**
+ * A plain action item that runs `onClick` and closes the menu.
+ * @param props - Base UI menu item props.
+ * @returns The menu item element.
+ */
+function DropdownMenuItem(props: MenuPrimitive.Item.Props) {
+  const { className, ...rest } = props
+  return (
+    <MenuPrimitive.Item
+      data-slot="dropdown-menu-item"
+      className={cn(novaItemStyles, className)}
+      {...rest}
+    />
+  )
+}
+
+/**
  * A small muted heading for a group of menu items.
  * @param props - Base UI group label props.
  * @returns The label element.
@@ -179,6 +195,7 @@ export {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuLinkItem,
   DropdownMenuRadioGroup,

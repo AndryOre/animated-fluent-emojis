@@ -28,6 +28,20 @@ test('Enter selects an emoji and shows its detail', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Copy id' })).toBeVisible()
 })
 
+test('copy id writes the emoji id to the clipboard', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.locator('[data-slug]').first().click()
+  await page.getByRole('button', { name: 'Copy id' }).click()
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Copied' }),
+  ).toBeVisible()
+  const copied = await page.evaluate<string>('navigator.clipboard.readText()')
+  expect(copied).not.toBe('')
+})
+
 test('copy buttons write to the clipboard and announce it', async ({
   context,
   page,
@@ -42,14 +56,34 @@ test('copy buttons write to the clipboard and announce it', async ({
   expect(copied).toMatch(/^https:\/\/.+\.gif$/)
 })
 
-test('download saves the emoji file under its slug', async ({ page }) => {
+test('download menu offers GIF, WebP and PNG and saves under the slug', async ({
+  page,
+}) => {
   const cell = page.locator('[data-slug]').first()
   const slug = await cell.getAttribute('data-slug')
   await cell.click()
+  const trigger = page.getByRole('button', { name: 'Download' })
+  await trigger.click()
+  const menu = page.getByRole('menu')
+  await expect(menu.getByRole('menuitem')).toHaveCount(3)
+  await expect(menu.getByRole('menuitem', { name: /GIF/ })).toBeVisible()
+  await expect(menu.getByRole('menuitem', { name: /WebP/ })).toBeVisible()
   const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Download PNG' }).click()
+  await menu.getByRole('menuitem', { name: /PNG/ }).click()
   const file = await download
   expect(file.suggestedFilename()).toBe(`${slug ?? ''}.png`)
+})
+
+test('download menu closes on Escape and returns focus to its trigger', async ({
+  page,
+}) => {
+  await page.locator('[data-slug]').first().click()
+  const trigger = page.getByRole('button', { name: 'Download' })
+  await trigger.click()
+  await expect(page.getByRole('menu')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('menu')).toBeHidden()
+  await expect(trigger).toBeFocused()
 })
 
 test('size segments switch by role and keep one pressed', async ({ page }) => {
