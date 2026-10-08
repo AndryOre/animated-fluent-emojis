@@ -7,6 +7,7 @@ import {
   type SkinTone,
 } from '../../gallery/public-index'
 import { parseGalleryUrl } from '../../gallery/url-state'
+import type { EmojiPageTabs } from '../../home/content'
 import { ChipGroup } from './ChipGroup'
 import { EmojiDetail, type GalleryStrings } from './EmojiDetail'
 
@@ -19,7 +20,7 @@ const TONE_LABELS: Record<SkinTone | 'default', keyof GalleryStrings> = {
   dark: 'toneDark',
 }
 
-const PREVIEW_SIZE = 200
+export const PREVIEW_SIZE = 200
 
 function unsubscribe(): void {
   return
@@ -44,16 +45,18 @@ export interface EmojiPageDetailProps {
   emoji: PublicEmoji
   name: string
   strings: GalleryStrings
+  snippetTabs: EmojiPageTabs
 }
 
 /**
  * The interactive half of an emoji page: tone chips plus the shared detail
  * view. The tone starts from the `?tone=` query and is written back to it.
- * @param props - The emoji, its localized name and the gallery strings.
+ * @param props - The emoji, its localized name, the gallery strings and the
+ * build-time highlighted snippet tabs.
  * @returns The chips and the detail view.
  */
 export function EmojiPageDetail(props: EmojiPageDetailProps) {
-  const { emoji, name, strings } = props
+  const { emoji, name, strings, snippetTabs } = props
   const [chosen, setChosen] = useState<SkinTone | 'default'>()
   const queryTone = useSyncExternalStore(
     subscribeToNothing,
@@ -80,19 +83,20 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
         tone={tone}
         size={PREVIEW_SIZE}
         strings={strings}
+        snippetTabs={snippetTabs}
         page
       />
-      <ChipGroup
-        label={strings.toneLabel}
-        chips={(['default', ...SKIN_TONES] as const).map((value) => ({
-          value,
-          label: strings[TONE_LABELS[value]],
-        }))}
-        selected={tone ?? 'default'}
-        onSelect={selectTone}
-        disabled={emoji.tones.length === 0}
-        disabledHint={strings.noSkinTones}
-      />
+      {emoji.tones.length > 0 && (
+        <ChipGroup
+          label={strings.toneLabel}
+          chips={(['default', ...SKIN_TONES] as const).map((value) => ({
+            value,
+            label: strings[TONE_LABELS[value]],
+          }))}
+          selected={tone ?? 'default'}
+          onSelect={selectTone}
+        />
+      )}
     </div>
   )
 }

@@ -8,9 +8,13 @@ import {
 import { fillSnippetSlots } from '../highlight/snippet-html'
 import {
   createSnippetRenderer,
+  type RenderedSnippet,
   type SnippetRenderer,
 } from '../highlight/snippet-render'
-import { TEMPLATE_KINDS } from '../highlight/snippet-template'
+import {
+  TEMPLATE_KINDS,
+  type TemplateKind,
+} from '../highlight/snippet-template'
 import {
   installCommand,
   PACKAGE_MANAGERS,
@@ -62,6 +66,28 @@ function sharedRenderer(): Promise<SnippetRenderer> {
   return created
 }
 
+const templateCache = new Map<string, Promise<RenderedSnippet>>()
+
+async function highlightTemplate(
+  kind: TemplateKind,
+  withTone: boolean,
+): Promise<RenderedSnippet> {
+  const renderer = await sharedRenderer()
+  return renderer.render(kind, withTone)
+}
+
+function renderTemplate(
+  kind: TemplateKind,
+  withTone: boolean,
+): Promise<RenderedSnippet> {
+  const key = `${kind}:${String(withTone)}`
+  const cached = templateCache.get(key)
+  if (cached) return cached
+  const created = highlightTemplate(kind, withTone)
+  templateCache.set(key, created)
+  return created
+}
+
 /**
  * Builds the highlighted code block tabs of the landing page. Each template is
  * highlighted once and its placeholders are filled with the emoji at build
@@ -76,13 +102,12 @@ export async function buildCodeBlockTabs(
   tone?: SkinTone,
   size: number = SHOWN_SIZE,
 ): Promise<CodeBlockTab[]> {
-  const renderer = await sharedRenderer()
   return Promise.all(
     buildSnippetTabs(emoji, { size, ...(tone && { tone }) }).map(
       async (tab) => {
         const templated = TEMPLATE_KINDS.find((kind) => kind === tab.kind)
         if (!templated) throw new Error(`no template for ${tab.kind}`)
-        const rendered = await renderer.render(templated, tone !== undefined)
+        const rendered = await renderTemplate(templated, tone !== undefined)
         return {
           id: tab.kind,
           label: tab.label,
@@ -97,6 +122,31 @@ export async function buildCodeBlockTabs(
       },
     ),
   )
+}
+
+export interface EmojiPageTabs {
+  plain: CodeBlockTab[]
+  toned: CodeBlockTab[]
+}
+
+/**
+ * Builds the highlighted snippet tabs of an emoji page: one set without a tone
+ * attribute and, for an emoji that has skin tones, one with it. The templates
+ * are highlighted once per build and shared by every page; only the cheap slot
+ * fill runs per emoji.
+ * @param emoji - The emoji the page shows.
+ * @param size - The size shown in the snippets.
+ * @returns The plain tabs and the toned tabs, which are empty without tones.
+ */
+export async function buildEmojiPageTabs(
+  emoji: PublicEmoji,
+  size: number,
+): Promise<EmojiPageTabs> {
+  const firstTone = emoji.tones[0]?.tone
+  return {
+    plain: await buildCodeBlockTabs(emoji, undefined, size),
+    toned: firstTone ? await buildCodeBlockTabs(emoji, firstTone, size) : [],
+  }
 }
 
 /**

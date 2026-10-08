@@ -12,8 +12,9 @@ import {
   type SkinTone,
 } from '../../gallery/public-index'
 import { generateSnippet, type SnippetKind } from '../../gallery/snippets'
+import type { EmojiPageTabs } from '../../home/content'
 import type { UiStrings } from '../../i18n/ui'
-import CodeBlock from '../CodeBlock'
+import CodeBlock, { type CodeBlockTab } from '../CodeBlock'
 import { FileActionButton, type FileActionNotice } from './FileActionButton'
 
 export type GalleryStrings = UiStrings['gallery']
@@ -61,6 +62,38 @@ function plainCodeHtml(code: string): string {
   return `<pre><code>${lines}</code></pre>`
 }
 
+const HIGHLIGHTED_LABELS: Partial<Record<SnippetKind, keyof GalleryStrings>> =
+  Object.fromEntries(TABS.map((tab) => [tab.kind, tab.label]))
+
+/**
+ * Picks the build-time highlighted tabs that match the current tone and gives
+ * them the localized labels and the plain code that copy writes.
+ * @param snippetTabs - The highlighted tabs without and with a tone attribute.
+ * @param emoji - The shown emoji.
+ * @param tone - The applied skin tone, if any.
+ * @param size - The shown size.
+ * @param strings - The gallery strings holding the tab labels.
+ * @returns The tabs for the code block.
+ */
+function highlightedTabs(
+  snippetTabs: EmojiPageTabs,
+  emoji: PublicEmoji,
+  tone: SkinTone | undefined,
+  size: number,
+  strings: GalleryStrings,
+): CodeBlockTab[] {
+  const source =
+    tone && snippetTabs.toned.length > 0 ? snippetTabs.toned : snippetTabs.plain
+  return source.map((tab) => {
+    const labelKey = HIGHLIGHTED_LABELS[tab.id as SnippetKind]
+    return {
+      ...tab,
+      label: labelKey ? strings[labelKey] : tab.label,
+      code: generateSnippet(emoji, tab.id as SnippetKind, { size, tone }),
+    }
+  })
+}
+
 /**
  * Properties of {@link EmojiDetail}.
  */
@@ -72,6 +105,7 @@ export interface EmojiDetailProps {
   strings: GalleryStrings
   headingId?: string
   page?: boolean
+  snippetTabs?: EmojiPageTabs
 }
 
 /**
@@ -82,7 +116,16 @@ export interface EmojiDetailProps {
  * @returns The detail view.
  */
 export function EmojiDetail(props: EmojiDetailProps) {
-  const { emoji, name, tone, size, strings, headingId, page = false } = props
+  const {
+    emoji,
+    name,
+    tone,
+    size,
+    strings,
+    headingId,
+    page = false,
+    snippetTabs,
+  } = props
   const [kind, setKind] = useState<SnippetKind>('react')
   const [status, setStatus] = useState('')
   const [zoom, setZoom] = useState<(typeof ZOOMS)[number]>(1)
@@ -101,15 +144,28 @@ export function EmojiDetail(props: EmojiDetailProps) {
     emoji.tones.find((variant) => variant.tone === appliedTone) ?? emoji
   const previewKey = `${emoji.id}-${appliedTone ?? 'default'}`
   const animated = loadedKey === previewKey
-  const tabs = TABS.map((tab) => {
-    const code = generateSnippet(emoji, tab.kind, { size, tone: appliedTone })
-    return {
-      id: tab.kind,
-      label: strings[tab.label],
-      code,
-      html: plainCodeHtml(code),
-    }
-  })
+  const tabs = snippetTabs
+    ? highlightedTabs(snippetTabs, emoji, appliedTone, size, strings)
+    : TABS.map((tab) => {
+        const code = generateSnippet(emoji, tab.kind, {
+          size,
+          tone: appliedTone,
+        })
+        return {
+          id: tab.kind,
+          label: strings[tab.label],
+          code,
+          html: plainCodeHtml(code),
+        }
+      })
+  const slotValues = snippetTabs
+    ? {
+        id: emoji.id,
+        size: String(size),
+        unicode: emoji.unicode,
+        ...(appliedTone && { tone: appliedTone }),
+      }
+    : undefined
 
   function announce(message: string) {
     clearTimeout(timerRef.current)
@@ -238,7 +294,8 @@ export function EmojiDetail(props: EmojiDetailProps) {
           copy: strings.copySnippet,
           copied: strings.copied,
         }}
-        lineNumbers={false}
+        lineNumbers={snippetTabs !== undefined}
+        slotValues={slotValues}
         activeId={kind}
         onActiveChange={(id) => {
           setKind(id as SnippetKind)
