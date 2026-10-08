@@ -106,8 +106,15 @@ page, docs, gallery and emoji pages. _Avoid_: Landing site, homepage, docs site
 **Gallery**: The searchable page of every catalog emoji on the website, with a
 snippet and public files for each. _Avoid_: Browser, explorer, icon page
 
+**Emoji sheet**: The gallery's bottom panel that shows one emoji's preview,
+names, public files and snippets without leaving the gallery. _Avoid_: Detail
+panel, drawer, side panel
+
 **Emoji page**: The static website page of one emoji, at its slug, in every
 locale. _Avoid_: Detail page, emoji route
+
+**Guide**: The docs pages that cover the library's full API, one topic per page,
+starting at the usage overview. _Avoid_: Usage guide (for the whole)
 
 **Snippet**: The copyable code that renders one emoji with one adapter or the
 element. _Avoid_: Code sample, embed code

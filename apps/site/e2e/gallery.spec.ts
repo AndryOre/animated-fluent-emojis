@@ -42,13 +42,14 @@ test('copy id writes the emoji id to the clipboard', async ({
   expect(copied).not.toBe('')
 })
 
-test('copy buttons write to the clipboard and announce it', async ({
+test('copy URL action writes to the clipboard and announces it', async ({
   context,
   page,
 }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.locator('[data-slug]').first().click()
-  await page.getByRole('button', { name: 'Copy URL' }).click()
+  await page.getByRole('button', { name: 'More file actions' }).click()
+  await page.getByRole('menuitem', { name: /Copy GIF URL/ }).click()
   await expect(
     page.getByRole('status').filter({ hasText: 'Copied' }),
   ).toBeVisible()
@@ -56,29 +57,36 @@ test('copy buttons write to the clipboard and announce it', async ({
   expect(copied).toMatch(/^https:\/\/.+\.gif$/)
 })
 
-test('download menu offers GIF, WebP and PNG and saves under the slug', async ({
+test('file action menu offers download and copy per format and saves under the slug', async ({
   page,
 }) => {
   const cell = page.locator('[data-slug]').first()
   const slug = await cell.getAttribute('data-slug')
   await cell.click()
-  const trigger = page.getByRole('button', { name: 'Download' })
-  await trigger.click()
+  await page.getByRole('button', { name: 'More file actions' }).click()
   const menu = page.getByRole('menu')
-  await expect(menu.getByRole('menuitem')).toHaveCount(3)
-  await expect(menu.getByRole('menuitem', { name: /GIF/ })).toBeVisible()
-  await expect(menu.getByRole('menuitem', { name: /WebP/ })).toBeVisible()
+  await expect(menu.getByRole('menuitem')).toHaveCount(6)
   const download = page.waitForEvent('download')
-  await menu.getByRole('menuitem', { name: /PNG/ }).click()
+  await menu.getByRole('menuitem', { name: /Download PNG/ }).click()
   const file = await download
   expect(file.suggestedFilename()).toBe(`${slug ?? ''}.png`)
 })
 
-test('download menu closes on Escape and returns focus to its trigger', async ({
+test('primary file action downloads WebP by default', async ({ page }) => {
+  const cell = page.locator('[data-slug]').first()
+  const slug = await cell.getAttribute('data-slug')
+  await cell.click()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download WebP' }).click()
+  const file = await download
+  expect(file.suggestedFilename()).toBe(`${slug ?? ''}.webp`)
+})
+
+test('file action menu closes on Escape and returns focus to its trigger', async ({
   page,
 }) => {
   await page.locator('[data-slug]').first().click()
-  const trigger = page.getByRole('button', { name: 'Download' })
+  const trigger = page.getByRole('button', { name: 'More file actions' })
   await trigger.click()
   await expect(page.getByRole('menu')).toBeVisible()
   await page.keyboard.press('Escape')

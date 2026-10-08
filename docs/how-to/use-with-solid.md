@@ -48,4 +48,4 @@ element:
 ```
 
 Attributes, properties and events are listed in the
-[usage guide](../usage.md#plain-html).
+[guide](../guide/frameworks.md#plain-html).

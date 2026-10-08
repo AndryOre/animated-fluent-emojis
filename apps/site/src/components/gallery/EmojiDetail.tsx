@@ -1,19 +1,12 @@
 import { Emoji } from 'animated-fluent-emojis/react'
-import { CopyIcon, DownloadIcon, LinkIcon } from 'lucide-react'
+import { CopyIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
-import { Button, buttonVariants } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utilities'
 
 import { effectiveTone } from '../../gallery/filter'
 import {
-  FILE_FORMATS,
   fileUrl,
   type PublicEmoji,
   type SkinTone,
@@ -21,6 +14,7 @@ import {
 import { generateSnippet, type SnippetKind } from '../../gallery/snippets'
 import type { UiStrings } from '../../i18n/ui'
 import CodeBlock from '../CodeBlock'
+import { FileActionButton, type FileActionNotice } from './FileActionButton'
 
 export type GalleryStrings = UiStrings['gallery']
 
@@ -32,12 +26,6 @@ const TABS: readonly { kind: SnippetKind; label: keyof GalleryStrings }[] = [
   { kind: 'element', label: 'tabHtml' },
   { kind: 'no-code', label: 'tabNoCode' },
 ]
-
-const DOWNLOAD_LABELS = {
-  gif: 'downloadGif',
-  webp: 'downloadWebp',
-  png: 'downloadPng',
-} as const
 
 const TOAST_MILLISECONDS = 2000
 
@@ -84,27 +72,6 @@ export interface EmojiDetailProps {
   strings: GalleryStrings
   headingId?: string
   page?: boolean
-}
-
-/**
- * Downloads a public file through fetch and a blob, so the browser saves it
- * instead of navigating to the cross-origin URL.
- * @param url - Absolute file URL.
- * @param filename - Name to save the file as.
- */
-async function downloadFile(url: string, filename: string): Promise<void> {
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`${url} answered ${String(response.status)}`)
-  }
-  const objectUrl = URL.createObjectURL(await response.blob())
-  const link = document.createElement('a')
-  link.href = objectUrl
-  link.download = filename
-  document.body.append(link)
-  link.click()
-  link.remove()
-  URL.revokeObjectURL(objectUrl)
 }
 
 /**
@@ -161,12 +128,8 @@ export function EmojiDetail(props: EmojiDetailProps) {
     }
   }
 
-  async function download(format: (typeof FILE_FORMATS)[number]) {
-    try {
-      await downloadFile(fileUrl(files.urls[format]), `${files.slug}.${format}`)
-    } catch {
-      announce(strings.downloadFailed)
-    }
+  function handleNotice(notice: FileActionNotice) {
+    announce(notice.kind === 'copied' ? notice.message : strings.downloadFailed)
   }
 
   const transitionName = page ? `emoji-${emoji.slug}` : undefined
@@ -281,42 +244,14 @@ export function EmojiDetail(props: EmojiDetailProps) {
           setKind(id as SnippetKind)
         }}
       />
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label={strings.copyUrl}
-          onClick={() => void copy(fileUrl(files.urls.gif))}
-        >
-          <LinkIcon />
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className={cn(buttonVariants({ variant: 'outline' }), 'flex-1')}
-          >
-            <DownloadIcon />
-            {strings.download}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent variant="nova" align="end">
-            {FILE_FORMATS.map((format) => (
-              <DropdownMenuItem
-                key={format}
-                onClick={() => void download(format)}
-              >
-                <span className="flex-1">
-                  {strings[DOWNLOAD_LABELS[format]]}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="font-mono text-xs text-muted-foreground"
-                >
-                  .{format}
-                </span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <FileActionButton
+        target={{
+          filenameBase: files.slug,
+          urlFor: (format) => fileUrl(files.urls[format]),
+        }}
+        strings={strings}
+        onNotice={handleNotice}
+      />
       <p
         role="status"
         aria-live="polite"

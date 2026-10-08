@@ -8,6 +8,12 @@ import { REPOSITORY_URL } from '../site-links'
  */
 export const PUBLISHED_DOCS = [
   'usage.md',
+  'guide/frameworks.md',
+  'guide/props.md',
+  'guide/behavior.md',
+  'guide/assets.md',
+  'guide/lookup.md',
+  'guide/types.md',
   'troubleshooting.md',
   'how-to/use-with-angular.md',
   'how-to/use-with-nextjs.md',

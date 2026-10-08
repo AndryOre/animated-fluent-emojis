@@ -5,9 +5,8 @@ An index of every document in this repository.
 ## Core
 
 - [`README.md`](../README.md): user-facing portal with install and usage.
-- [`usage.md`](usage.md): the full API: per-framework setup (React, Vue, Svelte,
-  Astro, plain HTML), props, playback, fallback, preloading, asset site, lookup
-  and types.
+- [`usage.md`](usage.md): the Guide overview, linking to one page per topic in
+  [`guide/`](guide/): frameworks, props, behavior, assets, lookup and types.
 - [`troubleshooting.md`](troubleshooting.md): fixes for common problems, by
   symptom.
 - [`CHANGELOG.md`](../CHANGELOG.md): release notes, newest first.

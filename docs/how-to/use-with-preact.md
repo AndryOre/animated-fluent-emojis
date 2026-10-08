@@ -49,9 +49,10 @@ export function Greeting() {
 ```
 
 Attributes, properties and events are listed in the
-[usage guide](../usage.md#plain-html).
+[guide](../guide/frameworks.md#plain-html).
 
 ## The React adapter
 
 Alias `react` and `react-dom` to `preact/compat` in your bundler, then use the
-React adapter as documented in the [usage guide](../usage.md#react).
+React adapter as documented in the
+[Frameworks guide](../guide/frameworks.md#react).

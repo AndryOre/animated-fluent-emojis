@@ -47,4 +47,5 @@ preload resets the manifest, so the warmed requests are wasted.
 The manifest request gives up after 15 seconds. A failed manifest is retried on
 the next `preloadEmojis` call, the next mount or when the browser comes back
 online, so calling it again from the trigger is safe. See
-[preloading](../usage.md#preloading) and [fallback](../usage.md#fallback).
+[preloading](../guide/assets.md#preloading) and
+[fallback](../guide/behavior.md#fallback).

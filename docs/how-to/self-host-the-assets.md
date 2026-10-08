@@ -30,8 +30,8 @@ configureEmojis({ assetSiteUrl: 'https://emojis.example.com' })
 ```
 
 Calling it after the manifest was requested resets the manifest and warns in
-development. See the [asset site](../usage.md#asset-site) section of the usage
-guide.
+development. See the [asset site](../guide/assets.md#asset-site) section of the
+usage guide.
 
 ## Set the Content Security Policy
 
@@ -56,4 +56,4 @@ Open the page with the network panel and check that the manifest request goes to
 `/v1/manifest.slim.json` on your origin, and that no request goes to
 `animated-fluent-emojis-cdn.andryore.dev`. A blocked request shows as a CSP
 violation in the console, and the emoji renders its fallback; see
-[fallback](../usage.md#fallback).
+[fallback](../guide/behavior.md#fallback).

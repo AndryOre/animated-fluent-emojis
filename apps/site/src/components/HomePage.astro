@@ -77,7 +77,7 @@ const demoLabels = {
   },
 }
 
-const wrap = 'mx-auto w-full max-w-[1200px] px-4 md:px-6'
+const wrap = 'site-container'
 const section = `${wrap} py-16 md:py-24`
 const eyebrow =
   'mb-3 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground'
@@ -97,14 +97,14 @@ const primaryButton = buttonVariants({
 
 <Layout locale={locale} title={meta.siteName} description={meta.description}>
   <main id="main" class="flex-1">
-    <section
-      class={`${wrap} relative -mt-[65px] pt-[calc(65px+4rem)] pb-12 max-[859px]:pt-[calc(65px+2.5rem)] max-[859px]:pb-10`}
-    >
+    <section class="relative -mt-[65px]">
       <div
         aria-hidden="true"
-        class="pointer-events-none absolute inset-x-0 top-0 h-[560px] [background:radial-gradient(60%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_70%),radial-gradient(50%_70%_at_100%_0%,color-mix(in_oklab,var(--primary)_6%,transparent),transparent_70%)]"
+        class="pointer-events-none absolute inset-x-0 top-0 h-[520px] [background:radial-gradient(60%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_16%,transparent),transparent_70%),radial-gradient(50%_70%_at_100%_0%,color-mix(in_oklab,var(--primary)_7%,transparent),transparent_70%)] [mask-image:linear-gradient(to_bottom,black_40%,transparent)]"
       ></div>
-      <div class="relative grid grid-cols-[minmax(0,1fr)] items-center gap-10 min-[960px]:grid-cols-[1fr_1.05fr]">
+      <div
+        class={`${wrap} relative grid grid-cols-[minmax(0,1fr)] items-center gap-12 pt-[calc(65px+56px)] pb-10 min-[860px]:grid-cols-[1fr_1.05fr]`}
+      >
         <div class="flex min-w-0 flex-col items-start gap-5">
           <p class="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase">
             v{libraryPackage.version} · {home.hero.eyebrow}

@@ -9,6 +9,34 @@ export interface LinkContext {
   locale: Locale
 }
 
+/**
+ * Where each heading that used to live in `usage.md` went when the usage guide
+ * was split into Guide pages. Translated pages written before the split still
+ * link to `usage.md#anchor`; those links keep resolving through this table.
+ */
+const MOVED_USAGE_ANCHORS: Readonly<Record<string, string>> = {
+  frameworks: 'guide/frameworks.md',
+  react: 'guide/frameworks.md',
+  vue: 'guide/frameworks.md',
+  svelte: 'guide/frameworks.md',
+  astro: 'guide/frameworks.md',
+  'plain-html': 'guide/frameworks.md',
+  'angular-solid-and-preact': 'guide/frameworks.md',
+  'without-a-framework': 'guide/frameworks.md',
+  props: 'guide/props.md',
+  'hover-and-focus': 'guide/behavior.md',
+  'reduced-motion': 'guide/behavior.md',
+  fallback: 'guide/behavior.md',
+  playback: 'guide/behavior.md',
+  'images-and-hd-sprite-sheets': 'guide/assets.md',
+  preloading: 'guide/assets.md',
+  'asset-site': 'guide/assets.md',
+  lookup: 'guide/lookup.md',
+  types: 'guide/types.md',
+}
+
+const PAGE_LEVEL_ANCHORS = new Set(['frameworks', 'props', 'lookup', 'types'])
+
 const NOT_RELATIVE = /^(?:[a-z][a-z0-9+.-]*:|\/|#)/i
 
 function resolveSegments(segments: string[]): string[] | undefined {
@@ -49,7 +77,16 @@ export function rewriteDocumentLink(
   ])
   if (!repositorySegments) return href
   const [first, ...rest] = repositorySegments
-  const docPath = rest.join('/')
+  const rewrittenDocumentPath = rest.join('/')
+  const movedAnchor = fragment.slice(1)
+  const movedTo =
+    first === 'docs' && rewrittenDocumentPath === 'usage.md'
+      ? MOVED_USAGE_ANCHORS[movedAnchor]
+      : undefined
+  if (movedTo) {
+    return `${docRoute(context.locale, movedTo)}${PAGE_LEVEL_ANCHORS.has(movedAnchor) ? '' : fragment}`
+  }
+  const docPath = rewrittenDocumentPath
   return first === 'docs' && isPublishedDocument(docPath)
     ? `${docRoute(context.locale, docPath)}${fragment}`
     : `${githubBlobUrl(repositorySegments.join('/'))}${fragment}`

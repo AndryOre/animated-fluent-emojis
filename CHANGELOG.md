@@ -68,7 +68,7 @@ and this project adheres to
   - `createEmoji` at the root renders an emoji into any DOM node and returns a
     controller with `update` and `destroy`.
 - Install and usage steps for every framework in the
-  [usage guide](docs/usage.md#frameworks), how-tos for
+  [usage guide](docs/guide/frameworks.md), how-tos for
   [Angular](docs/how-to/use-with-angular.md),
   [Solid](docs/how-to/use-with-solid.md) and
   [Preact](docs/how-to/use-with-preact.md), and a "Works with" table in the
