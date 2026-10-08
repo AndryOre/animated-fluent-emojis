@@ -141,6 +141,12 @@ export const ko: UiStrings = {
     howToGroup: '사용 가이드',
     copyMarkdown: '페이지를 Markdown으로 복사',
     copiedMarkdown: '복사했어요',
+    search: {
+      hint: '입력하여 문서 검색',
+      devTitle: '검색을 쓰려면 빌드가 필요합니다',
+      devBody:
+        '검색은 빌드된 사이트에서 동작합니다. 빌드한 뒤 미리보기에서 확인하세요.',
+    },
     notices: {
       missing:
         '이 페이지는 아직 선택한 언어로 제공되지 않습니다. 영어 버전을 표시하고 있습니다.',

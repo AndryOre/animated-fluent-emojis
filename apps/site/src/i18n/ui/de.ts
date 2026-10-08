@@ -140,6 +140,12 @@ export const de: UiStrings = {
     howToGroup: 'Anleitungen',
     copyMarkdown: 'Seite als Markdown kopieren',
     copiedMarkdown: 'Kopiert',
+    search: {
+      hint: 'Tippe, um die Dokumentation zu durchsuchen',
+      devTitle: 'Die Suche braucht einen Build',
+      devBody:
+        'Die Suche funktioniert nur auf der gebauten Seite. Baue die Seite und öffne die Vorschau.',
+    },
     notices: {
       missing:
         'Diese Seite ist in deiner Sprache noch nicht verfügbar. Es wird die englische Version angezeigt.',

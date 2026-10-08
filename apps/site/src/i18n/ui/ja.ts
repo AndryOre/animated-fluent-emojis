@@ -141,6 +141,12 @@ export const ja: UiStrings = {
     howToGroup: 'ハウツーガイド',
     copyMarkdown: 'ページを Markdown でコピー',
     copiedMarkdown: 'コピーしました',
+    search: {
+      hint: '入力してドキュメントを検索',
+      devTitle: '検索にはビルドが必要です',
+      devBody:
+        '検索はビルド済みのサイトで動作します。ビルドしてプレビューしてください。',
+    },
     notices: {
       missing:
         'このページはまだお使いの言語では利用できません。英語版を表示しています。',
