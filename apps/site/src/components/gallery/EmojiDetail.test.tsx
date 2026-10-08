@@ -69,11 +69,11 @@ describe('emoji detail on a page', () => {
     expect(render(undefined)).not.toContain('<h2')
   })
 
-  it('offers the id and URL copy actions and a download menu by name', () => {
+  it('offers the id copy action and the file action button by name', () => {
     const html = render(undefined)
     expect(html).toContain(`aria-label="${strings.copyId}"`)
-    expect(html).toContain(`aria-label="${strings.copyUrl}"`)
-    expect(html).toContain(strings.download)
+    expect(html).toContain(`aria-label="${strings.fileActionMenuLabel}"`)
+    expect(html).toContain(strings.fileActionDownloadWebp)
   })
 
   it('puts "No code" as the last snippet tab', () => {
