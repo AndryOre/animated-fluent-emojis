@@ -77,12 +77,22 @@ describe('teaser emojis', () => {
 
 const CODE_LINE_PATTERN = /<div class="code">(.*?)<\/div><\/div>/gs
 
+function stripTags(html: string): string {
+  let text = ''
+  let insideTag = false
+  for (const character of html) {
+    if (character === '<') insideTag = true
+    else if (character === '>' && insideTag) insideTag = false
+    else if (!insideTag) text += character
+  }
+  return text
+}
+
 function visibleText(html: string): string {
   return Array.from(
     html.replaceAll('\n', '').matchAll(CODE_LINE_PATTERN),
     ([, line = '']) =>
-      line
-        .replaceAll(/<[^>]*>/g, '')
+      stripTags(line)
         .replaceAll(/&#x([\dA-F]+);/gi, (_, code: string) =>
           String.fromCodePoint(Number.parseInt(code, 16)),
         )
