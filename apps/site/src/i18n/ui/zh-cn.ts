@@ -141,6 +141,11 @@ export const zh_CN: UiStrings = {
     howToGroup: '操作指南',
     copyMarkdown: '复制本页 Markdown',
     copiedMarkdown: '已复制',
+    search: {
+      hint: '输入以搜索文档',
+      devTitle: '搜索需要先构建',
+      devBody: '搜索仅在已构建的站点上可用。请先构建并预览。',
+    },
     notices: {
       missing: '本页暂无你所用语言的版本，当前显示英文版。',
       stale: '本页的翻译已过期，当前显示英文版。',

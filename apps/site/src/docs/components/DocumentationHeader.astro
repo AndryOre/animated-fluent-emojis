@@ -3,10 +3,19 @@ import Search from '@astrojs/starlight/components/Search.astro'
 
 import Header from '../../components/Header.astro'
 import { splitLocalePath } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
 
 const { path, locale } = splitLocalePath(Astro.url.pathname)
+const { search } = getUi(locale).docs
+const searchStyle = [
+  `--afe-search-hint:${JSON.stringify(search.hint)}`,
+  `--afe-search-dev-title:${JSON.stringify(search.devTitle)}`,
+  `--afe-search-dev-body:${JSON.stringify(search.devBody)}`,
+].join(';')
 ---
 
 <Header locale={locale} path={path}>
-  <Search slot="search" />
+  <div slot="search" style={`display:contents;${searchStyle}`}>
+    <Search />
+  </div>
 </Header>

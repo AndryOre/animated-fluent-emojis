@@ -141,6 +141,12 @@ export const pt_BR: UiStrings = {
     howToGroup: 'Guias práticos',
     copyMarkdown: 'Copiar página como Markdown',
     copiedMarkdown: 'Copiado',
+    search: {
+      hint: 'Digite para pesquisar na documentação',
+      devTitle: 'A pesquisa precisa de um build',
+      devBody:
+        'A pesquisa funciona no site compilado. Faça o build e visualize para testá-la.',
+    },
     notices: {
       missing:
         'Esta página ainda não está disponível no seu idioma. Você está vendo a versão em inglês.',

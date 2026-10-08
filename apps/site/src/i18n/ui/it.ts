@@ -140,6 +140,12 @@ export const it: UiStrings = {
     howToGroup: 'Guide pratiche',
     copyMarkdown: 'Copia la pagina come Markdown',
     copiedMarkdown: 'Copiato',
+    search: {
+      hint: 'Digita per cercare nella documentazione',
+      devTitle: 'La ricerca richiede una build',
+      devBody:
+        'La ricerca funziona sul sito compilato. Esegui una build e visualizza l’anteprima per provarla.',
+    },
     notices: {
       missing:
         'Questa pagina non è ancora disponibile nella tua lingua. Viene mostrata la versione in inglese.',

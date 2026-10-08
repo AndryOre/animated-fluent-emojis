@@ -140,6 +140,12 @@ export const fr: UiStrings = {
     howToGroup: 'Guides pratiques',
     copyMarkdown: 'Copier la page en Markdown',
     copiedMarkdown: 'Copié',
+    search: {
+      hint: 'Saisissez pour rechercher dans la documentation',
+      devTitle: 'La recherche nécessite un build',
+      devBody:
+        'La recherche fonctionne sur le site compilé. Lancez un build et prévisualisez-le pour l’essayer.',
+    },
     notices: {
       missing:
         "Cette page n'est pas encore disponible dans votre langue. La version anglaise est affichée.",

@@ -139,6 +139,12 @@ export const en = {
     howToGroup: 'How-to guides',
     copyMarkdown: 'Copy page as Markdown',
     copiedMarkdown: 'Copied',
+    search: {
+      hint: 'Type to search the docs',
+      devTitle: 'Search needs a build',
+      devBody:
+        'Search runs on a built site. Run a build and preview it to try it.',
+    },
     notices: {
       missing:
         'This page is not available in your language yet. Showing the English version.',
