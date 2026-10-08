@@ -1,6 +1,6 @@
 ---
 title: Usa con Next.js
-sourceHash: 4a0c3dc179e6b339
+sourceHash: 6f92dff657703a74
 ---
 
 Renderiza `Emoji` en el App Router, también desde Server Components.

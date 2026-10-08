@@ -1,6 +1,6 @@
 ---
 title: Solución de problemas
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 Problemas agrupados por lo que ves, cada uno con la causa en el código y una

@@ -1,6 +1,6 @@
 ---
 title: Usa con Angular
-sourceHash: fe6f60a9eefc53a0
+sourceHash: 45537066a981f484
 ---
 
 Renderiza emojis en Angular mediante el elemento `<fluent-emoji>`. No hay un

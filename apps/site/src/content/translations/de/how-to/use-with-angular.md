@@ -1,6 +1,6 @@
 ---
 title: Mit Angular verwenden
-sourceHash: fe6f60a9eefc53a0
+sourceHash: 45537066a981f484
 ---
 
 Binde Emojis in Angular über das Element `<fluent-emoji>` ein. Es gibt keinen

@@ -1,6 +1,6 @@
 ---
 title: Précharger pour un sélecteur
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 Préchauffez le manifest et les sprite sheets avant l'ouverture d'un sélecteur

@@ -1,6 +1,6 @@
 ---
 title: Aloja los assets tú mismo
-sourceHash: 335e7eb2eb379d49
+sourceHash: 1fa3d7fdc9a470b6
 ---
 
 Sirve el manifest y los sprite sheets desde un origen que controles, y apunta

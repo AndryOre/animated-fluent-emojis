@@ -1,6 +1,6 @@
 ---
 title: Mit Preact verwenden
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 Es gibt zwei Wege, Emojis in Preact zu verwenden: das Element `<fluent-emoji>`
