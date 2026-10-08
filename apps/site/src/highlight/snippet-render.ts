@@ -20,6 +20,7 @@ export interface RenderedSnippet {
 
 export interface SnippetRenderer {
   render: (kind: TemplateKind, withTone: boolean) => Promise<RenderedSnippet>
+  renderCode: (code: string, language: string) => Promise<RenderedSnippet>
   sharedStyles: () => Promise<string>
 }
 
@@ -95,21 +96,24 @@ export async function createSnippetRenderer(): Promise<SnippetRenderer> {
     plugins: [...sharedCodeConfig.plugins],
     frames: false,
   })
+  async function renderCode(
+    code: string,
+    language: string,
+  ): Promise<RenderedSnippet> {
+    const { renderedGroupAst, styles } = await engine.render({ code, language })
+    const found: SnippetSlot[] = []
+    isolateSlots(renderedGroupAst, found)
+    return {
+      html: toHtml(renderedGroupAst),
+      styles: [...styles].join(''),
+      slots: found,
+    }
+  }
   return {
     sharedStyles: async () =>
       [await engine.getBaseStyles(), await engine.getThemeStyles()].join(''),
-    render: async (kind, withTone) => {
-      const { renderedGroupAst, styles } = await engine.render({
-        code: snippetTemplateText(kind, withTone),
-        language: TEMPLATE_LANGUAGES[kind],
-      })
-      const found: SnippetSlot[] = []
-      isolateSlots(renderedGroupAst, found)
-      return {
-        html: toHtml(renderedGroupAst),
-        styles: [...styles].join(''),
-        slots: found,
-      }
-    },
+    renderCode,
+    render: (kind, withTone) =>
+      renderCode(snippetTemplateText(kind, withTone), TEMPLATE_LANGUAGES[kind]),
   }
 }

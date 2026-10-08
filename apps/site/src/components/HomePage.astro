@@ -4,13 +4,18 @@ import Emoji from 'animated-fluent-emojis/astro'
 import { buttonVariants } from '@/components/ui/button'
 
 import { loadPublicIndex } from '../gallery/public-index'
-import { buildSnippetTabs, pickTeaserEmojis } from '../home/content'
+import {
+  buildCodeBlockTabs,
+  buildInstallHtml,
+  pickTeaserEmojis,
+} from '../home/content'
 import DemoPlayground from '../home/DemoPlayground'
 import FaqAccordion from '../home/FaqAccordion'
-import SnippetTabs from '../home/SnippetTabs'
 import { localePath, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
+import CodeBlock from './CodeBlock'
+import InstallBlock from './InstallBlock'
 
 interface Props {
   locale: Locale
@@ -23,9 +28,9 @@ const galleryHref = localePath(locale, '/emojis/')
 const index = await loadPublicIndex()
 const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
 if (!snippetEmoji) throw new Error('The public index has no waving hand')
-const INSTALL_COMMAND = 'npm install animated-fluent-emojis'
 const TEASER_COUNT = 8
-const tabs = buildSnippetTabs(snippetEmoji)
+const tabs = await buildCodeBlockTabs(snippetEmoji)
+const installHtml = await buildInstallHtml()
 const teaser = pickTeaserEmojis(index, TEASER_COUNT)
 
 const pillars = [
@@ -53,12 +58,6 @@ const primaryButton = buttonVariants({
   shape: 'pill',
   className: 'h-auto min-h-11 px-6 text-base font-bold',
 })
-const copyButton = buttonVariants({
-  variant: 'outline',
-  shape: 'pill',
-  className:
-    'h-auto min-h-9 px-4 font-semibold hover:border-primary hover:bg-card hover:text-card-foreground',
-})
 ---
 
 <Layout locale={locale} title={meta.siteName} description={meta.description}>
@@ -71,22 +70,16 @@ const copyButton = buttonVariants({
           </h1>
           <p class="text-xl text-muted-foreground">{home.hero.sub}</p>
           <div class="flex w-full flex-col gap-3">
-            <div class="flex w-full max-w-lg items-center justify-between gap-3 rounded-full border border-border bg-card py-1.5 pr-1.5 pl-5">
-              <code
-                class="min-w-0 font-mono text-sm break-all"
-                id="install-command"
-                aria-label={home.hero.installLabel}
-              >
-                {INSTALL_COMMAND}
-              </code>
-              <button
-                type="button"
-                class={copyButton}
-                data-copy-text={INSTALL_COMMAND}
-                data-copied-label={home.hero.copied}
-              >
-                {home.hero.copy}
-              </button>
+            <div class="w-full max-w-lg">
+              <InstallBlock
+                client:load
+                htmlByManager={installHtml}
+                labels={{
+                  tabsLabel: home.hero.installLabel,
+                  copy: home.hero.copy,
+                  copied: home.hero.copied,
+                }}
+              />
             </div>
             <p class="text-sm text-muted-foreground">{home.hero.attribution}</p>
           </div>
@@ -118,7 +111,7 @@ const copyButton = buttonVariants({
         {home.snippets.title}
       </h2>
       <p class="mb-6 text-muted-foreground">{home.snippets.body}</p>
-      <SnippetTabs
+      <CodeBlock
         client:visible
         tabs={tabs}
         labels={{
@@ -167,19 +160,3 @@ const copyButton = buttonVariants({
     </section>
   </main>
 </Layout>
-
-<script>
-  import { copyWithFeedback } from '../lib/copy-feedback'
-
-  document
-    .querySelectorAll<HTMLButtonElement>('[data-copy-text]')
-    .forEach((button) => {
-      const original = button.textContent
-      const copiedLabel = button.dataset.copiedLabel ?? original
-      button.addEventListener('click', () => {
-        void copyWithFeedback(button.dataset.copyText ?? '', (copied) => {
-          button.textContent = copied ? copiedLabel : original
-        })
-      })
-    })
-</script>
