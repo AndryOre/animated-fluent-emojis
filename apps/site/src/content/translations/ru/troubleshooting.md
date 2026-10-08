@@ -1,6 +1,6 @@
 ---
 title: Устранение неполадок
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 Проблемы сгруппированы по тому, что вы видите. Для каждой указаны причина в коде
@@ -71,12 +71,12 @@ import 'animated-fluent-emojis/style.css'
 
 - Неизвестный id: используйте известный id. `EmojiId` подсказывает их при
   автодополнении, а экспорт `lookup` позволяет их искать (см.
-  [Lookup](usage.md#lookup)).
+  [Lookup](guide/lookup.md)).
 - Сбой manifest: убедитесь, что `<asset site>/v1/manifest.slim.json` отвечает
   200 из браузера. Неудачная загрузка повторяется при следующем монтировании,
   при вызове `preloadEmojis` и когда браузер снова подключается к сети.
 - Передайте `fallback`, если эмодзи не должно оставлять дыру в вёрстке. См.
-  [Fallback](usage.md#fallback).
+  [Fallback](guide/behavior.md#fallback).
 
 ## Manifest заблокирован CSP или браузер офлайн
 
@@ -98,7 +98,7 @@ import 'animated-fluent-emojis/style.css'
 Точные директивы приведены в [требованиях к CSP](security.md#csp-requirements).
 Если вы размещаете ресурсы у себя, разрешите вместо этого свой origin и вызовите
 `configureEmojis` до первого рендера `Emoji`. См.
-[Asset site](usage.md#asset-site).
+[Asset site](guide/assets.md#asset-site).
 
 ## Next.js сообщает об ошибке для configureEmojis или Emoji
 

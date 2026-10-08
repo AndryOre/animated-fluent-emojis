@@ -1,6 +1,6 @@
 ---
 title: 无需代码使用 emoji
-sourceHash: 1a25330011d80c02
+sourceHash: 040399c5bc04b224
 ---
 
 把带动画的 Fluent emoji 放进 Slack、Notion、Google Docs、电子邮件或 GitHub

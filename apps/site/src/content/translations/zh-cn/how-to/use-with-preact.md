@@ -1,6 +1,6 @@
 ---
 title: 在 Preact 中使用
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 在 Preact 中使用 emoji 有两种方式：`<fluent-emoji>` 元素，或通过 `preact/compat`
@@ -49,9 +49,9 @@ export function Greeting() {
 }
 ```
 
-attribute、属性和事件的完整列表见[使用指南](../usage.md#plain-html)。
+attribute、属性和事件的完整列表见[使用指南](../guide/frameworks.md#plain-html)。
 
 ## React 适配器
 
 在打包工具中把 `react` 和 `react-dom` 别名到
-`preact/compat`，然后按[使用指南](../usage.md#react)中的说明使用 React 适配器。
+`preact/compat`，然后按[使用指南](../guide/frameworks.md#react)中的说明使用 React 适配器。

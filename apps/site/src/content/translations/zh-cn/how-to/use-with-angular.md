@@ -1,6 +1,6 @@
 ---
 title: 在 Angular 中使用
-sourceHash: fe6f60a9eefc53a0
+sourceHash: 45537066a981f484
 ---
 
 在 Angular 中通过 `<fluent-emoji>`
@@ -47,6 +47,6 @@ export class GreetingComponent {}
 </fluent-emoji>
 ```
 
-attribute、属性和事件的完整列表见[使用指南](../usage.md#plain-html)。若要在元素升级之前预留占位空间，请把
+attribute、属性和事件的完整列表见[使用指南](../guide/frameworks.md#plain-html)。若要在元素升级之前预留占位空间，请把
 `FLUENT_EMOJI_PRE_UPGRADE_CSS`
 加入全局 CSS。关于加载、fallback 和播放行为，请参阅[使用指南](../usage.md)的其余部分。

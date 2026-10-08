@@ -1,6 +1,6 @@
 ---
 title: 故障排查
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 问题按你看到的现象分组，每个问题都给出代码层面的原因和修复方法。完整 API 请参阅[使用指南](usage.md)。
@@ -62,12 +62,12 @@ import 'animated-fluent-emojis/style.css'
 **修复：** 打开控制台和网络面板，查找上述日志。
 
 - 未知 id：使用已知的 id。`EmojiId` 会自动补全它们，也可以用 `lookup`
-  导出来搜索（参见 [Lookup](usage.md#lookup)）。
+  导出来搜索（参见 [Lookup](guide/lookup.md)）。
 - manifest 请求失败：确认浏览器访问 `<asset site>/v1/manifest.slim.json`
   返回 200。失败的加载会在下一次挂载、调用 `preloadEmojis`
   以及浏览器重新联网时重试。
 - 如果 emoji 绝不能在布局中留下空洞，请传入 `fallback`。参见
-  [Fallback](usage.md#fallback)。
+  [Fallback](guide/behavior.md#fallback)。
 
 ## manifest 被 CSP 拦截，或浏览器处于离线状态
 
@@ -86,7 +86,8 @@ sheet 则作为图片从同一源加载。如果策略的 `connect-src`
 **修复：** 在 `connect-src` 和 `img-src` 中放行 asset site 的源，默认是
 `https://animated-fluent-emojis-cdn.andryore.dev`。具体指令见
 [CSP 要求](security.md#csp-requirements)。如果你自行托管，请改为放行你自己的源，并在第一个
-`Emoji` 渲染之前调用 `configureEmojis`。参见 [Asset site](usage.md#asset-site)。
+`Emoji` 渲染之前调用 `configureEmojis`。参见
+[Asset site](guide/assets.md#asset-site)。
 
 ## Next.js 在 configureEmojis 或 Emoji 上报错
 

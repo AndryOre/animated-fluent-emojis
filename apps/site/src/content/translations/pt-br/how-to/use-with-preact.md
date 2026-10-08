@@ -1,6 +1,6 @@
 ---
 title: Usar com Preact
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 Há duas formas de usar emojis no Preact: o elemento `<fluent-emoji>` ou o
@@ -52,10 +52,10 @@ export function Greeting() {
 ```
 
 Atributos, propriedades e eventos estão listados no
-[guia de uso](../usage.md#plain-html).
+[guia de uso](../guide/frameworks.md#plain-html).
 
 ## O adaptador React
 
 Crie um alias de `react` e `react-dom` para `preact/compat` no seu bundler e
 depois use o adaptador React conforme documentado no
-[guia de uso](../usage.md#react).
+[guia de uso](../guide/frameworks.md#react).

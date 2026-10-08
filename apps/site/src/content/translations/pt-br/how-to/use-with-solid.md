@@ -1,6 +1,6 @@
 ---
 title: Usar com Solid
-sourceHash: 497090a31bbee052
+sourceHash: 7d4f24852e28d756
 ---
 
 Renderize emojis no Solid por meio do elemento `<fluent-emoji>`. Não existe um
@@ -51,4 +51,4 @@ elemento:
 ```
 
 Atributos, propriedades e eventos estão listados no
-[guia de uso](../usage.md#plain-html).
+[guia de uso](../guide/frameworks.md#plain-html).

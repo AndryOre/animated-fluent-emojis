@@ -1,6 +1,6 @@
 ---
 title: Usar com Angular
-sourceHash: fe6f60a9eefc53a0
+sourceHash: 45537066a981f484
 ---
 
 Renderize emojis no Angular por meio do elemento `<fluent-emoji>`. Não existe um
@@ -52,7 +52,8 @@ propriedades do elemento em vez de reescrever atributos. Os eventos são
 ```
 
 Atributos, propriedades e eventos estão listados no
-[guia de uso](../usage.md#plain-html). Para reservar o espaço do emoji antes de
-o elemento ser atualizado, adicione `FLUENT_EMOJI_PRE_UPGRADE_CSS` ao seu CSS
-global. Para o comportamento de carregamento, fallback e reprodução, veja o
-restante do [guia de uso](../usage.md).
+[guia de uso](../guide/frameworks.md#plain-html). Para reservar o espaço do
+emoji antes de o elemento ser atualizado, adicione
+`FLUENT_EMOJI_PRE_UPGRADE_CSS` ao seu CSS global. Para o comportamento de
+carregamento, fallback e reprodução, veja o restante do
+[guia de uso](../usage.md).

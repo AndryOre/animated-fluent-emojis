@@ -1,6 +1,6 @@
 ---
 title: Preact에서 사용하기
-sourceHash: 6b3cb25c61754474
+sourceHash: 690f9a4ab5451009
 ---
 
 Preact에서 emoji를 사용하는 방법은 두 가지입니다. `<fluent-emoji>` 요소를
@@ -51,9 +51,10 @@ export function Greeting() {
 ```
 
 attribute, property, 이벤트의 전체 목록은
-[사용 가이드](../usage.md#plain-html)에 있습니다.
+[사용 가이드](../guide/frameworks.md#plain-html)에 있습니다.
 
 ## React adapter
 
 번들러에서 `react`와 `react-dom`을 `preact/compat`의 alias로 설정한 다음,
-[사용 가이드](../usage.md#react)에 설명된 대로 React adapter를 사용하세요.
+[사용 가이드](../guide/frameworks.md#react)에 설명된 대로 React adapter를
+사용하세요.
