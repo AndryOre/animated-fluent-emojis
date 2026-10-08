@@ -14,7 +14,7 @@ const searchStyle = [
 ].join(';')
 ---
 
-<Header locale={locale} path={path}>
+<Header locale={locale} path={path} skipTarget="#_top">
   <div slot="search" style={`display:contents;${searchStyle}`}>
     <Search />
   </div>
