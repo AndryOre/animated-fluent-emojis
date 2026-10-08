@@ -62,9 +62,22 @@ export default function CodeBlock({
   const [ownActive, setOwnActive] = useState(tabs[0]?.id ?? '')
   const [copied, setCopied] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
+  const tabsRef = useRef<HTMLDivElement>(null)
   const active = activeId ?? ownActive
   const activeCode = tabs.find((tab) => tab.id === active)?.code ?? ''
   const showTabs = tabs.length > 1 || leading !== undefined
+
+  useEffect(() => {
+    const list = tabsRef.current?.querySelector<HTMLElement>('[role="tablist"]')
+    const tab = list?.querySelector<HTMLElement>('[aria-selected="true"]')
+    if (!list || !tab) return
+    const listBox = list.getBoundingClientRect()
+    const tabBox = tab.getBoundingClientRect()
+    if (tabBox.left < listBox.left)
+      list.scrollLeft -= listBox.left - tabBox.left
+    else if (tabBox.right > listBox.right - 20)
+      list.scrollLeft += tabBox.right - (listBox.right - 20)
+  }, [active])
 
   useEffect(() => {
     if (!slotValues || !bodyRef.current) return
@@ -86,13 +99,13 @@ export default function CodeBlock({
       className="overflow-hidden rounded-xl border border-border bg-card"
     >
       <div className="flex h-10 items-center justify-between gap-2 border-b border-border pr-1.5 pl-3">
-        <div className="flex min-w-0 items-center gap-2">
+        <div ref={tabsRef} className="flex min-w-0 items-center gap-2">
           {leading}
           {showTabs && (
             <TabsList
               activateOnFocus
               aria-label={labels.tabsLabel}
-              className="gap-1"
+              className="min-w-0 gap-1 pr-5 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.id} value={tab.id}>
