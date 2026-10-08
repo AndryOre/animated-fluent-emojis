@@ -22,3 +22,15 @@ test('buttonVariants lets className override variant utilities', () => {
   expect(classes).toContain('h-11')
   expect(classes).not.toContain('h-9')
 })
+
+test('buttonVariants adds the sm and icon-sm sizes at 8 units', () => {
+  expect(buttonVariants({ size: 'sm' })).toContain('h-8')
+  expect(buttonVariants({ size: 'icon-sm' })).toContain('size-8')
+})
+
+test('buttonVariants gives ghost a muted hover and a press scale', () => {
+  const classes = buttonVariants({ variant: 'ghost' })
+
+  expect(classes).toContain('hover:bg-muted')
+  expect(classes).toContain('active:scale-[0.97]')
+})

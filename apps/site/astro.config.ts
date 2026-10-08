@@ -5,6 +5,7 @@ import { defineConfig } from 'astro/config'
 import starlightLlmsTxt from 'starlight-llms-txt'
 
 import { docSlug, PUBLISHED_DOCS } from './src/docs/published'
+import { sharedCodeConfig } from './src/highlight/code-config'
 import {
   LOCALE_NAMES,
   LOCALES,
@@ -80,6 +81,13 @@ export default defineConfig({
       defaultLocale: 'root',
       locales: starlightLocales,
       customCss: ['./src/styles/docs.css'],
+      expressiveCode: {
+        ...sharedCodeConfig,
+        themes: [...sharedCodeConfig.themes],
+        plugins: [...sharedCodeConfig.plugins],
+        useStarlightDarkModeSwitch: false,
+        useStarlightUiThemeColors: false,
+      },
       editLink: { baseUrl: `${REPOSITORY_URL}/edit/main/` },
       lastUpdated: false,
       favicon: '/favicon.svg',
