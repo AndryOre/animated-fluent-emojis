@@ -1,6 +1,6 @@
 ---
 title: Использование с Next.js
-sourceHash: 4a0c3dc179e6b339
+sourceHash: 6f92dff657703a74
 ---
 
 Рендерьте `Emoji` в App Router, в том числе из Server Components.
@@ -70,4 +70,4 @@ export function EmojiSetup() {
 
 `animated-fluent-emojis/lookup` не содержит React и баннера `"use client"`,
 поэтому работает и в Server Components, и в route handlers. См.
-[lookup](../usage.md#lookup).
+[lookup](../guide/lookup.md).

@@ -1,6 +1,6 @@
 ---
 title: Solução de problemas
-sourceHash: 0db8f37a1a2c8643
+sourceHash: c3ad7fa99dc76181
 ---
 
 Problemas agrupados pelo que você vê, cada um com a causa no código e uma
@@ -68,12 +68,12 @@ termina em um de quatro estados:
 **Solução:** Abra o console e a aba de rede e procure as linhas acima.
 
 - Id desconhecido: use um id conhecido. `EmojiId` os autocompleta, e a
-  exportação `lookup` pode pesquisá-los (consulte [Lookup](usage.md#lookup)).
+  exportação `lookup` pode pesquisá-los (consulte [Lookup](guide/lookup.md)).
 - Manifest com falha: confirme que `<asset site>/v1/manifest.slim.json` responde
   200 a partir do navegador. Um carregamento com falha é repetido na próxima
   montagem, em `preloadEmojis` e quando o navegador volta a ficar online.
 - Passe um `fallback` se o emoji nunca puder deixar um buraco no layout.
-  Consulte [Fallback](usage.md#fallback).
+  Consulte [Fallback](guide/behavior.md#fallback).
 
 ## O manifest é bloqueado pela CSP ou o navegador está offline
 
@@ -95,7 +95,7 @@ que você precisa permitir.
 As diretivas exatas estão nos [requisitos de CSP](security.md#csp-requirements).
 Se você hospeda por conta própria, permita a sua origem e chame
 `configureEmojis` antes de o primeiro `Emoji` ser renderizado. Consulte
-[Asset site](usage.md#asset-site).
+[Asset site](guide/assets.md#asset-site).
 
 ## O Next.js informa um erro para configureEmojis ou Emoji
 

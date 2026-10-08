@@ -1,6 +1,6 @@
 ---
 title: Использование эмодзи без кода
-sourceHash: 1a25330011d80c02
+sourceHash: 040399c5bc04b224
 ---
 
 Поместите анимированное эмодзи Fluent в Slack, Notion, Google Docs, письмо или

@@ -1,6 +1,6 @@
 ---
 title: Предзагрузка для пикера
-sourceHash: 3878d26e36b785cb
+sourceHash: 727a2637d064bf30
 ---
 
 Прогрейте manifest и sprite sheets до открытия пикера эмодзи, чтобы эмодзи
@@ -52,5 +52,5 @@ function handlePickerTriggerHover() {
 Запрос manifest прекращается через 15 секунд. Неудачный manifest повторно
 запрашивается при следующем вызове `preloadEmojis`, при следующем монтировании
 или когда браузер снова подключается к сети, поэтому повторный вызов из триггера
-безопасен. См. [Предзагрузка](../usage.md#предзагрузка) и
-[Fallback](../usage.md#fallback).
+безопасен. См. [Предзагрузка](../guide/assets.md#preloading) и
+[Fallback](../guide/behavior.md#fallback).

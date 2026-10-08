@@ -1,6 +1,6 @@
 ---
 title: 在 Next.js 中使用
-sourceHash: 4a0c3dc179e6b339
+sourceHash: 6f92dff657703a74
 ---
 
 在 App Router 中渲染 `Emoji`，包括在 Server Component 中。
@@ -68,4 +68,4 @@ Policy 见[自行托管 asset](self-host-the-assets.md)，预加载指定 id 见
 
 `animated-fluent-emojis/lookup` 不含 React，也没有 `"use client"`
 声明，因此在 Server Component 和路由处理程序中同样可用。参见
-[lookup](../usage.md#lookup)。
+[lookup](../guide/lookup.md)。
