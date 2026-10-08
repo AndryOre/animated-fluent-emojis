@@ -46,16 +46,26 @@ export const it: UiStrings = {
       installLabel: 'Comando di installazione',
       copy: 'Copia',
       copied: 'Copiato',
+      eyebrow: 'Open source',
+      docs: 'Leggi la documentazione',
       browse: 'Sfoglia le emoji',
       attribution:
         'Le illustrazioni delle emoji sono di Microsoft. Non affiliato a Microsoft né approvato da Microsoft.',
-      stageLabel:
-        "Un'emoji di mano che saluta, animata al passaggio del cursore",
     },
     demo: {
       sizeLabel: 'Dimensione',
       toneLabel: 'Tono della pelle',
       playsLabel: 'Si anima',
+      emojiLabel: 'Emoji',
+      reset: 'Ripristina',
+      emojis: {
+        wave: 'Mano che saluta',
+        fire: 'Fuoco',
+        party: 'Spara coriandoli',
+        heart: 'Cuore rosso',
+        rocket: 'Razzo',
+        grin: 'Faccina sorridente',
+      },
       tones: {
         default: 'Predefinito',
         light: 'Chiaro',
@@ -68,6 +78,7 @@ export const it: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: 'Caratteristiche',
       title: 'Pensate per essere facili da usare',
       alive: {
         title: 'Vive',
@@ -94,12 +105,19 @@ export const it: UiStrings = {
       copied: 'Copiato',
     },
     noCode: {
+      eyebrow: 'Senza codice',
+      formats: {
+        gif: 'Funziona in qualsiasi chat',
+        webp: 'Animata, più leggera',
+        png: "Un'immagine statica",
+      },
       title: 'Niente codice? Nessun problema.',
       body: 'Scarica qualsiasi emoji come GIF, WebP animata o PNG statica e inseriscila in una chat o in un documento.',
       cta: 'Sfoglia le emoji',
       teaserLabel: 'Alcune emoji della galleria',
     },
     faq: {
+      eyebrow: 'FAQ',
       title: 'Domande',
       chat: {
         question: 'Posso usarle in una chat o in un documento?',
@@ -176,6 +194,8 @@ export const it: UiStrings = {
       'Controlla la connessione e riprova. La documentazione e il resto del sito continuano a funzionare.',
     retry: 'Riprova',
     loading: 'Caricamento delle emoji',
+    filtersButton: 'Filtri',
+    customizeTitle: 'Personalizza',
   },
   emojiPage: {
     title: '{name}, emoji animata · Animated Fluent Emojis',

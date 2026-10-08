@@ -47,15 +47,26 @@ export const zh_CN: UiStrings = {
       installLabel: '安装命令',
       copy: '复制',
       copied: '已复制',
+      eyebrow: '开源',
+      docs: '阅读文档',
       browse: '浏览 emoji',
       attribution:
         'emoji 图稿归 Microsoft 所有。与 Microsoft 无关联，也未获其认可。',
-      stageLabel: '一个挥手 emoji，悬停时播放',
     },
     demo: {
       sizeLabel: '大小',
       toneLabel: '肤色',
       playsLabel: '播放时机',
+      emojiLabel: '表情',
+      reset: '重置',
+      emojis: {
+        wave: '挥手',
+        fire: '火',
+        party: '拉炮',
+        heart: '红心',
+        rocket: '火箭',
+        grin: '咧嘴笑脸',
+      },
       tones: {
         default: '默认',
         light: '浅色',
@@ -68,6 +79,7 @@ export const zh_CN: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: '特性',
       title: '用起来省心',
       alive: {
         title: '灵动',
@@ -94,12 +106,19 @@ export const zh_CN: UiStrings = {
       copied: '已复制',
     },
     noCode: {
+      eyebrow: '无需代码',
+      formats: {
+        gif: '适用于任何聊天',
+        webp: '动画，体积更小',
+        png: '静态图片',
+      },
       title: '不写代码？没问题。',
       body: '把任意 emoji 下载为 GIF、动画 WebP 或静态 PNG，放进聊天或文档里就行。',
       cta: '浏览 emoji',
       teaserLabel: '图库中的几个 emoji',
     },
     faq: {
+      eyebrow: '常见问题',
       title: '常见问题',
       chat: {
         question: '可以在聊天或文档里用吗？',
@@ -173,6 +192,8 @@ export const zh_CN: UiStrings = {
     errorHint: '请检查网络连接后重试。文档和网站的其他部分仍可正常使用。',
     retry: '重试',
     loading: '正在加载 emoji',
+    filtersButton: '筛选',
+    customizeTitle: '自定义',
   },
   emojiPage: {
     title: '{name}，动画 emoji · Animated Fluent Emojis',

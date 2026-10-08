@@ -47,15 +47,26 @@ export const ja: UiStrings = {
       installLabel: 'インストールコマンド',
       copy: 'コピー',
       copied: 'コピーしました',
+      eyebrow: 'オープンソース',
+      docs: 'ドキュメントを読む',
       browse: '絵文字を見る',
       attribution:
         '絵文字のアートワークは Microsoft のものです。Microsoft とは提携しておらず、承認も受けていません。',
-      stageLabel: 'ホバーで再生される、手を振る絵文字',
     },
     demo: {
       sizeLabel: 'サイズ',
       toneLabel: '肌の色',
       playsLabel: '再生',
+      emojiLabel: '絵文字',
+      reset: 'リセット',
+      emojis: {
+        wave: '手を振る',
+        fire: '炎',
+        party: 'クラッカー',
+        heart: '赤いハート',
+        rocket: 'ロケット',
+        grin: 'にっこり笑顔',
+      },
       tones: {
         default: 'デフォルト',
         light: '明るい',
@@ -68,6 +79,7 @@ export const ja: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: '特長',
       title: '気持ちよく使えるように',
       alive: {
         title: '生きている',
@@ -94,12 +106,19 @@ export const ja: UiStrings = {
       copied: 'コピーしました',
     },
     noCode: {
+      eyebrow: 'ノーコード',
+      formats: {
+        gif: 'どのチャットでも使える',
+        webp: 'アニメーション、より軽量',
+        png: '静止画',
+      },
       title: 'コードなしでも大丈夫。',
       body: '好きな絵文字を GIF、アニメーション WebP、静止画 PNG でダウンロードして、チャットや文書に貼り付けられます。',
       cta: '絵文字を見る',
       teaserLabel: 'ギャラリーの絵文字から一部',
     },
     faq: {
+      eyebrow: 'よくある質問',
       title: 'よくある質問',
       chat: {
         question: 'チャットや文書でも使えますか？',
@@ -175,6 +194,8 @@ export const ja: UiStrings = {
       '接続を確認して、もう一度お試しください。ドキュメントとサイトのほかの部分は使えます。',
     retry: 'もう一度試す',
     loading: '絵文字を読み込み中',
+    filtersButton: 'フィルター',
+    customizeTitle: 'カスタマイズ',
   },
   emojiPage: {
     title: '{name}、アニメーション絵文字 · Animated Fluent Emojis',

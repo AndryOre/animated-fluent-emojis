@@ -47,15 +47,26 @@ export const pt_BR: UiStrings = {
       installLabel: 'Comando de instalação',
       copy: 'Copiar',
       copied: 'Copiado',
+      eyebrow: 'Código aberto',
+      docs: 'Ler a documentação',
       browse: 'Ver os emojis',
       attribution:
         'A arte dos emojis é da Microsoft. Não temos afiliação nem aprovação da Microsoft.',
-      stageLabel: 'Emoji acenando, que anima ao passar o mouse',
     },
     demo: {
       sizeLabel: 'Tamanho',
       toneLabel: 'Tom de pele',
       playsLabel: 'Animar',
+      emojiLabel: 'Emoji',
+      reset: 'Redefinir',
+      emojis: {
+        wave: 'Mão acenando',
+        fire: 'Fogo',
+        party: 'Cone de festa',
+        heart: 'Coração vermelho',
+        rocket: 'Foguete',
+        grin: 'Rosto sorridente',
+      },
       tones: {
         default: 'Padrão',
         light: 'Claro',
@@ -68,6 +79,7 @@ export const pt_BR: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: 'Recursos',
       title: 'Feito para ser agradável de usar',
       alive: {
         title: 'Cheio de vida',
@@ -94,12 +106,19 @@ export const pt_BR: UiStrings = {
       copied: 'Copiado',
     },
     noCode: {
+      eyebrow: 'Sem código',
+      formats: {
+        gif: 'Funciona em qualquer chat',
+        webp: 'Animado, mais leve',
+        png: 'Uma imagem estática',
+      },
       title: 'Sem código? Sem problema.',
       body: 'Baixe qualquer emoji como GIF, WebP animado ou PNG estático e cole no chat ou em um documento.',
       cta: 'Ver os emojis',
       teaserLabel: 'Alguns emojis da galeria',
     },
     faq: {
+      eyebrow: 'Perguntas',
       title: 'Perguntas frequentes',
       chat: {
         question: 'Posso usar os emojis em chats e documentos?',
@@ -176,6 +195,8 @@ export const pt_BR: UiStrings = {
       'Verifique sua conexão e tente novamente. A documentação e o resto do site continuam funcionando.',
     retry: 'Tentar novamente',
     loading: 'Carregando emojis',
+    filtersButton: 'Filtros',
+    customizeTitle: 'Personalizar',
   },
   emojiPage: {
     title: '{name}, emoji animado · Animated Fluent Emojis',

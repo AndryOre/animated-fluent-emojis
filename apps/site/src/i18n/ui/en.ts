@@ -45,15 +45,26 @@ export const en = {
       installLabel: 'Install command',
       copy: 'Copy',
       copied: 'Copied',
+      eyebrow: 'Open source',
+      docs: 'Read the docs',
       browse: 'Browse the emojis',
       attribution:
         "The emoji artwork is Microsoft's. Not affiliated with or endorsed by Microsoft.",
-      stageLabel: 'A waving hand emoji, playing on hover',
     },
     demo: {
       sizeLabel: 'Size',
       toneLabel: 'Skin tone',
       playsLabel: 'Plays',
+      emojiLabel: 'Emoji',
+      reset: 'Reset',
+      emojis: {
+        wave: 'Waving hand',
+        fire: 'Fire',
+        party: 'Party popper',
+        heart: 'Red heart',
+        rocket: 'Rocket',
+        grin: 'Grinning face',
+      },
       tones: {
         default: 'Default',
         light: 'Light',
@@ -66,6 +77,7 @@ export const en = {
       },
     },
     pillars: {
+      eyebrow: 'Features',
       title: 'Made to be easy to live with',
       alive: {
         title: 'Alive',
@@ -92,12 +104,19 @@ export const en = {
       copied: 'Copied',
     },
     noCode: {
+      eyebrow: 'No code',
+      formats: {
+        gif: 'Works in any chat',
+        webp: 'Animated, smaller',
+        png: 'A still picture',
+      },
       title: 'No code? No problem.',
       body: 'Download any emoji as a GIF, an animated WebP or a still PNG, and drop it into a chat or a document.',
       cta: 'Browse the emojis',
       teaserLabel: 'A few emojis from the gallery',
     },
     faq: {
+      eyebrow: 'FAQ',
       title: 'Questions',
       chat: {
         question: 'Can I use these in a chat or a document?',
@@ -174,6 +193,8 @@ export const en = {
       'Check your connection and try again. The docs and the rest of the site still work.',
     retry: 'Try again',
     loading: 'Loading emojis',
+    filtersButton: 'Filters',
+    customizeTitle: 'Customize',
   },
   emojiPage: {
     title: '{name}, animated emoji · Animated Fluent Emojis',

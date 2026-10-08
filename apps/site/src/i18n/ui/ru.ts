@@ -47,15 +47,26 @@ export const ru: UiStrings = {
       installLabel: 'Команда установки',
       copy: 'Копировать',
       copied: 'Скопировано',
+      eyebrow: 'Открытый код',
+      docs: 'Читать документацию',
       browse: 'Смотреть эмодзи',
       attribution:
         'Графика эмодзи принадлежит Microsoft. Проект не связан с Microsoft и не одобрен ею.',
-      stageLabel: 'Машущее эмодзи, воспроизводится при наведении',
     },
     demo: {
       sizeLabel: 'Размер',
       toneLabel: 'Тон кожи',
       playsLabel: 'Воспроизведение',
+      emojiLabel: 'Эмодзи',
+      reset: 'Сбросить',
+      emojis: {
+        wave: 'Машущая рука',
+        fire: 'Огонь',
+        party: 'Хлопушка',
+        heart: 'Красное сердце',
+        rocket: 'Ракета',
+        grin: 'Ухмыляющееся лицо',
+      },
       tones: {
         default: 'По умолчанию',
         light: 'Светлый',
@@ -68,6 +79,7 @@ export const ru: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: 'Возможности',
       title: 'Приятно в использовании',
       alive: {
         title: 'Живые',
@@ -94,12 +106,19 @@ export const ru: UiStrings = {
       copied: 'Скопировано',
     },
     noCode: {
+      eyebrow: 'Без кода',
+      formats: {
+        gif: 'Работает в любом чате',
+        webp: 'Анимация, меньше размер',
+        png: 'Статичная картинка',
+      },
       title: 'Код не нужен.',
       body: 'Скачайте любое эмодзи как GIF, анимированный WebP или статичный PNG и вставьте в чат или документ.',
       cta: 'Смотреть эмодзи',
       teaserLabel: 'Несколько эмодзи из галереи',
     },
     faq: {
+      eyebrow: 'Вопросы',
       title: 'Частые вопросы',
       chat: {
         question: 'Можно ли использовать их в чатах и документах?',
@@ -175,6 +194,8 @@ export const ru: UiStrings = {
       'Проверьте подключение и попробуйте ещё раз. Документация и остальные разделы сайта работают.',
     retry: 'Повторить',
     loading: 'Загрузка эмодзи',
+    filtersButton: 'Фильтры',
+    customizeTitle: 'Настройка',
   },
   emojiPage: {
     title: '{name}, анимированное эмодзи · Animated Fluent Emojis',

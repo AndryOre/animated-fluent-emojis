@@ -47,15 +47,26 @@ export const ko: UiStrings = {
       installLabel: '설치 명령어',
       copy: '복사',
       copied: '복사했어요',
+      eyebrow: '오픈 소스',
+      docs: '문서 읽기',
       browse: '이모지 둘러보기',
       attribution:
         '이모지 아트워크는 Microsoft의 것입니다. Microsoft와 제휴하거나 승인받은 프로젝트가 아닙니다.',
-      stageLabel: '마우스를 올리면 재생되는 손 흔드는 이모지',
     },
     demo: {
       sizeLabel: '크기',
       toneLabel: '피부색',
       playsLabel: '재생',
+      emojiLabel: '이모지',
+      reset: '초기화',
+      emojis: {
+        wave: '손 흔들기',
+        fire: '불',
+        party: '파티 폭죽',
+        heart: '빨간 하트',
+        rocket: '로켓',
+        grin: '활짝 웃는 얼굴',
+      },
       tones: {
         default: '기본',
         light: '밝은',
@@ -68,6 +79,7 @@ export const ko: UiStrings = {
       },
     },
     pillars: {
+      eyebrow: '특징',
       title: '쓰기 편하게 만들었어요',
       alive: {
         title: '살아 있어요',
@@ -94,12 +106,19 @@ export const ko: UiStrings = {
       copied: '복사했어요',
     },
     noCode: {
+      eyebrow: '노코드',
+      formats: {
+        gif: '모든 채팅에서 작동',
+        webp: '애니메이션, 더 작은 용량',
+        png: '정지 이미지',
+      },
       title: '코드 없이도 괜찮아요.',
       body: '마음에 드는 이모지를 GIF, 애니메이션 WebP, 정지 PNG로 내려받아 채팅과 문서에 붙여 넣으세요.',
       cta: '이모지 둘러보기',
       teaserLabel: '갤러리에서 고른 이모지 몇 개',
     },
     faq: {
+      eyebrow: '자주 묻는 질문',
       title: '자주 묻는 질문',
       chat: {
         question: '채팅이나 문서에서도 쓸 수 있나요?',
@@ -176,6 +195,8 @@ export const ko: UiStrings = {
       '연결을 확인하고 다시 시도해 주세요. 문서와 사이트의 다른 부분은 계속 사용할 수 있습니다.',
     retry: '다시 시도',
     loading: '이모지를 불러오는 중',
+    filtersButton: '필터',
+    customizeTitle: '사용자 지정',
   },
   emojiPage: {
     title: '{name}, 애니메이션 이모지 · Animated Fluent Emojis',
