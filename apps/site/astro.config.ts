@@ -47,6 +47,10 @@ const starlightLocales = Object.fromEntries(
 
 const { meta } = getUi('en')
 
+const guideItems = PUBLISHED_DOCS.filter(
+  (docPath) => docPath === 'usage.md' || docPath.startsWith('guide/'),
+).map((docPath) => ({ slug: docSlug(docPath) }))
+
 const howToItems = PUBLISHED_DOCS.filter((docPath) =>
   docPath.startsWith('how-to/'),
 ).map((docPath) => ({ slug: docSlug(docPath) }))
@@ -109,8 +113,16 @@ export default defineConfig({
         ThemeSelect: './src/docs/components/DocumentationThemeSelect.astro',
       },
       sidebar: [
-        { slug: docSlug('usage.md') },
-        { slug: docSlug('troubleshooting.md') },
+        {
+          label: getUi('en').docs.guideGroup,
+          translations: localized((locale) => getUi(locale).docs.guideGroup),
+          items: guideItems,
+        },
+        {
+          label: getUi('en').docs.helpGroup,
+          translations: localized((locale) => getUi(locale).docs.helpGroup),
+          items: [{ slug: docSlug('troubleshooting.md') }],
+        },
         {
           label: getUi('en').docs.howToGroup,
           translations: localized((locale) => getUi(locale).docs.howToGroup),

@@ -1,7 +1,7 @@
 # Troubleshooting
 
 Problems grouped by what you see, each with the cause in the code and a fix. For
-the full API see the [usage guide](usage.md).
+the full API see the [guide](usage.md).
 
 - [The emoji shows but never animates](#the-emoji-shows-but-never-animates)
 - [Nothing renders, or only the fallback shows](#nothing-renders-or-only-the-fallback-shows)
@@ -64,12 +64,12 @@ which ends in one of four states:
 **Fix:** Open the console and the network tab and look for the lines above.
 
 - Unknown id: use a known id. `EmojiId` autocompletes them, and the `lookup`
-  export can search them (see [Lookup](usage.md#lookup)).
+  export can search them (see [Lookup](guide/lookup.md)).
 - Failed manifest: confirm `<asset site>/v1/manifest.slim.json` answers 200 from
   the browser. A failed load is retried on the next mount, on `preloadEmojis`
   and when the browser comes back online.
 - Pass a `fallback` if the emoji must never leave a hole in the layout. See
-  [Fallback](usage.md#fallback).
+  [Fallback](guide/behavior.md#fallback).
 
 ## The manifest is blocked by CSP or the browser is offline
 
@@ -91,7 +91,7 @@ need to allow.
 `img-src`. The exact directives are in
 [CSP requirements](security.md#csp-requirements). If you self-host, allow your
 own origin instead and call `configureEmojis` before the first `Emoji` renders.
-See [Asset site](usage.md#asset-site).
+See [Asset site](guide/assets.md#asset-site).
 
 ## Next.js reports an error for configureEmojis or Emoji
 
@@ -110,7 +110,7 @@ imported on the server.
 **Fix:** Call `configureEmojis` and `preloadEmojis` from a module that starts
 with `"use client"`, and import `style.css` once in the root layout. See
 [Next.js and server components](../README.md#nextjs-and-server-components) and
-the [usage guide](usage.md).
+the [guide](usage.md).
 
 ## ERR_PACKAGE_PATH_NOT_EXPORTED or a require error
 
@@ -189,8 +189,7 @@ bunx playwright install chromium
 
 ## See also
 
-- [Usage guide](usage.md): props, fallback behavior, preloading and the asset
-  site.
+- [Guide](usage.md): props, fallback behavior, preloading and the asset site.
 - [Security design](security.md): the CSP requirements and the threat model.
 - [Architecture](architecture.md): the manifest store, CSS and build output.
 - [Development](development.md): setup and testing.

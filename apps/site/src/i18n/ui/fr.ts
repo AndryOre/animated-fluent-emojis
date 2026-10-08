@@ -137,6 +137,8 @@ export const fr: UiStrings = {
     },
   },
   docs: {
+    guideGroup: 'Guide',
+    helpGroup: 'Aide',
     howToGroup: 'Guides pratiques',
     copyMarkdown: 'Copier la page en Markdown',
     copiedMarkdown: 'Copié',

@@ -138,6 +138,8 @@ export const pt_BR: UiStrings = {
     },
   },
   docs: {
+    guideGroup: 'Guia',
+    helpGroup: 'Ajuda',
     howToGroup: 'Guias práticos',
     copyMarkdown: 'Copiar página como Markdown',
     copiedMarkdown: 'Copiado',

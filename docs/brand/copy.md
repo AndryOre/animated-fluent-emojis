@@ -140,13 +140,13 @@ For `[Unreleased]`, in the project's candid style:
 | Claim                                                 | Source                                                                         |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Plays on load or on hover                             | `README.md` props `autoPlay`, `playOnHover`; Playback                          |
-| Rests on a poster frame under reduced motion          | `docs/usage.md` "Reduced motion"                                               |
+| Rests on a poster frame under reduced motion          | `docs/guide/behavior.md` "Reduced motion"                                      |
 | Holds its space while it loads                        | `README.md` intro to the manifest: empty `aria-hidden` placeholder of the size |
 | The manifest is fetched on first render               | `README.md`: "never at import time"                                            |
-| HD sprite sheets at 2x on high-density screens        | `docs/usage.md` "Images and HD sprite sheets"                                  |
+| HD sprite sheets at 2x on high-density screens        | `docs/guide/assets.md` "Images and HD sprite sheets"                           |
 | `alt` defaults to the description; `""` is decorative | `README.md` props table, `alt`                                                 |
-| Fallback glyph or custom `fallback`                   | `docs/usage.md` "Fallback"                                                     |
-| Lookup has no framework                               | `docs/usage.md` "Lookup"                                                       |
+| Fallback glyph or custom `fallback`                   | `docs/guide/behavior.md` "Fallback"                                            |
+| Lookup has no framework                               | `docs/guide/lookup.md` "Lookup"                                                |
 | Five adapters, TypeScript, id autocomplete            | `package.json` `exports`; `README.md` props, `id`                              |
 | The code is MIT; the artwork is Microsoft's           | `README.md` "License" and "Assets and licensing"                               |
 

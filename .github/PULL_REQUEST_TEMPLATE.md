@@ -32,7 +32,8 @@ Refs: AO-<!-- Linear ticket number, delete this line if not applicable -->
 ## Checklist
 
 - [ ] Added/updated tests for changes in `src/`
-- [ ] Docs updated (`README.md` or `docs/usage.md`) if the public API changed
+- [ ] Docs updated (`README.md` or `docs/usage.md` and `docs/guide/`) if the
+      public API changed
 - [ ] Passes `bun run check`
 - [ ] PR title follows
       [Conventional Commits](https://www.conventionalcommits.org/)

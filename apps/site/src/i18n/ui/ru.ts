@@ -138,6 +138,8 @@ export const ru: UiStrings = {
     },
   },
   docs: {
+    guideGroup: 'Руководство',
+    helpGroup: 'Помощь',
     howToGroup: 'Практические руководства',
     copyMarkdown: 'Копировать страницу как Markdown',
     copiedMarkdown: 'Скопировано',

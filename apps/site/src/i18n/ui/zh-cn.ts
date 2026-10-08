@@ -138,6 +138,8 @@ export const zh_CN: UiStrings = {
     },
   },
   docs: {
+    guideGroup: '指南',
+    helpGroup: '帮助',
     howToGroup: '操作指南',
     copyMarkdown: '复制本页 Markdown',
     copiedMarkdown: '已复制',

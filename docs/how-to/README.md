@@ -1,6 +1,6 @@
 # How-to guides
 
-Task-focused recipes. For the full API, see the [usage guide](../usage.md).
+Task-focused recipes. For the full API, see the [guide](../usage.md).
 
 ## Using the library
 
@@ -17,8 +17,7 @@ Task-focused recipes. For the full API, see the [usage guide](../usage.md).
 - [`use-with-preact.md`](use-with-preact.md): `<fluent-emoji>`, or the React
   adapter through `preact/compat`.
 
-Vue, Svelte, Astro and React are covered by the
-[usage guide](../usage.md#frameworks).
+Vue, Svelte, Astro and React are covered by the [guide](../guide/frameworks.md).
 
 ## Using the files
 

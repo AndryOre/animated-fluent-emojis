@@ -148,6 +148,6 @@ describe('formatStatusReport', () => {
     const report = formatStatusReport(loadCatalog(sources()))
     expect(report).toContain('stale   de troubleshooting.md')
     expect(report).toContain('missing es usage.md')
-    expect(report).toContain('80 missing, 1 stale, 9 up to date')
+    expect(report).toContain('134 missing, 1 stale, 15 up to date')
   })
 })
