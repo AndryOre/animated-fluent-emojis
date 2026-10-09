@@ -65,6 +65,16 @@ describe('emoji detail on a page', () => {
     expect(html).not.toContain(`src="${fileUrl(emoji.urls.png)}"`)
   })
 
+  it('puts the background group and the pause button before the zoom group', () => {
+    const html = render(undefined)
+    const background = html.indexOf(`aria-label="${strings.backgroundLabel}"`)
+    const pause = html.indexOf(`aria-label="${strings.pauseAnimation}"`)
+    const zoom = html.indexOf(`aria-label="${strings.zoomLabel}"`)
+    expect(background).toBeGreaterThan(-1)
+    expect(pause).toBeGreaterThan(background)
+    expect(zoom).toBeGreaterThan(pause)
+  })
+
   it('leaves the name heading to the page', () => {
     expect(render(undefined)).not.toContain('<h2')
   })

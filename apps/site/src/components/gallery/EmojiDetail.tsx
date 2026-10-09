@@ -16,6 +16,13 @@ import type { EmojiPageTabs } from '../../home/content'
 import type { UiStrings } from '../../i18n/ui'
 import CodeBlock, { type CodeBlockTab } from '../CodeBlock'
 import { FileActionButton, type FileActionNotice } from './FileActionButton'
+import {
+  resolvePlaying,
+  STAGE_BACKGROUND_CLASSES,
+  StageToolbarControls,
+  usePrefersReducedMotion,
+  type StageBackground,
+} from './StageToolbar'
 
 export type GalleryStrings = UiStrings['gallery']
 
@@ -31,9 +38,6 @@ const TABS: readonly { kind: SnippetKind; label: keyof GalleryStrings }[] = [
 const TOAST_MILLISECONDS = 2000
 
 const ZOOMS = [1, 2] as const
-
-const STAGE_DOTS =
-  '[background-image:radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px]'
 
 const HTML_ESCAPES: Record<string, string> = {
   '&': '&amp;',
@@ -245,10 +249,19 @@ export function EmojiDetail(props: EmojiDetailProps) {
   const { status, copy, handleNotice } = useStatusAnnouncer(strings)
   const [zoom, setZoom] = useState<(typeof ZOOMS)[number]>(1)
   const [loadedKey, setLoadedKey] = useState<string>()
+  const [background, setBackground] = useState<StageBackground>('dots')
+  const [playback, setPlayback] = useState<{
+    key: string
+    playing: boolean
+  }>()
+  const reducedMotion = usePrefersReducedMotion()
+
   const appliedTone = effectiveTone(emoji, tone)
   const files =
     emoji.tones.find((variant) => variant.tone === appliedTone) ?? emoji
   const previewKey = `${emoji.id}-${appliedTone ?? 'default'}`
+  const playing = playback?.key === previewKey ? playback.playing : undefined
+  const running = resolvePlaying(playing, reducedMotion)
   const animated = loadedKey === previewKey
   const tabs = snippetTabs
     ? highlightedTabs(snippetTabs, emoji, appliedTone, size, strings)
@@ -280,31 +293,42 @@ export function EmojiDetail(props: EmojiDetailProps) {
       <div
         style={{ viewTransitionName: transitionName }}
         className={cn(
-          'relative flex items-center justify-center overflow-hidden rounded-xl bg-muted/40',
-          STAGE_DOTS,
+          'relative flex items-center justify-center overflow-hidden rounded-xl',
+          STAGE_BACKGROUND_CLASSES[background],
           page
             ? 'aspect-square min-[860px]:aspect-auto min-[860px]:h-[440px]'
             : 'aspect-square max-h-72 w-full',
         )}
       >
-        <div
-          role="group"
-          aria-label={strings.zoomLabel}
-          className="absolute top-2 right-2 z-10 flex rounded-lg border border-border bg-card p-0.5"
-        >
-          {ZOOMS.map((level) => (
-            <button
-              key={level}
-              type="button"
-              aria-pressed={zoom === level}
-              onClick={() => {
-                setZoom(level)
-              }}
-              className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
-            >
-              {level}×
-            </button>
-          ))}
+        <div className="absolute top-2 right-2 left-2 z-10 flex flex-wrap items-center justify-end gap-1.5">
+          <StageToolbarControls
+            strings={strings}
+            background={background}
+            onBackgroundChange={setBackground}
+            running={running}
+            onToggleRunning={() => {
+              setPlayback({ key: previewKey, playing: !running })
+            }}
+          />
+          <div
+            role="group"
+            aria-label={strings.zoomLabel}
+            className="flex h-8 items-center rounded-lg border border-border bg-card p-0.5"
+          >
+            {ZOOMS.map((level) => (
+              <button
+                key={level}
+                type="button"
+                aria-pressed={zoom === level}
+                onClick={() => {
+                  setZoom(level)
+                }}
+                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
+              >
+                {level}×
+              </button>
+            ))}
+          </div>
         </div>
         <div
           className="relative transition-transform duration-200 ease-(--ease-out-strong)"
@@ -331,6 +355,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
             size={size}
             skinTone={appliedTone}
             animationIterations="infinite"
+            playing={playing}
             alt={name}
             onLoad={() => {
               setLoadedKey(previewKey)
