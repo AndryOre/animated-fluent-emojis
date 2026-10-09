@@ -242,8 +242,8 @@ export const ru: UiStrings = {
     copyEmoji: 'Копировать эмодзи',
     codePointLabel: 'Кодовая позиция',
     navigationLabel: 'Навигация по эмодзи',
-    previousEmoji: 'Предыдущий эмодзи: {name}',
-    nextEmoji: 'Следующий эмодзи: {name}',
+    previousEmoji: 'Предыдущее эмодзи: {name}',
+    nextEmoji: 'Следующее эмодзи: {name}',
   },
   notFound: {
     title: 'Страница не найдена.',
