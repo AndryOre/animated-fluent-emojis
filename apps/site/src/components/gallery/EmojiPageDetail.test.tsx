@@ -74,6 +74,14 @@ describe('emoji page island', () => {
     )
   })
 
+  it('puts a color dot before every tone chip label', () => {
+    const html = renderPage(toned, []).toLowerCase()
+
+    for (const color of ['#feba46', '#fac7b4', '#e3aa94', '#533938']) {
+      expect(html).toContain(`background-color:${color}`)
+    }
+  })
+
   it('renders the download once, outside the stage column', () => {
     const html = renderPage(toned, [])
     expect(html.split(gallery.fileActionDownloadWebp)).toHaveLength(2)

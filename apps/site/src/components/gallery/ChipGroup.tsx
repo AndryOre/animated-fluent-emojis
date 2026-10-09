@@ -1,8 +1,11 @@
+import type { ReactNode } from 'react'
+
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 interface Chip<Value extends string | number> {
   value: Value
   label: string
+  leading?: ReactNode
 }
 
 interface ChipGroupProps<Value extends string | number> {
@@ -56,7 +59,14 @@ export function ChipGroup<Value extends string | number>(
           aria-disabled={disabled}
           title={disabled ? disabledHint : undefined}
         >
-          {chip.label}
+          {chip.leading === undefined ? (
+            chip.label
+          ) : (
+            <span className="inline-flex items-center gap-1.5">
+              {chip.leading}
+              {chip.label}
+            </span>
+          )}
         </ToggleGroupItem>
       ))}
     </ToggleGroup>
