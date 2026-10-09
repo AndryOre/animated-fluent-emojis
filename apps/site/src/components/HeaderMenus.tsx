@@ -64,8 +64,13 @@ const iconButtonClass = buttonVariants({
   className: 'rounded-lg',
 })
 
-const compactItemClass =
-  'h-8 gap-2 rounded-md px-2 font-normal data-highlighted:bg-muted data-highlighted:text-foreground aria-[current=true]:bg-transparent'
+/**
+ * Classes shared by the compact nav menu and language menu items. The popups
+ * portal to `<body>`, outside the header, so `no-underline` keeps Starlight's
+ * link decoration off the items on every page.
+ */
+export const compactItemClass =
+  'h-8 gap-2 rounded-md px-2 font-normal no-underline data-highlighted:bg-muted data-highlighted:text-foreground aria-[current=true]:bg-transparent'
 
 const THEME_ICONS = {
   system: MonitorIcon,
