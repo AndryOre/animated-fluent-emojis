@@ -70,7 +70,7 @@ test('each skin tone option has a decorative color dot before its label', () => 
   expect(html).toMatch(/aria-hidden="true"[^>]*><\/span>Light/)
 })
 
-test('the stage is compact and the code block sits in the capped wrapper', () => {
+test('the stage is compact and the code block sits in the demo wrapper', () => {
   const html = renderToString(
     <DemoPlayground
       emojis={[wave]}

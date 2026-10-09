@@ -83,7 +83,7 @@ function renderInstallBlock(command: InstallCommand, locale: Locale): string[] {
       `<button type="button" data-package-manager="${manager}" aria-pressed="${String(manager === PACKAGE_MANAGERS[0])}">${manager}</button>`,
   )
   const panels = PACKAGE_MANAGERS.flatMap((manager, index) => [
-    `<div class="afe-install-panel" data-package-manager="${manager}" data-command="${commandFor(manager, command)}"${index === 0 ? '' : ' hidden'}>`,
+    `<div class="afe-install-panel" data-package-manager="${manager}" data-command="${escapeAttribute(commandFor(manager, command))}"${index === 0 ? '' : ' hidden'}>`,
     '',
     '```sh frame="none"',
     commandFor(manager, command),
