@@ -1,4 +1,5 @@
 import { SKIN_TONES, type SkinTone } from '../../gallery/public-index'
+import { ToneDot } from '../ToneDot'
 import type { GalleryStrings } from './EmojiDetail'
 import { SegmentedControl } from './SegmentedControl'
 
@@ -95,6 +96,7 @@ export function GallerySidebar(props: GallerySidebarProps) {
           segments={(['default', ...SKIN_TONES] as const).map((value) => ({
             value,
             label: strings[TONE_LABELS[value]],
+            leading: <ToneDot tone={value} />,
           }))}
           selected={props.tone ?? 'default'}
           onSelect={(value) => {

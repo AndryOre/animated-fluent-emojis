@@ -1,6 +1,6 @@
 import { Emoji } from 'animated-fluent-emojis/react'
 import { RotateCcwIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 
 import 'animated-fluent-emojis/style.css'
 
@@ -8,6 +8,7 @@ import CodeBlock, {
   type CodeBlockLabels,
   type CodeBlockTab,
 } from '@/components/CodeBlock'
+import { ToneDot } from '@/components/ToneDot'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
@@ -49,7 +50,12 @@ export interface DemoPlaygroundProps {
 
 interface SegmentedProps<Value extends string | number> {
   label: string
-  options: readonly { value: Value; text: string; name?: string }[]
+  options: readonly {
+    value: Value
+    text: string
+    name?: string
+    leading?: ReactNode
+  }[]
   selected: Value
   onSelect: (value: Value) => void
   disabled?: boolean
@@ -92,7 +98,14 @@ function Segmented<Value extends string | number>({
             aria-label={option.name}
             className="flex-1 cursor-pointer aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
           >
-            {option.text}
+            {option.leading === undefined ? (
+              option.text
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                {option.leading}
+                {option.text}
+              </span>
+            )}
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
@@ -214,6 +227,7 @@ export default function DemoPlayground({
           options={DEMO_TONES.map((tone) => ({
             value: tone.id,
             text: labels.tones[tone.id],
+            leading: <ToneDot tone={tone.id} />,
           }))}
           selected={state.tone}
           onSelect={(tone) => {

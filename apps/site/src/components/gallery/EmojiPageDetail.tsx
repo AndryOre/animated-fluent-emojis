@@ -12,6 +12,7 @@ import {
 } from '../../gallery/public-index'
 import { parseGalleryUrl } from '../../gallery/url-state'
 import type { EmojiPageTabs } from '../../home/content'
+import { ToneDot } from '../ToneDot'
 import { ChipGroup } from './ChipGroup'
 import {
   EmojiDetail,
@@ -225,6 +226,7 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
             chips={(['default', ...SKIN_TONES] as const).map((value) => ({
               value,
               label: strings[TONE_LABELS[value]],
+              leading: <ToneDot tone={value} />,
             }))}
             selected={tone ?? 'default'}
             onSelect={selectTone}

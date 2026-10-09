@@ -54,6 +54,22 @@ test('the customizer starts untouched, so Reset is disabled', () => {
   expect(html).toContain('aria-label="Waving hand"')
 })
 
+test('each skin tone option has a decorative color dot before its label', () => {
+  const html = renderToString(
+    <DemoPlayground
+      emojis={[wave]}
+      plainTabs={tabs}
+      tonedTabs={tabs}
+      labels={labels}
+    />,
+  )
+
+  for (const color of ['#feba46', '#fac7b4', '#b3867a', '#533938']) {
+    expect(html.toLowerCase()).toContain(`background-color:${color}`)
+  }
+  expect(html).toMatch(/aria-hidden="true"[^>]*><\/span>Light/)
+})
+
 test('the stage is compact and the code block sits in the capped wrapper', () => {
   const html = renderToString(
     <DemoPlayground
