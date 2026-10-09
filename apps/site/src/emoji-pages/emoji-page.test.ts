@@ -3,10 +3,13 @@ import { describe, expect, it } from 'vitest'
 import fixture from '../gallery/fixtures/public-index.json'
 import { parsePublicIndex, type PublicEmoji } from '../gallery/public-index'
 import {
+  copyableGlyph,
   createEmojiSitemapSource,
   emojiPagePath,
   fillName,
+  formatCodePoint,
   imageObjectJsonLd,
+  neighbourEmojis,
   ogImagePath,
   relatedEmojis,
 } from './emoji-page'
@@ -74,6 +77,25 @@ describe('related emojis', () => {
   })
 })
 
+describe('neighbour emojis', () => {
+  const all = [make('a', 'X'), make('b', 'Y'), make('c', 'X'), make('d', 'X')]
+
+  it('returns the previous and next emoji of the category', () => {
+    const result = neighbourEmojis(at(all, 2), all)
+    expect(result?.previous.slug).toBe('a')
+    expect(result?.next.slug).toBe('d')
+  })
+
+  it('wraps around in both directions', () => {
+    expect(neighbourEmojis(at(all, 0), all)?.previous.slug).toBe('d')
+    expect(neighbourEmojis(at(all, 3), all)?.next.slug).toBe('a')
+  })
+
+  it('returns nothing for a one-emoji category', () => {
+    expect(neighbourEmojis(at(all, 1), all)).toBeUndefined()
+  })
+})
+
 describe('emoji sitemap source', () => {
   it('lists every emoji as a localized route', async () => {
     const source = createEmojiSitemapSource(() => Promise.resolve(emojis))
@@ -83,5 +105,43 @@ describe('emoji sitemap source', () => {
         localized: true,
       })),
     )
+  })
+})
+
+describe('formatCodePoint', () => {
+  it('formats a single code point', () => {
+    expect(formatCodePoint('🔥')).toBe('U+1F525')
+  })
+
+  it('formats a ZWJ sequence as space-separated code points', () => {
+    expect(formatCodePoint('👨‍💻')).toBe('U+1F468 U+200D U+1F4BB')
+  })
+
+  it('drops the U+FE0F variation selector', () => {
+    expect(formatCodePoint('❤️')).toBe('U+2764')
+  })
+})
+
+describe('copyableGlyph', () => {
+  const base = { ...at(emojis, 0), unicode: '👋' }
+  const withTone = (unicode?: string): PublicEmoji => ({
+    ...base,
+    tones: [
+      {
+        tone: 'light',
+        slug: 'waving-hand-light',
+        ...(unicode && { unicode }),
+        urls: base.urls,
+      },
+    ],
+  })
+
+  it('returns the toned glyph when the variant has its own unicode', () => {
+    expect(copyableGlyph(withTone('👋🏻'), 'light')).toBe('👋🏻')
+  })
+
+  it('falls back to the base glyph without a tone or variant unicode', () => {
+    expect(copyableGlyph(withTone('👋🏻'), undefined)).toBe('👋')
+    expect(copyableGlyph(withTone(), 'light')).toBe('👋')
   })
 })

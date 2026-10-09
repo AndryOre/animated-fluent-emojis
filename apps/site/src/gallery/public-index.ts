@@ -23,6 +23,7 @@ export type SkinTone = (typeof SKIN_TONES)[number]
 interface EmojiToneVariant {
   tone: SkinTone
   slug: string
+  unicode?: string
   urls: FileUrls
 }
 
@@ -88,6 +89,8 @@ function readTone(value: unknown, where: string): EmojiToneVariant {
   return {
     tone: tone as SkinTone,
     slug: readString(value, 'slug', where),
+    ...(typeof value.unicode === 'string' &&
+      value.unicode !== '' && { unicode: value.unicode }),
     urls: readUrls(value.urls, where),
   }
 }

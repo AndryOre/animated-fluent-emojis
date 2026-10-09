@@ -1,5 +1,8 @@
 import { useState, useSyncExternalStore, type ReactNode } from 'react'
 
+import { Button } from '@/components/ui/button'
+
+import { copyableGlyph, formatCodePoint } from '../../emoji-pages/emoji-page'
 import { effectiveTone } from '../../gallery/filter'
 import {
   fileUrl,
@@ -59,6 +62,7 @@ export interface EmojiPageDetailProps {
   category: string
   keywords: readonly string[]
   keywordStrings: KeywordStrings
+  metaStrings: MetaStrings
   header?: ReactNode
 }
 
@@ -69,6 +73,14 @@ interface KeywordStrings {
   keywordsLabel: string
   keywordsMore: string
   keywordsLess: string
+}
+
+/**
+ * The localized labels of the meta and action rows.
+ */
+interface MetaStrings {
+  copyEmoji: string
+  codePointLabel: string
 }
 
 const KEYWORD_CHIP = 'rounded-full bg-secondary px-3 py-1 text-xs'
@@ -149,6 +161,7 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
     category,
     keywords,
     keywordStrings,
+    metaStrings,
     header,
   } = props
   const { status, copy, handleNotice } = useStatusAnnouncer(strings)
@@ -177,18 +190,35 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
         <div>
           {header}
           <p className="mt-1 font-mono text-xs text-muted-foreground">
-            {category}
+            {category} ·{' '}
+            <span>
+              <span className="sr-only">{metaStrings.codePointLabel}: </span>
+              {formatCodePoint(emoji.unicode)}
+            </span>
           </p>
         </div>
         <EmojiIdRow id={emoji.id} strings={strings} onCopy={copy} />
-        <FileActionButton
-          target={{
-            filenameBase: files.slug,
-            urlFor: (format) => fileUrl(files.urls[format]),
-          }}
-          strings={strings}
-          onNotice={handleNotice}
-        />
+        <div className="flex flex-wrap items-stretch gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              void copy(copyableGlyph(emoji, tone))
+            }}
+          >
+            <span aria-hidden="true">{copyableGlyph(emoji, tone)}</span>
+            {metaStrings.copyEmoji}
+          </Button>
+          <FileActionButton
+            target={{
+              filenameBase: files.slug,
+              urlFor: (format) => fileUrl(files.urls[format]),
+            }}
+            strings={strings}
+            onNotice={handleNotice}
+            className="min-w-0 flex-1"
+          />
+        </div>
         {emoji.tones.length > 0 && (
           <ChipGroup
             label={strings.toneLabel}
