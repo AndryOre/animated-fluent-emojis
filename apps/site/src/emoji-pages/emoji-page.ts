@@ -58,6 +58,29 @@ export function relatedEmojis(
 }
 
 /**
+ * Finds the emojis before and after an emoji in its category, wrapping around,
+ * in the same order as `relatedEmojis`.
+ * @param emoji - The emoji whose page is rendered.
+ * @param all - The public index.
+ * @returns The previous and next emoji, or undefined when the category has no other emoji.
+ */
+export function neighbourEmojis(
+  emoji: PublicEmoji,
+  all: readonly PublicEmoji[],
+): { previous: PublicEmoji; next: PublicEmoji } | undefined {
+  const siblings = all.filter(
+    (candidate) => candidate.category === emoji.category,
+  )
+  const position = siblings.findIndex(
+    (candidate) => candidate.slug === emoji.slug,
+  )
+  if (position === -1 || siblings.length < 2) return undefined
+  const previous = siblings.at(position - 1)
+  const next = siblings[(position + 1) % siblings.length]
+  return previous && next ? { previous, next } : undefined
+}
+
+/**
  * Builds the schema.org `ImageObject` that describes the emoji's GIF.
  * @param emoji - The emoji whose GIF the object describes.
  * @param name - Its name in the page's locale.

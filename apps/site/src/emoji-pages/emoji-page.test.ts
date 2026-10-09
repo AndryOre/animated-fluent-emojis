@@ -9,6 +9,7 @@ import {
   fillName,
   formatCodePoint,
   imageObjectJsonLd,
+  neighbourEmojis,
   ogImagePath,
   relatedEmojis,
 } from './emoji-page'
@@ -73,6 +74,25 @@ describe('related emojis', () => {
 
   it('caps the list at the limit', () => {
     expect(relatedEmojis(at(all, 0), all, 2)).toHaveLength(2)
+  })
+})
+
+describe('neighbour emojis', () => {
+  const all = [make('a', 'X'), make('b', 'Y'), make('c', 'X'), make('d', 'X')]
+
+  it('returns the previous and next emoji of the category', () => {
+    const result = neighbourEmojis(at(all, 2), all)
+    expect(result?.previous.slug).toBe('a')
+    expect(result?.next.slug).toBe('d')
+  })
+
+  it('wraps around in both directions', () => {
+    expect(neighbourEmojis(at(all, 0), all)?.previous.slug).toBe('d')
+    expect(neighbourEmojis(at(all, 3), all)?.next.slug).toBe('a')
+  })
+
+  it('returns nothing for a one-emoji category', () => {
+    expect(neighbourEmojis(at(all, 1), all)).toBeUndefined()
   })
 })
 

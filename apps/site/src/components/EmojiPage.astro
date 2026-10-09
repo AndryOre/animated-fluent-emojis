@@ -1,13 +1,18 @@
 ---
+import ChevronLeft from '@lucide/astro/icons/chevron-left'
+import ChevronRight from '@lucide/astro/icons/chevron-right'
+
 import { loadEmojiPageData } from '../emoji-pages/data'
 import {
   emojiPagePath,
   fillName,
   imageObjectJsonLd,
+  neighbourEmojis,
   ogImagePath,
   relatedEmojis,
 } from '../emoji-pages/emoji-page'
 import { fileUrl } from '../gallery/public-index'
+import { fillTemplate } from '../gallery/template'
 import { buildEmojiPageTabs } from '../home/content'
 import { localePath, SITE_ORIGIN, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
@@ -32,6 +37,35 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
   emoji: item,
   name: names.get(item.slug)?.name ?? item.description,
 }))
+
+const neighbours = neighbourEmojis(emoji, emojis)
+const navigationLinks = neighbours
+  ? [
+      {
+        rel: 'prev',
+        icon: ChevronLeft,
+        target: neighbours.previous,
+        pattern: emojiPage.previousEmoji,
+      },
+      {
+        rel: 'next',
+        icon: ChevronRight,
+        target: neighbours.next,
+        pattern: emojiPage.nextEmoji,
+      },
+    ].map(({ rel, icon, target, pattern }) => ({
+      rel,
+      Icon: icon,
+      href: localePath(locale, emojiPagePath(target.slug)),
+      label: fillTemplate(
+        pattern,
+        'name',
+        names.get(target.slug)?.name ?? target.description,
+      ),
+    }))
+  : []
+const previousHref = navigationLinks.find((link) => link.rel === 'prev')?.href
+const nextHref = navigationLinks.find((link) => link.rel === 'next')?.href
 ---
 
 <Layout
@@ -41,6 +75,8 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
   path={emojiPagePath(slug)}
   image={`${SITE_ORIGIN}${ogImagePath(slug)}`}
   jsonLd={imageObjectJsonLd(emoji, localized.name, locale)}
+  previousHref={previousHref}
+  nextHref={nextHref}
 >
   <main id="main" class="site-container flex-1 py-8">
     <EmojiPageDetail
@@ -62,18 +98,38 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
       }}
     >
       <Fragment slot="header">
-        <nav
-          aria-label={emojiPage.breadcrumbLabel}
-          class="mb-4 font-mono text-xs text-muted-foreground"
-        >
-          <a href={localePath(locale, '/')}>{emojiPage.breadcrumbHome}</a>
-          {' / '}
-          <a href={localePath(locale, '/emojis/')}>
-            {emojiPage.breadcrumbEmojis}
-          </a>
-          {' / '}
-          <span aria-current="page">{localized.name}</span>
-        </nav>
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <nav
+            aria-label={emojiPage.breadcrumbLabel}
+            class="font-mono text-xs text-muted-foreground"
+          >
+            <a href={localePath(locale, '/')}>{emojiPage.breadcrumbHome}</a>
+            {' / '}
+            <a href={localePath(locale, '/emojis/')}>
+              {emojiPage.breadcrumbEmojis}
+            </a>
+            {' / '}
+            <span aria-current="page">{localized.name}</span>
+          </nav>
+          {navigationLinks.length > 0 && (
+            <nav
+              aria-label={emojiPage.navigationLabel}
+              class="flex shrink-0 gap-2"
+            >
+              {navigationLinks.map(({ rel, Icon, href, label }) => (
+                <a
+                  href={href}
+                  rel={rel}
+                  data-emoji-nav={rel}
+                  aria-label={label}
+                  class="inline-flex size-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-secondary hover:text-foreground"
+                >
+                  <Icon class="size-4" aria-hidden="true" />
+                </a>
+              ))}
+            </nav>
+          )}
+        </div>
         <h1 class="text-[40px] leading-tight font-extrabold">
           {localized.name}
         </h1>
@@ -109,3 +165,25 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
     )}
   </main>
 </Layout>
+
+<script>
+  const IGNORED_FOCUS_SELECTOR =
+    'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="tablist"], [role="radiogroup"], [role="group"], details[open]'
+
+  document.addEventListener('keydown', (event) => {
+    if (event.defaultPrevented) return
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+    const rel =
+      event.key === 'ArrowLeft'
+        ? 'prev'
+        : event.key === 'ArrowRight'
+          ? 'next'
+          : undefined
+    if (!rel) return
+    const active = document.activeElement
+    if (active?.closest(IGNORED_FOCUS_SELECTOR)) return
+    document
+      .querySelector<HTMLAnchorElement>(`a[data-emoji-nav="${rel}"]`)
+      ?.click()
+  })
+</script>
