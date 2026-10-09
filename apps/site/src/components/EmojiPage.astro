@@ -43,17 +43,21 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
   jsonLd={imageObjectJsonLd(emoji, localized.name, locale)}
 >
   <main id="main" class="site-container flex-1 py-8">
-    <div class="grid grid-cols-1 gap-8 min-[860px]:grid-cols-2">
-      <div class="min-[860px]:order-2">
-        <EmojiPageDetail
-          client:load
-          emoji={emoji}
-          name={localized.name}
-          strings={gallery}
-          snippetTabs={snippetTabs}
-        />
-      </div>
-      <div class="min-[860px]:order-1">
+    <EmojiPageDetail
+      client:load
+      emoji={emoji}
+      name={localized.name}
+      strings={gallery}
+      snippetTabs={snippetTabs}
+      category={emoji.category}
+      keywords={localized.keywords}
+      keywordStrings={{
+        keywordsLabel: emojiPage.keywordsLabel,
+        keywordsMore: emojiPage.keywordsMore,
+        keywordsLess: emojiPage.keywordsLess,
+      }}
+    >
+      <Fragment slot="header">
         <nav
           aria-label={emojiPage.breadcrumbLabel}
           class="mb-4 font-mono text-xs text-muted-foreground"
@@ -69,21 +73,8 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
         <h1 class="text-[40px] leading-tight font-extrabold">
           {localized.name}
         </h1>
-        <p class="mt-1 font-mono text-xs text-muted-foreground">
-          {emoji.category}
-        </p>
-        <h2 class="mt-6 text-xs font-semibold text-muted-foreground">
-          {emojiPage.keywordsLabel}
-        </h2>
-        <ul class="mt-2 flex flex-wrap gap-2">
-          {localized.keywords.map((keyword) => (
-            <li class="rounded-full bg-secondary px-3 py-1 text-xs">
-              {keyword}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+      </Fragment>
+    </EmojiPageDetail>
     {related.length > 0 && (
       <section class="mt-12" aria-labelledby="related-heading">
         <h2 id="related-heading" class="mb-4 text-xl font-extrabold">
