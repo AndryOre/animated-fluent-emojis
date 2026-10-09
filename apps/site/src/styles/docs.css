@@ -36,7 +36,7 @@
   --sl-color-accent: var(--primary);
   --sl-color-accent-low: var(--secondary);
   --sl-color-accent-high: var(--primary-text);
-  --sl-nav-height: 4.5rem;
+  --sl-nav-height: calc(3.75rem + 1px);
   --sl-content-pad-x: 1rem;
 }
 
