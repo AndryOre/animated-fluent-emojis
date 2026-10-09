@@ -71,6 +71,9 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/pages/[locale]/index.astro': ASTRO_PAGE_REASON,
   'apps/site/src/pages/[locale]/404.astro': ASTRO_PAGE_REASON,
   'apps/site/src/components/Footer.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/components/FooterCredit.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/docs/components/DocumentationFooter.astro':
+    ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/Header.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/HomePage.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/HeaderMenus.tsx':

@@ -79,8 +79,22 @@ describe('emoji detail on a page', () => {
     expect(render(undefined)).not.toContain('<h2')
   })
 
-  it('offers the id copy action and the file action button by name', () => {
+  it('leaves the id row and the file action button to the page columns', () => {
     const html = render(undefined)
+    expect(html).not.toContain(`aria-label="${strings.copyId}"`)
+    expect(html).not.toContain(`aria-label="${strings.fileActionMenuLabel}"`)
+  })
+
+  it('keeps the id copy action and the file action button in the sheet', () => {
+    const html = renderToString(
+      <EmojiDetail
+        emoji={emoji}
+        name="Waving hand"
+        tone={undefined}
+        size={200}
+        strings={strings}
+      />,
+    )
     expect(html).toContain(`aria-label="${strings.copyId}"`)
     expect(html).toContain(`aria-label="${strings.fileActionMenuLabel}"`)
     expect(html).toContain(strings.fileActionDownloadWebp)

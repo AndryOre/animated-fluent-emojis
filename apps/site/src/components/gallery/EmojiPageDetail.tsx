@@ -30,7 +30,7 @@ const TONE_LABELS: Record<SkinTone | 'default', keyof GalleryStrings> = {
 
 export const PREVIEW_SIZE = 200
 
-export const VISIBLE_KEYWORDS = 10
+const VISIBLE_KEYWORDS = 10
 
 function unsubscribe(): void {
   return
@@ -65,7 +65,7 @@ export interface EmojiPageDetailProps {
 /**
  * The localized keyword labels; `keywordsMore` carries a `{count}` slot.
  */
-export interface KeywordStrings {
+interface KeywordStrings {
   keywordsLabel: string
   keywordsMore: string
   keywordsLess: string
