@@ -21,7 +21,10 @@ async function loadPages(context: LoaderContext): Promise<void> {
         translationStatus: page.status,
       },
     })
-    const body = transformInstallBlocks(rewriteMarkdownLinks(page.body, page))
+    const body = transformInstallBlocks(
+      rewriteMarkdownLinks(page.body, page),
+      page.locale,
+    )
     context.store.set({
       id: page.id,
       data,

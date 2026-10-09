@@ -46,12 +46,44 @@ describe('transformInstallBlocks', () => {
       `Intro\n\n${fence('npm install animated-fluent-emojis')}\n\nOutro`,
     )
     expect(output).toContain('data-install-block')
-    expect(output).toContain('```sh\nbun add animated-fluent-emojis\n```')
-    expect(output).toContain('```sh\nnpm install animated-fluent-emojis\n```')
-    expect(output).toContain('```sh\npnpm add animated-fluent-emojis\n```')
-    expect(output).toContain('```sh\nyarn add animated-fluent-emojis\n```')
+    expect(output).toContain(
+      '```sh frame="none"\nbun add animated-fluent-emojis\n```',
+    )
+    expect(output).toContain(
+      '```sh frame="none"\nnpm install animated-fluent-emojis\n```',
+    )
+    expect(output).toContain(
+      '```sh frame="none"\npnpm add animated-fluent-emojis\n```',
+    )
+    expect(output).toContain(
+      '```sh frame="none"\nyarn add animated-fluent-emojis\n```',
+    )
     expect(output.startsWith('Intro\n\n')).toBe(true)
     expect(output.endsWith('\n\nOutro')).toBe(true)
+  })
+
+  it('renders one header row with the icon, the tabs and the copy button', () => {
+    const output = transformInstallBlocks(fence('npm install pkg'))
+    const header = output.slice(
+      output.indexOf('afe-install-header'),
+      output.indexOf('data-install-status'),
+    )
+    expect(header).toContain('afe-install-icon')
+    expect(header.match(/data-package-manager="/g)).toHaveLength(4)
+    expect(header).toContain('data-install-copy')
+    expect(output).toContain('data-command="npm install pkg"')
+    expect(output).toContain('data-command="bun add pkg"')
+  })
+
+  it('uses the English copy labels by default', () => {
+    const output = transformInstallBlocks(fence('npm install pkg'))
+    expect(output).toContain('data-copy-label="Copy"')
+    expect(output).toContain('data-copied-label="Copied"')
+  })
+
+  it('localizes the copy labels', () => {
+    const output = transformInstallBlocks(fence('npm install pkg'), 'es')
+    expect(output).toContain('data-copy-label="Copiar"')
   })
 
   it('maps the dev flag per manager', () => {
