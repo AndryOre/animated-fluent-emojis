@@ -168,7 +168,7 @@ const nextHref = navigationLinks.find((link) => link.rel === 'next')?.href
 
 <script>
   const IGNORED_FOCUS_SELECTOR =
-    'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="tablist"], [role="radiogroup"], [role="group"], details[open]'
+    'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="tablist"], [role="radiogroup"], [role="group"], [role="tabpanel"], [role="menu"], [role="listbox"], details[open]'
 
   document.addEventListener('keydown', (event) => {
     if (event.defaultPrevented) return
