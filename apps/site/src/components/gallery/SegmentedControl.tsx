@@ -1,8 +1,11 @@
+import type { ReactNode } from 'react'
+
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 interface Segment<Value extends string | number> {
   value: Value
   label: string
+  leading?: ReactNode
 }
 
 interface SegmentedControlProps<Value extends string | number> {
@@ -55,7 +58,14 @@ export function SegmentedControl<Value extends string | number>(
             aria-disabled={disabled}
             title={disabled ? disabledHint : undefined}
           >
-            {segment.label}
+            {segment.leading === undefined ? (
+              segment.label
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                {segment.leading}
+                {segment.label}
+              </span>
+            )}
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
