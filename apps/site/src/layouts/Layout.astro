@@ -15,9 +15,19 @@ interface Props {
   notFound?: boolean
   image?: string
   jsonLd?: object
+  previousHref?: string
+  nextHref?: string
 }
 
-const { locale, path = '/', notFound = false, image, jsonLd } = Astro.props
+const {
+  locale,
+  path = '/',
+  notFound = false,
+  image,
+  jsonLd,
+  previousHref,
+  nextHref,
+} = Astro.props
 const { meta } = getUi(locale)
 const title = Astro.props.title ?? meta.siteName
 const description = Astro.props.description ?? meta.description
@@ -41,6 +51,8 @@ const canonical = localeUrl(locale, path)
     ) : (
       <>
         <link rel="canonical" href={canonical} />
+        {previousHref && <link rel="prev" href={previousHref} />}
+        {nextHref && <link rel="next" href={nextHref} />}
         {hreflangAlternates(path).map(({ hreflang, href }) => (
           <link rel="alternate" hreflang={hreflang} href={href} />
         ))}
