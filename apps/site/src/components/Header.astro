@@ -34,11 +34,11 @@ const linkClass =
   >
     {header.skipLink}
   </a>
-  <div class="site-container relative flex items-center justify-between gap-3 py-4 min-[860px]:grid min-[860px]:grid-cols-[1fr_auto_1fr] min-[860px]:py-3.5">
+  <div class="site-container relative flex items-center justify-between gap-3 py-3.5 min-[860px]:grid min-[860px]:grid-cols-[1fr_auto_1fr]">
     <a
       href={localePath(locale)}
       aria-label={header.homeLabel}
-      class="flex items-center gap-2.5 text-base font-extrabold tracking-tight"
+      class="flex items-center gap-2.5 text-base font-extrabold tracking-tight min-[860px]:justify-self-start"
     >
       <img src={logoMark} alt="" width="28" height="28" class="size-7" />
       <span class="max-[480px]:sr-only">{getUi(locale).meta.siteName}</span>
