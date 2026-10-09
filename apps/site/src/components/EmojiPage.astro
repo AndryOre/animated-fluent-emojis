@@ -51,6 +51,10 @@ const related = relatedEmojis(emoji, emojis).map((item) => ({
       snippetTabs={snippetTabs}
       category={emoji.category}
       keywords={localized.keywords}
+      metaStrings={{
+        copyEmoji: emojiPage.copyEmoji,
+        codePointLabel: emojiPage.codePointLabel,
+      }}
       keywordStrings={{
         keywordsLabel: emojiPage.keywordsLabel,
         keywordsMore: emojiPage.keywordsMore,

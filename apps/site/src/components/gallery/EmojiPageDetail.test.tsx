@@ -18,6 +18,10 @@ const keywordStrings = {
   keywordsMore: emojiPage.keywordsMore,
   keywordsLess: emojiPage.keywordsLess,
 }
+const metaStrings = {
+  copyEmoji: emojiPage.copyEmoji,
+  codePointLabel: emojiPage.codePointLabel,
+}
 const snippetTabs = { plain: [], toned: [] }
 
 function words(count: number): string[] {
@@ -34,6 +38,7 @@ function renderPage(emoji: PublicEmoji, keywords: string[]): string {
       category="Gestures"
       keywords={keywords}
       keywordStrings={keywordStrings}
+      metaStrings={metaStrings}
       header={<h1>Waving hand</h1>}
     />,
   )
@@ -46,6 +51,20 @@ describe('emoji page island', () => {
     expect(html).toContain('Gestures')
     expect(html).toContain(toned.id)
     expect(html).toContain(gallery.fileActionDownloadWebp)
+  })
+
+  it('shows the code point in the meta row with a screen reader label', () => {
+    const html = renderPage(toned, [])
+    expect(html).toContain(emojiPage.codePointLabel)
+    expect(html).toContain('U+1F44B')
+  })
+
+  it('puts Copy emoji with the glyph before the download', () => {
+    const html = renderPage(toned, [])
+    const copyAt = html.indexOf(emojiPage.copyEmoji)
+    expect(copyAt).toBeGreaterThan(-1)
+    expect(copyAt).toBeLessThan(html.indexOf(gallery.fileActionDownloadWebp))
+    expect(html).toContain(toned.unicode)
   })
 
   it('shows tone chips only when the emoji has tones', () => {

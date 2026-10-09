@@ -1,4 +1,8 @@
-import { fileUrl, type PublicEmoji } from '../gallery/public-index'
+import {
+  fileUrl,
+  type PublicEmoji,
+  type SkinTone,
+} from '../gallery/public-index'
 import { fillTemplate } from '../gallery/template'
 import { localeUrl, type Locale } from '../i18n/locales'
 import type { SitemapSource } from '../seo/sitemap'
@@ -7,6 +11,8 @@ import type { SitemapSource } from '../seo/sitemap'
  * How many related emojis an emoji page lists at most.
  */
 const RELATED_LIMIT = 12
+
+const VARIATION_SELECTOR_16 = 0xfe_0f
 
 /**
  * Site path of an emoji page, without a locale prefix.
@@ -100,4 +106,37 @@ export function createEmojiSitemapSource(
       localized: true,
     }))
   }
+}
+
+/**
+ * Formats an emoji's `unicode` as space-separated `U+XXXX` code points. The
+ * variation selector U+FE0F is dropped.
+ * @param unicode - The emoji sequence, for example a ZWJ sequence.
+ * @returns The code points, such as `U+1F468 U+200D U+1F4BB`.
+ */
+export function formatCodePoint(unicode: string): string {
+  return Array.from(unicode, (character) => character.codePointAt(0) ?? 0)
+    .filter((codePoint) => codePoint !== VARIATION_SELECTOR_16)
+    .map(
+      (codePoint) =>
+        `U+${codePoint.toString(16).toUpperCase().padStart(4, '0')}`,
+    )
+    .join(' ')
+}
+
+/**
+ * Picks the glyph "Copy emoji" writes to the clipboard.
+ * @param emoji - The emoji whose page is rendered.
+ * @param tone - The applied skin tone, if any.
+ * @returns The toned glyph when the tone's variant has its own unicode,
+ * otherwise the base glyph.
+ */
+export function copyableGlyph(
+  emoji: PublicEmoji,
+  tone: SkinTone | undefined,
+): string {
+  const variant = tone
+    ? emoji.tones.find((candidate) => candidate.tone === tone)
+    : undefined
+  return variant?.unicode ?? emoji.unicode
 }

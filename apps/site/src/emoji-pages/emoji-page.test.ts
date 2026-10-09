@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest'
 import fixture from '../gallery/fixtures/public-index.json'
 import { parsePublicIndex, type PublicEmoji } from '../gallery/public-index'
 import {
+  copyableGlyph,
   createEmojiSitemapSource,
   emojiPagePath,
   fillName,
+  formatCodePoint,
   imageObjectJsonLd,
   ogImagePath,
   relatedEmojis,
@@ -83,5 +85,43 @@ describe('emoji sitemap source', () => {
         localized: true,
       })),
     )
+  })
+})
+
+describe('formatCodePoint', () => {
+  it('formats a single code point', () => {
+    expect(formatCodePoint('🔥')).toBe('U+1F525')
+  })
+
+  it('formats a ZWJ sequence as space-separated code points', () => {
+    expect(formatCodePoint('👨‍💻')).toBe('U+1F468 U+200D U+1F4BB')
+  })
+
+  it('drops the U+FE0F variation selector', () => {
+    expect(formatCodePoint('❤️')).toBe('U+2764')
+  })
+})
+
+describe('copyableGlyph', () => {
+  const base = { ...at(emojis, 0), unicode: '👋' }
+  const withTone = (unicode?: string): PublicEmoji => ({
+    ...base,
+    tones: [
+      {
+        tone: 'light',
+        slug: 'waving-hand-light',
+        ...(unicode && { unicode }),
+        urls: base.urls,
+      },
+    ],
+  })
+
+  it('returns the toned glyph when the variant has its own unicode', () => {
+    expect(copyableGlyph(withTone('👋🏻'), 'light')).toBe('👋🏻')
+  })
+
+  it('falls back to the base glyph without a tone or variant unicode', () => {
+    expect(copyableGlyph(withTone('👋🏻'), undefined)).toBe('👋')
+    expect(copyableGlyph(withTone(), 'light')).toBe('👋')
   })
 })
