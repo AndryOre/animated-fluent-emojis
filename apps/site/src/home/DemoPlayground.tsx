@@ -234,7 +234,7 @@ export default function DemoPlayground({
       >
         <StageEmoji
           key={`${playKey}-${String(tapRun)}`}
-          animateIn={ready}
+          animateIn={ready && tapRun === 0}
           emojiProps={{
             id: current.id,
             alt: name,

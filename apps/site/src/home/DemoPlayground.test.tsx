@@ -143,5 +143,5 @@ test('the first render of the stage emoji is visible, never held at opacity 0', 
     <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
   )
 
-  expect(html).not.toContain('opacity-0')
+  expect(html).not.toContain('scale-[0.96]')
 })

@@ -1,4 +1,4 @@
-const EMOJI_PAGE_PATTERN = /^\/emojis\/([^/]+)\/?$/
+const EMOJI_PAGE_PATTERN = /^(?:\/[a-z]{2}(?:-[a-z]{2})?)?\/emojis\/([^/]+)\/?$/
 
 /**
  * Extracts the emoji slug from an emoji detail page URL.

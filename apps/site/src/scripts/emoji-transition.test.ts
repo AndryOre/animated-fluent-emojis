@@ -13,7 +13,17 @@ describe('emojiSlugFromUrl', () => {
     )
   })
 
+  it('reads the slug from a localized emoji page', () => {
+    expect(emojiSlugFromUrl('https://x.test/es/emojis/waving-hand/')).toBe(
+      'waving-hand',
+    )
+    expect(emojiSlugFromUrl('https://x.test/pt-br/emojis/waving-hand/')).toBe(
+      'waving-hand',
+    )
+  })
+
   it('ignores the gallery and other pages', () => {
+    expect(emojiSlugFromUrl('https://x.test/es/emojis/')).toBeUndefined()
     expect(emojiSlugFromUrl('https://x.test/emojis/')).toBeUndefined()
     expect(emojiSlugFromUrl('https://x.test/docs/')).toBeUndefined()
     expect(emojiSlugFromUrl(undefined)).toBeUndefined()
