@@ -36,10 +36,17 @@ describe('snippet tabs', () => {
 })
 
 function text(html: string): string {
-  return html
-    .replaceAll(/<[^>]+>/g, '')
-    .replaceAll('&#x22;', '"')
-    .replaceAll('&#x3C;', '<')
+  let previous: string
+  let result = html
+  do {
+    previous = result
+    result = result.replaceAll(/<[^>]*>/g, '')
+  } while (result !== previous)
+  return result
+    .replaceAll(/&#x([\dA-F]+);/gi, (_, code: string) =>
+      String.fromCodePoint(Number.parseInt(code, 16)),
+    )
+    .replaceAll('&amp;', '&')
 }
 
 describe('highlighted blocks', () => {
