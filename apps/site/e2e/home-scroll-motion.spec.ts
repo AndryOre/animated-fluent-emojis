@@ -52,11 +52,13 @@ test.describe('with motion allowed', () => {
       .toBe('1')
   })
 
-  test('the teaser row drifts on a view timeline', async ({ page }) => {
+  test('the teaser row drifts on the named teaser timeline', async ({
+    page,
+  }) => {
     await page.goto('/')
     const state = await readAnimationState(page.locator(TEASER_ROW))
     expect(state.name).toBe('scroll-drift')
-    expect(state.timeline).toContain('view')
+    expect(state.timeline).toBe('--teaser')
   })
 
   test('the teaser row translates further as the page scrolls', async ({
