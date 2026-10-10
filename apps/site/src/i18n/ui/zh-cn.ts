@@ -80,6 +80,7 @@ export const zh_CN: UiStrings = {
       plays: {
         hover: '悬停时',
         load: '加载时',
+        loop: '循环',
       },
     },
     pillars: {

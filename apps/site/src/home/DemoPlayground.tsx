@@ -37,7 +37,7 @@ interface DemoLabels {
   reset: string
   emojis: Record<DemoEmojiName, string>
   tones: Record<'default' | 'light' | 'medium' | 'dark', string>
-  plays: Record<'hover' | 'load', string>
+  plays: Record<'hover' | 'load' | 'loop', string>
   code: CodeBlockLabels
 }
 

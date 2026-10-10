@@ -80,6 +80,7 @@ export const ja: UiStrings = {
       plays: {
         hover: 'ホバー時',
         load: '読み込み時',
+        loop: 'ループ',
       },
     },
     pillars: {

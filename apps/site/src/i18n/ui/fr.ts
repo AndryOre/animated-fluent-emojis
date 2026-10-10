@@ -79,6 +79,7 @@ export const fr: UiStrings = {
       plays: {
         hover: 'Au survol',
         load: 'Au chargement',
+        loop: 'En boucle',
       },
     },
     pillars: {

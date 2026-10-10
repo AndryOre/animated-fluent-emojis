@@ -78,6 +78,7 @@ export const en = {
       plays: {
         hover: 'On hover',
         load: 'On load',
+        loop: 'Loop',
       },
     },
     pillars: {
