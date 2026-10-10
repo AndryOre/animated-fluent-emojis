@@ -10,7 +10,12 @@ import {
   buildInstallHtml,
   pickTeaserEmojis,
 } from '../home/content'
-import { DEMO_EMOJIS, INITIAL_DEMO_STATE } from '../home/demo'
+import {
+  DEMO_EMOJIS,
+  DEMO_PLAYS,
+  INITIAL_DEMO_STATE,
+  type DemoTabs,
+} from '../home/demo'
 import DemoPlayground from '../home/DemoPlayground'
 import FaqAccordion from '../home/FaqAccordion'
 import { localePath, type Locale } from '../i18n/locales'
@@ -35,16 +40,27 @@ const tabs = await buildCodeBlockTabs(snippetEmoji)
 const demoEmojis = index.filter((emoji) =>
   DEMO_EMOJIS.some(({ id }) => id === emoji.id),
 )
-const demoPlainTabs = await buildCodeBlockTabs(
-  snippetEmoji,
-  undefined,
-  INITIAL_DEMO_STATE.size,
-)
-const demoTonedTabs = await buildCodeBlockTabs(
-  snippetEmoji,
-  'light',
-  INITIAL_DEMO_STATE.size,
-)
+const demoTabs = Object.fromEntries(
+  await Promise.all(
+    DEMO_PLAYS.map(async ({ id: play }) => [
+      play,
+      {
+        plain: await buildCodeBlockTabs(
+          snippetEmoji,
+          undefined,
+          INITIAL_DEMO_STATE.size,
+          play,
+        ),
+        toned: await buildCodeBlockTabs(
+          snippetEmoji,
+          'light',
+          INITIAL_DEMO_STATE.size,
+          play,
+        ),
+      },
+    ]),
+  ),
+) as DemoTabs
 const installHtml = await buildInstallHtml()
 const teaser = pickTeaserEmojis(index, TEASER_COUNT)
 
@@ -139,8 +155,7 @@ const primaryButton = buttonVariants({
         <DemoPlayground
           client:idle
           emojis={demoEmojis}
-          plainTabs={demoPlainTabs}
-          tonedTabs={demoTonedTabs}
+          tabs={demoTabs}
           labels={demoLabels}
         />
       </div>
