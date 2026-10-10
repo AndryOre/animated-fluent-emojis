@@ -93,6 +93,29 @@ except `i18n:status`, which also has a root script:
 `deploy-site.yml` is the build check. Translating:
 [`how-to/translate-the-website.md`](how-to/translate-the-website.md).
 
+### Scroll-driven motion
+
+The landing page reveals and drifts elements with CSS view timelines, defined as
+the `scroll-reveal` and `scroll-drift` utilities in
+[`apps/site/src/styles/global.css`](../apps/site/src/styles/global.css). The
+decision is recorded in [ADR 0021](adr/0021-css-scroll-driven-motion.md). When
+adding or changing one:
+
+- **Longhands only**: set `animation-name`, `animation-duration`,
+  `animation-timeline` and `animation-range` separately. Lightning CSS folds
+  `animation-timeline` into the `animation` shorthand, and the Chromium used in
+  CI rejects the result.
+- **Name the timeline when an ancestor clips**: an ancestor with `overflow`
+  other than `visible` becomes the scroller for `view()`, so the animation never
+  moves with the page. Declare a named view timeline (`view-timeline-name`) on
+  that ancestor and consume it from the child with `animation-timeline`.
+- **Gate every rule**: wrap it in `@supports (animation-timeline: view())` and
+  `@media (prefers-reduced-motion: no-preference)`. Unsupported browsers and
+  visitors who prefer reduced motion get a static, fully visible page.
+- **Verify the computed result**: emulate reduced motion off, scroll, and read
+  the element's computed `transform` and `opacity`. The animation name alone can
+  be set while the timeline is wrong and nothing moves.
+
 ### Brand assets
 
 `bun run brand:export` regenerates the PNG marks, the social preview, the Open
