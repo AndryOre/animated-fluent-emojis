@@ -22,11 +22,17 @@ test.describe('coarse pointer', () => {
     await expect(search).toHaveAttribute('spellcheck', 'false')
   })
 
-  test('the results counter is hidden below 480px', async ({ page }) => {
+  test('the results counter is visually hidden below 480px but stays announced', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 390, height: 800 })
     await page.goto('/emojis/')
     await expect(page.locator('[data-slug]').first()).toBeVisible()
-    await expect(page.getByRole('status')).toHaveCount(0)
+    const counter = page.getByRole('status')
+    await expect(counter).toHaveCount(1)
+    const box = await counter.boundingBox()
+    expect(box?.width).toBeLessThanOrEqual(1)
+    expect(box?.height).toBeLessThanOrEqual(1)
   })
 })
 
