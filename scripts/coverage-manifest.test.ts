@@ -84,8 +84,6 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Styled wrapper over the Base UI dialog, exercised in a real browser through the gallery mobile sheet.',
   'apps/site/src/components/ui/tabs.tsx':
     'Styled wrapper over the Base UI tabs, covered by EmojiDetail.test.tsx and the gallery e2e spec.',
-  'apps/site/src/components/ui/accordion.tsx':
-    'Styled wrapper over the Base UI accordion, exercised in a real browser through the landing FAQ.',
   'apps/site/src/home/FaqAccordion.tsx':
     'FAQ React island with no logic of its own, exercised in a real browser by the accessibility e2e spec.',
   'apps/site/src/components/InstallBlock.tsx':
