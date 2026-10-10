@@ -106,6 +106,7 @@ export default defineConfig({
         },
       ],
       components: {
+        EditLink: './src/docs/components/DocumentationEditLink.astro',
         Footer: './src/docs/components/DocumentationFooter.astro',
         Header: './src/docs/components/DocumentationHeader.astro',
         Pagination: './src/docs/components/DocumentationPagination.astro',
