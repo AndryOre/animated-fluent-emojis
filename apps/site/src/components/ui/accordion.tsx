@@ -55,7 +55,7 @@ function AccordionTrigger(props: AccordionPrimitive.Trigger.Props) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-transform group-aria-expanded/accordion-trigger:rotate-180"
+          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-[rotate] duration-200 ease-(--ease-out-strong) group-aria-expanded/accordion-trigger:rotate-180"
         >
           <path d="m4 6 4 4 4-4" />
         </svg>
@@ -76,10 +76,17 @@ function AccordionContent(props: AccordionPrimitive.Panel.Props) {
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
       keepMounted
-      className="overflow-hidden text-sm"
+      className="group/accordion-panel h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-200 ease-(--ease-out-strong) data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-[opacity] motion-reduce:duration-150 motion-reduce:data-ending-style:h-(--accordion-panel-height) motion-reduce:data-ending-style:opacity-0 motion-reduce:data-starting-style:h-(--accordion-panel-height) motion-reduce:data-starting-style:opacity-0"
       {...rest}
     >
-      <div className={cn('pt-0 pb-2.5', className)}>{children}</div>
+      <div
+        className={cn(
+          'pt-0 pb-2.5 opacity-100 transition-opacity duration-200 ease-(--ease-out-strong) group-data-ending-style/accordion-panel:opacity-0 group-data-starting-style/accordion-panel:opacity-0 motion-reduce:duration-150',
+          className,
+        )}
+      >
+        {children}
+      </div>
     </AccordionPrimitive.Panel>
   )
 }
