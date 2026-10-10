@@ -9,7 +9,7 @@ import { cn } from '@/lib/utilities'
  * @returns The provider, which renders no element of its own.
  */
 function TooltipProvider(props: TooltipPrimitive.Provider.Props) {
-  const { delay = 0, ...rest } = props
+  const { delay = 300, ...rest } = props
   return <TooltipPrimitive.Provider delay={delay} {...rest} />
 }
 
@@ -66,7 +66,7 @@ function TooltipContent(props: TooltipContentProps) {
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            'inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md bg-foreground px-2.5 py-1.5 text-xs text-background transition-[opacity,scale] duration-100 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0',
+            'inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md bg-foreground px-2.5 py-1.5 text-xs text-background transition-[opacity,scale] duration-100 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:opacity-0 data-instant:transition-none data-starting-style:scale-95 data-starting-style:opacity-0',
             className,
           )}
           {...rest}
