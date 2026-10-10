@@ -15,17 +15,18 @@ browser does not support it or who prefer reduced motion.
 
 The first implementation exposed two traps. Lightning CSS folds
 `animation-timeline` into the `animation` shorthand, which the Chromium used in
-CI rejects. And an ancestor with `overflow` other than `visible` becomes the
-scroller for an anonymous `view()` timeline, so the teaser strip, clipped by its
-parent link, never moved with the page.
+CI rejects. And an ancestor with `overflow` set to `hidden`, `auto` or `scroll`
+becomes the scroller for an anonymous `view()` timeline, so the teaser strip,
+clipped by its parent link, never moved with the page.
 
 ## Decision
 
 Drive the motion with CSS view timelines, as two utilities in
 `apps/site/src/styles/global.css`: `scroll-reveal` and `scroll-drift`.
 
-- **`animation-timeline: view()`**: each utility animates from the element's own
-  progress through the viewport, with no script.
+- **View timelines**: each utility animates from a view timeline's progress
+  through the viewport, with no script. `scroll-reveal` uses an anonymous
+  `view()`; `scroll-drift` consumes the named timeline of its clipping link.
 - **Gated**: every rule sits inside `@supports (animation-timeline: view())` and
   `prefers-reduced-motion: no-preference`, so the default state is static and
   fully visible.
