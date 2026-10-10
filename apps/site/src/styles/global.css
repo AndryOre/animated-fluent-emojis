@@ -77,7 +77,8 @@
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .scroll-reveal {
-      animation: scroll-reveal both;
+      animation-name: scroll-reveal;
+      animation-fill-mode: both;
       animation-timing-function: var(--ease-out-strong);
       animation-timeline: view();
       animation-range: entry calc(var(--reveal-index, 0) * 6%) cover
@@ -85,7 +86,8 @@
     }
 
     .scroll-drift {
-      animation: scroll-drift both;
+      animation-name: scroll-drift;
+      animation-fill-mode: both;
       animation-timing-function: linear;
       animation-timeline: view();
       animation-range: cover 0% cover 100%;
