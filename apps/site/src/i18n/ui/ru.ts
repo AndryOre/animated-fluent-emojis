@@ -10,6 +10,9 @@ export const ru: UiStrings = {
     description:
       'Библиотека анимированных эмодзи Microsoft Fluent для React, Vue, Svelte, Astro и обычного HTML.',
   },
+  common: {
+    opensInNewTab: 'откроется в новой вкладке',
+  },
   header: {
     skipLink: 'Перейти к содержимому',
     homeLabel: 'Animated Fluent Emojis, главная',

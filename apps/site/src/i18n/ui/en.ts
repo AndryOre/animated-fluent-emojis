@@ -8,6 +8,9 @@ export const en = {
     description:
       'Microsoft Fluent animated emojis for the web, as a library for React, Vue, Svelte, Astro and plain HTML.',
   },
+  common: {
+    opensInNewTab: 'opens in a new tab',
+  },
   header: {
     skipLink: 'Skip to content',
     homeLabel: 'Animated Fluent Emojis, home',
