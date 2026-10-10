@@ -35,7 +35,7 @@ function SheetOverlay(props: SheetPrimitive.Backdrop.Props) {
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        'fixed inset-0 z-40 bg-foreground/40 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0',
+        'fixed inset-0 z-40 bg-foreground/40 transition-opacity duration-250 ease-(--ease-out-strong) data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:opacity-0',
         className,
       )}
       {...rest}
@@ -54,12 +54,12 @@ interface SheetContentProps extends SheetPrimitive.Popup.Props {
 }
 
 const SIDE_CLASSES = {
-  top: 'inset-x-0 top-0 max-h-[80vh] rounded-b-brand border-b data-ending-style:-translate-y-10 data-starting-style:-translate-y-10',
+  top: 'inset-x-0 top-0 max-h-[80dvh] rounded-b-brand border-b data-ending-style:-translate-y-full data-starting-style:-translate-y-full motion-reduce:data-ending-style:translate-y-0 motion-reduce:data-starting-style:translate-y-0',
   right:
-    'inset-y-0 right-0 h-full w-3/4 max-w-sm border-l data-ending-style:translate-x-10 data-starting-style:translate-x-10',
+    'inset-y-0 right-0 h-full w-3/4 max-w-sm border-l data-ending-style:translate-x-full data-starting-style:translate-x-full motion-reduce:data-ending-style:translate-x-0 motion-reduce:data-starting-style:translate-x-0',
   bottom:
-    'inset-x-0 bottom-0 max-h-[80vh] rounded-t-brand border-t data-ending-style:translate-y-10 data-starting-style:translate-y-10',
-  left: 'inset-y-0 left-0 h-full w-3/4 max-w-sm border-r data-ending-style:-translate-x-10 data-starting-style:-translate-x-10',
+    'inset-x-0 bottom-0 max-h-[80dvh] rounded-t-brand border-t pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] data-ending-style:translate-y-full data-starting-style:translate-y-full motion-reduce:data-ending-style:translate-y-0 motion-reduce:data-starting-style:translate-y-0',
+  left: 'inset-y-0 left-0 h-full w-3/4 max-w-sm border-r data-ending-style:-translate-x-full data-starting-style:-translate-x-full motion-reduce:data-ending-style:translate-x-0 motion-reduce:data-starting-style:translate-x-0',
 } as const
 
 /**
@@ -88,7 +88,7 @@ function SheetContent(props: SheetContentProps) {
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          'fixed z-50 overflow-y-auto border border-border bg-card p-5 outline-none transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0',
+          'fixed z-50 overflow-y-auto overscroll-contain border border-border bg-card p-5 outline-none transition-[opacity,translate] duration-(--duration-sheet) ease-(--ease-drawer) data-ending-style:opacity-0 data-ending-style:duration-150 data-ending-style:ease-(--ease-out-strong) data-starting-style:opacity-0',
           SIDE_CLASSES[side],
           className,
         )}

@@ -49,6 +49,16 @@ describe('emoji sheet body', () => {
     expect(render()).toContain('data-testid="sheet-preview-skeleton"')
   })
 
+  it('keeps the preview transparent until it is ready', () => {
+    expect(render()).toContain('data-ready="false"')
+  })
+
+  it('always renders the hidden status toast with an empty live region', () => {
+    const html = render()
+    expect(html).toContain('data-visible="false"')
+    expect(html).toMatch(/<p role="status"[^>]*><\/p>/)
+  })
+
   it('renders the file, snippet and page actions', () => {
     const html = render()
     expect(html).toContain(strings.fileActionDownloadWebp)

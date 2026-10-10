@@ -15,6 +15,7 @@ import {
 } from './src/i18n/locales'
 import { getUi } from './src/i18n/ui'
 import { THEME_INIT_HASH } from './src/scripts/theme-init'
+import { THEME_COLORS } from './src/scripts/theme-keys'
 import { REPOSITORY_URL } from './src/site-links'
 
 const CDN_ORIGIN = 'https://animated-fluent-emojis-cdn.andryore.dev'
@@ -96,6 +97,22 @@ export default defineConfig({
       lastUpdated: false,
       favicon: '/favicon.svg',
       head: [
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'theme-color',
+            media: '(prefers-color-scheme: light)',
+            content: THEME_COLORS.light,
+          },
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'theme-color',
+            media: '(prefers-color-scheme: dark)',
+            content: THEME_COLORS.dark,
+          },
+        },
         {
           tag: 'link',
           attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },

@@ -1,6 +1,6 @@
 import { Emoji } from 'animated-fluent-emojis/react'
 import { CopyIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utilities'
@@ -15,7 +15,7 @@ import { generateSnippet, type SnippetKind } from '../../gallery/snippets'
 import type { EmojiPageTabs } from '../../home/content'
 import type { UiStrings } from '../../i18n/ui'
 import CodeBlock, { type CodeBlockTab } from '../CodeBlock'
-import { FileActionButton, type FileActionNotice } from './FileActionButton'
+import { FileActionButton } from './FileActionButton'
 import {
   resolvePlaying,
   STAGE_BACKGROUND_CLASSES,
@@ -23,6 +23,7 @@ import {
   usePrefersReducedMotion,
   type StageBackground,
 } from './StageToolbar'
+import { StatusToast, useStatusAnnouncer } from './StatusToast'
 
 export type GalleryStrings = UiStrings['gallery']
 
@@ -34,8 +35,6 @@ const TABS: readonly { kind: SnippetKind; label: keyof GalleryStrings }[] = [
   { kind: 'element', label: 'tabHtml' },
   { kind: 'no-code', label: 'tabNoCode' },
 ]
-
-const TOAST_MILLISECONDS = 2000
 
 const ZOOMS = [1, 2] as const
 
@@ -99,86 +98,6 @@ function highlightedTabs(
 }
 
 /**
- * Result of {@link useStatusAnnouncer}.
- */
-export interface StatusAnnouncer {
-  status: string
-  announce: (message: string) => void
-  copy: (text: string) => Promise<void>
-  handleNotice: (notice: FileActionNotice) => void
-}
-
-/**
- * Owns the transient "Copied" message shown in the live region and the
- * clipboard and download-notice handlers that feed it.
- * @param strings - The gallery strings holding the messages.
- * @returns The current message and the handlers that set it.
- */
-export function useStatusAnnouncer(strings: GalleryStrings): StatusAnnouncer {
-  const [status, setStatus] = useState('')
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-  useEffect(
-    () => () => {
-      clearTimeout(timerRef.current)
-    },
-    [],
-  )
-
-  function announce(message: string) {
-    clearTimeout(timerRef.current)
-    setStatus(message)
-    timerRef.current = setTimeout(() => {
-      setStatus('')
-    }, TOAST_MILLISECONDS)
-  }
-
-  async function copy(text: string) {
-    try {
-      await navigator.clipboard.writeText(text)
-      announce(strings.copied)
-    } catch {
-      announce(strings.downloadFailed)
-    }
-  }
-
-  function handleNotice(notice: FileActionNotice) {
-    announce(notice.kind === 'copied' ? notice.message : strings.downloadFailed)
-  }
-
-  return { status, announce, copy, handleNotice }
-}
-
-/**
- * Properties of {@link StatusToast}.
- */
-export interface StatusToastProps {
-  status: string
-}
-
-/**
- * The polite live region that shows the transient status as a toast.
- * @param props - The current status message.
- * @returns The live region.
- */
-export function StatusToast(props: StatusToastProps) {
-  const { status } = props
-  return (
-    <p
-      role="status"
-      aria-live="polite"
-      className={
-        status === ''
-          ? 'sr-only'
-          : 'fixed right-4 bottom-4 z-50 rounded-lg border border-border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md'
-      }
-    >
-      {status}
-    </p>
-  )
-}
-
-/**
  * Properties of {@link EmojiIdRow}.
  */
 export interface EmojiIdRowProps {
@@ -203,7 +122,7 @@ export function EmojiIdRow(props: EmojiIdRowProps) {
       <Button
         variant="ghost"
         size="icon-sm"
-        className="size-6 shrink-0 text-muted-foreground"
+        className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
         aria-label={strings.copyId}
         onClick={() => void onCopy(id)}
       >
@@ -246,7 +165,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
     snippetTabs,
   } = props
   const [kind, setKind] = useState<SnippetKind>('react')
-  const { status, copy, handleNotice } = useStatusAnnouncer(strings)
+  const { message, visible, copy, handleNotice } = useStatusAnnouncer(strings)
   const [zoom, setZoom] = useState<(typeof ZOOMS)[number]>(1)
   const [loadedKey, setLoadedKey] = useState<string>()
   const [background, setBackground] = useState<StageBackground>('dots')
@@ -323,7 +242,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
                 onClick={() => {
                   setZoom(level)
                 }}
-                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
+                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground active:scale-[0.97] pointer-coarse:size-9 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
               >
                 {level}×
               </button>
@@ -375,7 +294,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground"
+              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
               aria-label={strings.copyName}
               onClick={() => void copy(name)}
             >
@@ -409,7 +328,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
           onNotice={handleNotice}
         />
       )}
-      <StatusToast status={status} />
+      <StatusToast message={message} visible={visible} />
     </div>
   )
 }

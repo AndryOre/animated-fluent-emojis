@@ -14,14 +14,9 @@ import { parseGalleryUrl } from '../../gallery/url-state'
 import type { EmojiPageTabs } from '../../home/content'
 import { ToneDot } from '../ToneDot'
 import { ChipGroup } from './ChipGroup'
-import {
-  EmojiDetail,
-  EmojiIdRow,
-  StatusToast,
-  useStatusAnnouncer,
-  type GalleryStrings,
-} from './EmojiDetail'
+import { EmojiDetail, EmojiIdRow, type GalleryStrings } from './EmojiDetail'
 import { FileActionButton } from './FileActionButton'
+import { StatusToast, useStatusAnnouncer } from './StatusToast'
 
 const TONE_LABELS: Record<SkinTone | 'default', keyof GalleryStrings> = {
   default: 'toneDefault',
@@ -165,7 +160,7 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
     metaStrings,
     header,
   } = props
-  const { status, copy, handleNotice } = useStatusAnnouncer(strings)
+  const { message, visible, copy, handleNotice } = useStatusAnnouncer(strings)
   const [chosen, setChosen] = useState<SkinTone | 'default'>()
   const queryTone = useSyncExternalStore(
     subscribeToNothing,
@@ -247,7 +242,7 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
       <div className="min-w-0 min-[860px]:col-start-1 min-[860px]:row-start-2">
         <KeywordList keywords={keywords} strings={keywordStrings} />
       </div>
-      <StatusToast status={status} />
+      <StatusToast message={message} visible={visible} />
     </div>
   )
 }

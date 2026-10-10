@@ -2,7 +2,6 @@ import { Emoji } from 'animated-fluent-emojis/react'
 import { CopyIcon, ExternalLinkIcon, XIcon } from 'lucide-react'
 import {
   useCallback,
-  useEffect,
   useRef,
   useState,
   type ReactNode,
@@ -21,9 +20,9 @@ import {
 import { localePath, type Locale } from '../../i18n/locales'
 import { CopySnippetButton } from './CopySnippetButton'
 import type { GalleryStrings } from './EmojiDetail'
-import { FileActionButton, type FileActionNotice } from './FileActionButton'
+import { FileActionButton } from './FileActionButton'
+import { StatusToast, useStatusAnnouncer } from './StatusToast'
 
-const TOAST_MILLISECONDS = 2000
 const ZOOMS = [1, 2] as const
 const PREVIEW_SIZE = 64
 const KEYWORD_LIMIT = 8
@@ -60,19 +59,12 @@ export interface EmojiSheetBodyProps {
 export function EmojiSheetBody(props: EmojiSheetBodyProps) {
   const { emoji, name, tone, size, locale, strings, closeControl } = props
   const [zoom, setZoom] = useState<(typeof ZOOMS)[number]>(1)
-  const [status, setStatus] = useState('')
   const [preview, setPreview] = useState<{ key: string; state: PreviewStatus }>(
     { key: '', state: 'loading' },
   )
   const [attempt, setAttempt] = useState(0)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-  useEffect(
-    () => () => {
-      clearTimeout(timerRef.current)
-    },
-    [],
-  )
+  const { message, visible, announce, copy, handleNotice } =
+    useStatusAnnouncer(strings)
 
   const appliedTone = effectiveTone(emoji, tone)
   const files =
@@ -80,27 +72,6 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
   const previewKey = `${emoji.id}-${appliedTone ?? 'default'}-${String(attempt)}`
   const previewState = preview.key === previewKey ? preview.state : 'loading'
   const hasError = previewState === 'error'
-
-  function announce(message: string) {
-    clearTimeout(timerRef.current)
-    setStatus(message)
-    timerRef.current = setTimeout(() => {
-      setStatus('')
-    }, TOAST_MILLISECONDS)
-  }
-
-  async function copy(text: string) {
-    try {
-      await navigator.clipboard.writeText(text)
-      announce(strings.copied)
-    } catch {
-      announce(strings.downloadFailed)
-    }
-  }
-
-  function handleNotice(notice: FileActionNotice) {
-    announce(notice.kind === 'copied' ? notice.message : strings.downloadFailed)
-  }
 
   return (
     <div className="grid gap-4 min-[860px]:grid-cols-[200px_minmax(0,1fr)_auto] min-[860px]:gap-8">
@@ -120,7 +91,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
               onClick={() => {
                 setZoom(level)
               }}
-              className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
+              className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground active:scale-[0.97] pointer-coarse:size-9 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
             >
               {level}×
             </button>
@@ -134,7 +105,9 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
         )}
         {!hasError && (
           <div
-            className="relative transition-transform duration-200 ease-(--ease-out-strong)"
+            data-testid="sheet-preview"
+            data-ready={previewState === 'ready'}
+            className="relative transition-[transform,opacity] duration-200 ease-(--ease-out-strong) [transition-duration:200ms,150ms] data-[ready=false]:opacity-0"
             style={{
               width: PREVIEW_SIZE,
               height: PREVIEW_SIZE,
@@ -170,7 +143,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground"
+              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
               aria-label={strings.copyName}
               onClick={() => void copy(name)}
             >
@@ -186,7 +159,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground"
+              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
               aria-label={strings.copyId}
               onClick={() => void copy(emoji.id)}
             >
@@ -257,17 +230,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
           {strings.openPage}
         </a>
       </fieldset>
-      <p
-        role="status"
-        aria-live="polite"
-        className={
-          status === ''
-            ? 'sr-only'
-            : 'fixed right-4 bottom-4 z-[60] rounded-lg border border-border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md'
-        }
-      >
-        {status}
-      </p>
+      <StatusToast message={message} visible={visible} />
     </div>
   )
 }
@@ -330,7 +293,7 @@ export function EmojiSheet(props: EmojiSheetProps) {
         finalFocus={finalFocus}
         className="p-0"
       >
-        <div className="site-container py-4">
+        <div className="site-container pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
           <EmojiSheetBody
             {...body}
             closeControl={
