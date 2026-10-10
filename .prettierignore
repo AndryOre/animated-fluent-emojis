@@ -4,3 +4,4 @@ bun.lock
 **/coverage
 .claude/worktrees
 **/.astro
+.claude/skills
