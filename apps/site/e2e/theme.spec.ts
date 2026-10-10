@@ -2,19 +2,25 @@ import { expect, test, type Page } from '@playwright/test'
 
 const THEME_STORAGE_KEY = 'afe:theme'
 
-async function shimmerAnimation(
+async function expectShimmerAnimation(
   page: Page,
   reducedMotion: 'reduce' | 'no-preference',
+  expected: { host: string; sweep: string },
 ) {
   await page.emulateMedia({ reducedMotion })
   await page.route('**/index.json', (route) => route.request())
   await page.goto('/emojis/')
-  const placeholder = page.locator('.shimmer').first()
-  await expect(placeholder).toBeVisible()
-  return placeholder.evaluate((element) => ({
-    host: getComputedStyle(element).animationName,
-    sweep: getComputedStyle(element, '::after').animationName,
-  }))
+  await expect
+    .poll(() =>
+      page
+        .locator('.shimmer')
+        .first()
+        .evaluate((element) => ({
+          host: getComputedStyle(element).animationName,
+          sweep: getComputedStyle(element, '::after').animationName,
+        })),
+    )
+    .toEqual(expected)
 }
 
 async function chooseTheme(page: Page, name: 'System' | 'Light' | 'Dark') {
@@ -99,14 +105,14 @@ test('a stored theme is applied before the body is parsed', async ({
 
 test.describe('reduced motion', () => {
   test('swaps the loading sweep for a gentle pulse', async ({ page }) => {
-    expect(await shimmerAnimation(page, 'reduce')).toEqual({
+    await expectShimmerAnimation(page, 'reduce', {
       host: 'shimmer-pulse',
       sweep: 'none',
     })
   })
 
   test('keeps the loading sweep otherwise', async ({ page }) => {
-    expect(await shimmerAnimation(page, 'no-preference')).toEqual({
+    await expectShimmerAnimation(page, 'no-preference', {
       host: 'none',
       sweep: 'shimmer',
     })
