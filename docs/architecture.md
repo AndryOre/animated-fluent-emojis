@@ -530,6 +530,6 @@ Vite 8 library mode builds one ES module per entry (`animated-fluent-emojis`,
 `react-dom` and `vue` are externalized. The `.svelte` and `.astro` sources are
 copied to `dist` as they are, and type declarations are generated. `size-limit`
 measures each entry together with its shared chunks (brotli); the limits are in
-the `size-limit` field of `package.json`, and the stylesheet is limited to 170
+the `size-limit` field of `package.json`, and the stylesheet is limited to 190
 B. The root and `react` bundles start with a `"use client";` banner so they work
 from Next.js server components. See [ADR 0003](adr/0003-esm-only-and-vite-8.md).
