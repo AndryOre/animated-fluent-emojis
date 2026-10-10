@@ -77,12 +77,12 @@ test.describe('with motion allowed', () => {
       await card.evaluate(async (element) => {
         for (let attempt = 0; attempt < 5; attempt += 1) {
           const { top } = element.getBoundingClientRect()
-          window.scrollBy(0, top - window.innerHeight * 0.9)
+          window.scrollBy(0, top - window.innerHeight * 0.85)
           await new Promise((resolve) => requestAnimationFrame(resolve))
         }
       })
       await expect.poll(() => readOpacity(card)).toBeLessThan(1)
-      await expect.poll(() => readTranslateY(card)).toBeGreaterThan(12)
+      await expect.poll(() => readTranslateY(card)).toBeGreaterThan(24)
 
       await card.evaluate((element) => {
         element.scrollIntoView({ block: 'center' })
@@ -108,6 +108,30 @@ test.describe('with motion allowed', () => {
     await expect
       .poll(async () => -(await readTranslateX(row)))
       .toBeGreaterThan(150)
+  })
+
+  test('every reveal is settled once the page is scrolled to the end', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    await page.waitForLoadState('load')
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight)
+    })
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            [...document.querySelectorAll('.scroll-reveal')].filter(
+              (element) => {
+                const style = getComputedStyle(element)
+                const matrix = new DOMMatrix(style.transform)
+                return style.opacity !== '1' || !matrix.isIdentity
+              },
+            ).length,
+        ),
+      )
+      .toBe(0)
   })
 
   test('the teaser row drifts on the named teaser timeline', async ({
