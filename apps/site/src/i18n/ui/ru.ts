@@ -79,6 +79,7 @@ export const ru: UiStrings = {
       },
       plays: {
         hover: 'При наведении',
+        hoverTap: 'Наведение / касание',
         load: 'При загрузке',
         loop: 'По кругу',
       },

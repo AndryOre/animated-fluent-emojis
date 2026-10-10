@@ -79,6 +79,7 @@ export const pt_BR: UiStrings = {
       },
       plays: {
         hover: 'Ao passar o mouse',
+        hoverTap: 'Mouse / toque',
         load: 'Ao carregar',
         loop: 'Em loop',
       },

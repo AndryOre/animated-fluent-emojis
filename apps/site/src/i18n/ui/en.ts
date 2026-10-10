@@ -77,6 +77,7 @@ export const en = {
       },
       plays: {
         hover: 'On hover',
+        hoverTap: 'Hover / tap',
         load: 'On load',
         loop: 'Loop',
       },

@@ -78,6 +78,7 @@ export const fr: UiStrings = {
       },
       plays: {
         hover: 'Au survol',
+        hoverTap: 'Survol / appui',
         load: 'Au chargement',
         loop: 'En boucle',
       },

@@ -42,7 +42,12 @@ const labels = {
     grin: 'Grinning face',
   },
   tones: { default: 'Default', light: 'Light', medium: 'Medium', dark: 'Dark' },
-  plays: { hover: 'On hover', load: 'On load', loop: 'Loop' },
+  plays: {
+    hover: 'On hover',
+    hoverTap: 'Hover / tap',
+    load: 'On load',
+    loop: 'Loop',
+  },
   code: { tabsLabel: 'Framework', copy: 'Copy', copied: 'Copied' },
 }
 
@@ -118,4 +123,25 @@ test('selecting Loop marks the demo as changed, so Reset is enabled', () => {
   expect(html).not.toMatch(
     /<button[^>]*\sdisabled=""[^>]*>(?:(?!<\/button>).)*Reset/s,
   )
+})
+
+test('the hover option swaps to Hover / tap under a coarse pointer', () => {
+  const html = renderToString(
+    <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
+  )
+
+  expect(html).toMatch(
+    /<span[^>]*class="[^"]*pointer-coarse:hidden[^"]*"[^>]*>On hover</,
+  )
+  expect(html).toMatch(
+    /<span[^>]*class="[^"]*hidden pointer-coarse:inline[^"]*"[^>]*>Hover \/ tap</,
+  )
+})
+
+test('the first render of the stage emoji is visible, never held at opacity 0', () => {
+  const html = renderToString(
+    <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
+  )
+
+  expect(html).not.toContain('opacity-0')
 })

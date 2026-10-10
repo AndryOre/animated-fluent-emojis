@@ -78,6 +78,7 @@ export const it: UiStrings = {
       },
       plays: {
         hover: 'Al passaggio',
+        hoverTap: 'Passaggio / tocco',
         load: 'Al caricamento',
         loop: 'In loop',
       },
