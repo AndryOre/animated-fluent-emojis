@@ -34,7 +34,7 @@ const labels = {
     grin: 'Grinning face',
   },
   tones: { default: 'Default', light: 'Light', medium: 'Medium', dark: 'Dark' },
-  plays: { hover: 'On hover', load: 'On load' },
+  plays: { hover: 'On hover', load: 'On load', loop: 'Loop' },
   code: { tabsLabel: 'Framework', copy: 'Copy', copied: 'Copied' },
 }
 
