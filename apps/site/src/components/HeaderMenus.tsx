@@ -73,7 +73,7 @@ const iconButtonClass = buttonVariants({
  * link decoration off the items on every page.
  */
 export const compactItemClass =
-  'h-8 gap-2 rounded-md px-2 font-normal no-underline data-highlighted:bg-muted data-highlighted:text-foreground aria-[current=true]:bg-transparent'
+  'h-8 gap-2 rounded-md px-2 font-normal pointer-coarse:h-11 no-underline data-highlighted:bg-muted data-highlighted:text-foreground aria-[current=true]:bg-transparent'
 
 const THEME_ICONS = {
   system: MonitorIcon,

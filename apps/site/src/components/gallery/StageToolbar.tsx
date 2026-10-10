@@ -108,7 +108,7 @@ export function StageToolbarControls(props: StageToolbarControlsProps) {
               onBackgroundChange(option)
             }}
             className={cn(
-              'size-5 cursor-pointer rounded-md border border-border outline-none focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:ring-2 aria-pressed:ring-primary',
+              'size-5 cursor-pointer transition-[color,background-color,border-color,box-shadow,scale] duration-(--duration-press) ease-(--ease-out-strong) select-none active:scale-[0.97] rounded-md border border-border outline-none focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:ring-2 aria-pressed:ring-primary',
               SWATCH_CLASSES[option],
             )}
           />
@@ -118,7 +118,7 @@ export function StageToolbarControls(props: StageToolbarControlsProps) {
         type="button"
         aria-label={running ? strings.pauseAnimation : strings.playAnimation}
         onClick={onToggleRunning}
-        className="flex size-8 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-4"
+        className="flex size-8 cursor-pointer transition-[color,background-color,border-color,box-shadow,scale] duration-(--duration-press) ease-(--ease-out-strong) select-none active:scale-[0.97] items-center justify-center rounded-lg border border-border bg-card text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-4"
       >
         {running ? <PauseIcon /> : <PlayIcon />}
       </button>

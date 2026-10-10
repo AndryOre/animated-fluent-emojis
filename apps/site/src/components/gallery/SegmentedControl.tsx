@@ -54,7 +54,7 @@ export function SegmentedControl<Value extends string | number>(
             key={segment.value}
             value={String(segment.value)}
             variant="outline"
-            className="h-8 shrink-0 cursor-pointer rounded-lg border-border bg-transparent px-2.5 text-xs font-medium hover:bg-muted aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-muted aria-pressed:text-foreground"
+            className="h-8 shrink-0 cursor-pointer pointer-coarse:h-10 rounded-lg border-border bg-transparent px-2.5 text-xs font-medium hover:bg-muted aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-muted aria-pressed:text-foreground"
             aria-disabled={disabled}
             title={disabled ? disabledHint : undefined}
           >

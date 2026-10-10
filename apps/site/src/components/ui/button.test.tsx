@@ -34,3 +34,25 @@ test('buttonVariants gives ghost a muted hover and a press scale', () => {
   expect(classes).toContain('hover:bg-muted')
   expect(classes).toContain('active:scale-[0.97]')
 })
+
+test('buttonVariants presses every variant except link and never uses transition-all', () => {
+  for (const variant of [
+    'default',
+    'outline',
+    'secondary',
+    'ghost',
+    'destructive',
+  ] as const) {
+    expect(buttonVariants({ variant })).toContain('active:scale-[0.97]')
+  }
+  expect(buttonVariants({ variant: 'link' })).not.toContain('active:scale-')
+  expect(buttonVariants()).not.toContain('transition-all')
+  expect(buttonVariants()).toContain('duration-(--duration-press)')
+})
+
+test('buttonVariants grows icon sizes on coarse pointers', () => {
+  expect(buttonVariants({ size: 'icon' })).toContain('pointer-coarse:size-10')
+  expect(buttonVariants({ size: 'icon-sm' })).toContain(
+    'pointer-coarse:size-10',
+  )
+})
