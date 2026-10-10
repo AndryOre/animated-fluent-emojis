@@ -1,5 +1,6 @@
 import {
   CheckIcon,
+  ExternalLinkIcon,
   GlobeIcon,
   MenuIcon,
   MonitorIcon,
@@ -33,6 +34,7 @@ import {
   subscribeTheme,
   type Theme,
 } from '../scripts/theme'
+import { externalLinkAttributes, isExternalHref } from '../site-links'
 
 interface MenuLink {
   href: string
@@ -54,6 +56,7 @@ interface HeaderMenusProps {
   themeNames: Record<Theme, string>
   repositoryLabel: string
   repositoryHref: string
+  opensInNewTabLabel: string
   currentLocale: string
   locales: LocaleOption[]
 }
@@ -153,6 +156,7 @@ export default function HeaderMenus(props: HeaderMenusProps) {
     themeNames,
     repositoryLabel,
     repositoryHref,
+    opensInNewTabLabel,
     currentLocale,
     locales,
   } = props
@@ -171,15 +175,28 @@ export default function HeaderMenus(props: HeaderMenusProps) {
             className="w-48"
             aria-label={navLabel}
           >
-            {links.map((link) => (
-              <DropdownMenuLinkItem
-                key={link.href}
-                href={link.href}
-                className={compactItemClass}
-              >
-                {link.label}
-              </DropdownMenuLinkItem>
-            ))}
+            {links.map((link) => {
+              const external = isExternalHref(link.href)
+              return (
+                <DropdownMenuLinkItem
+                  key={link.href}
+                  href={link.href}
+                  className={compactItemClass}
+                  {...(external ? externalLinkAttributes() : {})}
+                >
+                  {link.label}
+                  {external && (
+                    <>
+                      <ExternalLinkIcon
+                        aria-hidden="true"
+                        className="size-3.5 shrink-0"
+                      />
+                      <span className="sr-only"> ({opensInNewTabLabel})</span>
+                    </>
+                  )}
+                </DropdownMenuLinkItem>
+              )
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -230,7 +247,8 @@ export default function HeaderMenus(props: HeaderMenusProps) {
             render={
               <a
                 href={repositoryHref}
-                aria-label={repositoryLabel}
+                aria-label={`${repositoryLabel} (${opensInNewTabLabel})`}
+                {...externalLinkAttributes()}
                 className={iconButtonClass}
               />
             }

@@ -10,6 +10,9 @@ export const ko: UiStrings = {
     description:
       'Microsoft의 Fluent 애니메이션 이모지를 React, Vue, Svelte, Astro, 일반 HTML에서 사용할 수 있는 라이브러리입니다.',
   },
+  common: {
+    opensInNewTab: '새 탭에서 열립니다',
+  },
   header: {
     skipLink: '본문으로 건너뛰기',
     homeLabel: 'Animated Fluent Emojis, 홈',
