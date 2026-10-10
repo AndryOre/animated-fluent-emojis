@@ -79,6 +79,7 @@ export const zh_CN: UiStrings = {
       },
       plays: {
         hover: '悬停时',
+        hoverTap: '悬停 / 点按',
         load: '加载时',
         loop: '循环',
       },

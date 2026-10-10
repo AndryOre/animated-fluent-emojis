@@ -98,7 +98,7 @@ const section = `${wrap} py-16 md:py-24`
 const eyebrow =
   'mb-3 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground'
 const heading =
-  'text-[clamp(24px,4vw,36px)] leading-tight font-extrabold tracking-[-0.03em]'
+  'text-[clamp(24px,4vw,36px)] leading-tight font-extrabold tracking-[-0.03em] text-balance'
 const docsHref = localePath(locale, '/docs/')
 const secondaryButton = buttonVariants({
   variant: 'outline',
@@ -125,10 +125,12 @@ const primaryButton = buttonVariants({
           <p class="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase">
             v{libraryPackage.version} · {home.hero.eyebrow}
           </p>
-          <h1 class="text-[clamp(36px,6vw,60px)] leading-[1.02] font-extrabold tracking-[-0.04em]">
+          <h1 class="text-[clamp(36px,6vw,60px)] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance">
             {home.tagline}
           </h1>
-          <p class="text-xl text-muted-foreground">{home.hero.sub}</p>
+          <p class="text-xl text-pretty text-muted-foreground">
+            {home.hero.sub}
+          </p>
           <div class="flex flex-wrap gap-3">
             <a href={galleryHref} class={primaryButton}>
               {home.hero.browse}
@@ -179,8 +181,10 @@ const primaryButton = buttonVariants({
               alt=""
             />
             <div class="flex flex-col gap-1">
-              <h3 class="text-lg font-extrabold">{pillar.title}</h3>
-              <p class="text-muted-foreground">{pillar.body}</p>
+              <h3 class="text-lg font-extrabold text-balance">
+                {pillar.title}
+              </h3>
+              <p class="text-pretty text-muted-foreground">{pillar.body}</p>
             </div>
           </li>
         ))}
@@ -191,7 +195,7 @@ const primaryButton = buttonVariants({
       <h2 id="snippets-title" class={`${heading} mb-2`}>
         {home.snippets.title}
       </h2>
-      <p class="mb-6 text-muted-foreground">{home.snippets.body}</p>
+      <p class="mb-6 text-pretty text-muted-foreground">{home.snippets.body}</p>
       <CodeBlock
         client:visible
         tabs={tabs}
@@ -210,7 +214,7 @@ const primaryButton = buttonVariants({
           <h2 id="no-code-title" class={heading}>
             {home.noCode.title}
           </h2>
-          <p class="text-muted-foreground">{home.noCode.body}</p>
+          <p class="text-pretty text-muted-foreground">{home.noCode.body}</p>
           <ul class="m-0 grid w-full list-none gap-3 p-0 min-[520px]:grid-cols-3">
             {formats.map((format) => (
               <li class="flex flex-col gap-1 rounded-xl border border-border bg-card p-4">

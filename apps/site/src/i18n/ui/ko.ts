@@ -79,6 +79,7 @@ export const ko: UiStrings = {
       },
       plays: {
         hover: '마우스를 올릴 때',
+        hoverTap: '호버 / 탭',
         load: '불러올 때',
         loop: '반복',
       },

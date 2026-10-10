@@ -78,6 +78,7 @@ export const es: UiStrings = {
       },
       plays: {
         hover: 'Al pasar el cursor',
+        hoverTap: 'Cursor / toque',
         load: 'Al cargar',
         loop: 'En bucle',
       },
