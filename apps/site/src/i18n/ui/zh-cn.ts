@@ -10,6 +10,9 @@ export const zh_CN: UiStrings = {
     description:
       'Microsoft Fluent 动画 emoji，提供适用于 React、Vue、Svelte、Astro 和纯 HTML 的库。',
   },
+  common: {
+    opensInNewTab: '在新标签页中打开',
+  },
   header: {
     skipLink: '跳到正文',
     homeLabel: 'Animated Fluent Emojis，首页',

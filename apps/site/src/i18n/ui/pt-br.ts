@@ -10,6 +10,9 @@ export const pt_BR: UiStrings = {
     description:
       'Uma biblioteca com os emojis animados Fluent da Microsoft para React, Vue, Svelte, Astro e HTML puro.',
   },
+  common: {
+    opensInNewTab: 'abre em uma nova guia',
+  },
   header: {
     skipLink: 'Ir para o conteúdo',
     homeLabel: 'Animated Fluent Emojis, início',

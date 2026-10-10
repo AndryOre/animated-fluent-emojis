@@ -9,6 +9,9 @@ export const it: UiStrings = {
     description:
       'Emoji animate Fluent di Microsoft per il web, come libreria per React, Vue, Svelte, Astro e HTML semplice.',
   },
+  common: {
+    opensInNewTab: 'si apre in una nuova scheda',
+  },
   header: {
     skipLink: 'Vai al contenuto',
     homeLabel: 'Animated Fluent Emojis, home',

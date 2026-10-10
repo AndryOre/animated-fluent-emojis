@@ -10,6 +10,9 @@ export const ja: UiStrings = {
     description:
       'Microsoft の Fluent アニメーション絵文字を、React、Vue、Svelte、Astro、素の HTML で使えるライブラリです。',
   },
+  common: {
+    opensInNewTab: '新しいタブで開きます',
+  },
   header: {
     skipLink: '本文へスキップ',
     homeLabel: 'Animated Fluent Emojis、ホーム',
