@@ -8,6 +8,11 @@
 
 :root {
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-press: 150ms;
+  --duration-popover: 150ms;
+  --duration-sheet: 250ms;
   --site-max-width: 1600px;
   --site-gutter: 1rem;
 }
@@ -47,6 +52,15 @@
 @layer base {
   html {
     color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  a,
+  button,
+  [role='button'],
+  summary {
+    touch-action: manipulation;
   }
 
   html.dark {
@@ -67,29 +81,55 @@
   }
 }
 
-.shimmer {
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in oklab, var(--foreground) 8%, transparent),
-    transparent
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
+@layer components {
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--foreground) 8%, transparent),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 1.4s linear infinite;
+    will-change: transform;
+  }
 }
 
 @keyframes shimmer {
   from {
-    background-position: 200% 0;
+    transform: translateX(-100%);
   }
   to {
-    background-position: -200% 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shimmer-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .shimmer {
+    animation: shimmer-pulse 2s ease-in-out infinite;
+  }
+
+  .shimmer::after {
     animation: none;
+    transform: none;
   }
 }
 
