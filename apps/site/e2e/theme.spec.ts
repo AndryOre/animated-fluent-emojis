@@ -11,9 +11,10 @@ async function shimmerAnimation(
   await page.goto('/emojis/')
   const placeholder = page.locator('.shimmer').first()
   await expect(placeholder).toBeVisible()
-  return placeholder.evaluate(
-    (element) => getComputedStyle(element).animationName,
-  )
+  return placeholder.evaluate((element) => ({
+    host: getComputedStyle(element).animationName,
+    sweep: getComputedStyle(element, '::after').animationName,
+  }))
 }
 
 async function chooseTheme(page: Page, name: 'System' | 'Light' | 'Dark') {
@@ -97,12 +98,18 @@ test('a stored theme is applied before the body is parsed', async ({
 })
 
 test.describe('reduced motion', () => {
-  test('stops the loading shimmer', async ({ page }) => {
-    expect(await shimmerAnimation(page, 'reduce')).toBe('none')
+  test('swaps the loading sweep for a gentle pulse', async ({ page }) => {
+    expect(await shimmerAnimation(page, 'reduce')).toEqual({
+      host: 'shimmer-pulse',
+      sweep: 'none',
+    })
   })
 
-  test('keeps the loading shimmer otherwise', async ({ page }) => {
-    expect(await shimmerAnimation(page, 'no-preference')).toBe('shimmer')
+  test('keeps the loading sweep otherwise', async ({ page }) => {
+    expect(await shimmerAnimation(page, 'no-preference')).toEqual({
+      host: 'none',
+      sweep: 'shimmer',
+    })
   })
 })
 
