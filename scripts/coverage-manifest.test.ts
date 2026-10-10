@@ -74,10 +74,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/components/FooterCredit.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/docs/components/DocumentationFooter.astro':
     ASTRO_PRESENTATION_REASON,
+  'apps/site/src/docs/components/DocumentationEditLink.astro':
+    ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/Header.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/HomePage.astro': ASTRO_PRESENTATION_REASON,
-  'apps/site/src/components/HeaderMenus.tsx':
-    'Header menu React island with no logic of its own, exercised in a real browser by the accessibility and mobile-overflow e2e specs.',
   'apps/site/src/components/ui/input.tsx':
     'Styled wrapper over the Base UI input, exercised in a real browser through the gallery search.',
   'apps/site/src/components/ui/sheet.tsx':
@@ -106,8 +106,6 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Constants-only module shared by the init script and the toggle, exercised by theme-init.test.ts.',
   'apps/site/src/gallery/index.ts':
     'Barrel that only re-exports the gallery data API, each module tested in its own colocated test.',
-  'apps/site/src/site-links.ts':
-    'Constants-only list of external URLs, with no behavior to test.',
   'apps/site/src/content.config.ts':
     'Astro content collection wiring, verified through the site build output.',
   'apps/site/src/docs/loader.ts':

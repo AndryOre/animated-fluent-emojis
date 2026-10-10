@@ -102,14 +102,19 @@
     font-weight: 400;
   }
 
-  .sidebar-content a:hover,
   .sidebar-content a:focus-visible {
     background-color: var(--muted);
     color: var(--foreground);
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    .sidebar-content a:hover {
+      background-color: var(--muted);
+      color: var(--foreground);
+    }
+  }
+
   .sidebar-content a[aria-current='page'],
-  .sidebar-content a[aria-current='page']:hover,
   .sidebar-content a[aria-current='page']:focus {
     background-color: var(--muted);
     color: var(--foreground);
@@ -122,8 +127,10 @@
     border-radius: var(--radius-md);
   }
 
-  .sidebar-content summary:hover {
-    background-color: var(--muted);
+  @media (hover: hover) and (pointer: fine) {
+    .sidebar-content summary:hover {
+      background-color: var(--muted);
+    }
   }
 
   .sidebar-content summary .large {
@@ -160,9 +167,14 @@
     text-decoration: none;
   }
 
-  starlight-toc a:hover,
   starlight-toc a[aria-current='true'] {
     color: var(--foreground);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    starlight-toc a:hover {
+      color: var(--foreground);
+    }
   }
 
   starlight-toc a[aria-current='true'] {
@@ -232,11 +244,15 @@
     background-color: var(--card);
   }
 
-  #starlight__search
-    .pagefind-ui__result-title:not(:where(.pagefind-ui__result-nested *)):hover,
-  #starlight__search .pagefind-ui__result-nested:hover {
-    outline: 0;
-    background-color: var(--muted);
+  @media (hover: hover) and (pointer: fine) {
+    #starlight__search
+      .pagefind-ui__result-title:not(
+        :where(.pagefind-ui__result-nested *)
+      ):hover,
+    #starlight__search .pagefind-ui__result-nested:hover {
+      outline: 0;
+      background-color: var(--muted);
+    }
   }
 
   #starlight__search
@@ -318,9 +334,14 @@
     overflow-wrap: anywhere;
   }
 
-  .pagination-nav a:hover,
   .pagination-nav a:focus-visible {
     background-color: var(--muted);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pagination-nav a:hover {
+      background-color: var(--muted);
+    }
   }
 
   .pagination-nav a[rel='next'] {

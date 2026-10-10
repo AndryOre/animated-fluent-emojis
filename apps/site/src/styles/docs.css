@@ -10,6 +10,20 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  a,
+  button,
+  [role='button'],
+  summary {
+    touch-action: manipulation;
+  }
+}
+
 :root {
   color-scheme: light;
   --sl-font: var(--font-sans);
@@ -38,6 +52,12 @@
   --sl-color-accent-high: var(--primary-text);
   --sl-nav-height: calc(3.75rem + 1px);
   --sl-content-pad-x: 1rem;
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-press: 150ms;
+  --duration-popover: 150ms;
+  --duration-sheet: 250ms;
 }
 
 :root.dark {
@@ -112,9 +132,11 @@
   font-weight: 500;
 }
 
-.sl-markdown-content a:not(.sl-anchor-link):hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+@media (hover: hover) and (pointer: fine) {
+  .sl-markdown-content a:not(.sl-anchor-link):hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 
 .sl-markdown-content
@@ -223,9 +245,17 @@
     color 0.15s;
 }
 
-.sl-markdown-content .afe-install-tabs button:hover {
-  background: var(--muted);
-  color: var(--foreground);
+@media (hover: hover) and (pointer: fine) {
+  .sl-markdown-content .afe-install-tabs button:hover {
+    background: var(--muted);
+    color: var(--foreground);
+  }
+}
+
+@media (pointer: coarse) {
+  .sl-markdown-content .afe-install-tabs button {
+    height: 2.5rem;
+  }
 }
 
 .sl-markdown-content .afe-install-tabs button[aria-pressed='true'] {
@@ -255,9 +285,11 @@
   cursor: pointer;
 }
 
-.sl-markdown-content .afe-install-copy:hover {
-  background: var(--muted);
-  color: var(--foreground);
+@media (hover: hover) and (pointer: fine) {
+  .sl-markdown-content .afe-install-copy:hover {
+    background: var(--muted);
+    color: var(--foreground);
+  }
 }
 
 .sl-markdown-content .afe-install-check-icon,
