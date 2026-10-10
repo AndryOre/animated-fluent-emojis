@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 
 import publicIndexFixture from '../gallery/fixtures/public-index.json'
 import { parsePublicIndex, type PublicEmoji } from '../gallery/public-index'
-import { generateSnippet } from '../gallery/snippets'
+import { generateSnippet, PLAY_MODES } from '../gallery/snippets'
 import {
   createSnippetRenderer,
   type RenderedSnippet,
@@ -105,69 +105,76 @@ describe('snippet templates', () => {
     renderer = await createSnippetRenderer()
     for (const kind of TEMPLATE_KINDS) {
       for (const withTone of [false, true]) {
-        rendered.set(
-          `${kind}:${String(withTone)}`,
-          await renderer.render(kind, withTone),
-        )
+        for (const play of PLAY_MODES) {
+          rendered.set(
+            `${kind}:${String(withTone)}:${play}`,
+            await renderer.render(kind, withTone, play),
+          )
+        }
       }
     }
   })
 
   const variants = TEMPLATE_KINDS.flatMap((kind) =>
-    [false, true].map((withTone) => ({ kind, withTone })),
+    [false, true].flatMap((withTone) =>
+      PLAY_MODES.map((play) => ({ kind, withTone, play })),
+    ),
   )
 
-  describe.each(variants)('$kind (tone: $withTone)', ({ kind, withTone }) => {
-    const get = (): RenderedSnippet => {
-      const result = rendered.get(`${kind}:${String(withTone)}`)
-      if (!result) throw new Error('missing render')
-      return result
-    }
+  describe.each(variants)(
+    '$kind (tone: $withTone, play: $play)',
+    ({ kind, withTone, play }) => {
+      const get = (): RenderedSnippet => {
+        const result = rendered.get(`${kind}:${String(withTone)}:${play}`)
+        if (!result) throw new Error('missing render')
+        return result
+      }
 
-    it('holds each placeholder in exactly one token', () => {
-      const { html, slots } = get()
-      expect(slots.toSorted(compareSlots)).toEqual(
-        expectedSlots(kind, withTone).toSorted(compareSlots),
-      )
-      for (const slot of SNIPPET_SLOTS) {
-        const tokens = html
-          .matchAll(SLOT_PATTERN)
-          .filter((match) => match[2] === slot)
-          .toArray()
-        const expected = slots.includes(slot) ? 1 : 0
-        expect(tokens).toHaveLength(expected)
-        for (const token of tokens) {
-          expect(token[4]).toBe(SLOT_SENTINELS[slot])
+      it('holds each placeholder in exactly one token', () => {
+        const { html, slots } = get()
+        expect(slots.toSorted(compareSlots)).toEqual(
+          expectedSlots(kind, withTone).toSorted(compareSlots),
+        )
+        for (const slot of SNIPPET_SLOTS) {
+          const tokens = html
+            .matchAll(SLOT_PATTERN)
+            .filter((match) => match[2] === slot)
+            .toArray()
+          const expected = slots.includes(slot) ? 1 : 0
+          expect(tokens).toHaveLength(expected)
+          for (const token of tokens) {
+            expect(token[4]).toBe(SLOT_SENTINELS[slot])
+          }
         }
-      }
-    })
-
-    it('keeps the highlighting colors on the slot tokens', () => {
-      for (const [, before = '', , after = ''] of get().html.matchAll(
-        SLOT_PATTERN,
-      )) {
-        expect(`${before}${after}`).toContain('style="--0:')
-      }
-    })
-
-    it('swaps to the text generateSnippet produces', () => {
-      if (!emoji) throw new Error('fixture lacks waving-hand tones')
-      const tone = withTone ? emoji.tones[0]?.tone : undefined
-      const size = 48
-      const swapped = swapInHtml(get().html, {
-        id: emoji.id,
-        size: String(size),
-        unicode: emoji.unicode,
-        ...(tone && { tone }),
       })
-      expect(textOf(swapped)).toBe(
-        generateSnippet(emoji, kind, { size, ...(tone && { tone }) }),
-      )
-    })
-  })
+
+      it('keeps the highlighting colors on the slot tokens', () => {
+        for (const [, before = '', , after = ''] of get().html.matchAll(
+          SLOT_PATTERN,
+        )) {
+          expect(`${before}${after}`).toContain('style="--0:')
+        }
+      })
+
+      it('swaps to the text generateSnippet produces', () => {
+        if (!emoji) throw new Error('fixture lacks waving-hand tones')
+        const tone = withTone ? emoji.tones[0]?.tone : undefined
+        const size = 48
+        const swapped = swapInHtml(get().html, {
+          id: emoji.id,
+          size: String(size),
+          unicode: emoji.unicode,
+          ...(tone && { tone }),
+        })
+        expect(textOf(swapped)).toBe(
+          generateSnippet(emoji, kind, { size, play, ...(tone && { tone }) }),
+        )
+      })
+    },
+  )
 
   it('leaves untouched slots alone', () => {
-    const html = rendered.get('react:false')?.html ?? ''
+    const html = rendered.get('react:false:load')?.html ?? ''
     expect(textOf(swapInHtml(html, { size: '12' }))).toContain(
       `id="${SLOT_SENTINELS.id}" size={12}`,
     )

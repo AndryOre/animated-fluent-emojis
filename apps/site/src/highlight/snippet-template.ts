@@ -1,6 +1,7 @@
 import type { PublicEmoji, SkinTone } from '../gallery/public-index'
 import {
   generateSnippet,
+  type PlayMode,
   type SnippetKind,
   type SnippetOptions,
 } from '../gallery/snippets'
@@ -64,14 +65,17 @@ const SENTINEL_EMOJI: PublicEmoji = {
  * sentinel emoji, so the structure can never drift from the copied text.
  * @param kind - The adapter to template.
  * @param withTone - Whether the structural variant includes the tone attribute.
+ * @param play - The play mode variant; `'load'` adds no attributes.
  * @returns The template text with each slot holding its sentinel.
  */
 export function snippetTemplateText(
   kind: TemplateKind,
   withTone: boolean,
+  play: PlayMode = 'load',
 ): string {
   const options: SnippetOptions = {
     size: Number(SLOT_SENTINELS.size),
+    play,
     ...(withTone && { tone: SLOT_SENTINELS.tone as SkinTone }),
   }
   return generateSnippet(SENTINEL_EMOJI, kind, options)

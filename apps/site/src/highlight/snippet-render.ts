@@ -2,6 +2,7 @@ import { ExpressiveCode, loadShikiTheme } from 'expressive-code'
 import type { Element, ElementContent } from 'hast'
 import { toHtml } from 'hast-util-to-html'
 
+import type { PlayMode } from '../gallery/snippets'
 import { sharedCodeConfig } from './code-config'
 import {
   SLOT_SENTINELS,
@@ -19,7 +20,11 @@ export interface RenderedSnippet {
 }
 
 export interface SnippetRenderer {
-  render: (kind: TemplateKind, withTone: boolean) => Promise<RenderedSnippet>
+  render: (
+    kind: TemplateKind,
+    withTone: boolean,
+    play?: PlayMode,
+  ) => Promise<RenderedSnippet>
   renderCode: (code: string, language: string) => Promise<RenderedSnippet>
   sharedStyles: () => Promise<string>
 }
@@ -113,7 +118,10 @@ export async function createSnippetRenderer(): Promise<SnippetRenderer> {
     sharedStyles: async () =>
       [await engine.getBaseStyles(), await engine.getThemeStyles()].join(''),
     renderCode,
-    render: (kind, withTone) =>
-      renderCode(snippetTemplateText(kind, withTone), TEMPLATE_LANGUAGES[kind]),
+    render: (kind, withTone, play = 'load') =>
+      renderCode(
+        snippetTemplateText(kind, withTone, play),
+        TEMPLATE_LANGUAGES[kind],
+      ),
   }
 }

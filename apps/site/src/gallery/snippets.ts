@@ -17,15 +17,39 @@ export const SNIPPET_KINDS = [
 
 export type SnippetKind = (typeof SNIPPET_KINDS)[number]
 
+export const PLAY_MODES = ['load', 'hover', 'loop'] as const
+
+export type PlayMode = (typeof PLAY_MODES)[number]
+
 export interface SnippetOptions {
   size?: number
   tone?: SkinTone
+  play?: PlayMode
 }
+
+type AttributeStyle = 'jsx' | 'vue' | 'element'
 
 const DEFAULT_SIZE = 64
 
 function toneAttribute(tone: SkinTone | undefined, name: string): string {
   return tone ? ` ${name}="${tone}"` : ''
+}
+
+function playAttributes(play: PlayMode, style: AttributeStyle): string {
+  if (play === 'hover') {
+    const attributes: Record<AttributeStyle, string> = {
+      jsx: ' playOnHover autoPlay={false}',
+      vue: ' play-on-hover :auto-play="false"',
+      element: ' play-on-hover auto-play="false"',
+    }
+    return attributes[style]
+  }
+  if (play === 'loop') {
+    return style === 'jsx'
+      ? ' animationIterations="infinite"'
+      : ' animation-iterations="infinite"'
+  }
+  return ''
 }
 
 /**
@@ -54,16 +78,18 @@ function resolveFiles(
  * plain file URLs, following the API in `docs/guide/`.
  * @param emoji - The emoji to show.
  * @param kind - Which snippet to produce.
- * @param options - Size in pixels and an optional skin tone.
+ * @param options - Size in pixels, an optional skin tone and a play mode.
  * @param options.size - Size in pixels.
  * @param options.tone - The skin tone.
+ * @param options.play - The play mode; `'load'` adds no attributes and
+ * `'no-code'` ignores it.
  * @returns The snippet text.
  * @throws {Error} When the tone is not available for the emoji.
  */
 export function generateSnippet(
   emoji: PublicEmoji,
   kind: SnippetKind,
-  { size = DEFAULT_SIZE, tone }: SnippetOptions = {},
+  { size = DEFAULT_SIZE, tone, play = 'load' }: SnippetOptions = {},
 ): string {
   if (tone) {
     resolveFiles(emoji, tone)
@@ -75,7 +101,7 @@ export function generateSnippet(
         '',
         `import 'animated-fluent-emojis/style.css'`,
         '',
-        `<Emoji id="${emoji.id}" size={${String(size)}}${toneAttribute(tone, 'skinTone')} />`,
+        `<Emoji id="${emoji.id}" size={${String(size)}}${playAttributes(play, 'jsx')}${toneAttribute(tone, 'skinTone')} />`,
       ].join('\n')
     }
     case 'vue': {
@@ -87,7 +113,7 @@ export function generateSnippet(
         '</script>',
         '',
         '<template>',
-        `  <Emoji id="${emoji.id}" :size="${String(size)}"${toneAttribute(tone, 'skin-tone')} />`,
+        `  <Emoji id="${emoji.id}" :size="${String(size)}"${playAttributes(play, 'vue')}${toneAttribute(tone, 'skin-tone')} />`,
         '</template>',
       ].join('\n')
     }
@@ -99,7 +125,7 @@ export function generateSnippet(
         `  import 'animated-fluent-emojis/style.css'`,
         '</script>',
         '',
-        `<Emoji id="${emoji.id}" size={${String(size)}}${toneAttribute(tone, 'skinTone')} />`,
+        `<Emoji id="${emoji.id}" size={${String(size)}}${playAttributes(play, 'jsx')}${toneAttribute(tone, 'skinTone')} />`,
       ].join('\n')
     }
     case 'astro': {
@@ -108,7 +134,7 @@ export function generateSnippet(
         `import Emoji from 'animated-fluent-emojis/astro'`,
         '---',
         '',
-        `<Emoji id="${emoji.id}" size={${String(size)}}${toneAttribute(tone, 'skinTone')}>`,
+        `<Emoji id="${emoji.id}" size={${String(size)}}${playAttributes(play, 'jsx')}${toneAttribute(tone, 'skinTone')}>`,
         `  <span slot="fallback">${emoji.unicode}</span>`,
         '</Emoji>',
       ].join('\n')
@@ -119,7 +145,7 @@ export function generateSnippet(
         `  import 'animated-fluent-emojis/element'`,
         '</script>',
         '',
-        `<fluent-emoji id="${emoji.id}" size="${String(size)}"${toneAttribute(tone, 'skin-tone')}>`,
+        `<fluent-emoji id="${emoji.id}" size="${String(size)}"${playAttributes(play, 'element')}${toneAttribute(tone, 'skin-tone')}>`,
         `  <span slot="fallback">${emoji.unicode}</span>`,
         '</fluent-emoji>',
       ].join('\n')

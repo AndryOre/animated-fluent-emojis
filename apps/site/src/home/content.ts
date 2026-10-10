@@ -2,6 +2,7 @@ import type { CodeBlockTab } from '../components/CodeBlock'
 import type { PublicEmoji, SkinTone } from '../gallery/public-index'
 import {
   generateSnippet,
+  type PlayMode,
   type SnippetKind,
   type SnippetOptions,
 } from '../gallery/snippets'
@@ -41,7 +42,7 @@ export const SNIPPET_TABS: readonly SnippetTab[] = [
 /**
  * Builds the landing page snippet tabs from the snippet generator.
  * @param emoji - The emoji shown in every snippet.
- * @param options - Size and skin tone passed to the generator.
+ * @param options - Size, skin tone and play mode passed to the generator.
  * @returns One entry per tab with its code.
  */
 export function buildSnippetTabs(
@@ -71,19 +72,21 @@ const templateCache = new Map<string, Promise<RenderedSnippet>>()
 async function highlightTemplate(
   kind: TemplateKind,
   withTone: boolean,
+  play: PlayMode,
 ): Promise<RenderedSnippet> {
   const renderer = await sharedRenderer()
-  return renderer.render(kind, withTone)
+  return renderer.render(kind, withTone, play)
 }
 
 function renderTemplate(
   kind: TemplateKind,
   withTone: boolean,
+  play: PlayMode,
 ): Promise<RenderedSnippet> {
-  const key = `${kind}:${String(withTone)}`
+  const key = `${kind}:${String(withTone)}:${play}`
   const cached = templateCache.get(key)
   if (cached) return cached
-  const created = highlightTemplate(kind, withTone)
+  const created = highlightTemplate(kind, withTone, play)
   templateCache.set(key, created)
   return created
 }
@@ -95,19 +98,25 @@ function renderTemplate(
  * @param emoji - The emoji shown in every snippet.
  * @param tone - A skin tone to include in every snippet; none by default.
  * @param size - The size shown in every snippet.
+ * @param play - The play mode the snippets express; `'load'` by default.
  * @returns One code block tab per framework.
  */
 export async function buildCodeBlockTabs(
   emoji: PublicEmoji,
   tone?: SkinTone,
   size: number = SHOWN_SIZE,
+  play: PlayMode = 'load',
 ): Promise<CodeBlockTab[]> {
   return Promise.all(
-    buildSnippetTabs(emoji, { size, ...(tone && { tone }) }).map(
+    buildSnippetTabs(emoji, { size, play, ...(tone && { tone }) }).map(
       async (tab) => {
         const templated = TEMPLATE_KINDS.find((kind) => kind === tab.kind)
         if (!templated) throw new Error(`no template for ${tab.kind}`)
-        const rendered = await renderTemplate(templated, tone !== undefined)
+        const rendered = await renderTemplate(
+          templated,
+          tone !== undefined,
+          play,
+        )
         return {
           id: tab.kind,
           label: tab.label,
