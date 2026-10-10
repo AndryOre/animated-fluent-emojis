@@ -369,9 +369,8 @@ export function Gallery(props: GalleryProps) {
                           }
                         >
                           <span
-                            style={{
-                              viewTransitionName: `emoji-${emoji.slug}`,
-                            }}
+                            data-transition-target=""
+                            style={{ viewTransitionClass: 'emoji' }}
                           >
                             <Emoji
                               id={emoji.id}

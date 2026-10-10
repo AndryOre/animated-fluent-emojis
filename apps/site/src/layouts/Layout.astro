@@ -97,5 +97,10 @@ const canonical = localeUrl(locale, path)
     <Header locale={locale} path={notFound ? '/' : path} />
     <slot />
     <Footer locale={locale} />
+    <script>
+      import { installEmojiTransition } from '../scripts/emoji-transition'
+
+      installEmojiTransition()
+    </script>
   </body>
 </html>
