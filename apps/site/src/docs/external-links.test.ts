@@ -70,6 +70,16 @@ describe('markExternalLinks', () => {
     expect(markExternalLinks(html, 'en')).toBe(html)
   })
 
+  it('marks external links whose text is inline code', () => {
+    const result = markExternalLinks(
+      '<p><a href="https://github.com/x/blob/main/CONTEXT.md"><code>CONTEXT.md</code></a></p>',
+      'en',
+    )
+    expect(result).toContain('target="_blank"')
+    expect(result).toContain('<code>CONTEXT.md</code>')
+    expect(result).toContain('<svg')
+  })
+
   it('skips the icon for image links but keeps the attributes', () => {
     const result = markExternalLinks(
       '<a href="https://example.com"><img src="/a.png" alt=""></a>',

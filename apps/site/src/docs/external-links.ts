@@ -2,7 +2,7 @@ import { SITE_ORIGIN, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { externalLinkAttributes, isExternalHref } from '../site-links'
 
-const PROTECTED_SEGMENT = /(<pre\b[\s\S]*?<\/pre>|<code\b[\s\S]*?<\/code>)/i
+const PROTECTED_SEGMENT = /<pre\b[\s\S]*?<\/pre>|<code\b[\s\S]*?<\/code>/gi
 const ANCHOR = /<a\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/a>/gi
 const ATTRIBUTE =
   /\s([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?/g
@@ -71,16 +71,22 @@ function markAnchor(
  */
 export function markExternalLinks(html: string, locale: Locale): string {
   const hint = getUi(locale).common.opensInNewTab
-  return html
-    .split(PROTECTED_SEGMENT)
-    .map((segment, index) =>
-      index % 2 === 1
-        ? segment
-        : segment.replaceAll(
-            ANCHOR,
-            (match: string, attributeSource: string, content: string) =>
-              markAnchor(match, attributeSource, content, hint),
-          ),
+  const protectedRanges = html
+    .matchAll(PROTECTED_SEGMENT)
+    .map(
+      (segment) => [segment.index, segment.index + segment[0].length] as const,
     )
-    .join('')
+    .toArray()
+  return html.replaceAll(
+    ANCHOR,
+    (
+      match: string,
+      attributeSource: string,
+      content: string,
+      offset: number,
+    ) =>
+      protectedRanges.some(([start, end]) => offset >= start && offset < end)
+        ? match
+        : markAnchor(match, attributeSource, content, hint),
+  )
 }
