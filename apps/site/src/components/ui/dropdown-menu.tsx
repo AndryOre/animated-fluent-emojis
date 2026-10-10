@@ -33,7 +33,7 @@ const defaultContentStyles =
   'rounded-brand border border-border bg-card p-2 shadow-lg'
 
 const novaContentStyles =
-  'min-w-40 rounded-lg bg-popover p-1 ring-1 ring-foreground/10 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin] transition-[opacity,scale] duration-100 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0'
+  'min-w-40 rounded-lg bg-popover p-1 ring-1 ring-foreground/10 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin] origin-(--transform-origin) transition-[opacity,scale] duration-150 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:duration-100 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0'
 
 /**
  * The menu surface, rendered in a portal and positioned against the trigger.
@@ -94,7 +94,7 @@ function DropdownMenuLinkItem(props: MenuPrimitive.LinkItem.Props) {
 }
 
 const novaItemStyles =
-  'relative flex h-8 w-full cursor-pointer items-center gap-2 rounded-md px-2 text-sm outline-none select-none data-highlighted:bg-muted data-disabled:pointer-events-none data-disabled:opacity-50'
+  'relative flex h-8 w-full pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-md px-2 text-sm outline-none select-none data-highlighted:bg-muted data-disabled:pointer-events-none data-disabled:opacity-50'
 
 /**
  * Groups related items so a {@link DropdownMenuLabel} can name them.
