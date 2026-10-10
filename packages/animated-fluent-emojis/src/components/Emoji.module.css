@@ -16,7 +16,12 @@
   animation-name: none;
 }
 
-.animateOnHover:hover .emojiImage,
 :is(a, button):focus-visible .animateOnHover .emojiImage {
   animation-name: emoji-play;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .animateOnHover:hover .emojiImage {
+    animation-name: emoji-play;
+  }
 }

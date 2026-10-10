@@ -179,3 +179,28 @@ test('property sets parse string values like attributes do', () => {
   expect(Reflect.get(element ?? {}, 'playing')).toBe(false)
   expect(Reflect.get(element ?? {}, 'size')).toBe(32)
 })
+
+test('gates hover playback to hover-capable pointers in the shadow styles', async () => {
+  const host = mount('<fluent-emoji id="cat" size="48"></fluent-emoji>')
+  const element = host.querySelector('fluent-emoji')
+  await expect.poll(() => element && getImage(element)).not.toBeNull()
+
+  const css = element?.shadowRoot?.querySelector('style')?.textContent ?? ''
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(css)
+  const rules = [...sheet.cssRules]
+  const gated = rules.filter(
+    (rule): rule is CSSMediaRule =>
+      rule instanceof CSSMediaRule &&
+      rule.conditionText === '(hover: hover) and (pointer: fine)',
+  )
+
+  expect(gated).toHaveLength(1)
+  expect(gated[0]?.cssRules[0]?.cssText).toContain(':hover')
+  expect(
+    rules.some(
+      (rule) =>
+        !(rule instanceof CSSMediaRule) && rule.cssText.includes(':hover'),
+    ),
+  ).toBe(false)
+})

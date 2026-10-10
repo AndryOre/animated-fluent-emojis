@@ -3,6 +3,27 @@ import { render } from 'vitest-browser-react'
 import { page, userEvent } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
+import emojiStyles from './Emoji.module.css?inline'
+
+const HOVER_GATE = '(hover: hover) and (pointer: fine)'
+
+const collectHoverRules = (cssText: string) => {
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(cssText)
+  const gated: string[] = []
+  const ungated: string[] = []
+  for (const rule of sheet.cssRules) {
+    if (rule instanceof CSSMediaRule) {
+      const target = rule.conditionText === HOVER_GATE ? gated : ungated
+      for (const inner of rule.cssRules) {
+        target.push(inner.cssText)
+      }
+    } else {
+      ungated.push(rule.cssText)
+    }
+  }
+  return { gated, ungated }
+}
 
 const SPRITE_BASE = 'https://animated-fluent-emojis-cdn.andryore.dev/v1/sprites'
 
@@ -321,4 +342,16 @@ test.each([
   await expect.element(getImage('Waving hand')).toBeVisible()
   const box = container.firstElementChild
   expect(box && getComputedStyle(box).width).toBe(expected)
+})
+
+test('gates hover playback to hover-capable pointers and keeps focus ungated', () => {
+  const { gated, ungated } = collectHoverRules(emojiStyles)
+
+  expect(gated.some((rule) => rule.includes(':hover'))).toBe(true)
+  expect(ungated.some((rule) => rule.includes(':hover'))).toBe(false)
+  expect(
+    ungated.some(
+      (rule) => rule.includes(':focus-visible') && rule.includes('emoji-play'),
+    ),
+  ).toBe(true)
 })
