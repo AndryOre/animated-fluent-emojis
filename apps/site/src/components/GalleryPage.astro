@@ -3,6 +3,7 @@ import { localeSegment, type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
 import { Gallery } from './gallery/Gallery'
+import { GallerySkeleton } from './gallery/GallerySkeleton'
 
 interface Props {
   locale: Locale
@@ -27,6 +28,10 @@ const { gallery } = getUi(locale)
       locale={locale}
       searchIndexUrl={`/search-index/${localeSegment(locale)}.json`}
       strings={gallery}
-    />
+    >
+      <div slot="fallback">
+        <GallerySkeleton label={gallery.loading} size={64} />
+      </div>
+    </Gallery>
   </main>
 </Layout>
