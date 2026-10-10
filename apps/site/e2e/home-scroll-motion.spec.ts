@@ -29,7 +29,20 @@ const readTranslateX = (locator: Locator) =>
     return Number(match[1].split(',', 5)[4])
   })
 
+const readTranslateY = (locator: Locator) =>
+  locator.evaluate((element): number => {
+    const { transform } = getComputedStyle(element)
+    if (transform === 'none') return 0
+    const match = /^matrix\((.+)\)$/.exec(transform)
+    if (!match?.[1]) throw new Error(`Unexpected transform: ${transform}`)
+    return Number(match[1].split(',', 6)[5])
+  })
+
+const readOpacity = (locator: Locator) =>
+  locator.evaluate((element) => Number(getComputedStyle(element).opacity))
+
 const TEASER_LINK = '.scroll-drift-scope'
+const PILLAR_INDICES = [0, 1, 2, 3]
 
 test.describe('with motion allowed', () => {
   test.use({ reducedMotion: 'no-preference' })
@@ -50,6 +63,75 @@ test.describe('with motion allowed', () => {
     await expect
       .poll(() => card.evaluate((element) => getComputedStyle(element).opacity))
       .toBe('1')
+  })
+
+  for (const index of PILLAR_INDICES) {
+    test(`pillar card ${String(index)} is clearly moving low in the viewport and settled when centred`, async ({
+      page,
+    }) => {
+      await page.goto('/')
+      const card = page.locator(PILLAR_CARD).nth(index)
+      await expect(card).toBeAttached()
+
+      await page.waitForLoadState('load')
+      await card.evaluate(async (element) => {
+        for (let attempt = 0; attempt < 5; attempt += 1) {
+          const { top } = element.getBoundingClientRect()
+          window.scrollBy(0, top - window.innerHeight * 0.85)
+          await new Promise((resolve) => requestAnimationFrame(resolve))
+        }
+      })
+      await expect.poll(() => readOpacity(card)).toBeLessThan(1)
+      await expect.poll(() => readTranslateY(card)).toBeGreaterThan(24)
+
+      await card.evaluate((element) => {
+        element.scrollIntoView({ block: 'center' })
+      })
+      await expect.poll(() => readOpacity(card)).toBe(1)
+      await expect
+        .poll(() =>
+          card.evaluate((element) => getComputedStyle(element).transform),
+        )
+        .toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/)
+    })
+  }
+
+  test('the teaser row drifts a wide distance by block start', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const row = page.locator(TEASER_ROW)
+    await expect(row).toBeAttached()
+    await page.locator(TEASER_LINK).evaluate((element) => {
+      element.scrollIntoView({ block: 'start' })
+    })
+    await expect
+      .poll(async () => -(await readTranslateX(row)))
+      .toBeGreaterThan(150)
+  })
+
+  test('every reveal is settled once the page is scrolled to the end', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    await page.waitForLoadState('load')
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight)
+    })
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            [...document.querySelectorAll('.scroll-reveal')].filter(
+              (element) => {
+                const style = getComputedStyle(element)
+                const matrix = new DOMMatrix(style.transform)
+                return style.opacity !== '1' || !matrix.isIdentity
+              },
+            ).length,
+        ),
+      )
+      .toBe(0)
   })
 
   test('the teaser row drifts on the named teaser timeline', async ({
