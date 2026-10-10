@@ -4,10 +4,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 
 import 'animated-fluent-emojis/style.css'
 
-import CodeBlock, {
-  type CodeBlockLabels,
-  type CodeBlockTab,
-} from '@/components/CodeBlock'
+import CodeBlock, { type CodeBlockLabels } from '@/components/CodeBlock'
 import { ToneDot } from '@/components/ToneDot'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -27,6 +24,7 @@ import {
   isInitialDemoState,
   type DemoEmojiName,
   type DemoState,
+  type DemoTabs,
 } from './demo'
 
 interface DemoLabels {
@@ -43,9 +41,9 @@ interface DemoLabels {
 
 export interface DemoPlaygroundProps {
   emojis: readonly PublicEmoji[]
-  plainTabs: readonly CodeBlockTab[]
-  tonedTabs: readonly CodeBlockTab[]
+  tabs: DemoTabs
   labels: DemoLabels
+  initialState?: DemoState
 }
 
 interface SegmentedProps<Value extends string | number> {
@@ -120,18 +118,20 @@ function Segmented<Value extends string | number>({
  * tokens. A React island hydrated when the browser is idle.
  * @param props - Component props.
  * @param props.emojis - The curated emojis, in display order.
- * @param props.plainTabs - Highlighted snippets without a tone attribute.
- * @param props.tonedTabs - Highlighted snippets with a tone attribute.
+ * @param props.tabs - Highlighted snippets for every play, with and without a
+ * tone attribute.
  * @param props.labels - Localized control, emoji and code block labels.
+ * @param props.initialState - The starting selection; the untouched demo
+ * state when omitted. Reset always returns to the untouched demo state.
  * @returns The customizer card.
  */
 export default function DemoPlayground({
   emojis,
-  plainTabs,
-  tonedTabs,
+  tabs: demoTabs,
   labels,
+  initialState = INITIAL_DEMO_STATE,
 }: DemoPlaygroundProps) {
-  const [state, setState] = useState<DemoState>(INITIAL_DEMO_STATE)
+  const [state, setState] = useState<DemoState>(initialState)
   const emoji = emojis.find((candidate) => candidate.id === state.emojiId)
   const initialEmoji = emojis.find(
     (candidate) => candidate.id === INITIAL_DEMO_STATE.emojiId,
@@ -145,7 +145,7 @@ export default function DemoPlayground({
   if (!current) return null
 
   const toned = demoTone(current, state) !== undefined
-  const tabs = (toned ? tonedTabs : plainTabs).map((tab) => ({
+  const tabs = demoTabs[state.play][toned ? 'toned' : 'plain'].map((tab) => ({
     ...tab,
     code: demoSnippetCode(current, tab.id as SnippetKind, state),
   }))
@@ -199,6 +199,7 @@ export default function DemoPlayground({
           }}
         />
         <Segmented
+          className="col-span-2 sm:col-span-1"
           label={labels.sizeLabel}
           options={DEMO_SIZES.map((size) => ({
             value: size,
@@ -210,6 +211,7 @@ export default function DemoPlayground({
           }}
         />
         <Segmented
+          className="col-span-2 sm:col-span-1"
           label={labels.playsLabel}
           options={DEMO_PLAYS.map((play) => ({
             value: play.id,

@@ -45,7 +45,7 @@ describe('demo options', () => {
       'medium',
       'dark',
     ])
-    expect(DEMO_PLAYS.map((play) => play.id)).toEqual(['hover', 'load'])
+    expect(DEMO_PLAYS.map((play) => play.id)).toEqual(['hover', 'load', 'loop'])
   })
 
   it('starts on a hover-driven waving hand', () => {
@@ -87,6 +87,16 @@ describe('demo emoji props', () => {
     })
   })
 
+  it('loops forever with autoplay', () => {
+    expect(demoEmojiProps(diverse, state({ size: 64, play: 'loop' }))).toEqual({
+      size: 64,
+      skinTone: undefined,
+      playOnHover: false,
+      autoPlay: true,
+      animationIterations: 'infinite',
+    })
+  })
+
   it('drops the tone for an emoji without tones', () => {
     expect(demoEmojiProps(plain, state({ tone: 'dark' })).skinTone).toBe(
       undefined,
@@ -105,10 +115,36 @@ describe('demo snippets', () => {
     'copies exactly what generateSnippet makes for $kind',
     ({ kind }) => {
       expect(
-        demoSnippetCode(diverse, kind, state({ size: 32, tone: 'light' })),
+        demoSnippetCode(
+          diverse,
+          kind,
+          state({ size: 32, tone: 'light', play: 'load' }),
+        ),
       ).toBe(generateSnippet(diverse, kind, { size: 32, tone: 'light' }))
-      expect(demoSnippetCode(plain, kind, state({ tone: 'dark' }))).toBe(
-        generateSnippet(plain, kind, { size: 96 }),
+      expect(
+        demoSnippetCode(plain, kind, state({ tone: 'dark', play: 'load' })),
+      ).toBe(generateSnippet(plain, kind, { size: 96 }))
+    },
+  )
+
+  it.each(SNIPPET_TABS.filter(({ kind }) => kind !== 'no-code'))(
+    'expresses each play in the $kind snippet, toned and plain',
+    ({ kind }) => {
+      for (const play of ['hover', 'loop'] as const) {
+        expect(
+          demoSnippetCode(diverse, kind, state({ tone: 'light', play })),
+        ).toBe(
+          generateSnippet(diverse, kind, { size: 96, tone: 'light', play }),
+        )
+        expect(demoSnippetCode(plain, kind, state({ play }))).toBe(
+          generateSnippet(plain, kind, { size: 96, play }),
+        )
+      }
+      expect(demoSnippetCode(plain, kind, state({ play: 'loop' }))).toContain(
+        'infinite',
+      )
+      expect(demoSnippetCode(plain, kind, state({ play: 'hover' }))).toMatch(
+        /play-?on-?hover/i,
       )
     },
   )

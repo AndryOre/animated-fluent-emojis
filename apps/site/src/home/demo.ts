@@ -1,5 +1,7 @@
 import type { SkinTone as LibrarySkinTone } from 'animated-fluent-emojis/react'
 
+import type { CodeBlockTab } from '@/components/CodeBlock'
+
 import type { PublicEmoji, SkinTone } from '../gallery/public-index'
 import { generateSnippet, type SnippetKind } from '../gallery/snippets'
 import type { SnippetSlot } from '../highlight/snippet-template'
@@ -8,12 +10,21 @@ export const DEMO_SIZES = [32, 64, 96, 128] as const
 
 type DemoSize = (typeof DEMO_SIZES)[number]
 
-export type DemoPlayId = 'hover' | 'load'
+export type DemoPlayId = 'hover' | 'load' | 'loop'
 
 export type DemoToneId = 'default' | 'light' | 'medium' | 'dark'
 
 export type DemoEmojiName =
   'wave' | 'fire' | 'party' | 'heart' | 'rocket' | 'grin'
+
+/**
+ * Pre-highlighted code block tabs, keyed by play and then by whether the
+ * snippet carries a tone attribute.
+ */
+export type DemoTabs = Record<
+  DemoPlayId,
+  Record<'plain' | 'toned', readonly CodeBlockTab[]>
+>
 
 export interface DemoState {
   emojiId: string
@@ -41,6 +52,7 @@ export const DEMO_TONES: readonly { id: DemoToneId }[] = [
 export const DEMO_PLAYS: readonly { id: DemoPlayId }[] = [
   { id: 'hover' },
   { id: 'load' },
+  { id: 'loop' },
 ]
 
 export const INITIAL_DEMO_STATE: DemoState = {
@@ -94,12 +106,14 @@ export function demoEmojiProps(
   skinTone: LibrarySkinTone | undefined
   playOnHover: boolean
   autoPlay: boolean
+  animationIterations?: 'infinite'
 } {
   return {
     size: state.size,
     skinTone: demoTone(emoji, state),
     playOnHover: state.play === 'hover',
-    autoPlay: state.play === 'load',
+    autoPlay: state.play !== 'hover',
+    ...(state.play === 'loop' && { animationIterations: 'infinite' as const }),
   }
 }
 
@@ -118,6 +132,7 @@ export function demoSnippetCode(
   const tone = demoTone(emoji, state)
   return generateSnippet(emoji, kind, {
     size: state.size,
+    play: state.play,
     ...(tone && { tone }),
   })
 }
