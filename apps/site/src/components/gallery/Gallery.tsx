@@ -25,21 +25,17 @@ import {
   listCategories,
 } from '../../gallery/filter'
 import { fillTemplate } from '../../gallery/template'
-import {
-  parseGalleryUrl,
-  serializeGalleryUrl,
-  type GallerySize,
-} from '../../gallery/url-state'
+import { parseGalleryUrl, serializeGalleryUrl } from '../../gallery/url-state'
 import type { Locale } from '../../i18n/locales'
 import type { UiStrings } from '../../i18n/ui'
 import { EmojiSheet } from './EmojiSheet'
 import { GallerySidebar } from './GallerySidebar'
+import { GallerySkeleton, GRID_COLUMNS } from './GallerySkeleton'
 import { useGalleryData } from './use-gallery-data'
 
 import 'animated-fluent-emojis/style.css'
 
 const PAGE_SIZE = 96
-const SKELETON_CELLS = 24
 const DESKTOP_QUERY = '(min-width: 860px)'
 const TOOLTIP_DELAY = 300
 
@@ -76,33 +72,6 @@ function readInitialFilters() {
   return parseGalleryUrl(globalThis.location.search)
 }
 
-/**
- * The grid track minimum class for each gallery size, written out in full so
- * Tailwind keeps the classes.
- */
-const GRID_COLUMNS: Record<GallerySize, string> = {
-  64: 'grid-cols-[repeat(auto-fill,minmax(96px,1fr))]',
-  96: 'grid-cols-[repeat(auto-fill,minmax(128px,1fr))]',
-  128: 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))]',
-}
-
-function Skeleton({ label, size }: { label: string; size: GallerySize }) {
-  return (
-    <div
-      role="status"
-      aria-label={label}
-      className={`grid ${GRID_COLUMNS[size]} gap-2`}
-    >
-      {Array.from({ length: SKELETON_CELLS }, (_, position) => (
-        <div
-          key={position}
-          className="shimmer aspect-square rounded-[10px] bg-secondary"
-        />
-      ))}
-    </div>
-  )
-}
-
 interface MessageProps {
   title: string
   hint: string
@@ -112,16 +81,17 @@ interface MessageProps {
 
 function Message({ title, hint, action, onAction }: MessageProps) {
   return (
-    <div className="flex flex-col items-center gap-3 py-16 text-center">
+    <div className="flex flex-col items-center gap-3 py-16 text-center transition-[opacity,translate] duration-200 ease-(--ease-out-strong) starting:translate-y-1 starting:opacity-0">
       <p className="text-lg font-extrabold">{title}</p>
       <p className="max-w-md text-muted-foreground">{hint}</p>
-      <button
-        type="button"
+      <Button
+        size="lg"
+        shape="pill"
         onClick={onAction}
-        className="h-10 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
+        className="h-10 px-5 font-semibold"
       >
         {action}
-      </button>
+      </Button>
     </div>
   )
 }
@@ -246,7 +216,7 @@ export function Gallery(props: GalleryProps) {
   }
 
   if (state.status === 'loading')
-    return <Skeleton label={strings.loading} size={size} />
+    return <GallerySkeleton label={strings.loading} size={size} />
   if (!data || state.status === 'error') {
     return (
       <Message
@@ -325,7 +295,11 @@ export function Gallery(props: GalleryProps) {
                 aria-label={strings.searchLabel}
                 aria-keyshortcuts="Control+K Meta+K"
                 placeholder={placeholder}
-                className="h-9 rounded-[10px] pr-14 pl-9 text-sm"
+                enterKeyHint="search"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                className="h-9 rounded-[10px] pr-14 pl-9 text-base pointer-fine:text-sm"
               />
               <kbd className="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-border px-1.5 font-mono text-[11px] text-muted-foreground min-[860px]:block">
                 {shortcutHint}
@@ -333,7 +307,7 @@ export function Gallery(props: GalleryProps) {
             </div>
             <p
               role="status"
-              className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums"
+              className="hidden shrink-0 font-mono text-xs min-[480px]:block text-muted-foreground tabular-nums"
             >
               {fillTemplate(
                 strings.resultsCount,
@@ -342,89 +316,92 @@ export function Gallery(props: GalleryProps) {
               )}
             </p>
           </div>
-          {results.length === 0 ? (
-            <Message
-              title={fillTemplate(
-                strings.noResultsTitle,
-                'query',
-                filters.query,
-              )}
-              hint={strings.noResultsHint}
-              action={strings.clearSearch}
-              onAction={() => {
-                updateFilters({ query: '', category: undefined })
-              }}
-            />
-          ) : (
-            <div
-              className="flex flex-col items-center gap-4"
-              style={{ paddingBottom: sheetOpen ? sheetHeight : 0 }}
-            >
+          <div className="transition-opacity duration-200 ease-(--ease-out-strong) starting:opacity-0">
+            {results.length === 0 ? (
+              <Message
+                title={fillTemplate(
+                  strings.noResultsTitle,
+                  'query',
+                  filters.query,
+                )}
+                hint={strings.noResultsHint}
+                action={strings.clearSearch}
+                onAction={() => {
+                  updateFilters({ query: '', category: undefined })
+                }}
+              />
+            ) : (
               <div
-                ref={gridRef}
-                role="group"
-                aria-label={strings.resultsLabel}
-                className={`grid w-full ${GRID_COLUMNS[size]} gap-2`}
+                className="flex flex-col items-center gap-4"
+                style={{ paddingBottom: sheetOpen ? sheetHeight : 0 }}
               >
-                {shown.map((emoji) => {
-                  const name = names.get(emoji.slug) ?? emoji.description
-                  const isSelected = sheetOpen && selected?.slug === emoji.slug
-                  return (
-                    <Tooltip key={emoji.slug}>
-                      <TooltipTrigger
-                        render={
-                          <button
-                            type="button"
-                            data-slug={emoji.slug}
-                            aria-pressed={isSelected}
-                            aria-label={name}
-                            tabIndex={tabStop?.slug === emoji.slug ? 0 : -1}
-                            onClick={(event) => {
-                              select(emoji.slug, event.currentTarget)
-                            }}
-                            onFocus={() => {
-                              setFocusedSlug(emoji.slug)
-                            }}
-                            onKeyDown={(event) => {
-                              moveFocus(event, shown.indexOf(emoji))
-                            }}
-                            className="flex aspect-square cursor-pointer items-center justify-center rounded-[10px] border border-transparent p-1 transition-colors hover:bg-muted aria-pressed:border-primary"
-                          />
-                        }
-                      >
-                        <span
-                          style={{
-                            viewTransitionName: `emoji-${emoji.slug}`,
-                          }}
-                        >
-                          <Emoji
-                            id={emoji.id}
-                            size={size}
-                            skinTone={effectiveTone(emoji, tone)}
-                            autoPlay={false}
-                            playOnHover
-                            alt=""
-                          />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>{name}</TooltipContent>
-                    </Tooltip>
-                  )
-                })}
-              </div>
-              {shown.length < results.length && (
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => {
-                    setVisibleCount((count) => count + PAGE_SIZE)
-                  }}
+                <div
+                  ref={gridRef}
+                  role="group"
+                  aria-label={strings.resultsLabel}
+                  className={`grid w-full ${GRID_COLUMNS[size]} gap-2`}
                 >
-                  {strings.showMore}
-                </Button>
-              )}
-            </div>
-          )}
+                  {shown.map((emoji) => {
+                    const name = names.get(emoji.slug) ?? emoji.description
+                    const isSelected =
+                      sheetOpen && selected?.slug === emoji.slug
+                    return (
+                      <Tooltip key={emoji.slug}>
+                        <TooltipTrigger
+                          render={
+                            <button
+                              type="button"
+                              data-slug={emoji.slug}
+                              aria-pressed={isSelected}
+                              aria-label={name}
+                              tabIndex={tabStop?.slug === emoji.slug ? 0 : -1}
+                              onClick={(event) => {
+                                select(emoji.slug, event.currentTarget)
+                              }}
+                              onFocus={() => {
+                                setFocusedSlug(emoji.slug)
+                              }}
+                              onKeyDown={(event) => {
+                                moveFocus(event, shown.indexOf(emoji))
+                              }}
+                              className="flex aspect-square cursor-pointer items-center justify-center rounded-[10px] border border-transparent p-1 transition-[background-color,transform] duration-100 ease-(--ease-out-strong) select-none [-webkit-touch-callout:none] hover:bg-muted active:scale-[0.96] active:bg-muted aria-pressed:border-primary"
+                            />
+                          }
+                        >
+                          <span
+                            style={{
+                              viewTransitionName: `emoji-${emoji.slug}`,
+                            }}
+                          >
+                            <Emoji
+                              id={emoji.id}
+                              size={size}
+                              skinTone={effectiveTone(emoji, tone)}
+                              autoPlay={false}
+                              playOnHover
+                              alt=""
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>{name}</TooltipContent>
+                      </Tooltip>
+                    )
+                  })}
+                </div>
+                {shown.length < results.length && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => {
+                      setVisibleCount((count) => count + PAGE_SIZE)
+                    }}
+                  >
+                    {strings.showMore}
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       {selected && (
