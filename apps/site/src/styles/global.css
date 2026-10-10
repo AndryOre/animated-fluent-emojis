@@ -85,11 +85,16 @@
         calc(25% + var(--reveal-index, 0) * 4%);
     }
 
+    .scroll-drift-scope {
+      view-timeline-name: --teaser;
+      view-timeline-axis: block;
+    }
+
     .scroll-drift {
       animation-name: scroll-drift;
       animation-fill-mode: both;
       animation-timing-function: linear;
-      animation-timeline: view();
+      animation-timeline: --teaser;
       animation-range: cover 0% cover 100%;
     }
   }
