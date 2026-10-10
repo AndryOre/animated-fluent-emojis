@@ -164,14 +164,17 @@ const primaryButton = buttonVariants({
     </section>
 
     <section class={section} aria-labelledby="pillars-title">
-      <p class={eyebrow}>{home.pillars.eyebrow}</p>
-      <h2 id="pillars-title" class={`${heading} mb-8`}>
-        {home.pillars.title}
-      </h2>
+      <div class="scroll-reveal">
+        <p class={eyebrow}>{home.pillars.eyebrow}</p>
+        <h2 id="pillars-title" class={`${heading} mb-8`}>
+          {home.pillars.title}
+        </h2>
+      </div>
       <ul class="grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-3">
         {pillars.map((pillar, position) => (
           <li
-            class={`flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 ${position === 0 ? 'min-[860px]:col-span-2 min-[860px]:row-span-2 min-[860px]:justify-between min-[860px]:p-8' : ''} ${position === 3 ? 'min-[860px]:col-span-3' : ''}`}
+            style={`--reveal-index: ${position}`}
+            class={`scroll-reveal flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 ${position === 0 ? 'min-[860px]:col-span-2 min-[860px]:row-span-2 min-[860px]:justify-between min-[860px]:p-8' : ''} ${position === 3 ? 'min-[860px]:col-span-3' : ''}`}
           >
             <Emoji
               id={pillar.icon}
@@ -192,24 +195,28 @@ const primaryButton = buttonVariants({
     </section>
 
     <section class={section} aria-labelledby="snippets-title">
-      <h2 id="snippets-title" class={`${heading} mb-2`}>
-        {home.snippets.title}
-      </h2>
-      <p class="mb-6 text-pretty text-muted-foreground">{home.snippets.body}</p>
-      <CodeBlock
-        client:visible
-        tabs={tabs}
-        labels={{
-          tabsLabel: home.snippets.tabsLabel,
-          copy: home.snippets.copy,
-          copied: home.snippets.copied,
-        }}
-      />
+      <div class="scroll-reveal">
+        <h2 id="snippets-title" class={`${heading} mb-2`}>
+          {home.snippets.title}
+        </h2>
+        <p class="mb-6 text-pretty text-muted-foreground">
+          {home.snippets.body}
+        </p>
+        <CodeBlock
+          client:visible
+          tabs={tabs}
+          labels={{
+            tabsLabel: home.snippets.tabsLabel,
+            copy: home.snippets.copy,
+            copied: home.snippets.copied,
+          }}
+        />
+      </div>
     </section>
 
     <section class={section} aria-labelledby="no-code-title">
       <div class="grid items-center gap-10 min-[860px]:grid-cols-2">
-        <div class="flex flex-col items-start gap-4">
+        <div class="scroll-reveal flex flex-col items-start gap-4">
           <p class={eyebrow}>{home.noCode.eyebrow}</p>
           <h2 id="no-code-title" class={heading}>
             {home.noCode.title}
@@ -232,23 +239,27 @@ const primaryButton = buttonVariants({
         <a
           href={galleryHref}
           aria-label={home.noCode.teaserLabel}
-          class="flex min-w-0 items-center gap-4 overflow-hidden rounded-2xl border border-border bg-card px-5 py-8 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]"
+          class="scroll-reveal flex min-w-0 items-center gap-4 overflow-hidden rounded-2xl border border-border bg-card px-5 py-8 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]"
         >
-          {teaser.map((emoji) => (
-            <span class="shrink-0">
-              <Emoji id={emoji.id} size={64} alt="" />
-            </span>
-          ))}
+          <div class="scroll-drift flex shrink-0 items-center gap-4">
+            {teaser.map((emoji) => (
+              <span class="shrink-0">
+                <Emoji id={emoji.id} size={64} alt="" />
+              </span>
+            ))}
+          </div>
         </a>
       </div>
     </section>
 
     <section class={section} aria-labelledby="faq-title">
-      <p class={eyebrow}>{home.faq.eyebrow}</p>
-      <h2 id="faq-title" class={`${heading} mb-6`}>
-        {home.faq.title}
-      </h2>
-      <FaqAccordion client:visible items={faq} />
+      <div class="scroll-reveal">
+        <p class={eyebrow}>{home.faq.eyebrow}</p>
+        <h2 id="faq-title" class={`${heading} mb-6`}>
+          {home.faq.title}
+        </h2>
+        <FaqAccordion client:visible items={faq} />
+      </div>
     </section>
   </main>
 </Layout>
