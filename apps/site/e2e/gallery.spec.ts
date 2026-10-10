@@ -107,6 +107,45 @@ test('size segments switch by role and keep one pressed', async ({ page }) => {
   )
 })
 
+test('size scales the grid, persists in the URL and survives reload', async ({
+  page,
+}) => {
+  const size = page.getByRole('group', { name: 'Size' })
+  const grid = page.getByRole('group', { name: 'Emojis', exact: true })
+  const firstEmoji = page
+    .locator('[data-slug]')
+    .first()
+    .locator('span > *')
+    .first()
+  const columnCount = async () =>
+    grid.evaluate(
+      (element) =>
+        getComputedStyle(element).gridTemplateColumns.split(' ').length,
+    )
+  const initialColumns = await columnCount()
+  const emojiWidth = async () => {
+    const box = await firstEmoji.boundingBox()
+    return box?.width ?? 0
+  }
+  const initialWidth = await emojiWidth()
+  expect(initialWidth).toBeGreaterThan(0)
+
+  await size.getByRole('button', { name: '128' }).click()
+  await expect(page).toHaveURL(/[?&]s=128/)
+  await expect.poll(emojiWidth).toBeGreaterThan(initialWidth)
+  expect(await columnCount()).toBeLessThan(initialColumns)
+
+  await page.reload()
+  await expect(size.getByRole('button', { name: '128' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page).toHaveURL(/[?&]s=128/)
+
+  await size.getByRole('button', { name: '64' }).click()
+  await expect(page).not.toHaveURL(/[?&]s=/)
+})
+
 test('categories filter the grid and are pressed by role', async ({ page }) => {
   const categories = page.getByRole('group', { name: 'Category' })
   const all = categories.getByRole('button').first()

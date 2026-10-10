@@ -1,4 +1,5 @@
 import { SKIN_TONES, type SkinTone } from '../../gallery/public-index'
+import { GALLERY_SIZES, type GallerySize } from '../../gallery/url-state'
 import { ToneDot } from '../ToneDot'
 import type { GalleryStrings } from './EmojiDetail'
 import { SegmentedControl } from './SegmentedControl'
@@ -11,16 +12,6 @@ const TONE_LABELS: Record<SkinTone | 'default', keyof GalleryStrings> = {
   'medium-dark': 'toneMediumDark',
   dark: 'toneDark',
 }
-
-/**
- * The sizes the gallery can render emojis at.
- */
-const SIZES = [64, 96, 128] as const
-
-/**
- * One of the {@link SIZES}.
- */
-export type GallerySize = (typeof SIZES)[number]
 
 /**
  * A category with the number of emojis it holds.
@@ -107,7 +98,10 @@ export function GallerySidebar(props: GallerySidebarProps) {
         />
         <SegmentedControl
           label={strings.sizeLabel}
-          segments={SIZES.map((value) => ({ value, label: String(value) }))}
+          segments={GALLERY_SIZES.map((value) => ({
+            value,
+            label: String(value),
+          }))}
           selected={props.size}
           onSelect={props.onSize}
         />

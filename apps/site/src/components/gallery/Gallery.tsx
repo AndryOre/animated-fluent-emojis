@@ -25,11 +25,15 @@ import {
   listCategories,
 } from '../../gallery/filter'
 import { fillTemplate } from '../../gallery/template'
-import { parseGalleryUrl, serializeGalleryUrl } from '../../gallery/url-state'
+import {
+  parseGalleryUrl,
+  serializeGalleryUrl,
+  type GallerySize,
+} from '../../gallery/url-state'
 import type { Locale } from '../../i18n/locales'
 import type { UiStrings } from '../../i18n/ui'
 import { EmojiSheet } from './EmojiSheet'
-import { GallerySidebar, type GallerySize } from './GallerySidebar'
+import { GallerySidebar } from './GallerySidebar'
 import { useGalleryData } from './use-gallery-data'
 
 import 'animated-fluent-emojis/style.css'
@@ -72,12 +76,22 @@ function readInitialFilters() {
   return parseGalleryUrl(globalThis.location.search)
 }
 
-function Skeleton({ label }: { label: string }) {
+/**
+ * The grid track minimum class for each gallery size, written out in full so
+ * Tailwind keeps the classes.
+ */
+const GRID_COLUMNS: Record<GallerySize, string> = {
+  64: 'grid-cols-[repeat(auto-fill,minmax(96px,1fr))]',
+  96: 'grid-cols-[repeat(auto-fill,minmax(128px,1fr))]',
+  128: 'grid-cols-[repeat(auto-fill,minmax(160px,1fr))]',
+}
+
+function Skeleton({ label, size }: { label: string; size: GallerySize }) {
   return (
     <div
       role="status"
       aria-label={label}
-      className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2"
+      className={`grid ${GRID_COLUMNS[size]} gap-2`}
     >
       {Array.from({ length: SKELETON_CELLS }, (_, position) => (
         <div
@@ -121,7 +135,6 @@ export function Gallery(props: GalleryProps) {
   const { locale, searchIndexUrl, strings } = props
   const { state, retry } = useGalleryData(searchIndexUrl)
   const [filters, setFilters] = useState(readInitialFilters)
-  const [size, setSize] = useState<GallerySize>(64)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [selectedSlug, setSelectedSlug] = useState<string | undefined>()
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -192,11 +205,12 @@ export function Gallery(props: GalleryProps) {
   const selected = results.find((emoji) => emoji.slug === selectedSlug)
   const tabStop = shown.find((emoji) => emoji.slug === focusedSlug) ?? shown[0]
   const tone = filters.tone
+  const size = filters.size
 
   function updateFilters(change: Partial<typeof filters>) {
     setFilters((current) => ({ ...current, ...change }))
     if ('query' in change || 'category' in change) setSheetOpen(false)
-    setVisibleCount(PAGE_SIZE)
+    if (!('size' in change)) setVisibleCount(PAGE_SIZE)
   }
 
   function select(slug: string, trigger: HTMLElement) {
@@ -231,7 +245,8 @@ export function Gallery(props: GalleryProps) {
       ?.focus()
   }
 
-  if (state.status === 'loading') return <Skeleton label={strings.loading} />
+  if (state.status === 'loading')
+    return <Skeleton label={strings.loading} size={size} />
   if (!data || state.status === 'error') {
     return (
       <Message
@@ -263,7 +278,9 @@ export function Gallery(props: GalleryProps) {
       }}
       toneDisabled={selected?.tones.length === 0}
       size={size}
-      onSize={setSize}
+      onSize={(next) => {
+        updateFilters({ size: next })
+      }}
     />
   )
 
@@ -347,7 +364,7 @@ export function Gallery(props: GalleryProps) {
                 ref={gridRef}
                 role="group"
                 aria-label={strings.resultsLabel}
-                className="grid w-full grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-2"
+                className={`grid w-full ${GRID_COLUMNS[size]} gap-2`}
               >
                 {shown.map((emoji) => {
                   const name = names.get(emoji.slug) ?? emoji.description
@@ -382,7 +399,7 @@ export function Gallery(props: GalleryProps) {
                         >
                           <Emoji
                             id={emoji.id}
-                            size={48}
+                            size={size}
                             skinTone={effectiveTone(emoji, tone)}
                             autoPlay={false}
                             playOnHover
