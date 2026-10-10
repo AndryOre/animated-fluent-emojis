@@ -68,3 +68,11 @@ test('InstallBlock renders a tab per package manager with bun selected', () => {
   expect(html).toMatch(/aria-selected="true"[^>]*>bun</)
   expect(html).toContain('data-line-numbers="false"')
 })
+
+test('CodeBlock keeps both copy icons mounted so the swap can crossfade', () => {
+  const html = renderToString(<CodeBlock tabs={tabs} labels={labels} />)
+
+  expect(html).toContain('data-copy-icon')
+  expect(html).toContain('data-check-icon')
+  expect(html).toMatch(/opacity-0[^>]*data-check-icon/)
+})

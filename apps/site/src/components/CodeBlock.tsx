@@ -4,10 +4,15 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { copyWithFeedback } from '@/lib/copy-feedback'
+import { cn } from '@/lib/utilities'
 
 import { markHighlightedLine } from '../highlight/snippet-html'
 import { swapSnippetSlots } from '../highlight/snippet-swap'
 import type { SnippetSlot } from '../highlight/snippet-template'
+
+const ICON_FADE =
+  'transition-[opacity,scale,filter] duration-150 ease-(--ease-out-strong) motion-reduce:scale-100 motion-reduce:blur-none motion-reduce:duration-100'
+const ICON_HIDDEN = 'scale-80 opacity-0 blur-[4px]'
 
 export interface CodeBlockTab {
   id: string
@@ -121,7 +126,16 @@ export default function CodeBlock({
           aria-label={copied ? labels.copied : labels.copy}
           onClick={() => void copyWithFeedback(activeCode, setCopied)}
         >
-          {copied ? <CheckIcon /> : <CopyIcon />}
+          <span className="grid *:col-start-1 *:row-start-1">
+            <CopyIcon
+              data-copy-icon
+              className={cn(ICON_FADE, copied && ICON_HIDDEN)}
+            />
+            <CheckIcon
+              data-check-icon
+              className={cn(ICON_FADE, !copied && ICON_HIDDEN)}
+            />
+          </span>
         </Button>
       </div>
       <div ref={bodyRef} className="grid">
