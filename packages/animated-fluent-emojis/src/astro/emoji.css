@@ -16,7 +16,12 @@
   animation-name: none;
 }
 
-.afe-hover:hover .afe-image,
 :is(a, button):focus-visible .afe-hover .afe-image {
   animation-name: emoji-play;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .afe-hover:hover .afe-image {
+    animation-name: emoji-play;
+  }
 }

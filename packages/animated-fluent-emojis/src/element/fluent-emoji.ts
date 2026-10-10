@@ -51,7 +51,7 @@ const SHADOW_STYLES = `
 @keyframes emoji-play{from{transform:translateY(0)}to{transform:translateY(-100%)}}
 .${imageClass}{animation-name:emoji-play}
 .${hoverClass} .${imageClass}{animation-name:none}
-.${hoverClass}:hover .${imageClass}{animation-name:emoji-play}
+@media (hover:hover) and (pointer:fine){.${hoverClass}:hover .${imageClass}{animation-name:emoji-play}}
 `
 
 /**

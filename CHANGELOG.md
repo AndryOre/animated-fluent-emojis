@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- `playOnHover` now only replays on hover for hover-capable, fine pointers
+  (`@media (hover: hover) and (pointer: fine)`) in the React component, the
+  Astro component and `<fluent-emoji>`. On touch devices a tap no longer leaves
+  a sticky `:hover` that loops the animation until the user taps elsewhere;
+  keyboard focus (`:focus-visible`) playback is unchanged.
+
 ## [0.8.0] - 2026-10-06
 
 ### Added

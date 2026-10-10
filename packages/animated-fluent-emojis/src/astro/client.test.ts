@@ -18,6 +18,26 @@ import componentStyles from './emoji.css?inline'
 import { ROOT_ATTRIBUTE, ROOT_SELECTOR } from './markup.js'
 import { renderEmojiHtml } from './server.js'
 
+const HOVER_GATE = '(hover: hover) and (pointer: fine)'
+
+const collectHoverRules = (cssText: string) => {
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(cssText)
+  const gated: string[] = []
+  const ungated: string[] = []
+  for (const rule of sheet.cssRules) {
+    if (rule instanceof CSSMediaRule) {
+      const target = rule.conditionText === HOVER_GATE ? gated : ungated
+      for (const inner of rule.cssRules) {
+        target.push(inner.cssText)
+      }
+    } else {
+      ungated.push(rule.cssText)
+    }
+  }
+  return { gated, ungated }
+}
+
 const stylesheet = document.createElement('style')
 stylesheet.textContent = componentStyles
 
@@ -173,4 +193,16 @@ describe('astro client script', () => {
       .toBe(true)
     stop()
   })
+})
+
+test('gates hover playback to hover-capable pointers and keeps focus ungated', () => {
+  const { gated, ungated } = collectHoverRules(componentStyles)
+
+  expect(gated.some((rule) => rule.includes(':hover'))).toBe(true)
+  expect(ungated.some((rule) => rule.includes(':hover'))).toBe(false)
+  expect(
+    ungated.some(
+      (rule) => rule.includes(':focus-visible') && rule.includes('emoji-play'),
+    ),
+  ).toBe(true)
 })
