@@ -1,9 +1,20 @@
 import type { Loader, LoaderContext } from 'astro/loaders'
 
+import type { Locale } from '../i18n/locales'
 import { loadCatalog } from './catalog'
+import { markExternalLinks } from './external-links'
 import { transformInstallBlocks } from './install-block'
 import { rewriteMarkdownLinks } from './markdown'
 import { DOCS_DIR, TRANSLATIONS_DIR } from './paths'
+
+async function renderDocument(
+  context: LoaderContext,
+  body: string,
+  locale: Locale,
+) {
+  const rendered = await context.renderMarkdown(body)
+  return { ...rendered, html: markExternalLinks(rendered.html, locale) }
+}
 
 async function loadPages(context: LoaderContext): Promise<void> {
   context.store.clear()
@@ -30,7 +41,7 @@ async function loadPages(context: LoaderContext): Promise<void> {
       data,
       body: page.body,
       digest: context.generateDigest(`${page.status}\n${page.body}`),
-      rendered: await context.renderMarkdown(body),
+      rendered: await renderDocument(context, body, page.locale),
     })
   }
 }
