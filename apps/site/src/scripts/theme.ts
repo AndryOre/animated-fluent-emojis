@@ -1,4 +1,4 @@
-import { THEME_STORAGE_KEY } from './theme-keys'
+import { THEME_COLORS, THEME_STORAGE_KEY } from './theme-keys'
 
 export type Theme = 'system' | 'light' | 'dark'
 
@@ -79,4 +79,22 @@ export function applyTheme(theme: Theme, suppressTransitions = true): void {
     (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
   root.classList.toggle('dark', dark)
   root.dataset.theme = theme
+  syncThemeColor(theme)
+}
+
+/**
+ * Points every `theme-color` meta at the chosen scheme. `system` restores each
+ * tag's own `prefers-color-scheme` color.
+ * @param theme - The theme being applied.
+ */
+function syncThemeColor(theme: Theme): void {
+  for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
+    const scheme =
+      theme === 'system'
+        ? meta.getAttribute('media')?.includes('dark')
+          ? 'dark'
+          : 'light'
+        : theme
+    meta.setAttribute('content', THEME_COLORS[scheme])
+  }
 }
