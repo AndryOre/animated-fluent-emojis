@@ -20,6 +20,7 @@ const LOADING_LINK_RELATIONS = new Set([
 const SOURCE_TAG_PATTERN =
   /<(?:script|img|iframe|source|video|audio|embed|object|track|input)\b[^>]*>/gi
 const LINK_TAG_PATTERN = /<link\b[^>]*>/gi
+const ANCHOR_TAG_PATTERN = /<a\s(?:[^>"']|"[^"]*"|'[^']*')*>/gi
 const CSS_URL_PATTERN = /url\(\s*['"]?([^'")\s]+)/gi
 const CSS_IMPORT_PATTERN = /@import\s+['"]([^'"]+)/gi
 
@@ -40,6 +41,37 @@ function isThirdParty(reference: string): boolean {
   } catch {
     return true
   }
+}
+
+function isExternalWebUrl(reference: string): boolean {
+  if (!/^https?:\/\//i.test(reference)) return false
+  try {
+    return new URL(reference).origin !== SITE_ORIGIN
+  } catch {
+    return false
+  }
+}
+
+function externalLinkProblems(route: string, html: string): string[] {
+  const problems: string[] = []
+  for (const [tag] of html.matchAll(ANCHOR_TAG_PATTERN)) {
+    const href = attribute(tag, 'href')?.trim()
+    if (!href || !isExternalWebUrl(href)) continue
+    const target = (attribute(tag, 'target') ?? '').trim().toLowerCase()
+    const relations = new Set(
+      (attribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/),
+    )
+    if (
+      target !== '_blank' ||
+      !relations.has('noopener') ||
+      !relations.has('noreferrer')
+    ) {
+      problems.push(
+        `${route}: external link ${href} missing target="_blank" or rel noopener noreferrer`,
+      )
+    }
+  }
+  return problems
 }
 
 function srcsetUrls(value: string): string[] {
@@ -191,7 +223,9 @@ function auditPage(
  * policy, a canonical link listed in the sitemap, favicon, ICO fallback and
  * apple touch icon links, and hreflang alternates for every locale plus
  * `x-default`; no page or stylesheet may request a resource
- * from a host outside `andryore.dev`.
+ * from a host outside `andryore.dev`. Every `<a href>` pointing to an
+ * absolute `http(s)` URL outside the site origin needs `target="_blank"` and
+ * a `rel` containing both `noopener` and `noreferrer`.
  * @param distribution - The build output folder.
  * @returns One message per problem, empty when the build is clean.
  */
@@ -215,7 +249,10 @@ export function auditDistribution(distribution: string): string[] {
     const route = path.relative(distribution, file)
     if (file.endsWith('.html')) {
       const html = readFileSync(file, 'utf8')
-      problems.push(...thirdPartyProblems(route, requestedUrls(html)))
+      problems.push(
+        ...thirdPartyProblems(route, requestedUrls(html)),
+        ...externalLinkProblems(route, html),
+      )
       if (path.basename(file) === 'index.html' && isIndexable(html)) {
         problems.push(...auditPage(route, html, sitemapLocations))
       }

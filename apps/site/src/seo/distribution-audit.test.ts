@@ -54,6 +54,14 @@ describe('auditDistribution', () => {
     writeFileSync(file, content)
   }
 
+  function auditBody(body: string): string[] {
+    write(
+      'index.html',
+      pageHtml('/').replace('ok', () => body),
+    )
+    return auditDistribution(distribution)
+  }
+
   beforeEach(() => {
     distribution = mkdtempSync(path.join(tmpdir(), 'distribution-audit-'))
     write('index.html', pageHtml('/'))
@@ -134,10 +142,54 @@ describe('auditDistribution', () => {
       'index.html',
       pageHtml(
         '/',
-        '<img src="https://animated-fluent-emojis-cdn.andryore.dev/a.png"><a href="https://github.com/x/y">repo</a><svg xmlns="http://www.w3.org/2000/svg"></svg>',
+        '<img src="https://animated-fluent-emojis-cdn.andryore.dev/a.png"><a href="https://github.com/x/y" target="_blank" rel="noopener noreferrer">repo</a><svg xmlns="http://www.w3.org/2000/svg"></svg>',
       ),
     )
     expect(auditDistribution(distribution)).toEqual([])
+  })
+
+  describe('external links', () => {
+    const MESSAGE = 'missing target="_blank" or rel noopener noreferrer'
+
+    it('accepts an external anchor with target and both rel tokens', () => {
+      expect(
+        auditBody(
+          '<a href="https://github.com/x/y" target="_blank" rel="external noreferrer noopener">repo</a>',
+        ),
+      ).toEqual([])
+    })
+
+    it('flags an external anchor without target', () => {
+      expect(
+        auditBody(
+          '<a href="https://github.com/x/y" rel="noopener noreferrer">r</a>',
+        ),
+      ).toEqual([`index.html: external link https://github.com/x/y ${MESSAGE}`])
+    })
+
+    it('flags an external anchor without rel', () => {
+      expect(
+        auditBody('<a href="https://github.com/x/y" target="_blank">r</a>'),
+      ).toEqual([`index.html: external link https://github.com/x/y ${MESSAGE}`])
+    })
+
+    it('flags an external anchor missing one rel token', () => {
+      const problems = auditBody(
+        '<a href="https://a.example/" target="_blank" rel="noopener">a</a><a href="http://b.example/" target="_blank" rel="noreferrer">b</a>',
+      )
+      expect(problems).toEqual([
+        `index.html: external link https://a.example/ ${MESSAGE}`,
+        `index.html: external link http://b.example/ ${MESSAGE}`,
+      ])
+    })
+
+    it('ignores internal, relative, fragment, mailto and tel anchors', () => {
+      expect(
+        auditBody(
+          `<a href="${localeUrl('en', '/emojis/')}">a</a><a href="/emojis/">b</a><a href="#top">c</a><a href="mailto:a@b.c">d</a><a href="tel:123">e</a>`,
+        ),
+      ).toEqual([])
+    })
   })
 
   it('flags a page without a content security policy', () => {
