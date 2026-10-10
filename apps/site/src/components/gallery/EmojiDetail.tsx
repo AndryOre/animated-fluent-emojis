@@ -210,7 +210,6 @@ export function EmojiDetail(props: EmojiDetailProps) {
   return (
     <div className="flex flex-col gap-4">
       <div
-        style={{ viewTransitionName: transitionName }}
         className={cn(
           'relative flex items-center justify-center overflow-hidden rounded-xl',
           STAGE_BACKGROUND_CLASSES[background],
@@ -255,6 +254,8 @@ export function EmojiDetail(props: EmojiDetailProps) {
             width: size,
             height: size,
             transform: `scale(${String(zoom)})`,
+            viewTransitionName: transitionName,
+            viewTransitionClass: transitionName ? 'emoji' : undefined,
           }}
         >
           {page && !animated && (

@@ -84,3 +84,63 @@ test('filtering never re-triggers the grid fade', async ({ page }) => {
   )
   expect(running).toBe(0)
 })
+
+test.describe('view transitions', () => {
+  test('nothing is named before a click and only the leaving tile is named on navigation', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    const tile = page.locator('[data-slug]').first()
+    await expect(tile).toBeVisible()
+    const slug = await tile.getAttribute('data-slug')
+    const countNamed = () =>
+      page.evaluate(
+        () =>
+          [...globalThis.document.querySelectorAll<HTMLElement>('*')].filter(
+            (element) => element.style.viewTransitionName !== '',
+          ).length,
+      )
+    expect(await countNamed()).toBe(0)
+
+    await page.evaluate(() => {
+      globalThis.addEventListener('pageswap', () => {
+        const names = [
+          ...globalThis.document.querySelectorAll<HTMLElement>('*'),
+        ]
+          .map((element) => element.style.viewTransitionName)
+          .filter((name) => name !== '')
+        globalThis.sessionStorage.setItem(
+          'named-on-swap',
+          JSON.stringify(names),
+        )
+      })
+    })
+    await tile.click()
+    await page.getByRole('link', { name: 'Open page' }).click()
+    await expect(page).toHaveURL(new RegExp(`/emojis/${slug ?? ''}/$`))
+    const names = await page.evaluate(
+      () =>
+        JSON.parse(
+          globalThis.sessionStorage.getItem('named-on-swap') ?? '[]',
+        ) as string[],
+    )
+    expect(names).toEqual([`emoji-${slug ?? ''}`])
+  })
+
+  test('the detail page names the square emoji wrapper, not the stage', async ({
+    page,
+  }) => {
+    await page.goto('/emojis/')
+    const slug = await page
+      .locator('[data-slug]')
+      .first()
+      .getAttribute('data-slug')
+    await page.goto(`/emojis/${slug ?? ''}/`)
+    const named = page.locator(
+      `[style*="view-transition-name:emoji-${slug ?? ''}"]`,
+    )
+    await expect(named).toHaveCount(1)
+    const box = await named.boundingBox()
+    expect(box?.width).toBeCloseTo(box?.height ?? -1, 0)
+  })
+})

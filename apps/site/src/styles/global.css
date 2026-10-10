@@ -47,6 +47,11 @@
   @view-transition {
     navigation: auto;
   }
+
+  ::view-transition-group(*.emoji) {
+    animation-duration: 300ms;
+    animation-timing-function: var(--ease-in-out-strong);
+  }
 }
 
 @layer base {
