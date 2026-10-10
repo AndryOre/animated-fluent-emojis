@@ -292,13 +292,39 @@
   }
 }
 
+.sl-markdown-content .afe-install-copy {
+  display: inline-grid;
+  place-items: center;
+}
+
+.sl-markdown-content .afe-install-copy > svg {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--duration-press) var(--ease-out-strong),
+    scale var(--duration-press) var(--ease-out-strong),
+    filter var(--duration-press) var(--ease-out-strong);
+}
+
 .sl-markdown-content .afe-install-check-icon,
 .sl-markdown-content .afe-install-copy[data-copied] .afe-install-copy-icon {
-  display: none;
+  opacity: 0;
+  scale: 0.8;
+  filter: blur(4px);
 }
 
 .sl-markdown-content .afe-install-copy[data-copied] .afe-install-check-icon {
-  display: block;
+  opacity: 1;
+  scale: 1;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sl-markdown-content .afe-install-copy > svg {
+    transition-property: opacity;
+    transition-duration: 100ms;
+    scale: 1 !important;
+    filter: none !important;
+  }
 }
 
 .sl-markdown-content .afe-install-status {

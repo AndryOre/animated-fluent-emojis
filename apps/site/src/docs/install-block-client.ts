@@ -23,9 +23,13 @@ function copyActiveCommand(block: HTMLElement): void {
   )
   const command = panel?.dataset.command
   if (command) {
-    void copyWithFeedback(command, (copied) => {
-      setCopied(block, copied)
-    })
+    void copyWithFeedback(
+      command,
+      (copied) => {
+        setCopied(block, copied)
+      },
+      block,
+    )
   }
 }
 

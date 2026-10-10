@@ -15,6 +15,7 @@ import {
   demoTone,
   INITIAL_DEMO_STATE,
   isInitialDemoState,
+  isTapPlayTrigger,
   type DemoState,
 } from './demo'
 
@@ -161,5 +162,21 @@ describe('demo snippets', () => {
     expect(demoSlotValues(plain, state({ tone: 'medium' }))).not.toHaveProperty(
       'tone',
     )
+  })
+})
+
+describe('tap playback', () => {
+  it('starts a hover play from a touch or pen press', () => {
+    expect(isTapPlayTrigger('hover', 'touch')).toBe(true)
+    expect(isTapPlayTrigger('hover', 'pen')).toBe(true)
+  })
+
+  it('ignores a mouse press, which already plays through hover', () => {
+    expect(isTapPlayTrigger('hover', 'mouse')).toBe(false)
+  })
+
+  it('ignores presses when the play is not hover', () => {
+    expect(isTapPlayTrigger('load', 'touch')).toBe(false)
+    expect(isTapPlayTrigger('loop', 'touch')).toBe(false)
   })
 })

@@ -35,7 +35,7 @@ interface GallerySidebarProps {
 }
 
 const ROW_CLASS =
-  'flex h-8 w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 text-left text-sm hover:bg-muted aria-pressed:bg-muted aria-pressed:font-medium'
+  'flex h-8 w-full cursor-pointer select-none pointer-coarse:h-11 active:bg-muted items-center justify-between gap-2 rounded-lg px-2.5 text-left text-sm hover:bg-muted aria-pressed:bg-muted aria-pressed:font-medium'
 
 /**
  * The gallery filters: a category list with counts and a card with the tone

@@ -79,6 +79,7 @@ export const ja: UiStrings = {
       },
       plays: {
         hover: 'ホバー時',
+        hoverTap: 'ホバー / タップ',
         load: '読み込み時',
         loop: 'ループ',
       },

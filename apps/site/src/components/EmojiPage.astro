@@ -103,9 +103,17 @@ const nextHref = navigationLinks.find((link) => link.rel === 'next')?.href
             aria-label={emojiPage.breadcrumbLabel}
             class="font-mono text-xs text-muted-foreground"
           >
-            <a href={localePath(locale, '/')}>{emojiPage.breadcrumbHome}</a>
+            <a
+              href={localePath(locale, '/')}
+              class="pointer-coarse:inline-block pointer-coarse:py-2"
+            >
+              {emojiPage.breadcrumbHome}
+            </a>
             {' / '}
-            <a href={localePath(locale, '/emojis/')}>
+            <a
+              href={localePath(locale, '/emojis/')}
+              class="pointer-coarse:inline-block pointer-coarse:py-2"
+            >
               {emojiPage.breadcrumbEmojis}
             </a>
             {' / '}
@@ -130,14 +138,17 @@ const nextHref = navigationLinks.find((link) => link.rel === 'next')?.href
             </nav>
           )}
         </div>
-        <h1 class="text-[40px] leading-tight font-extrabold">
+        <h1 class="text-[clamp(28px,8vw,40px)] leading-tight font-extrabold text-balance break-words">
           {localized.name}
         </h1>
       </Fragment>
     </EmojiPageDetail>
     {related.length > 0 && (
       <section class="mt-12" aria-labelledby="related-heading">
-        <h2 id="related-heading" class="mb-4 text-xl font-extrabold">
+        <h2
+          id="related-heading"
+          class="mb-4 text-xl font-extrabold text-balance"
+        >
           {emojiPage.relatedTitle}
         </h2>
         <ul class="grid grid-cols-3 gap-3 min-[860px]:grid-cols-6">

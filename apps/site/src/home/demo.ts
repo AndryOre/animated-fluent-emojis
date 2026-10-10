@@ -93,6 +93,20 @@ export function demoTone(
 }
 
 /**
+ * Whether a press on the stage should start a hover play by hand. Mouse
+ * presses already play through hover, and touch has none.
+ * @param play - The selected play.
+ * @param pointerType - The pointer event's `pointerType`.
+ * @returns True for a touch or pen press while the play is hover.
+ */
+export function isTapPlayTrigger(
+  play: DemoPlayId,
+  pointerType: string,
+): boolean {
+  return play === 'hover' && pointerType !== 'mouse'
+}
+
+/**
  * Maps the demo controls to the library's Emoji props.
  * @param emoji - The shown emoji.
  * @param state - The selected size, skin tone and playback trigger.

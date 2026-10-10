@@ -1,6 +1,13 @@
 import { Emoji } from 'animated-fluent-emojis/react'
 import { RotateCcwIcon } from 'lucide-react'
-import { useMemo, useState, type ReactNode } from 'react'
+import {
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ComponentProps,
+  type PointerEvent,
+  type ReactNode,
+} from 'react'
 
 import 'animated-fluent-emojis/style.css'
 
@@ -22,6 +29,7 @@ import {
   demoTone,
   INITIAL_DEMO_STATE,
   isInitialDemoState,
+  isTapPlayTrigger,
   type DemoEmojiName,
   type DemoState,
   type DemoTabs,
@@ -35,7 +43,7 @@ interface DemoLabels {
   reset: string
   emojis: Record<DemoEmojiName, string>
   tones: Record<'default' | 'light' | 'medium' | 'dark', string>
-  plays: Record<'hover' | 'load' | 'loop', string>
+  plays: Record<'hover' | 'hoverTap' | 'load' | 'loop', string>
   code: CodeBlockLabels
 }
 
@@ -51,6 +59,7 @@ interface SegmentedProps<Value extends string | number> {
   options: readonly {
     value: Value
     text: string
+    coarseText?: string
     name?: string
     leading?: ReactNode
   }[]
@@ -58,6 +67,20 @@ interface SegmentedProps<Value extends string | number> {
   onSelect: (value: Value) => void
   disabled?: boolean
   className?: string
+}
+
+function OptionText({
+  option,
+}: {
+  option: { text: string; coarseText?: string }
+}) {
+  if (option.coarseText === undefined) return option.text
+  return (
+    <>
+      <span className="pointer-coarse:hidden">{option.text}</span>
+      <span className="hidden pointer-coarse:inline">{option.coarseText}</span>
+    </>
+  )
 }
 
 function Segmented<Value extends string | number>({
@@ -97,7 +120,7 @@ function Segmented<Value extends string | number>({
             className="flex-1 cursor-pointer aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
           >
             {option.leading === undefined ? (
-              option.text
+              <OptionText option={option} />
             ) : (
               <span className="inline-flex items-center gap-1.5">
                 {option.leading}
@@ -108,6 +131,36 @@ function Segmented<Value extends string | number>({
         ))}
       </ToggleGroup>
     </div>
+  )
+}
+
+/**
+ * The no-op unsubscribe of {@link subscribeNever}.
+ */
+function unsubscribe(): void {
+  return
+}
+
+function subscribeNever(): typeof unsubscribe {
+  return unsubscribe
+}
+
+interface StageEmojiProps {
+  emojiProps: ComponentProps<typeof Emoji>
+  animateIn: boolean
+}
+
+function StageEmoji({ emojiProps, animateIn }: StageEmojiProps) {
+  const [settled, setSettled] = useState(!animateIn)
+  const settle = () => {
+    setSettled(true)
+  }
+  return (
+    <span
+      className={`inline-flex transition-[opacity,transform] duration-150 ease-(--ease-out-strong) ${settled ? '' : 'scale-[0.96] opacity-0 motion-reduce:scale-100'}`}
+    >
+      <Emoji {...emojiProps} onLoad={settle} onError={settle} />
+    </span>
   )
 }
 
@@ -132,6 +185,12 @@ export default function DemoPlayground({
   initialState = INITIAL_DEMO_STATE,
 }: DemoPlaygroundProps) {
   const [state, setState] = useState<DemoState>(initialState)
+  const [tap, setTap] = useState({ key: '', run: 0 })
+  const ready = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  )
   const emoji = emojis.find((candidate) => candidate.id === state.emojiId)
   const initialEmoji = emojis.find(
     (candidate) => candidate.id === INITIAL_DEMO_STATE.emojiId,
@@ -149,6 +208,17 @@ export default function DemoPlayground({
     ...tab,
     code: demoSnippetCode(current, tab.id as SnippetKind, state),
   }))
+  const playKey = `${state.emojiId}-${state.play}-${state.tone}-${String(state.size)}`
+  const tapRun = tap.key === playKey ? tap.run : 0
+  const startTapPlay = (event: PointerEvent<HTMLDivElement>) => {
+    if (
+      !isTapPlayTrigger(state.play, event.pointerType) ||
+      (event.target instanceof Element && event.target.closest('button'))
+    ) {
+      return
+    }
+    setTap((previous) => ({ key: playKey, run: previous.run + 1 }))
+  }
   const name =
     labels.emojis[
       DEMO_EMOJIS.find((candidate) => candidate.id === current.id)?.name ??
@@ -160,12 +230,17 @@ export default function DemoPlayground({
       <div
         className="relative flex h-[180px] items-center justify-center border-b border-border bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-[length:16px_16px]"
         data-testid="demo-stage"
+        onPointerDown={startTapPlay}
       >
-        <Emoji
-          key={`${state.emojiId}-${state.play}-${state.tone}-${String(state.size)}`}
-          id={current.id}
-          alt={name}
-          {...demoEmojiProps(current, state)}
+        <StageEmoji
+          key={`${playKey}-${String(tapRun)}`}
+          animateIn={ready && tapRun === 0}
+          emojiProps={{
+            id: current.id,
+            alt: name,
+            ...demoEmojiProps(current, state),
+            ...(tapRun > 0 && state.play === 'hover' && { playing: true }),
+          }}
         />
         <Button
           variant="ghost"
@@ -216,6 +291,7 @@ export default function DemoPlayground({
           options={DEMO_PLAYS.map((play) => ({
             value: play.id,
             text: labels.plays[play.id],
+            coarseText: play.id === 'hover' ? labels.plays.hoverTap : undefined,
           }))}
           selected={state.play}
           onSelect={(play) => {

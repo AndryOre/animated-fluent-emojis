@@ -78,6 +78,7 @@ export const de: UiStrings = {
       },
       plays: {
         hover: 'Beim Darüberfahren',
+        hoverTap: 'Hover / Tippen',
         load: 'Beim Laden',
         loop: 'Endlos',
       },
