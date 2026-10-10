@@ -131,6 +131,8 @@ const linkClass =
 <script>
   import { applyTheme, readStoredTheme } from '../scripts/theme'
 
+  applyTheme(readStoredTheme(), false)
+
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (readStoredTheme() === 'system') applyTheme('system', false)
   })
