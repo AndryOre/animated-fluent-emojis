@@ -121,8 +121,8 @@ function Segmented<Value extends string | number>({
  * @param props.tabs - Highlighted snippets for every play, with and without a
  * tone attribute.
  * @param props.labels - Localized control, emoji and code block labels.
- * @param props.initialState - The starting selection, and the state Reset
- * returns to by default; the untouched demo state when omitted.
+ * @param props.initialState - The starting selection; the untouched demo
+ * state when omitted. Reset always returns to the untouched demo state.
  * @returns The customizer card.
  */
 export default function DemoPlayground({
