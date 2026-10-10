@@ -15,7 +15,22 @@ function stubBrowser(prefersDark: boolean, storage: Map<string, string>) {
     dataset: {} as Record<string, string>,
   }
   const frames: FrameRequestCallback[] = []
-  vi.stubGlobal('document', { documentElement: root })
+  const metas = ['light', 'dark'].map((scheme) => {
+    const attributes = new Map([
+      ['media', `(prefers-color-scheme: ${scheme})`],
+      ['content', scheme === 'dark' ? '#0d1715' : '#f7faf9'],
+    ])
+    return {
+      getAttribute: (name: string) => attributes.get(name) ?? null,
+      setAttribute: (name: string, value: string) => {
+        attributes.set(name, value)
+      },
+    }
+  })
+  vi.stubGlobal('document', {
+    documentElement: root,
+    querySelectorAll: () => metas,
+  })
   vi.stubGlobal('matchMedia', () => ({ matches: prefersDark }))
   vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
     frames.push(callback)
@@ -29,7 +44,7 @@ function stubBrowser(prefersDark: boolean, storage: Map<string, string>) {
       storage.delete(key)
     },
   })
-  return { classes, root, frames }
+  return { classes, root, frames, metas }
 }
 
 describe('theme', () => {
@@ -62,6 +77,17 @@ describe('theme', () => {
     applyTheme('system')
     expect(classes.has('dark')).toBe(true)
     expect(root.dataset.theme).toBe('system')
+  })
+
+  it('keeps theme-color in step with a manual toggle', () => {
+    const { metas } = stubBrowser(false, storage)
+    const colors = () => metas.map((meta) => meta.getAttribute('content'))
+    applyTheme('dark')
+    expect(colors()).toEqual(['#0d1715', '#0d1715'])
+    applyTheme('light')
+    expect(colors()).toEqual(['#f7faf9', '#f7faf9'])
+    applyTheme('system')
+    expect(colors()).toEqual(['#f7faf9', '#0d1715'])
   })
 
   it('holds theme-switching for two frames', () => {

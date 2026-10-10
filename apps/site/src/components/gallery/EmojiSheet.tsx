@@ -328,7 +328,7 @@ export function EmojiSheet(props: EmojiSheetProps) {
         aria-labelledby={EMOJI_SHEET_HEADING_ID}
         initialFocus={false}
         finalFocus={finalFocus}
-        className="p-0"
+        className="p-0 pb-[env(safe-area-inset-bottom,0px)]"
       >
         <div className="site-container py-4">
           <EmojiSheetBody
