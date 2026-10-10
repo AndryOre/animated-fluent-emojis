@@ -80,6 +80,7 @@ export const ko: UiStrings = {
       plays: {
         hover: '마우스를 올릴 때',
         load: '불러올 때',
+        loop: '반복',
       },
     },
     pillars: {

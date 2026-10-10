@@ -35,6 +35,20 @@ describe('snippet tabs', () => {
   })
 })
 
+function text(html: string): string {
+  let previous: string
+  let result = html
+  do {
+    previous = result
+    result = result.replaceAll(/<[^>]*>/g, '')
+  } while (result !== previous)
+  return result
+    .replaceAll(/&#x([\dA-F]+);/gi, (_, code: string) =>
+      String.fromCodePoint(Number.parseInt(code, 16)),
+    )
+    .replaceAll('&amp;', '&')
+}
+
 describe('highlighted blocks', () => {
   it('fills the placeholders of every framework tab at build time', async () => {
     const emoji = emojis[0]
@@ -52,6 +66,20 @@ describe('highlighted blocks', () => {
       expect(tab.html).not.toContain('EMOJIID')
       expect(tab.html).not.toContain('99999')
     }
+  })
+
+  it('expresses the play mode in code and filled html', async () => {
+    const emoji = emojis[0]
+    if (!emoji) throw new Error('fixture is empty')
+    const hover = await buildCodeBlockTabs(emoji, undefined, 64, 'hover')
+    const loop = await buildCodeBlockTabs(emoji, undefined, 64, 'loop')
+    expect(hover[0]?.code).toContain('playOnHover autoPlay={false}')
+    expect(text(hover[0]?.html ?? '')).toContain('playOnHover autoPlay={false}')
+    expect(hover[1]?.code).toContain('play-on-hover :auto-play="false"')
+    expect(loop[4]?.code).toContain('animation-iterations="infinite"')
+    expect(text(loop[4]?.html ?? '')).toContain(
+      'animation-iterations="infinite"',
+    )
   })
 
   it('highlights the install command of every package manager', async () => {

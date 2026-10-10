@@ -80,6 +80,7 @@ export const pt_BR: UiStrings = {
       plays: {
         hover: 'Ao passar o mouse',
         load: 'Ao carregar',
+        loop: 'Em loop',
       },
     },
     pillars: {

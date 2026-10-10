@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { PLAY_MODES } from '../gallery/snippets'
 import {
   SLOT_SENTINELS,
   snippetTemplateText,
@@ -30,5 +31,28 @@ describe('snippetTemplateText', () => {
       )
       expect(hasGlyph).toBe(kind === 'astro' || kind === 'element')
     }
+  })
+})
+
+describe('snippetTemplateText play modes', () => {
+  it.each(TEMPLATE_KINDS)('matches generateSnippet for %s', (kind) => {
+    for (const play of PLAY_MODES) {
+      expect(snippetTemplateText(kind, false, play)).not.toContain(
+        SLOT_SENTINELS.tone,
+      )
+    }
+    expect(snippetTemplateText(kind, false)).toBe(
+      snippetTemplateText(kind, false, 'load'),
+    )
+  })
+
+  it('adds the play attributes only outside load', () => {
+    expect(snippetTemplateText('react', false, 'hover')).toContain(
+      'playOnHover autoPlay={false}',
+    )
+    expect(snippetTemplateText('vue', false, 'loop')).toContain(
+      'animation-iterations="infinite"',
+    )
+    expect(snippetTemplateText('react', false, 'load')).not.toContain('play')
   })
 })

@@ -80,6 +80,7 @@ export const ru: UiStrings = {
       plays: {
         hover: 'При наведении',
         load: 'При загрузке',
+        loop: 'По кругу',
       },
     },
     pillars: {

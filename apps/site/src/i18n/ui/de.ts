@@ -79,6 +79,7 @@ export const de: UiStrings = {
       plays: {
         hover: 'Beim Darüberfahren',
         load: 'Beim Laden',
+        loop: 'Endlos',
       },
     },
     pillars: {
