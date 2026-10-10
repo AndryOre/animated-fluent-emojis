@@ -112,9 +112,11 @@
   font-weight: 500;
 }
 
-.sl-markdown-content a:not(.sl-anchor-link):hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+@media (hover: hover) and (pointer: fine) {
+  .sl-markdown-content a:not(.sl-anchor-link):hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 
 .sl-markdown-content
@@ -223,9 +225,17 @@
     color 0.15s;
 }
 
-.sl-markdown-content .afe-install-tabs button:hover {
-  background: var(--muted);
-  color: var(--foreground);
+@media (hover: hover) and (pointer: fine) {
+  .sl-markdown-content .afe-install-tabs button:hover {
+    background: var(--muted);
+    color: var(--foreground);
+  }
+}
+
+@media (pointer: coarse) {
+  .sl-markdown-content .afe-install-tabs button {
+    height: 2.5rem;
+  }
 }
 
 .sl-markdown-content .afe-install-tabs button[aria-pressed='true'] {
@@ -255,9 +265,11 @@
   cursor: pointer;
 }
 
-.sl-markdown-content .afe-install-copy:hover {
-  background: var(--muted);
-  color: var(--foreground);
+@media (hover: hover) and (pointer: fine) {
+  .sl-markdown-content .afe-install-copy:hover {
+    background: var(--muted);
+    color: var(--foreground);
+  }
 }
 
 .sl-markdown-content .afe-install-check-icon,

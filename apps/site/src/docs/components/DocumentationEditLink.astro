@@ -26,8 +26,10 @@ const externalAttributes = externalLinkAttributes()
       text-decoration: none;
       color: var(--sl-color-gray-3);
     }
-    a:hover {
-      color: var(--sl-color-white);
+    @media (hover: hover) and (pointer: fine) {
+      a:hover {
+        color: var(--sl-color-white);
+      }
     }
   }
 </style>
