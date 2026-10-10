@@ -23,7 +23,9 @@ test.describe('long emoji names at 343px', () => {
 })
 
 test.describe('touch emulation', () => {
-  test.use({ ...devices['Pixel 7'] })
+  const { viewport, userAgent, deviceScaleFactor, isMobile, hasTouch } =
+    devices['Pixel 7']
+  test.use({ viewport, userAgent, deviceScaleFactor, isMobile, hasTouch })
 
   test('the hover play reads Hover / tap and starts when the stage is tapped', async ({
     page,
