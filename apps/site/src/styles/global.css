@@ -184,6 +184,30 @@
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    transition-property: opacity, transform;
+    transition-duration: 500ms;
+    transition-timing-function: var(--ease-out-strong);
+    transition-delay: calc(var(--enter-index, 0) * 60ms);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  .hero-demo-enter {
+    transition-property: transform;
+    transition-duration: 500ms;
+    transition-timing-function: var(--ease-out-strong);
+
+    @starting-style {
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+}
+
 @layer base {
   html {
     scroll-padding-top: var(--site-header-height);

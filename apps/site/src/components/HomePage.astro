@@ -122,16 +122,22 @@ const primaryButton = buttonVariants({
         class={`${wrap} relative grid grid-cols-[minmax(0,1fr)] items-center gap-12 pt-[calc(65px+56px)] pb-10 min-[860px]:grid-cols-[1fr_1.05fr]`}
       >
         <div class="flex min-w-0 flex-col items-start gap-5">
-          <p class="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase">
+          <p
+            class="hero-enter font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase"
+            style="--enter-index: 0"
+          >
             v{libraryPackage.version} · {home.hero.eyebrow}
           </p>
           <h1 class="text-[clamp(36px,6vw,60px)] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance">
             {home.tagline}
           </h1>
-          <p class="text-xl text-pretty text-muted-foreground">
+          <p
+            class="hero-enter text-xl text-pretty text-muted-foreground"
+            style="--enter-index: 1"
+          >
             {home.hero.sub}
           </p>
-          <div class="flex flex-wrap gap-3">
+          <div class="hero-enter flex flex-wrap gap-3" style="--enter-index: 2">
             <a href={galleryHref} class={primaryButton}>
               {home.hero.browse}
             </a>
@@ -139,7 +145,10 @@ const primaryButton = buttonVariants({
               {home.hero.docs}
             </a>
           </div>
-          <div class="flex w-full flex-col gap-3">
+          <div
+            class="hero-enter flex w-full flex-col gap-3"
+            style="--enter-index: 3"
+          >
             <div class="w-full max-w-lg">
               <InstallBlock
                 client:load
@@ -154,12 +163,14 @@ const primaryButton = buttonVariants({
             <p class="text-sm text-muted-foreground">{home.hero.attribution}</p>
           </div>
         </div>
-        <DemoPlayground
-          client:idle
-          emojis={demoEmojis}
-          tabs={demoTabs}
-          labels={demoLabels}
-        />
+        <div class="hero-demo-enter min-w-0">
+          <DemoPlayground
+            client:idle
+            emojis={demoEmojis}
+            tabs={demoTabs}
+            labels={demoLabels}
+          />
+        </div>
       </div>
     </section>
 
