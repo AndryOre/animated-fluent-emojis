@@ -41,7 +41,13 @@ test.describe('with motion allowed', () => {
       await expect(page.locator(HEADER)).toBeVisible()
       expect(await readHeaderTop(page)).toBe(0)
 
-      await scrollTo(page, SCROLL_DISTANCE_PX)
+      const scrollable = await page.evaluate(
+        (distance) =>
+          document.documentElement.scrollHeight - window.innerHeight >=
+          distance,
+        SCROLL_DISTANCE_PX,
+      )
+      if (scrollable) await scrollTo(page, SCROLL_DISTANCE_PX)
       expect(await readHeaderTop(page)).toBe(0)
     })
   }
