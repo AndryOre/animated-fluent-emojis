@@ -3,6 +3,9 @@ import { expect, test, type Locator } from '@playwright/test'
 
 const PILLAR_CARD = '[aria-labelledby="pillars-title"] li.scroll-reveal'
 const TEASER_ROW = '.scroll-drift'
+const HERO_HEADING = 'main > section:first-child h1'
+const HERO_ENTER = 'main > section:first-child .hero-enter'
+const HERO_DEMO_ENTER = 'main > section:first-child .hero-demo-enter'
 
 interface ScrollAnimationState {
   name: string
@@ -185,6 +188,51 @@ test.describe('with motion allowed', () => {
     await expect.poll(readSpotlight).toBe('60px')
   })
 
+  test('the hero secondary content settles in without touching the h1', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const heading = page.locator(HERO_HEADING)
+    const entering = page.locator(HERO_ENTER)
+    await expect(entering).toHaveCount(4)
+    const headingTransition = await heading.evaluate((element) => {
+      const style = getComputedStyle(element)
+      return {
+        duration: style.transitionDuration,
+        animation: style.animationName,
+      }
+    })
+    expect(headingTransition).toEqual({ duration: '0s', animation: 'none' })
+
+    for (const index of [0, 1, 2, 3]) {
+      const element = entering.nth(index)
+      await expect.poll(() => readOpacity(element)).toBe(1)
+      await expect.poll(() => readTranslateY(element)).toBe(0)
+    }
+    const stagger = await entering.evaluateAll((elements) =>
+      elements.map((element) => getComputedStyle(element).transitionDelay),
+    )
+    expect(stagger).toEqual(['0s', '0.06s', '0.12s', '0.18s'])
+  })
+
+  test('the hero demo only moves and never drops below full opacity', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const demo = page.locator(HERO_DEMO_ENTER)
+    await expect(demo).toBeAttached()
+    const transition = await demo.evaluate(
+      (element) => getComputedStyle(element).transitionProperty,
+    )
+    expect(transition).toBe('transform')
+    await expect.poll(() => readOpacity(demo)).toBe(1)
+    await expect
+      .poll(() =>
+        demo.evaluate((element) => getComputedStyle(element).transform),
+      )
+      .toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/)
+  })
+
   test('the hero has no scroll animation', async ({ page }) => {
     await page.goto('/')
     const heroAnimationNames = await page
@@ -212,6 +260,28 @@ test.describe('with reduced motion', () => {
     const row = await readAnimationState(page.locator(TEASER_ROW))
     expect(row.name).toBe('none')
     expect(row.opacity).toBe('1')
+  })
+
+  test('the hero is static and fully visible', async ({ page }) => {
+    await page.goto('/')
+    const states = await page
+      .locator(`${HERO_ENTER}, ${HERO_DEMO_ENTER}`)
+      .evaluateAll((elements) =>
+        elements.map((element) => {
+          const style = getComputedStyle(element)
+          return {
+            opacity: style.opacity,
+            transition: style.transitionDuration,
+            transform: style.transform,
+          }
+        }),
+      )
+    expect(states).toHaveLength(5)
+    for (const state of states) {
+      expect(state.opacity).toBe('1')
+      expect(state.transition).toBe('0s')
+      expect(state.transform).toBe('none')
+    }
   })
 
   test('the teaser row transform is static while scrolling', async ({
