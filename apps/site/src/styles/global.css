@@ -104,6 +104,51 @@
   }
 }
 
+/* Landing pillar cards: CSS-derived reveal stagger */
+@supports (z-index: sibling-index()) {
+  .pillar-stagger > .scroll-reveal {
+    --reveal-index: calc(sibling-index() - 1);
+  }
+}
+
+/* Landing pillar cards: pointer spotlight */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.spotlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 320px;
+  height: 320px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle closest-side,
+    color-mix(in oklab, var(--primary) 14%, transparent),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(
+    calc(var(--spotlight-x, 50%) - 160px),
+    calc(var(--spotlight-y, 50%) - 160px)
+  );
+  transition-property: opacity;
+  transition-duration: 200ms;
+  transition-timing-function: var(--ease-out-strong);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+}
+
 @layer base {
   html {
     color-scheme: light;
