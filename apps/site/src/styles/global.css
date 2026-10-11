@@ -141,14 +141,12 @@
   }
 }
 
-/* Landing pillar cards: CSS-derived reveal stagger */
 @supports (z-index: sibling-index()) {
   .pillar-stagger > .scroll-reveal {
     --reveal-index: calc(sibling-index() - 1);
   }
 }
 
-/* Landing pillar cards: pointer spotlight */
 .spotlight {
   position: relative;
   isolation: isolate;
