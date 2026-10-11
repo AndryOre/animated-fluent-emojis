@@ -117,6 +117,16 @@ adding or changing one:
   the element's computed `transform` and `opacity`. The animation name alone can
   be set while the timeline is wrong and nothing moves.
 
+The sticky site header fades its surface in on a scroll timeline. The
+`.site-header::before` layer in `global.css` carries the background and blur and
+animates `opacity` from 0 to 1 over the first 64px of root scroll, with
+`animation-timeline: scroll(root block)`, `animation-range: 0px 64px` and a
+linear curve. It is gated only by `@supports (animation-timeline: scroll())`,
+not by reduced motion, because it fades without moving anything. Without support
+the layer is always opaque. `html` sets `scroll-padding-top` from
+`--site-header-height` so in-page anchors clear the header; update the token if
+the header height changes.
+
 ### Theme transition
 
 Choosing a theme from the header menu cross-fades the page for 250ms through a
