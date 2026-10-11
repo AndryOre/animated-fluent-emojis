@@ -27,7 +27,7 @@ import {
 import { cn } from '@/lib/utilities'
 
 import {
-  applyTheme,
+  applyThemeAnimated,
   isTheme,
   readStoredTheme,
   storeTheme,
@@ -120,7 +120,7 @@ function ThemeMenu(props: { label: string; names: Record<Theme, string> }) {
           onValueChange={(value) => {
             if (!isTheme(value)) return
             storeTheme(value)
-            applyTheme(value)
+            applyThemeAnimated(value)
           }}
         >
           {THEME_ORDER.map((name) => {

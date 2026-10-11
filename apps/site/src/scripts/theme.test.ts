@@ -1,9 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { applyTheme, isTheme, readStoredTheme, storeTheme } from './theme'
+import {
+  applyTheme,
+  applyThemeAnimated,
+  isTheme,
+  readStoredTheme,
+  storeTheme,
+} from './theme'
 import { THEME_STORAGE_KEY } from './theme-keys'
 
-function stubBrowser(prefersDark: boolean, storage: Map<string, string>) {
+function stubBrowser(
+  prefersDark: boolean,
+  storage: Map<string, string>,
+  options: { reducedMotion?: boolean; startViewTransition?: boolean } = {},
+) {
   const classes = new Set<string>()
   const root = {
     classList: {
@@ -27,11 +37,19 @@ function stubBrowser(prefersDark: boolean, storage: Map<string, string>) {
       },
     }
   })
+  const startViewTransition = vi.fn((update: () => void) => {
+    update()
+  })
   vi.stubGlobal('document', {
     documentElement: root,
     querySelectorAll: () => metas,
+    ...(options.startViewTransition && { startViewTransition }),
   })
-  vi.stubGlobal('matchMedia', () => ({ matches: prefersDark }))
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: query.includes('prefers-reduced-motion')
+      ? Boolean(options.reducedMotion)
+      : prefersDark,
+  }))
   vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
     frames.push(callback)
   })
@@ -44,7 +62,7 @@ function stubBrowser(prefersDark: boolean, storage: Map<string, string>) {
       storage.delete(key)
     },
   })
-  return { classes, root, frames, metas }
+  return { classes, root, frames, metas, startViewTransition }
 }
 
 describe('theme', () => {
@@ -98,5 +116,39 @@ describe('theme', () => {
     expect(classes.has('theme-switching')).toBe(true)
     frames.shift()?.(0)
     expect(classes.has('theme-switching')).toBe(false)
+  })
+
+  it('cross-fades through one view transition that applies the theme', () => {
+    const { classes, startViewTransition } = stubBrowser(false, storage, {
+      startViewTransition: true,
+    })
+    applyThemeAnimated('dark')
+    expect(startViewTransition).toHaveBeenCalledTimes(1)
+    expect(classes.has('dark')).toBe(true)
+  })
+
+  it('applies the theme directly when view transitions are missing', () => {
+    const { classes, root } = stubBrowser(false, storage)
+    applyThemeAnimated('dark')
+    expect(classes.has('dark')).toBe(true)
+    expect(root.dataset.theme).toBe('dark')
+  })
+
+  it('applies the theme directly under reduced motion', () => {
+    const { classes, startViewTransition } = stubBrowser(false, storage, {
+      reducedMotion: true,
+      startViewTransition: true,
+    })
+    applyThemeAnimated('dark')
+    expect(startViewTransition).not.toHaveBeenCalled()
+    expect(classes.has('dark')).toBe(true)
+  })
+
+  it('never starts a view transition from applyTheme', () => {
+    const { startViewTransition } = stubBrowser(false, storage, {
+      startViewTransition: true,
+    })
+    applyTheme('dark')
+    expect(startViewTransition).not.toHaveBeenCalled()
   })
 })
