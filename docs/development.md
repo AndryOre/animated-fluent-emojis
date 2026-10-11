@@ -157,11 +157,13 @@ transitions, in a block of `global.css` gated by
 
 - **Secondary content**: the eyebrow, subtitle, buttons row and install row
   carry `hero-enter` and `--enter-index`. Each fades from `opacity: 0` and rises
-  12px over 500ms with `--ease-out-strong`, staggered by 60ms per index.
+  20px over 900ms with `--ease-out-gentle`, staggered by 150ms per index. The
+  gentler curve keeps the rise readable; `--ease-out-strong` front-loads it so
+  much that a 500ms entrance looked instant.
 - **Never the headline**: the `<h1>` has no transition or animation, so the
   largest text paints immediately.
 - **Demo, transform only**: the `DemoPlayground` wrapper (`hero-demo-enter`)
-  moves from `translateY(16px) scale(0.98)` and never changes opacity, so the
+  moves from `translateY(24px) scale(0.97)` and never changes opacity, so the
   likely LCP candidate is not held back.
 - **Longhands only**, and visitors who prefer reduced motion get a static, fully
   visible hero.

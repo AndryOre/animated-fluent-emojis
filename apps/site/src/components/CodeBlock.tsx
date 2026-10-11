@@ -157,7 +157,7 @@ export default function CodeBlock({
             key={tab.id}
             value={tab.id}
             keepMounted
-            className="col-start-1 row-start-1 min-w-0 [&[hidden]]:invisible [&[hidden]]:block"
+            className="col-start-1 row-start-1 min-w-0 motion-safe:transition-[opacity,translate,visibility] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1"
           >
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex, @eslint-react/dom-no-dangerously-set-innerhtml -- the scrollable code must be keyboard reachable and the markup is trusted build-time output */}
             <div

@@ -212,7 +212,7 @@ test.describe('with motion allowed', () => {
     const stagger = await entering.evaluateAll((elements) =>
       elements.map((element) => getComputedStyle(element).transitionDelay),
     )
-    expect(stagger).toEqual(['0s', '0.06s', '0.12s', '0.18s'])
+    expect(stagger).toEqual(['0s', '0.15s', '0.3s', '0.45s'])
   })
 
   test('the hero demo only moves and never drops below full opacity', async ({

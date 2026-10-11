@@ -8,6 +8,7 @@
 
 :root {
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-gentle: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --duration-press: 150ms;
@@ -187,23 +188,23 @@
 @media (prefers-reduced-motion: no-preference) {
   .hero-enter {
     transition-property: opacity, transform;
-    transition-duration: 500ms;
-    transition-timing-function: var(--ease-out-strong);
-    transition-delay: calc(var(--enter-index, 0) * 60ms);
+    transition-duration: 900ms;
+    transition-timing-function: var(--ease-out-gentle);
+    transition-delay: calc(var(--enter-index, 0) * 150ms);
 
     @starting-style {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(20px);
     }
   }
 
   .hero-demo-enter {
     transition-property: transform;
-    transition-duration: 500ms;
-    transition-timing-function: var(--ease-out-strong);
+    transition-duration: 900ms;
+    transition-timing-function: var(--ease-out-gentle);
 
     @starting-style {
-      transform: translateY(16px) scale(0.98);
+      transform: translateY(24px) scale(0.97);
     }
   }
 }
