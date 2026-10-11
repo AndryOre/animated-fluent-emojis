@@ -117,6 +117,13 @@ adding or changing one:
   the element's computed `transform` and `opacity`. The animation name alone can
   be set while the timeline is wrong and nothing moves.
 
+### Theme transition
+
+Choosing a theme from the header menu cross-fades the page for 250ms through a
+same-document view transition (`applyThemeAnimated`); initial load and
+OS-preference changes apply instantly, as do visitors who prefer reduced motion
+or browsers without `document.startViewTransition`.
+
 ### Brand assets
 
 `bun run brand:export` regenerates the PNG marks, the social preview, the Open
