@@ -188,9 +188,9 @@
 @media (prefers-reduced-motion: no-preference) {
   .hero-enter {
     transition-property: opacity, transform;
-    transition-duration: 900ms;
+    transition-duration: 800ms;
     transition-timing-function: var(--ease-out-gentle);
-    transition-delay: calc(var(--enter-index, 0) * 150ms);
+    transition-delay: calc(var(--enter-index, 0) * 120ms);
 
     @starting-style {
       opacity: 0;
@@ -200,7 +200,7 @@
 
   .hero-demo-enter {
     transition-property: transform;
-    transition-duration: 900ms;
+    transition-duration: 800ms;
     transition-timing-function: var(--ease-out-gentle);
 
     @starting-style {

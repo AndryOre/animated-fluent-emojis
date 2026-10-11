@@ -14,6 +14,13 @@ for (const colorScheme of ['light', 'dark'] as const) {
         const response = await page.goto(path)
         expect(response?.status()).toBe(200)
         await expect(page.locator('h1').first()).toBeVisible()
+        await page
+          .locator('body')
+          .evaluate((body) =>
+            Promise.all(
+              body.getAnimations({ subtree: true }).map((a) => a.finished),
+            ),
+          )
         const results = await new AxeBuilder({ page })
           .withTags(AXE_TAGS)
           .analyze()

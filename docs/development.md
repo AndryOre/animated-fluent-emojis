@@ -157,7 +157,7 @@ transitions, in a block of `global.css` gated by
 
 - **Secondary content**: the eyebrow, subtitle, buttons row and install row
   carry `hero-enter` and `--enter-index`. Each fades from `opacity: 0` and rises
-  20px over 900ms with `--ease-out-gentle`, staggered by 150ms per index. The
+  20px over 800ms with `--ease-out-gentle`, staggered by 120ms per index. The
   gentler curve keeps the rise readable; `--ease-out-strong` front-loads it so
   much that a 500ms entrance looked instant.
 - **Never the headline**: the `<h1>` has no transition or animation, so the
