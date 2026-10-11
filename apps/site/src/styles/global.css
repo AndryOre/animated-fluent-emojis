@@ -15,6 +15,7 @@
   --duration-sheet: 250ms;
   --site-max-width: 1600px;
   --site-gutter: 1rem;
+  --site-header-height: 65px;
 }
 
 @media (min-width: 640px) {
@@ -104,8 +105,37 @@
   }
 }
 
+@keyframes header-surface-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.site-header::before {
+  @apply bg-background/80 backdrop-blur-md;
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .site-header::before {
+    animation-name: header-surface-in;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: scroll(root block);
+    animation-range: 0px 64px;
+  }
+}
+
 @layer base {
   html {
+    scroll-padding-top: var(--site-header-height);
     color-scheme: light;
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
