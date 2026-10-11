@@ -83,6 +83,23 @@ export function applyTheme(theme: Theme, suppressTransitions = true): void {
 }
 
 /**
+ * Applies a user-chosen theme, cross-fading the page through a same-document
+ * view transition. Falls back to an instant {@link applyTheme} when the user
+ * prefers reduced motion or the browser lacks `startViewTransition`.
+ * @param theme - The theme whose class and attribute are written.
+ */
+export function applyThemeAnimated(theme: Theme): void {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced || typeof document.startViewTransition !== 'function') {
+    applyTheme(theme)
+    return
+  }
+  document.startViewTransition(() => {
+    applyTheme(theme)
+  })
+}
+
+/**
  * Points every `theme-color` meta at the chosen scheme. `system` restores each
  * tag's own `prefers-color-scheme` color.
  * @param theme - The theme being applied.

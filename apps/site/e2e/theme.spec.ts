@@ -65,6 +65,29 @@ test('the theme menu selects light and dark and remembers the choice', async ({
   ).toBeNull()
 })
 
+for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+  test(`the theme menu applies a choice with reduced motion ${reducedMotion}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: 'light', reducedMotion })
+    await page.goto('/')
+    const html = page.locator('html')
+
+    await chooseTheme(page, 'Dark')
+    await expect(html).toHaveAttribute('data-theme', 'dark')
+    await expect(html).toHaveClass(/dark/)
+
+    await chooseTheme(page, 'Light')
+    await expect(html).toHaveAttribute('data-theme', 'light')
+    await expect(html).not.toHaveClass(/dark/)
+
+    await chooseTheme(page, 'Dark')
+    await page.reload()
+    await expect(html).toHaveAttribute('data-theme', 'dark')
+    await expect(html).toHaveClass(/dark/)
+  })
+}
+
 test('the system theme follows the browser color scheme', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')

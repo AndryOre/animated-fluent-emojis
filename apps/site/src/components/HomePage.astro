@@ -170,11 +170,13 @@ const primaryButton = buttonVariants({
           {home.pillars.title}
         </h2>
       </div>
-      <ul class="grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-3">
+      <ul
+        data-pillar-spotlight
+        class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-3"
+      >
         {pillars.map((pillar, position) => (
           <li
-            style={`--reveal-index: ${position}`}
-            class={`scroll-reveal flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 ${position === 0 ? 'min-[860px]:col-span-2 min-[860px]:row-span-2 min-[860px]:justify-between min-[860px]:p-8' : ''} ${position === 3 ? 'min-[860px]:col-span-3' : ''}`}
+            class={`scroll-reveal spotlight flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 ${position === 0 ? 'min-[860px]:col-span-2 min-[860px]:row-span-2 min-[860px]:justify-between min-[860px]:p-8' : ''} ${position === 3 ? 'min-[860px]:col-span-3' : ''}`}
           >
             <Emoji
               id={pillar.icon}
@@ -263,3 +265,12 @@ const primaryButton = buttonVariants({
     </section>
   </main>
 </Layout>
+
+<script>
+  import { attachPillarSpotlight } from '../scripts/pillar-spotlight'
+
+  const cards = document.querySelectorAll<HTMLElement>(
+    '[data-pillar-spotlight] > .spotlight',
+  )
+  attachPillarSpotlight(cards)
+</script>

@@ -36,6 +36,8 @@ export interface CodeBlockProps {
   activeId?: string
   onActiveChange?: (id: string) => void
   slotValues?: Partial<Record<SnippetSlot, string>>
+  onCopied?: () => void
+  copyEffect?: ReactNode
 }
 
 /**
@@ -53,6 +55,10 @@ export interface CodeBlockProps {
  * @param props.onActiveChange - Called with the id of a newly chosen tab.
  * @param props.slotValues - New text for the placeholder tokens, swapped in
  * place without touching the rest of the highlighting.
+ * @param props.onCopied - Called after each successful copy, never after a
+ * failed one.
+ * @param props.copyEffect - Decoration anchored to the copy button, such as a
+ * burst of particles; it must not affect layout.
  * @returns The code block card.
  */
 export default function CodeBlock({
@@ -63,6 +69,8 @@ export default function CodeBlock({
   activeId,
   onActiveChange,
   slotValues,
+  onCopied,
+  copyEffect,
 }: CodeBlockProps) {
   const [ownActive, setOwnActive] = useState(tabs[0]?.id ?? '')
   const [copied, setCopied] = useState(false)
@@ -120,23 +128,28 @@ export default function CodeBlock({
             </TabsList>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={copied ? labels.copied : labels.copy}
-          onClick={() => void copyWithFeedback(activeCode, setCopied)}
-        >
-          <span className="grid *:col-start-1 *:row-start-1">
-            <CopyIcon
-              data-copy-icon
-              className={cn(ICON_FADE, copied && ICON_HIDDEN)}
-            />
-            <CheckIcon
-              data-check-icon
-              className={cn(ICON_FADE, !copied && ICON_HIDDEN)}
-            />
-          </span>
-        </Button>
+        <span className="relative flex shrink-0">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={copied ? labels.copied : labels.copy}
+            onClick={() =>
+              void copyWithFeedback(activeCode, setCopied, setCopied, onCopied)
+            }
+          >
+            <span className="grid *:col-start-1 *:row-start-1">
+              <CopyIcon
+                data-copy-icon
+                className={cn(ICON_FADE, copied && ICON_HIDDEN)}
+              />
+              <CheckIcon
+                data-check-icon
+                className={cn(ICON_FADE, !copied && ICON_HIDDEN)}
+              />
+            </span>
+          </Button>
+          {copyEffect}
+        </span>
       </div>
       <div ref={bodyRef} className="grid">
         {tabs.map((tab) => (

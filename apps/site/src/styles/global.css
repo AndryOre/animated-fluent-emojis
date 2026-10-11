@@ -15,6 +15,7 @@
   --duration-sheet: 250ms;
   --site-max-width: 1600px;
   --site-gutter: 1rem;
+  --site-header-height: 65px;
 }
 
 @media (min-width: 640px) {
@@ -51,6 +52,14 @@
   ::view-transition-group(*.emoji) {
     animation-duration: 300ms;
     animation-timing-function: var(--ease-in-out-strong);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 250ms;
+    animation-timing-function: var(--ease-out-strong);
   }
 }
 
@@ -104,8 +113,80 @@
   }
 }
 
+@keyframes header-surface-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.site-header::before {
+  @apply bg-background/80 backdrop-blur-md;
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .site-header::before {
+    animation-name: header-surface-in;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: scroll(root block);
+    animation-range: 0px 64px;
+  }
+}
+
+@supports (z-index: sibling-index()) {
+  .pillar-stagger > .scroll-reveal {
+    --reveal-index: calc(sibling-index() - 1);
+  }
+}
+
+.spotlight {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.spotlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 320px;
+  height: 320px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle closest-side,
+    color-mix(in oklab, var(--primary) 14%, transparent),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(
+    calc(var(--spotlight-x, 50%) - 160px),
+    calc(var(--spotlight-y, 50%) - 160px)
+  );
+  transition-property: opacity;
+  transition-duration: 200ms;
+  transition-timing-function: var(--ease-out-strong);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+}
+
 @layer base {
   html {
+    scroll-padding-top: var(--site-header-height);
     color-scheme: light;
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
@@ -252,4 +333,32 @@
 .afe-code .ec-line-highlight .gutter {
   background: color-mix(in oklab, var(--primary) 10%, var(--card));
   color: var(--foreground);
+}
+
+@keyframes copy-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(0.5);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--burst-x), var(--burst-y))
+      rotate(var(--burst-rotate)) scale(1);
+  }
+}
+
+.copy-burst-particle {
+  animation-name: copy-burst;
+  animation-duration: 600ms;
+  animation-timing-function: var(--ease-out-strong);
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-burst-particle {
+    display: none;
+  }
 }
