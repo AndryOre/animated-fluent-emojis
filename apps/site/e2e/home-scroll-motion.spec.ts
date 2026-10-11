@@ -164,6 +164,27 @@ test.describe('with motion allowed', () => {
     await expect.poll(() => readTranslateX(row)).toBeLessThan(centred - 1)
   })
 
+  test('the pillar spotlight variables follow the mouse', async ({ page }) => {
+    await page.goto('/')
+    const card = page.locator(PILLAR_CARD).nth(1)
+    await card.evaluate((element) => {
+      element.scrollIntoView({ block: 'center' })
+    })
+    await expect.poll(() => readOpacity(card)).toBe(1)
+    const box = await card.boundingBox()
+    if (!box) throw new Error('Pillar card has no box')
+    const readSpotlight = () =>
+      card.evaluate((element) =>
+        element.style.getPropertyValue('--spotlight-x'),
+      )
+
+    await page.mouse.move(box.x + 20, box.y + 20)
+    await page.mouse.move(box.x + 30, box.y + 20)
+    await expect.poll(readSpotlight).toBe('30px')
+    await page.mouse.move(box.x + 60, box.y + 40)
+    await expect.poll(readSpotlight).toBe('60px')
+  })
+
   test('the hero has no scroll animation', async ({ page }) => {
     await page.goto('/')
     const heroAnimationNames = await page

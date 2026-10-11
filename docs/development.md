@@ -117,6 +117,38 @@ adding or changing one:
   the element's computed `transform` and `opacity`. The animation name alone can
   be set while the timeline is wrong and nothing moves.
 
+The sticky site header fades its surface in on a scroll timeline. The
+`.site-header::before` layer in `global.css` carries the background and blur and
+animates `opacity` from 0 to 1 over the first 64px of root scroll, with
+`animation-timeline: scroll(root block)`, `animation-range: 0px 64px` and a
+linear curve. It is gated only by `@supports (animation-timeline: scroll())`,
+not by reduced motion, because it fades without moving anything. Without support
+the layer is always opaque. `html` sets `scroll-padding-top` from
+`--site-header-height` so in-page anchors clear the header; update the token if
+the header height changes.
+
+### Theme transition
+
+Choosing a theme from the header menu cross-fades the page for 250ms through a
+same-document view transition (`applyThemeAnimated`); initial load and
+OS-preference changes apply instantly, as do visitors who prefer reduced motion
+or browsers without `document.startViewTransition`.
+
+#### Pillar spotlight and stagger
+
+The landing pillar cards carry two small additions, each in its own block in
+`global.css`:
+
+- **Spotlight**: `attachPillarSpotlight` in
+  [`apps/site/src/scripts/pillar-spotlight.ts`](../apps/site/src/scripts/pillar-spotlight.ts)
+  writes `--spotlight-x` and `--spotlight-y` once per animation frame, and the
+  `.spotlight::before` glow follows them with `transform` and `opacity` only. It
+  attaches only on `(hover: hover) and (pointer: fine)` with reduced motion off,
+  and the glow never takes pointer events.
+- **Stagger**: the `pillar-stagger` list derives `--reveal-index` from
+  `sibling-index()` under `@supports (z-index: sibling-index())`. Browsers
+  without it lose only the stagger, because the index defaults to 0.
+
 ### Brand assets
 
 `bun run brand:export` regenerates the PNG marks, the social preview, the Open

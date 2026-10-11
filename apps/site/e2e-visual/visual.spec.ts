@@ -21,6 +21,14 @@ const PAGES: readonly {
 const VIEWPORT_WIDTHS = [1280, 768, 375, 320] as const
 const COLOR_SCHEMES = ['light', 'dark'] as const
 
+/**
+ * Playwright finishes every animation before a screenshot, which would leave
+ * the scroll-linked header surface fully opaque at scroll 0. Hiding the layer
+ * keeps the baselines identical to the header at rest.
+ */
+const HEADER_SURFACE_HIDDEN =
+  '.site-header::before { display: none !important; }'
+
 async function settlePage(page: Page): Promise<void> {
   await page.evaluate(async () => {
     const { document: doc, window: win } = globalThis
@@ -60,6 +68,7 @@ for (const { name: localeName, prefix } of LOCALE_PREFIXES) {
             })
             await page.goto(`${prefix}${path}`, { waitUntil: 'networkidle' })
             await settlePage(page)
+            await page.addStyleTag({ content: HEADER_SURFACE_HIDDEN })
             await expect(page).toHaveScreenshot(
               `${localeName}-${pageName}-${colorScheme}-${String(width)}.png`,
               {
