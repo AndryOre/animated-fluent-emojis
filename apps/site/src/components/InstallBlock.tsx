@@ -1,5 +1,5 @@
 import { TerminalIcon } from 'lucide-react'
-import { useMemo, useSyncExternalStore } from 'react'
+import { useMemo, useState, useSyncExternalStore } from 'react'
 
 import {
   createPackageManagerStore,
@@ -12,6 +12,7 @@ import {
 } from '@/lib/package-manager'
 
 import CodeBlock, { type CodeBlockLabels } from './CodeBlock'
+import CopyBurst from './CopyBurst'
 
 export interface InstallBlockProps {
   htmlByManager: Record<PackageManager, string>
@@ -23,7 +24,8 @@ export interface InstallBlockProps {
  * The install command block: a terminal icon, one tab per package manager and
  * a copy button, without line numbers. The chosen manager is shared with every
  * other install block on the page and persists across visits through the
- * package manager store. The server and the first client render show the
+ * package manager store. A successful copy sets off a party-popper burst
+ * from the copy button. The server and the first client render show the
  * default manager, then the stored choice is applied after hydration.
  * @param props - Component props.
  * @param props.htmlByManager - The pre-highlighted command per package manager.
@@ -46,6 +48,8 @@ export default function InstallBlock({
     () => DEFAULT_PACKAGE_MANAGER,
   )
 
+  const [burst, setBurst] = useState(0)
+
   const tabs = PACKAGE_MANAGERS.map((id) => ({
     id,
     label: id,
@@ -62,6 +66,10 @@ export default function InstallBlock({
         <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
       }
       activeId={manager}
+      onCopied={() => {
+        setBurst((count) => count + 1)
+      }}
+      copyEffect={<CopyBurst burst={burst} />}
       onActiveChange={(id) => {
         if (isPackageManager(id)) store.set(id)
       }}
