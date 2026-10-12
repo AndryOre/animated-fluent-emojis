@@ -80,37 +80,36 @@ const primaryButton = buttonVariants({
   <div
     class={`${wrap} relative flex flex-col items-center pt-[calc(65px+40px)] pb-16 text-center md:pb-24 min-[860px]:pt-[calc(65px+72px)]`}
   >
-    <div
-      data-hero-emojis
-      class="hero-demo-enter pointer-events-none mb-6 flex justify-center gap-6 min-[860px]:hidden"
-    >
-      {mobileDecorations.map((decoration) => (
-        <span class={`pointer-events-auto block ${decoration.tilt}`}>
-          <Emoji
-            id={decoration.id}
-            size={56}
-            alt=""
-            playOnHover={decoration.playOnHover}
-          />
-        </span>
-      ))}
-    </div>
-    <div
-      data-hero-emojis
-      class="hero-demo-enter pointer-events-none absolute inset-0 hidden min-[860px]:block"
-    >
-      {decorations.map((decoration) => (
-        <span
-          class={`pointer-events-auto absolute size-[150px] ${decoration.tilt} ${decoration.placement}`}
-        >
-          <Emoji
-            id={decoration.id}
-            size="100%"
-            alt=""
-            playOnHover={decoration.playOnHover}
-          />
-        </span>
-      ))}
+    <div class="hero-demo-enter pointer-events-none mb-6 min-[860px]:absolute min-[860px]:inset-0 min-[860px]:mb-0">
+      <div
+        data-hero-emojis
+        class="flex justify-center gap-6 min-[860px]:hidden"
+      >
+        {mobileDecorations.map((decoration) => (
+          <span class={`pointer-events-auto block ${decoration.tilt}`}>
+            <Emoji
+              id={decoration.id}
+              size={56}
+              alt=""
+              playOnHover={decoration.playOnHover}
+            />
+          </span>
+        ))}
+      </div>
+      <div data-hero-emojis class="absolute inset-0 hidden min-[860px]:block">
+        {decorations.map((decoration) => (
+          <span
+            class={`pointer-events-auto absolute size-[150px] ${decoration.tilt} ${decoration.placement}`}
+          >
+            <Emoji
+              id={decoration.id}
+              size="100%"
+              alt=""
+              playOnHover={decoration.playOnHover}
+            />
+          </span>
+        ))}
+      </div>
     </div>
     <div class="relative flex min-w-0 max-w-3xl flex-col items-center gap-5">
       <p
