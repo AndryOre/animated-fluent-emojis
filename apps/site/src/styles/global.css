@@ -75,15 +75,6 @@
   }
 }
 
-@keyframes scroll-drift {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-20%);
-  }
-}
-
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .scroll-reveal {
@@ -97,19 +88,6 @@
 
     .scroll-reveal-last {
       animation-range: entry 0% entry 100%;
-    }
-
-    .scroll-drift-scope {
-      view-timeline-name: --teaser;
-      view-timeline-axis: block;
-    }
-
-    .scroll-drift {
-      animation-name: scroll-drift;
-      animation-fill-mode: both;
-      animation-timing-function: linear;
-      animation-timeline: --teaser;
-      animation-range: cover 0% cover 100%;
     }
   }
 }

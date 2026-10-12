@@ -1,0 +1,103 @@
+---
+import Emoji from 'animated-fluent-emojis/astro'
+
+import { buttonVariants } from '@/components/ui/button'
+
+import { loadAnnotations, localizeEmojis } from '../../gallery/annotations'
+import { loadPublicIndex } from '../../gallery/public-index'
+import { localePath, type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import { pickTeaserEmojis } from '../content'
+import { heading, section } from './styles'
+
+interface Props {
+  locale: Locale
+}
+
+const TEASER_EMOJI_SIZE = 64
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
+
+const galleryHref = localePath(locale, '/emojis/')
+const [index, annotations] = await Promise.all([
+  loadPublicIndex(),
+  loadAnnotations(locale),
+])
+const names = new Map(
+  localizeEmojis(index, annotations).map((entry) => [entry.slug, entry.name]),
+)
+const tiles = pickTeaserEmojis(
+  index,
+  Boolean(process.env.SITE_EMOJI_SLUGS),
+).map(({ emoji, hue }) => ({
+  id: emoji.id,
+  hue,
+  name: names.get(emoji.slug) ?? emoji.description,
+}))
+const primaryButton = buttonVariants({
+  shape: 'pill',
+  className: 'h-auto min-h-11 px-6 text-base font-bold',
+})
+---
+
+<section class={section} aria-labelledby="teaser-title">
+  <div class="flex flex-col items-center gap-8 text-center">
+    <h2 id="teaser-title" class={`scroll-reveal ${heading}`}>
+      {home.teaser.title}
+    </h2>
+    <ul class="scroll-reveal m-0 grid w-full list-none grid-cols-3 gap-3 p-0 min-[860px]:grid-cols-6">
+      {tiles.map((tile) => (
+        <li class="contents">
+          <a
+            href={galleryHref}
+            aria-label={tile.name}
+            class="teaser-tile relative isolate flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            style={`--glow-hue: ${tile.hue}`}
+          >
+            <Emoji id={tile.id} size={TEASER_EMOJI_SIZE} alt="" />
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a href={galleryHref} class={primaryButton}>
+      {home.teaser.cta}
+    </a>
+  </div>
+</section>
+
+<style>
+  .teaser-tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      circle closest-side,
+      oklch(0.8 0.15 var(--glow-hue, 60)),
+      transparent
+    );
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .teaser-tile::before {
+      transition-property: opacity, scale;
+      transition-duration: 200ms;
+      transition-timing-function: var(--ease-out-strong);
+    }
+
+    .teaser-tile:focus-visible::before {
+      opacity: 0.85;
+      scale: 1.5;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .teaser-tile:hover::before {
+      opacity: 0.85;
+      scale: 1.5;
+    }
+  }
+</style>

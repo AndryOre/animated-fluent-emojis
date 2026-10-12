@@ -125,18 +125,6 @@ export const ja: UiStrings = {
       copy: 'コードをコピー',
       copied: 'コピーしました',
     },
-    noCode: {
-      eyebrow: 'ノーコード',
-      formats: {
-        gif: 'どのチャットでも使える',
-        webp: 'アニメーション、より軽量',
-        png: '静止画',
-      },
-      title: 'コードなしでも大丈夫。',
-      body: '好きな絵文字を GIF、アニメーション WebP、静止画 PNG でダウンロードして、チャットや文書に貼り付けられます。',
-      cta: '絵文字を見る',
-      teaserLabel: 'ギャラリーの絵文字から一部',
-    },
     stats: {
       emojis: 'アニメーション絵文字',
       adapters: 'アダプター、タグはひとつ',

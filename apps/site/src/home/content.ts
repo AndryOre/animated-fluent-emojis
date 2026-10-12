@@ -227,14 +227,62 @@ export function verifyShortcodeDemo(
   }
 }
 
+export interface TeaserEmoji {
+  id: string
+  hue: number
+}
+
 /**
- * Picks the emojis for the gallery teaser grid, evenly spread over the index
- * so the teaser shows variety and stays stable between builds.
+ * The emojis of the landing gallery teaser, in display order, each with the
+ * OKLCH hue of its glow.
+ */
+export const TEASER_EMOJIS: readonly TeaserEmoji[] = [
+  { id: 'fire', hue: 40 },
+  { id: '1f4a7_droplet', hue: 235 },
+  { id: '1f33f_herb', hue: 145 },
+  { id: 'heart', hue: 20 },
+  { id: 'star', hue: 90 },
+  { id: '1f52e_crystalball', hue: 305 },
+]
+
+export interface PickedTeaserEmoji {
+  emoji: PublicEmoji
+  hue: number
+}
+
+/**
+ * Picks the emojis of the gallery teaser grid by id. It throws when one is
+ * missing, so a renamed or removed emoji fails the build instead of leaving a
+ * hole in the grid.
+ * @param emojis - The full public index.
+ * @param allowMissing - Skip absent emojis instead of throwing, for builds
+ * that run on a filtered index.
+ * @returns The teaser emojis in display order, each with its glow hue.
+ */
+export function pickTeaserEmojis(
+  emojis: readonly PublicEmoji[],
+  allowMissing = false,
+): PickedTeaserEmoji[] {
+  const byId = new Map(emojis.map((emoji) => [emoji.id, emoji]))
+  const picked: PickedTeaserEmoji[] = []
+  for (const { id, hue } of TEASER_EMOJIS) {
+    const emoji = byId.get(id)
+    if (emoji) picked.push({ emoji, hue })
+    else if (!allowMissing) {
+      throw new Error(`The public index has no teaser emoji ${id}`)
+    }
+  }
+  return picked
+}
+
+/**
+ * Spreads a pick evenly over the index so a fallback shows variety and stays
+ * stable between builds.
  * @param emojis - The full public index.
  * @param count - How many emojis to pick.
  * @returns At most `count` distinct emojis.
  */
-export function pickTeaserEmojis(
+function spreadEmojis(
   emojis: readonly PublicEmoji[],
   count: number,
 ): PublicEmoji[] {
@@ -242,7 +290,7 @@ export function pickTeaserEmojis(
   const step = emojis.length / count
   return Array.from({ length: count }, (_, index) => {
     const emoji = emojis[Math.floor(index * step)]
-    if (!emoji) throw new Error('teaser index out of range')
+    if (!emoji) throw new Error('spread index out of range')
     return emoji
   })
 }
@@ -328,7 +376,7 @@ export function pickMarqueeRows(
     return emoji ? [emoji] : []
   }).slice(0, wanted)
   const taken = new Set(preferred.map((emoji) => emoji.id))
-  const filler = pickTeaserEmojis(emojis, wanted + taken.size).filter(
+  const filler = spreadEmojis(emojis, wanted + taken.size).filter(
     (emoji) => !taken.has(emoji.id),
   )
   const picked = [...preferred, ...filler].slice(0, wanted)
