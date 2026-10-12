@@ -46,6 +46,20 @@ export const it: UiStrings = {
     title: 'Animated Fluent Emojis',
     tagline: 'Emoji Fluent, ma si muovono.',
     hero: {
+      badge: 'Le emoji Fluent di Microsoft, ora in movimento',
+      titleLead: 'Emoji che si muovono,',
+      titleAccent: 'su qualsiasi sito.',
+      subtitle:
+        'Inserisci un tag e la tua pagina ottiene emoji 3D animate. Nessuno spostamento del layout, nessun runtime pesante, e restano ferme se qualcuno chiede meno movimento.',
+      ctaDocs: 'Leggi la documentazione',
+      ctaGallery: 'Sfoglia la galleria',
+      ready: {
+        react: 'Pronto per React',
+        vue: 'Pronto per Vue',
+        svelte: 'Pronto per Svelte',
+        astro: 'Pronto per Astro',
+        html: 'Pronto per HTML',
+      },
       sub: 'Passaci sopra. Ti saluta.',
       installLabel: 'Comando di installazione',
       copy: 'Copia',
@@ -121,6 +135,96 @@ export const it: UiStrings = {
       body: 'Scarica qualsiasi emoji come GIF, WebP animata o PNG statica e inseriscila in una chat o in un documento.',
       cta: 'Sfoglia le emoji',
       teaserLabel: 'Alcune emoji della galleria',
+    },
+    stats: {
+      emojis: 'emoji animate',
+      adapters: 'adattatori, un tag',
+      languages: 'lingue del sito',
+      license: 'codice open source',
+    },
+    playground: {
+      eyebrow: 'Area di prova',
+      title: 'La stessa emoji, a modo tuo',
+      body: 'Scegli un’emoji, una dimensione e quando si anima. Lo snippet si aggiorna di conseguenza.',
+    },
+    bento: {
+      eyebrow: 'Caratteristiche',
+      title: 'Pensate per essere facili da usare',
+      alive: {
+        title: 'Vive',
+        body: 'Ti salutano. Passaci sopra e guarda.',
+      },
+      light: {
+        title: 'Leggere',
+        body: 'Non spostano mai la tua pagina mentre si caricano.',
+      },
+      considerate: {
+        title: 'Attente',
+        body: "Se qualcuno chiede al proprio dispositivo meno movimento, l'emoji resta ferma.",
+      },
+      credit: {
+        title: 'Chiare su cosa è di chi',
+        body: 'Le illustrazioni delle emoji sono di Microsoft. Il codice è open source.',
+      },
+      layoutShift: 'spostamento del layout: 0 px',
+      reduceMotion: {
+        off: 'Riduci il movimento: no',
+        on: 'Riduci il movimento: sì',
+      },
+      artwork: {
+        label: 'Illustrazione',
+        value: '© Microsoft',
+      },
+      code: {
+        label: 'Codice',
+        value: 'MIT · open source',
+      },
+    },
+    teaser: {
+      title: 'Scegline una, si muove già',
+      cta: 'Apri la galleria',
+    },
+    install: {
+      eyebrow: 'Installazione',
+      title: 'Un solo tag, qualsiasi sito',
+      body: "Scegli il tuo framework, copia il codice e l'emoji è sulla pagina.",
+      steps: {
+        import: {
+          title: 'Importa',
+          body: 'Aggiungi il pacchetto e importa il componente per il tuo framework.',
+        },
+        render: {
+          title: 'Mostra',
+          body: 'Usa il tag dove vuoi che compaia l’emoji.',
+        },
+        shortcodes: {
+          title: 'Shortcode',
+          body: 'Usa l’id dell’emoji, oppure l’id senza il suo prefisso di punto di codice. Nessun nome nuovo da imparare.',
+        },
+      },
+      shortcodeBody:
+        'Usa l’id dell’emoji, oppure l’id senza il suo prefisso di punto di codice. Nessun nome nuovo da imparare.',
+      architecture: {
+        title: 'Come si incastra',
+        nodes: {
+          page: 'La tua pagina',
+          adapter: 'Adattatore',
+          lookup: 'Ricerca',
+          assets: 'Emoji animata',
+        },
+      },
+    },
+    closing: {
+      titleLead: 'Inizia a usare le emoji',
+      titleAccent: 'in pochi minuti.',
+      body: 'Open source, licenza MIT, un solo tag.',
+      cta: 'Vedi su GitHub',
+    },
+    dock: {
+      label: 'Comando di installazione',
+      copy: 'Copia',
+      copied: 'Copiato',
+      tabsLabel: 'Framework',
     },
     faq: {
       eyebrow: 'FAQ',

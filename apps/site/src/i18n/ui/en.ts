@@ -45,6 +45,20 @@ export const en = {
     title: 'Animated Fluent Emojis',
     tagline: 'Fluent emojis, but they move.',
     hero: {
+      badge: "Microsoft's Fluent emoji, now in motion",
+      titleLead: 'Emojis that move,',
+      titleAccent: 'on any site.',
+      subtitle:
+        'Drop in one tag and your page gets 3D animated emoji. No layout shift, no heavy runtime, and they stay still if someone asks for less motion.',
+      ctaDocs: 'Read the docs',
+      ctaGallery: 'Browse the gallery',
+      ready: {
+        react: 'React ready',
+        vue: 'Vue ready',
+        svelte: 'Svelte ready',
+        astro: 'Astro ready',
+        html: 'HTML ready',
+      },
       sub: 'Hover it. It waves back.',
       installLabel: 'Install command',
       copy: 'Copy',
@@ -120,6 +134,96 @@ export const en = {
       body: 'Download any emoji as a GIF, an animated WebP or a still PNG, and drop it into a chat or a document.',
       cta: 'Browse the emojis',
       teaserLabel: 'A few emojis from the gallery',
+    },
+    stats: {
+      emojis: 'animated emojis',
+      adapters: 'adapters, one tag',
+      languages: 'site languages',
+      license: 'open source code',
+    },
+    playground: {
+      eyebrow: 'Playground',
+      title: 'Same emoji, your style',
+      body: 'Pick an emoji, a size and when it plays. The snippet updates with it.',
+    },
+    bento: {
+      eyebrow: 'Features',
+      title: 'Made to be easy to live with',
+      alive: {
+        title: 'Alive',
+        body: 'They wave back. Hover one and see.',
+      },
+      light: {
+        title: 'Light',
+        body: 'They never push your page around while they load.',
+      },
+      considerate: {
+        title: 'Considerate',
+        body: 'If someone asks their device for less motion, the emoji stays still.',
+      },
+      credit: {
+        title: 'Clear about what is whose',
+        body: "The emoji artwork is Microsoft's. The code is open source.",
+      },
+      layoutShift: 'layout shift: 0 px',
+      reduceMotion: {
+        off: 'Reduce motion: off',
+        on: 'Reduce motion: on',
+      },
+      artwork: {
+        label: 'Artwork',
+        value: '© Microsoft',
+      },
+      code: {
+        label: 'Code',
+        value: 'MIT · open source',
+      },
+    },
+    teaser: {
+      title: "Pick one, it's already moving",
+      cta: 'Open the gallery',
+    },
+    install: {
+      eyebrow: 'Install',
+      title: 'One tag, any site',
+      body: 'Pick your framework, copy the code, and the emoji is on the page.',
+      steps: {
+        import: {
+          title: 'Import',
+          body: 'Add the package and import the component for your framework.',
+        },
+        render: {
+          title: 'Render',
+          body: 'Use the tag wherever you want the emoji to appear.',
+        },
+        shortcodes: {
+          title: 'Shortcodes',
+          body: 'Use the emoji id, or the id without its code-point prefix. No new names to learn.',
+        },
+      },
+      shortcodeBody:
+        'Use the emoji id, or the id without its code-point prefix. No new names to learn.',
+      architecture: {
+        title: 'How it fits',
+        nodes: {
+          page: 'Your page',
+          adapter: 'Adapter',
+          lookup: 'Lookup',
+          assets: 'Animated emoji',
+        },
+      },
+    },
+    closing: {
+      titleLead: 'Start shipping emojis',
+      titleAccent: 'in minutes.',
+      body: 'Open source, MIT licensed, one tag.',
+      cta: 'View on GitHub',
+    },
+    dock: {
+      label: 'Install command',
+      copy: 'Copy',
+      copied: 'Copied',
+      tabsLabel: 'Framework',
     },
     faq: {
       eyebrow: 'FAQ',

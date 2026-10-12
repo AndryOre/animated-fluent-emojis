@@ -67,3 +67,11 @@ export function createPackageManagerStore(
     environment,
   )
 }
+
+/**
+ * The page-wide package manager store every landing island shares. It reads
+ * `localStorage` only when queried, so creating it during server rendering is
+ * safe.
+ */
+export const sharedPackageManagerStore: PackageManagerStore =
+  createPackageManagerStore()

@@ -47,6 +47,20 @@ export const ko: UiStrings = {
     title: 'Animated Fluent Emojis',
     tagline: 'Fluent 이모지가 움직입니다.',
     hero: {
+      badge: 'Microsoft의 Fluent 이모지, 이제 움직입니다',
+      titleLead: '움직이는 이모지,',
+      titleAccent: '어느 사이트에서나.',
+      subtitle:
+        '태그 하나만 넣으면 페이지에 3D 애니메이션 이모지가 생깁니다. 레이아웃 이동도, 무거운 런타임도 없고, 움직임을 줄이고 싶은 사람에게는 가만히 멈춰 있습니다.',
+      ctaDocs: '문서 읽기',
+      ctaGallery: '갤러리 둘러보기',
+      ready: {
+        react: 'React 지원',
+        vue: 'Vue 지원',
+        svelte: 'Svelte 지원',
+        astro: 'Astro 지원',
+        html: 'HTML 지원',
+      },
       sub: '마우스를 올리면 손을 흔들어 줍니다.',
       installLabel: '설치 명령어',
       copy: '복사',
@@ -122,6 +136,96 @@ export const ko: UiStrings = {
       body: '마음에 드는 이모지를 GIF, 애니메이션 WebP, 정지 PNG로 내려받아 채팅과 문서에 붙여 넣으세요.',
       cta: '이모지 둘러보기',
       teaserLabel: '갤러리에서 고른 이모지 몇 개',
+    },
+    stats: {
+      emojis: '애니메이션 이모지',
+      adapters: '어댑터, 태그 하나',
+      languages: '사이트 언어',
+      license: '오픈 소스 코드',
+    },
+    playground: {
+      eyebrow: '플레이그라운드',
+      title: '같은 이모지, 나만의 스타일',
+      body: '이모지, 크기, 재생 시점을 고르세요. 스니펫도 함께 바뀝니다.',
+    },
+    bento: {
+      eyebrow: '특징',
+      title: '쓰기 편하게 만들었어요',
+      alive: {
+        title: '살아 있어요',
+        body: '손을 흔들어 인사해 줍니다. 마우스를 올려 보세요.',
+      },
+      light: {
+        title: '가벼워요',
+        body: '불러오는 동안에도 페이지가 밀리지 않습니다.',
+      },
+      considerate: {
+        title: '배려해요',
+        body: '기기에서 동작 줄이기를 켜 두었다면 이모지는 멈춘 채로 있습니다.',
+      },
+      credit: {
+        title: '누구의 것인지 분명하게',
+        body: '이모지 아트워크는 Microsoft의 것입니다. 코드는 오픈 소스입니다.',
+      },
+      layoutShift: '레이아웃 이동: 0 px',
+      reduceMotion: {
+        off: '동작 줄이기: 꺼짐',
+        on: '동작 줄이기: 켜짐',
+      },
+      artwork: {
+        label: '아트워크',
+        value: '© Microsoft',
+      },
+      code: {
+        label: '코드',
+        value: 'MIT · 오픈 소스',
+      },
+    },
+    teaser: {
+      title: '하나 골라 보세요, 벌써 움직이고 있어요',
+      cta: '갤러리 열기',
+    },
+    install: {
+      eyebrow: '설치',
+      title: '태그 하나면 어느 사이트에서든',
+      body: '프레임워크를 고르고 코드를 복사하면 이모지가 페이지에 나타납니다.',
+      steps: {
+        import: {
+          title: '가져오기',
+          body: '패키지를 추가하고 사용하는 프레임워크의 컴포넌트를 가져오세요.',
+        },
+        render: {
+          title: '표시',
+          body: '이모지를 보여 줄 자리에 태그를 넣으세요.',
+        },
+        shortcodes: {
+          title: '숏코드',
+          body: '이모지 id나 코드 포인트 접두사를 뺀 id를 쓰세요. 새로 배울 이름은 없습니다.',
+        },
+      },
+      shortcodeBody:
+        '이모지 id나 코드 포인트 접두사를 뺀 id를 쓰세요. 새로 배울 이름은 없습니다.',
+      architecture: {
+        title: '구성 방식',
+        nodes: {
+          page: '내 페이지',
+          adapter: '어댑터',
+          lookup: '조회',
+          assets: '애니메이션 이모지',
+        },
+      },
+    },
+    closing: {
+      titleLead: '이모지를 몇 분 만에',
+      titleAccent: '시작하세요.',
+      body: '오픈 소스, MIT 라이선스, 태그 하나.',
+      cta: 'GitHub에서 보기',
+    },
+    dock: {
+      label: '설치 명령어',
+      copy: '복사',
+      copied: '복사했어요',
+      tabsLabel: '프레임워크',
     },
     faq: {
       eyebrow: '자주 묻는 질문',
