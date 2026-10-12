@@ -19,6 +19,10 @@ const definition = {
   isValue: isColor,
 }
 
+function storageEvent(key: string, newValue: string | null): Event {
+  return Object.assign(new Event('storage'), { key, newValue })
+}
+
 function memoryStorage(initial?: string): PreferenceStorage {
   const values = new Map<string, string>()
   if (initial !== undefined) values.set(definition.storageKey, initial)
@@ -107,6 +111,26 @@ describe('preference store', () => {
       new CustomEvent(definition.eventName, { detail: 'green' }),
     )
     expect(listener).not.toHaveBeenCalled()
+  })
+
+  it('follows storage events from other tabs for its own key only', () => {
+    const target = new EventTarget()
+    const store = createPreferenceStore(definition, {
+      storage: () => memoryStorage(),
+      target,
+    })
+    const listener = vi.fn()
+    const unsubscribe = store.subscribe(listener)
+    target.dispatchEvent(storageEvent('other', 'blue'))
+    target.dispatchEvent(storageEvent(definition.storageKey, 'green'))
+    target.dispatchEvent(storageEvent(definition.storageKey, null))
+    expect(listener).not.toHaveBeenCalled()
+    target.dispatchEvent(storageEvent(definition.storageKey, 'blue'))
+    expect(listener).toHaveBeenCalledWith('blue')
+    expect(store.get()).toBe('blue')
+    unsubscribe()
+    target.dispatchEvent(storageEvent(definition.storageKey, 'red'))
+    expect(listener).toHaveBeenCalledTimes(1)
   })
 
   it('keeps working for the session when storage throws', () => {

@@ -24,7 +24,8 @@ export interface PreferenceStore<Value extends string> {
 /**
  * Creates a string preference that persists in `localStorage` and is announced
  * on an event target, so components hydrated by separate islands stay in sync
- * without sharing module state. A missing or throwing storage only costs
+ * without sharing module state; the `storage` event carries changes made in
+ * other tabs. A missing or throwing storage only costs
  * persistence; the choice still lasts for the rest of the page.
  * @param definition - The storage key, event name, fallback and validator.
  * @param environment - Overrides for the storage getter and the event target.
@@ -78,9 +79,20 @@ export function createPreferenceStore<Value extends string>(
         current = detail
         listener(detail)
       }
+      const handleStorage = (event: Event): void => {
+        const { key, newValue } = event as StorageEvent
+        if (key !== storageKey || !isValue(newValue)) {
+          return
+        }
+
+        current = newValue
+        listener(newValue)
+      }
       target.addEventListener(eventName, handle)
+      target.addEventListener('storage', handleStorage)
       return () => {
         target.removeEventListener(eventName, handle)
+        target.removeEventListener('storage', handleStorage)
       }
     },
   }
