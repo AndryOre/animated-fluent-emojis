@@ -5,10 +5,10 @@ import FaqSection from '../home/sections/FaqSection.astro'
 import HeroSection from '../home/sections/HeroSection.astro'
 import InstallSection from '../home/sections/InstallSection.astro'
 import MarqueeDivider from '../home/sections/MarqueeDivider.astro'
-import NoCodeSection from '../home/sections/NoCodeSection.astro'
 import PillarsSection from '../home/sections/PillarsSection.astro'
 import PlaygroundSection from '../home/sections/PlaygroundSection.astro'
 import StatsBar from '../home/sections/StatsBar.astro'
+import TeaserSection from '../home/sections/TeaserSection.astro'
 import { type Locale } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import Layout from '../layouts/Layout.astro'
@@ -28,7 +28,7 @@ const { meta } = getUi(locale)
     <MarqueeDivider locale={locale} />
     <PlaygroundSection locale={locale} />
     <PillarsSection locale={locale} />
-    <NoCodeSection locale={locale} />
+    <TeaserSection locale={locale} />
     <InstallSection locale={locale} />
     <FaqSection locale={locale} />
     <ClosingPanel locale={locale} />

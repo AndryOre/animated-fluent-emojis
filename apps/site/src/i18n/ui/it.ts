@@ -124,18 +124,6 @@ export const it: UiStrings = {
       copy: 'Copia il codice',
       copied: 'Copiato',
     },
-    noCode: {
-      eyebrow: 'Senza codice',
-      formats: {
-        gif: 'Funziona in qualsiasi chat',
-        webp: 'Animata, più leggera',
-        png: "Un'immagine statica",
-      },
-      title: 'Niente codice? Nessun problema.',
-      body: 'Scarica qualsiasi emoji come GIF, WebP animata o PNG statica e inseriscila in una chat o in un documento.',
-      cta: 'Sfoglia le emoji',
-      teaserLabel: 'Alcune emoji della galleria',
-    },
     stats: {
       emojis: 'emoji animate',
       adapters: 'adattatori, un tag',

@@ -125,18 +125,6 @@ export const ko: UiStrings = {
       copy: '코드 복사',
       copied: '복사했어요',
     },
-    noCode: {
-      eyebrow: '노코드',
-      formats: {
-        gif: '모든 채팅에서 작동',
-        webp: '애니메이션, 더 작은 용량',
-        png: '정지 이미지',
-      },
-      title: '코드 없이도 괜찮아요.',
-      body: '마음에 드는 이모지를 GIF, 애니메이션 WebP, 정지 PNG로 내려받아 채팅과 문서에 붙여 넣으세요.',
-      cta: '이모지 둘러보기',
-      teaserLabel: '갤러리에서 고른 이모지 몇 개',
-    },
     stats: {
       emojis: '애니메이션 이모지',
       adapters: '어댑터, 태그 하나',

@@ -123,18 +123,6 @@ export const en = {
       copy: 'Copy code',
       copied: 'Copied',
     },
-    noCode: {
-      eyebrow: 'No code',
-      formats: {
-        gif: 'Works in any chat',
-        webp: 'Animated, smaller',
-        png: 'A still picture',
-      },
-      title: 'No code? No problem.',
-      body: 'Download any emoji as a GIF, an animated WebP or a still PNG, and drop it into a chat or a document.',
-      cta: 'Browse the emojis',
-      teaserLabel: 'A few emojis from the gallery',
-    },
     stats: {
       emojis: 'animated emojis',
       adapters: 'adapters, one tag',
