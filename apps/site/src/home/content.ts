@@ -197,3 +197,49 @@ export function pickTeaserEmojis(
     return emoji
   })
 }
+
+export interface HomeStat {
+  id: 'emojis' | 'adapters' | 'languages' | 'license'
+  value: string
+}
+
+/**
+ * Builds the stats bar entries from real facts. The adapter count is the
+ * number of framework snippet tabs, so it follows the adapters the site
+ * documents instead of a hardcoded number.
+ * @param facts - The real facts the stats show.
+ * @param facts.emojiCount - How many emojis the public index holds.
+ * @param facts.localeCount - How many languages the site ships.
+ * @param facts.license - The license id of the library.
+ * @returns The four stats in display order.
+ */
+export function buildHomeStats(facts: {
+  emojiCount: number
+  localeCount: number
+  license: string
+}): HomeStat[] {
+  return [
+    { id: 'emojis', value: String(facts.emojiCount) },
+    { id: 'adapters', value: String(SNIPPET_TABS.length) },
+    { id: 'languages', value: String(facts.localeCount) },
+    { id: 'license', value: facts.license },
+  ]
+}
+
+/**
+ * Picks the emojis of the two marquee rows, evenly spread over the index and
+ * dealt alternately so the rows never repeat an emoji.
+ * @param emojis - The full public index.
+ * @param perRow - How many emojis each row holds.
+ * @returns The top row and the bottom row.
+ */
+export function pickMarqueeRows(
+  emojis: readonly PublicEmoji[],
+  perRow: number,
+): [PublicEmoji[], PublicEmoji[]] {
+  const picked = pickTeaserEmojis(emojis, perRow * 2)
+  return [
+    picked.filter((_, position) => position % 2 === 0),
+    picked.filter((_, position) => position % 2 === 1),
+  ]
+}

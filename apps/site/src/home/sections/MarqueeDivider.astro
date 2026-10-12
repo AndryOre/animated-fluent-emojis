@@ -1,9 +1,59 @@
 ---
+import Emoji from 'animated-fluent-emojis/astro'
+
+import { loadPublicIndex } from '../../gallery/public-index'
 import type { Locale } from '../../i18n/locales'
+import { pickMarqueeRows } from '../content'
 
 interface Props {
   locale: Locale
 }
+
+const MARQUEE_EMOJI_SIZE = 56
+const EMOJIS_PER_ROW = 12
+
+const index = await loadPublicIndex()
+const rows = pickMarqueeRows(index, EMOJIS_PER_ROW).map((emojis, position) => ({
+  emojis,
+  direction: position === 0 ? 'forward' : 'reverse',
+  duration: position === 0 ? '60s' : '75s',
+}))
 ---
 
-<Fragment />
+<section class="py-10 md:py-14" aria-hidden="true" data-marquee>
+  <div class="flex flex-col gap-4">
+    {rows.map((row) => (
+      <div
+        class="marquee h-16 motion-reduce:flex motion-reduce:justify-center"
+        data-marquee-row
+      >
+        <div
+          class="marquee-track"
+          data-direction={row.direction}
+          style={`--marquee-duration: ${row.duration}`}
+        >
+          {[false, true].map((duplicate) => (
+            <div
+              class="flex shrink-0 items-center gap-4 pr-4"
+              aria-hidden={duplicate ? 'true' : undefined}
+            >
+              {row.emojis.map((emoji) => (
+                <span
+                  class="flex size-14 shrink-0 items-center justify-center"
+                  data-marquee-emoji
+                >
+                  <Emoji
+                    id={emoji.id}
+                    size={MARQUEE_EMOJI_SIZE}
+                    alt=""
+                    autoPlay={false}
+                  />
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

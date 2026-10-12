@@ -1,9 +1,44 @@
 ---
-import type { Locale } from '../../i18n/locales'
+import libraryPackage from '../../../../../packages/animated-fluent-emojis/package.json'
+import { loadPublicIndex } from '../../gallery/public-index'
+import { LOCALES, type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import { buildHomeStats } from '../content'
+import { wrap } from './styles'
 
 interface Props {
   locale: Locale
 }
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
+
+const index = await loadPublicIndex()
+const stats = buildHomeStats({
+  emojiCount: index.length,
+  localeCount: LOCALES.length,
+  license: libraryPackage.license,
+})
+const labels = {
+  emojis: home.stats.emojis,
+  adapters: home.stats.adapters,
+  languages: home.stats.languages,
+  license: home.stats.license,
+}
 ---
 
-<Fragment />
+<section class={wrap} data-stats-bar>
+  <ul class="m-0 grid list-none grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border p-0 min-[560px]:grid-cols-4">
+    {stats.map((stat) => (
+      <li
+        class="flex flex-col items-center gap-1 bg-card px-4 py-6 text-center"
+        data-stat={stat.id}
+      >
+        <span class="text-3xl font-extrabold tracking-[-0.03em] tabular-nums">
+          {stat.value}
+        </span>
+        <span class="text-sm text-muted-foreground">{labels[stat.id]}</span>
+      </li>
+    ))}
+  </ul>
+</section>
