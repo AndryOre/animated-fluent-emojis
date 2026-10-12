@@ -495,3 +495,74 @@ test('searchEmojis floors a fractional limit', async () => {
   expect(await searchEmojis('a', { limit: 2.5 })).toHaveLength(2)
   expect(await searchEmojis('a', { limit: 0.5 })).toEqual([])
 })
+
+const SHORTCODE_MANIFEST = buildManifest([
+  { id: '1f603_grinningfacewithbigeyes', unicode: '😃' },
+  { id: '1f680_launch', unicode: '🚀' },
+  { id: '1f983_turkey', unicode: '🦃' },
+  { id: 'turkey', unicode: '🍗' },
+  { id: '2602_umbrella', unicode: '☂' },
+  { id: 'umbrella', unicode: '☔' },
+  { id: '1f4f7_camera', unicode: '📷' },
+  { id: 'camera', unicode: '📸' },
+  { id: 'fire', unicode: '🔥' },
+])
+
+test('findEmojiByShortcode resolves exact ids and ids without their prefix', async () => {
+  serveManifest(SHORTCODE_MANIFEST)
+  const { findEmojiByShortcode } = await importFresh()
+
+  expect(await findEmojiByShortcode(':fire:')).toEqual({ id: 'fire' })
+  expect(await findEmojiByShortcode(':launch:')).toEqual({
+    id: '1f680_launch',
+  })
+  expect(await findEmojiByShortcode(':grinningfacewithbigeyes:')).toEqual({
+    id: '1f603_grinningfacewithbigeyes',
+  })
+  expect(await findEmojiByShortcode(':1f680_launch:')).toEqual({
+    id: '1f680_launch',
+  })
+})
+
+test('plain ids win collisions and prefixed ids stay reachable', async () => {
+  serveManifest(SHORTCODE_MANIFEST)
+  const { findEmojiByShortcode } = await importFresh()
+
+  for (const name of ['turkey', 'umbrella', 'camera']) {
+    expect(await findEmojiByShortcode(`:${name}:`)).toEqual({ id: name })
+  }
+  expect(await findEmojiByShortcode(':1f983_turkey:')).toEqual({
+    id: '1f983_turkey',
+  })
+  expect(await findEmojiByShortcode(':2602_umbrella:')).toEqual({
+    id: '2602_umbrella',
+  })
+  expect(await findEmojiByShortcode(':1f4f7_camera:')).toEqual({
+    id: '1f4f7_camera',
+  })
+})
+
+test('findEmojiByShortcode ignores case and rejects unknown input', async () => {
+  serveManifest(SHORTCODE_MANIFEST)
+  const { findEmojiByShortcode } = await importFresh()
+
+  expect(await findEmojiByShortcode(':FIRE:')).toEqual({ id: 'fire' })
+  expect(await findEmojiByShortcode(':Launch:')).toEqual({ id: '1f680_launch' })
+  expect(await findEmojiByShortcode(':nope:')).toBeUndefined()
+  expect(await findEmojiByShortcode('fire')).toBeUndefined()
+  expect(await findEmojiByShortcode(':fire')).toBeUndefined()
+  expect(await findEmojiByShortcode('::')).toBeUndefined()
+})
+
+test('extractEmojis finds several shortcodes next to emojis in order', async () => {
+  serveManifest(SHORTCODE_MANIFEST)
+  const { extractEmojis } = await importFresh()
+  const text = 'a :launch: b 🔥 c :FIRE: d :nope: e :turkey:'
+
+  expect(await extractEmojis(text)).toEqual([
+    { id: '1f680_launch', text: ':launch:', index: 2, length: 8 },
+    { id: 'fire', text: '🔥', index: 13, length: 2 },
+    { id: 'fire', text: ':FIRE:', index: 18, length: 6 },
+    { id: 'turkey', text: ':turkey:', index: 36, length: 8 },
+  ])
+})

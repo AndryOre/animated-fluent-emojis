@@ -187,13 +187,12 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-enter {
-    transition-property: opacity, transform;
+    transition-property: transform;
     transition-duration: 800ms;
     transition-timing-function: var(--ease-out-gentle);
     transition-delay: calc(var(--enter-index, 0) * 120ms);
 
     @starting-style {
-      opacity: 0;
       transform: translateY(20px);
     }
   }

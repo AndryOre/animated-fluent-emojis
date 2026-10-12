@@ -178,6 +178,55 @@ export async function buildInstallHtml(): Promise<
   return Object.fromEntries(entries) as Record<PackageManager, string>
 }
 
+const CODE_POINT_PREFIX = /^[\da-f]+(?:_[\da-f]+)*_/
+
+/**
+ * Finds the emoji a shortcode names: its full id, or its id without the
+ * code-point prefix. There are no aliases. It throws when nothing matches or
+ * when two ids would answer to the same shortcode, so the build fails instead
+ * of showing a demo that does not resolve.
+ * @param emojis - The public index.
+ * @param shortcode - The code between the colons, such as `fire`.
+ * @returns The single matching emoji.
+ */
+export function resolveShortcodeEmoji(
+  emojis: readonly PublicEmoji[],
+  shortcode: string,
+): PublicEmoji {
+  const matches = emojis.filter(
+    (emoji) =>
+      emoji.id === shortcode ||
+      emoji.id.replace(CODE_POINT_PREFIX, '') === shortcode,
+  )
+  const [match] = matches
+  if (!match) {
+    throw new Error(`The public index has no emoji for :${shortcode}:`)
+  }
+  if (matches.length > 1) {
+    throw new Error(`The shortcode :${shortcode}: is ambiguous`)
+  }
+  return match
+}
+
+/**
+ * Checks that every shortcode of a static demo still resolves to the id the
+ * demo renders, so a renamed or removed emoji fails the build instead of
+ * leaving a stale demo.
+ * @param emojis - The public index.
+ * @param demo - The shortcodes shown and the full id each one renders.
+ */
+export function verifyShortcodeDemo(
+  emojis: readonly PublicEmoji[],
+  demo: readonly { code: string; id: string }[],
+): void {
+  for (const { code, id } of demo) {
+    const resolved = resolveShortcodeEmoji(emojis, code).id
+    if (resolved !== id) {
+      throw new Error(`:${code}: resolves to ${resolved}, the demo shows ${id}`)
+    }
+  }
+}
+
 /**
  * Picks the emojis for the gallery teaser grid, evenly spread over the index
  * so the teaser shows variety and stays stable between builds.
@@ -196,4 +245,95 @@ export function pickTeaserEmojis(
     if (!emoji) throw new Error('teaser index out of range')
     return emoji
   })
+}
+
+export interface HomeStat {
+  id: 'emojis' | 'adapters' | 'languages' | 'license'
+  value: string
+}
+
+/**
+ * Builds the stats bar entries from real facts. The adapter count is the
+ * number of framework snippet tabs, so it follows the adapters the site
+ * documents instead of a hardcoded number.
+ * @param facts - The real facts the stats show.
+ * @param facts.emojiCount - How many emojis the public index holds.
+ * @param facts.localeCount - How many languages the site ships.
+ * @param facts.license - The license id of the library.
+ * @returns The four stats in display order.
+ */
+export function buildHomeStats(facts: {
+  emojiCount: number
+  localeCount: number
+  license: string
+}): HomeStat[] {
+  return [
+    { id: 'emojis', value: String(facts.emojiCount) },
+    { id: 'adapters', value: String(SNIPPET_TABS.length) },
+    { id: 'languages', value: String(facts.localeCount) },
+    { id: 'license', value: facts.license },
+  ]
+}
+
+/**
+ * Single-frame emojis the marquee prefers. The marquee never plays its
+ * emojis, so a still sprite looks the same as the first frame of an animated
+ * one while weighing a few kilobytes instead of hundreds, which keeps the
+ * landing page inside its Lighthouse performance budget.
+ */
+export const MARQUEE_EMOJI_IDS: readonly string[] = [
+  'salute',
+  '1f4ab_dizzysymbol',
+  'wiltedflower',
+  'deciduoustree',
+  '1f33a_hibiscus',
+  '1f33f_herb',
+  'watermelon',
+  '1f350_pear',
+  '1f35e_bread',
+  '1f368_icecream',
+  'bubbletea',
+  '1f32e_taco',
+  '1f356_meatonbone',
+  '1f30f_earthglobeasiaaustralia',
+  '1f3d6_beachwithumbrella',
+  '1f3aa_circustent',
+  '1f68d_oncomingbus',
+  '1f3a9_tophat',
+  '1f511_key',
+  '1f4dd_memo',
+  '1fa89_harp',
+  '1f4c8_chartwithupwardstrend',
+  'computer',
+  '1f393_graduationcap',
+]
+
+/**
+ * Picks the emojis of the two marquee rows and deals them alternately so the
+ * rows never repeat an emoji. The still emojis of `MARQUEE_EMOJI_IDS` come
+ * first; when the index lacks some of them, the rest is filled with emojis
+ * spread evenly over the index.
+ * @param emojis - The full public index.
+ * @param perRow - How many emojis each row holds.
+ * @returns The top row and the bottom row.
+ */
+export function pickMarqueeRows(
+  emojis: readonly PublicEmoji[],
+  perRow: number,
+): [PublicEmoji[], PublicEmoji[]] {
+  const wanted = perRow * 2
+  const byId = new Map(emojis.map((emoji) => [emoji.id, emoji]))
+  const preferred = MARQUEE_EMOJI_IDS.flatMap((id) => {
+    const emoji = byId.get(id)
+    return emoji ? [emoji] : []
+  }).slice(0, wanted)
+  const taken = new Set(preferred.map((emoji) => emoji.id))
+  const filler = pickTeaserEmojis(emojis, wanted + taken.size).filter(
+    (emoji) => !taken.has(emoji.id),
+  )
+  const picked = [...preferred, ...filler].slice(0, wanted)
+  return [
+    picked.filter((_, position) => position % 2 === 0),
+    picked.filter((_, position) => position % 2 === 1),
+  ]
 }

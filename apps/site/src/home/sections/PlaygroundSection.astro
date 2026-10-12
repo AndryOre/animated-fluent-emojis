@@ -1,9 +1,83 @@
 ---
+import { loadPublicIndex } from '../../gallery/public-index'
 import type { Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import { buildCodeBlockTabs } from '../content'
+import {
+  DEMO_EMOJIS,
+  DEMO_PLAYS,
+  INITIAL_DEMO_STATE,
+  type DemoTabs,
+} from '../demo'
+import DemoPlayground from '../DemoPlayground'
+import { eyebrow, heading, section } from './styles'
 
 interface Props {
   locale: Locale
 }
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
+
+const index = await loadPublicIndex()
+const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
+if (!snippetEmoji) throw new Error('The public index has no waving hand')
+const demoEmojis = index.filter((emoji) =>
+  DEMO_EMOJIS.some(({ id }) => id === emoji.id),
+)
+const demoTabs = Object.fromEntries(
+  await Promise.all(
+    DEMO_PLAYS.map(async ({ id: play }) => [
+      play,
+      {
+        plain: await buildCodeBlockTabs(
+          snippetEmoji,
+          undefined,
+          INITIAL_DEMO_STATE.size,
+          play,
+        ),
+        toned: await buildCodeBlockTabs(
+          snippetEmoji,
+          'light',
+          INITIAL_DEMO_STATE.size,
+          play,
+        ),
+      },
+    ]),
+  ),
+) as DemoTabs
+
+const demoLabels = {
+  emojiLabel: home.demo.emojiLabel,
+  sizeLabel: home.demo.sizeLabel,
+  toneLabel: home.demo.toneLabel,
+  playsLabel: home.demo.playsLabel,
+  reset: home.demo.reset,
+  emojis: home.demo.emojis,
+  tones: home.demo.tones,
+  plays: home.demo.plays,
+  code: {
+    tabsLabel: home.snippets.tabsLabel,
+    copy: home.snippets.copy,
+    copied: home.snippets.copied,
+  },
+}
 ---
 
-<Fragment />
+<section class={section} aria-labelledby="playground-title">
+  <div class="mx-auto mb-8 flex max-w-2xl flex-col items-center gap-3 text-center">
+    <p class={`${eyebrow} mb-0`}>{home.playground.eyebrow}</p>
+    <h2 id="playground-title" class={heading}>
+      {home.playground.title}
+    </h2>
+    <p class="text-pretty text-muted-foreground">{home.playground.body}</p>
+  </div>
+  <div class="mx-auto min-w-0 max-w-3xl">
+    <DemoPlayground
+      client:idle
+      emojis={demoEmojis}
+      tabs={demoTabs}
+      labels={demoLabels}
+    />
+  </div>
+</section>

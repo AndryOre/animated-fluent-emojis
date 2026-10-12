@@ -6,10 +6,15 @@ import { generateSnippet, type SnippetKind } from '../gallery/snippets'
 import {
   buildCodeBlockTabs,
   buildEmojiPageTabs,
+  buildHomeStats,
   buildInstallHtml,
   buildSnippetTabs,
+  MARQUEE_EMOJI_IDS,
+  pickMarqueeRows,
   pickTeaserEmojis,
+  resolveShortcodeEmoji,
   SNIPPET_TABS,
+  verifyShortcodeDemo,
 } from './content'
 
 const emojis = parsePublicIndex(publicIndexFixture)
@@ -154,5 +159,97 @@ describe('emoji page tabs', () => {
     const { plain, toned } = await buildEmojiPageTabs(withoutTones, 200)
     expect(plain).toHaveLength(5)
     expect(toned).toEqual([])
+  })
+})
+
+describe('home stats', () => {
+  it('derives every stat from the given facts, in display order', () => {
+    expect(
+      buildHomeStats({
+        emojiCount: 1500,
+        localeCount: 10,
+        license: 'MIT',
+      }),
+    ).toEqual([
+      { id: 'emojis', value: '1500' },
+      { id: 'adapters', value: String(SNIPPET_TABS.length) },
+      { id: 'languages', value: '10' },
+      { id: 'license', value: 'MIT' },
+    ])
+  })
+})
+
+describe('marquee rows', () => {
+  it('splits distinct emojis into two rows of the requested length', () => {
+    const [top, bottom] = pickMarqueeRows(emojis, 1)
+    expect(top).toHaveLength(1)
+    expect(bottom).toHaveLength(1)
+    expect(top[0]?.id).not.toBe(bottom[0]?.id)
+  })
+
+  it('returns what it can when the index is small', () => {
+    const [top, bottom] = pickMarqueeRows(emojis, 4)
+    expect(top.length + bottom.length).toBe(3)
+  })
+
+  it('puts the preferred still emojis first and never repeats one', () => {
+    const template = emojis[0]
+    if (!template) throw new Error('fixture is empty')
+    const [preferredId] = MARQUEE_EMOJI_IDS
+    if (!preferredId) throw new Error('no preferred marquee emoji')
+    const withPreferred = [...emojis, { ...template, id: preferredId }]
+    const [top, bottom] = pickMarqueeRows(withPreferred, 2)
+    const ids = [...top, ...bottom].map((emoji) => emoji.id)
+    expect(ids[0]).toBe(preferredId)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+describe('shortcode resolution', () => {
+  const template = emojis[0]
+  if (!template) throw new Error('fixture is empty')
+  const fire = { ...template, id: '1f525_fire' }
+  const launch = { ...template, id: 'launch' }
+  const prefixedLaunch = { ...template, id: '1f680_launch' }
+
+  it('matches the full id', () => {
+    expect(resolveShortcodeEmoji([fire], '1f525_fire').id).toBe('1f525_fire')
+  })
+
+  it('matches the id without its code-point prefix', () => {
+    expect(resolveShortcodeEmoji([fire], 'fire').id).toBe('1f525_fire')
+  })
+
+  it('fails loudly for an unknown shortcode', () => {
+    expect(() => resolveShortcodeEmoji([fire, launch], 'missing')).toThrow(
+      /missing/,
+    )
+  })
+
+  it('accepts a demo whose ids all resolve', () => {
+    expect(() => {
+      verifyShortcodeDemo(
+        [fire, launch],
+        [
+          { code: 'fire', id: '1f525_fire' },
+          { code: 'launch', id: 'launch' },
+        ],
+      )
+    }).not.toThrow()
+  })
+
+  it('fails loudly when a demo id drifts from its shortcode', () => {
+    expect(() => {
+      verifyShortcodeDemo([fire], [{ code: 'fire', id: 'fire' }])
+    }).toThrow(/1f525_fire/)
+    expect(() => {
+      verifyShortcodeDemo([fire], [{ code: 'launch', id: 'launch' }])
+    }).toThrow(/:launch:/)
+  })
+
+  it('fails loudly when two ids share a shortcode', () => {
+    expect(() =>
+      resolveShortcodeEmoji([launch, prefixedLaunch], 'launch'),
+    ).toThrow(/ambiguous/i)
   })
 })

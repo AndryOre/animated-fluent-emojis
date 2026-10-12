@@ -39,6 +39,12 @@ test('CodeBlock stacks the panels in one cell so the height never jumps', () => 
   expect(html.match(/col-start-1 row-start-1/g)).toHaveLength(2)
 })
 
+test('CodeBlock reserves the height of its tallest panel from the line counts', () => {
+  const html = renderToString(<CodeBlock tabs={tabs} labels={labels} />)
+
+  expect(html).toContain('min-height:5rem')
+})
+
 test('CodeBlock marks the highlighted line and exposes the line number flag', () => {
   const html = renderToString(<CodeBlock tabs={tabs} labels={labels} />)
 
@@ -49,6 +55,21 @@ test('CodeBlock marks the highlighted line and exposes the line number flag', ()
       <CodeBlock tabs={tabs} labels={labels} lineNumbers={false} />,
     ),
   ).toContain('data-line-numbers="false"')
+})
+
+test('CodeBlock keeps the line tab bar unless the sliding pill is asked for', () => {
+  const plain = renderToString(<CodeBlock tabs={tabs} labels={labels} />)
+  const pilled = renderToString(<CodeBlock tabs={tabs} labels={labels} pill />)
+
+  expect(plain).not.toContain('tab-pill-list')
+  expect(pilled).toContain('tab-pill-list')
+  expect(pilled).toContain('data-variant="default"')
+})
+
+test('CodeBlock keeps the scrolling code from chaining into the page', () => {
+  const html = renderToString(<CodeBlock tabs={tabs} labels={labels} />)
+
+  expect(html).toContain('overscroll-x-contain')
 })
 
 test('InstallBlock renders a tab per package manager with bun selected', () => {

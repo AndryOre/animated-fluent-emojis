@@ -38,6 +38,28 @@ export interface CodeBlockProps {
   slotValues?: Partial<Record<SnippetSlot, string>>
   onCopied?: () => void
   copyEffect?: ReactNode
+  pill?: boolean
+}
+
+const CODE_LINE_HEIGHT_REM = 1.5
+const CODE_PADDING_LINES = 1
+const SCROLLBAR_ALLOWANCE_REM = 0.5
+
+/**
+ * The height of the tallest panel, from its line count, so the block keeps its
+ * size when a tab is chosen even though the inactive panels are not rendered
+ * (the reset stylesheet forces `display: none` on `hidden`). It mirrors the
+ * `.afe-code` rules: one `1.5rem` line each plus `0.75rem` of padding above
+ * and below, and a small allowance for a horizontal scrollbar.
+ * @param tabs - The panels of the block.
+ * @returns A CSS length for the body's `min-height`.
+ */
+function bodyMinHeight(tabs: readonly CodeBlockTab[]): string {
+  const lines = Math.max(0, ...tabs.map((tab) => tab.code.split('\n').length))
+  const rem =
+    (lines + CODE_PADDING_LINES) * CODE_LINE_HEIGHT_REM +
+    SCROLLBAR_ALLOWANCE_REM
+  return `${String(rem)}rem`
 }
 
 /**
@@ -59,6 +81,8 @@ export interface CodeBlockProps {
  * failed one.
  * @param props.copyEffect - Decoration anchored to the copy button, such as a
  * burst of particles; it must not affect layout.
+ * @param props.pill - Swaps the line tab bar for brand pills with a sliding
+ * indicator behind the active tab; off by default.
  * @returns The code block card.
  */
 export default function CodeBlock({
@@ -71,6 +95,7 @@ export default function CodeBlock({
   slotValues,
   onCopied,
   copyEffect,
+  pill = false,
 }: CodeBlockProps) {
   const [ownActive, setOwnActive] = useState(tabs[0]?.id ?? '')
   const [copied, setCopied] = useState(false)
@@ -102,7 +127,7 @@ export default function CodeBlock({
 
   return (
     <Tabs
-      variant="line"
+      variant={pill ? 'default' : 'line'}
       value={active}
       onValueChange={(value) => {
         const id = String(value)
@@ -111,11 +136,17 @@ export default function CodeBlock({
       }}
       className="overflow-hidden rounded-xl border border-border bg-card"
     >
-      <div className="flex h-10 items-center justify-between gap-2 border-b border-border pr-1.5 pl-3">
+      <div
+        className={cn(
+          'flex items-center justify-between gap-2 border-b border-border pr-1.5 pl-3',
+          pill ? 'h-12' : 'h-10',
+        )}
+      >
         <div ref={tabsRef} className="flex min-w-0 items-center gap-2">
           {leading}
           {showTabs && (
             <TabsList
+              pill={pill}
               activateOnFocus
               aria-label={labels.tabsLabel}
               className="min-w-0 gap-1 pr-5 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -151,7 +182,11 @@ export default function CodeBlock({
           {copyEffect}
         </span>
       </div>
-      <div ref={bodyRef} className="grid">
+      <div
+        ref={bodyRef}
+        className="grid"
+        style={{ minHeight: bodyMinHeight(tabs) }}
+      >
         {tabs.map((tab) => (
           <TabsContent
             key={tab.id}
@@ -163,7 +198,7 @@ export default function CodeBlock({
             <div
               tabIndex={0}
               data-line-numbers={lineNumbers}
-              className="afe-code overflow-x-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
+              className="afe-code overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
               dangerouslySetInnerHTML={{
                 __html: tab.highlightLine
                   ? markHighlightedLine(tab.html, tab.highlightLine)
