@@ -1,9 +1,81 @@
 ---
-import type { Locale } from '../../i18n/locales'
+import { type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import DockInstall from '../DockInstall'
 
 interface Props {
   locale: Locale
 }
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
 ---
 
-<Fragment />
+<div
+  class="dock-reveal h-12 rounded-full border border-border bg-background/85 shadow-lg backdrop-blur-md"
+  data-dock
+>
+  <DockInstall
+    client:visible
+    labels={{
+      label: home.dock.label,
+      tabsLabel: home.dock.tabsLabel,
+      copy: home.dock.copy,
+      copied: home.dock.copied,
+    }}
+  />
+</div>
+
+<style is:global>
+  .dock-reveal {
+    max-width: min(35rem, calc(100% - 2 * var(--site-gutter)));
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  @keyframes dock-appear {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  @keyframes dock-disappear {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: reduce) {
+      .dock-scope {
+        timeline-scope: --dock-hero, --dock-end;
+      }
+
+      .dock-hero {
+        view-timeline-name: --dock-hero;
+        view-timeline-axis: block;
+      }
+
+      .dock-end {
+        view-timeline-name: --dock-end;
+        view-timeline-axis: block;
+      }
+
+      .dock-reveal {
+        animation-name: dock-appear, dock-disappear;
+        animation-fill-mode: both, both;
+        animation-timing-function: steps(1, jump-end), steps(1, jump-end);
+        animation-timeline: --dock-hero, --dock-end;
+        animation-range:
+          exit 50% exit 51%,
+          entry 0% entry 1%;
+      }
+    }
+  }
+</style>

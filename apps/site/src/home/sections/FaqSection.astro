@@ -1,4 +1,6 @@
 ---
+import Emoji from 'animated-fluent-emojis/astro'
+
 import { type Locale } from '../../i18n/locales'
 import { getUi } from '../../i18n/ui'
 import FaqAccordion from '../FaqAccordion'
@@ -8,18 +10,88 @@ interface Props {
   locale: Locale
 }
 
+const MASCOT_SIZE = 200
+
 const { locale } = Astro.props
 const { home } = getUi(locale)
 
-const faq = [home.faq.chat, home.faq.speed, home.faq.motion]
+const faq = [
+  { id: 'chat', emojiId: 'speechbubble', ...home.faq.chat },
+  { id: 'speed', emojiId: '26a1_highvoltagesign', ...home.faq.speed },
+  { id: 'motion', emojiId: '1f319_crescentmoon', ...home.faq.motion },
+]
 ---
 
 <section class={section} aria-labelledby="faq-title">
-  <div class="scroll-reveal scroll-reveal-last">
-    <p class={eyebrow}>{home.faq.eyebrow}</p>
-    <h2 id="faq-title" class={`${heading} mb-6`}>
-      {home.faq.title}
-    </h2>
-    <FaqAccordion client:visible items={faq} />
+  <div class="faq-scope scroll-reveal scroll-reveal-last grid items-center gap-10 min-[860px]:grid-cols-2">
+    <div class="min-w-0">
+      <p class={eyebrow}>{home.faq.eyebrow}</p>
+      <h2 id="faq-title" class={`${heading} mb-6`}>
+        {home.faq.title}
+      </h2>
+      <FaqAccordion client:visible items={faq} />
+    </div>
+    <div
+      aria-hidden="true"
+      data-faq-mascots
+      class="relative hidden min-w-0 justify-self-center min-[860px]:grid"
+      style={`width: ${MASCOT_SIZE}px; height: ${MASCOT_SIZE}px`}
+    >
+      {faq.map((entry) => (
+        <span
+          data-faq-mascot={entry.id}
+          class="col-start-1 row-start-1 grid place-items-center"
+        >
+          <Emoji id={entry.emojiId} size={MASCOT_SIZE} alt="" />
+        </span>
+      ))}
+    </div>
   </div>
 </section>
+
+<style is:global>
+  [data-faq-mascot] {
+    opacity: 0;
+    scale: 0.9;
+    pointer-events: none;
+  }
+
+  [data-faq-mascot='chat'] {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='chat'],
+  .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='chat'],
+  .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='speed'] {
+    opacity: 0;
+    scale: 0.9;
+  }
+
+  .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='speed'],
+  .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='motion'] {
+    opacity: 1;
+    scale: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-faq-mascot] {
+      transition-property: opacity, scale, filter;
+      transition-duration: 220ms;
+      transition-timing-function: var(--ease-out-strong);
+    }
+
+    .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='chat'],
+    .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='chat'],
+    .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='speed'] {
+      filter: blur(2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-faq-mascot] {
+      transition: opacity 150ms ease;
+      scale: 1;
+    }
+  }
+</style>
