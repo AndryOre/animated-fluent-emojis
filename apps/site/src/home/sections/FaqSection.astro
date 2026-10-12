@@ -1,0 +1,25 @@
+---
+import { type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import FaqAccordion from '../FaqAccordion'
+import { eyebrow, heading, section } from './styles'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
+
+const faq = [home.faq.chat, home.faq.speed, home.faq.motion]
+---
+
+<section class={section} aria-labelledby="faq-title">
+  <div class="scroll-reveal scroll-reveal-last">
+    <p class={eyebrow}>{home.faq.eyebrow}</p>
+    <h2 id="faq-title" class={`${heading} mb-6`}>
+      {home.faq.title}
+    </h2>
+    <FaqAccordion client:visible items={faq} />
+  </div>
+</section>

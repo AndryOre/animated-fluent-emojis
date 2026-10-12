@@ -1,0 +1,38 @@
+---
+import CodeBlock from '../../components/CodeBlock'
+import { loadPublicIndex } from '../../gallery/public-index'
+import { type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import { buildCodeBlockTabs } from '../content'
+import { heading, section } from './styles'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
+
+const index = await loadPublicIndex()
+const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
+if (!snippetEmoji) throw new Error('The public index has no waving hand')
+const tabs = await buildCodeBlockTabs(snippetEmoji)
+---
+
+<section class={section} aria-labelledby="snippets-title">
+  <div class="scroll-reveal">
+    <h2 id="snippets-title" class={`${heading} mb-2`}>
+      {home.snippets.title}
+    </h2>
+    <p class="mb-6 text-pretty text-muted-foreground">{home.snippets.body}</p>
+    <CodeBlock
+      client:visible
+      tabs={tabs}
+      labels={{
+        tabsLabel: home.snippets.tabsLabel,
+        copy: home.snippets.copy,
+        copied: home.snippets.copied,
+      }}
+    />
+  </div>
+</section>

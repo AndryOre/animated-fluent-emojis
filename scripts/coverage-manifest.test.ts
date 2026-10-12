@@ -78,6 +78,21 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/Header.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/components/HomePage.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/HeroSection.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/StatsBar.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/MarqueeDivider.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/PlaygroundSection.astro':
+    ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/PillarsSection.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/NoCodeSection.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/InstallSection.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/SnippetsSection.astro':
+    ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/FaqSection.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/ClosingPanel.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/Dock.astro': ASTRO_PRESENTATION_REASON,
+  'apps/site/src/home/sections/styles.ts':
+    'Constants-only module with the Tailwind class strings shared by the home sections.',
   'apps/site/src/components/ui/input.tsx':
     'Styled wrapper over the Base UI input, exercised in a real browser through the gallery search.',
   'apps/site/src/components/ui/sheet.tsx':
