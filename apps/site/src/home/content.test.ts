@@ -14,6 +14,7 @@ import {
   pickTeaserEmojis,
   resolveShortcodeEmoji,
   SNIPPET_TABS,
+  TEASER_EMOJIS,
   verifyShortcodeDemo,
 } from './content'
 
@@ -96,15 +97,37 @@ describe('highlighted blocks', () => {
 })
 
 describe('teaser emojis', () => {
-  it('returns the requested number of distinct emojis', () => {
-    const count = Math.min(8, emojis.length)
-    const picked = pickTeaserEmojis(emojis, count)
-    expect(picked).toHaveLength(count)
-    expect(new Set(picked.map((emoji) => emoji.slug)).size).toBe(count)
+  const template = emojis[0]
+  if (!template) throw new Error('fixture is empty')
+  const everyTeaser = TEASER_EMOJIS.map((entry) => ({
+    ...template,
+    id: entry.id,
+    slug: entry.id,
+  }))
+  const withoutFire = emojis.filter((emoji) => emoji.id !== 'fire')
+
+  it('picks the curated emojis in order with a glow hue each', () => {
+    const picked = pickTeaserEmojis([...withoutFire, ...everyTeaser])
+    expect(picked.map((entry) => entry.emoji.id)).toEqual(
+      TEASER_EMOJIS.map((entry) => entry.id),
+    )
+    for (const entry of picked) {
+      expect(entry.hue).toBeGreaterThanOrEqual(0)
+      expect(entry.hue).toBeLessThan(360)
+    }
   })
 
-  it('returns everything when fewer are available', () => {
-    expect(pickTeaserEmojis(emojis.slice(0, 3), 8)).toHaveLength(3)
+  it('shows six tiles', () => {
+    expect(TEASER_EMOJIS).toHaveLength(6)
+  })
+
+  it('fails loudly when a curated emoji left the index', () => {
+    expect(() => pickTeaserEmojis(withoutFire)).toThrow(/fire/)
+  })
+
+  it('skips missing emojis when asked to, for filtered builds', () => {
+    expect(pickTeaserEmojis(withoutFire, true)).toEqual([])
+    expect(pickTeaserEmojis(emojis, true)).toHaveLength(1)
   })
 })
 
