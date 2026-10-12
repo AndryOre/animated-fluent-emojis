@@ -15,7 +15,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@types/node": "^24",
+    "@types/node": "24.19.2",
     "@vitest/coverage-v8": "catalog:",
     "animated-fluent-emojis": "workspace:*",
     "sharp": "^0.35.5",
