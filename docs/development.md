@@ -179,10 +179,11 @@ get the end state and nothing is hidden. None of them uses JavaScript observers.
   `TabsList`, which adds `tab-pill-list` and renders the indicator, and the pill
   follows the selected tab through the `--active-tab-left`,
   `--active-tab-width`, `--active-tab-top` and `--active-tab-height` variables
-  that Base UI measures. It moves with `transform` and `width` over 200ms with
-  `--ease-out-strong`. Triggers inside `tab-pill-list` lose their own selected
-  background; set `--tab-pill-background` and `--tab-pill-radius` to restyle the
-  pill. Use it for the hero, install and dock tab sets.
+  that Base UI measures. It moves with `transform` over 200ms (the width snaps,
+  so a pill never triggers layout) with `--ease-out-strong`. Triggers inside
+  `tab-pill-list` lose their own selected background; set
+  `--tab-pill-background` and `--tab-pill-radius` to restyle the pill. Use it
+  for the hero, install and dock tab sets.
 - **`fake-cursor`**: a looping cursor for demos. Declare the waypoints with
   `--cursor-x0`/`--cursor-y0` (start), `--cursor-x1`/`--cursor-y1` (the press)
   and `--cursor-x2`/`--cursor-y2` (after), plus `--cursor-duration` (6s by

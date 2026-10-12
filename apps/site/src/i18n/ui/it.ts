@@ -232,16 +232,17 @@ export const it: UiStrings = {
       chat: {
         question: 'Posso usarle in una chat o in un documento?',
         answer:
-          'Sì, come file immagine. Il pacchetto in sé è pensato per le pagine web.',
+          "Sì. Scarica l'emoji come GIF, WebP animata o PNG statica dalla galleria, poi aggiungila al tuo messaggio o file come una qualsiasi immagine.",
       },
       speed: {
         question: 'Rallenteranno la mia pagina?',
         answer:
-          'No. Vengono scaricate solo le emoji che mostri, e il loro spazio è riservato così niente salta.',
+          "No. Ogni emoji riserva il proprio spazio mentre si carica, quindi nulla salta, e i file dell'animazione vengono recuperati solo quando un'emoji viene mostrata.",
       },
       motion: {
         question: 'Cosa succede se qualcuno preferisce meno movimento?',
-        answer: 'L’emoji resta sul suo primo fotogramma.',
+        answer:
+          "L'emoji resta ferma sul primo fotogramma. Non si muove mai, a meno che il visitatore non abbia lasciato attivo il movimento.",
       },
     },
   },

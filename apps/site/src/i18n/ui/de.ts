@@ -215,7 +215,7 @@ export const de: UiStrings = {
       },
     },
     closing: {
-      titleLead: 'Emojis in Minuten einsetzen',
+      titleLead: 'Emojis einsetzen',
       titleAccent: 'in Minuten.',
       body: 'Open Source, MIT-lizenziert, ein Tag.',
       cta: 'Auf GitHub ansehen',
@@ -232,16 +232,17 @@ export const de: UiStrings = {
       chat: {
         question: 'Kann ich sie in einem Chat oder Dokument verwenden?',
         answer:
-          'Ja, als Bilddateien. Das Paket selbst ist für Webseiten gebaut.',
+          'Ja. Lade das Emoji in der Galerie als GIF, animiertes WebP oder stehendes PNG herunter und füge es wie jedes Bild zu deiner Nachricht oder Datei hinzu.',
       },
       speed: {
         question: 'Machen sie meine Seite langsamer?',
         answer:
-          'Nein. Es werden nur die Emojis geladen, die du anzeigst, und ihr Platz ist reserviert, damit nichts springt.',
+          'Nein. Jedes Emoji reserviert seinen Platz, solange es lädt, also springt nichts, und die Animationsdateien werden erst geladen, wenn ein Emoji angezeigt wird.',
       },
       motion: {
         question: 'Was passiert, wenn jemand weniger Bewegung bevorzugt?',
-        answer: 'Das Emoji bleibt auf seinem ersten Bild stehen.',
+        answer:
+          'Das Emoji bleibt auf seinem ersten Bild stehen. Es bewegt sich nur, wenn die Besucherin oder der Besucher Bewegung eingeschaltet gelassen hat.',
       },
     },
   },

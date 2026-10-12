@@ -216,7 +216,7 @@ export const zh_CN: UiStrings = {
       },
     },
     closing: {
-      titleLead: '几分钟内用上表情符号',
+      titleLead: '用上表情符号，',
       titleAccent: '几分钟即可。',
       body: '开源，MIT 许可，一个标签。',
       cta: '在 GitHub 上查看',
@@ -232,16 +232,18 @@ export const zh_CN: UiStrings = {
       title: '常见问题',
       chat: {
         question: '可以在聊天或文档里用吗？',
-        answer: '可以，以图片文件的形式使用。软件包本身是为网页设计的。',
+        answer:
+          '可以。从图库里把 emoji 下载为 GIF、动画 WebP 或静态 PNG，然后像添加普通图片一样加进消息或文件即可。',
       },
       speed: {
         question: '会拖慢我的页面吗？',
         answer:
-          '不会。只会加载你渲染的表情符号，并预留好它们的空间，所以不会跳动。',
+          '不会。每个 emoji 在加载时都会先占好位置，所以页面不会跳动，动画文件也只在 emoji 显示时才会加载。',
       },
       motion: {
         question: '如果有人想减少动态效果，会怎么样？',
-        answer: '表情符号会停在第一帧。',
+        answer:
+          'emoji 会停在第一帧，保持静止。只有访客保持开启动态效果时，它才会动。',
       },
     },
   },

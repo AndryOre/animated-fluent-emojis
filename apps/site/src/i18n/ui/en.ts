@@ -231,16 +231,17 @@ export const en = {
       chat: {
         question: 'Can I use these in a chat or a document?',
         answer:
-          'Yes, as image assets. The package itself is built for web pages.',
+          'Yes. Download the emoji as a GIF, an animated WebP or a still PNG from the gallery, then add it to your message or file like any picture.',
       },
       speed: {
         question: 'Will they slow my page down?',
         answer:
-          'No. Only the emoji you render are fetched, and their space is reserved so nothing jumps.',
+          'No. Each emoji holds its space while it loads, so nothing jumps, and the animation files are only fetched when an emoji is shown.',
       },
       motion: {
         question: 'What happens if someone prefers less motion?',
-        answer: 'The emoji stays on its first frame.',
+        answer:
+          'The emoji stays still on its first frame. It never moves unless the visitor has left motion switched on.',
       },
     },
   },

@@ -416,7 +416,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .tab-pill {
-    transition-property: transform, width;
+    transition-property: transform;
     transition-duration: 200ms;
     transition-timing-function: var(--ease-out-strong);
   }
