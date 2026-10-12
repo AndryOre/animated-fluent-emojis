@@ -1,0 +1,61 @@
+---
+import Emoji from 'animated-fluent-emojis/astro'
+
+import { type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import { eyebrow, heading, section } from './styles'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const { home } = getUi(locale)
+
+const pillars = [
+  { icon: '1f44b_wavinghand', ...home.pillars.alive },
+  { icon: 'feather', ...home.pillars.light },
+  { icon: '1f319_crescentmoon', ...home.pillars.considerate },
+  { icon: 'handshake', ...home.pillars.credit },
+]
+---
+
+<section class={section} aria-labelledby="pillars-title">
+  <div class="scroll-reveal">
+    <p class={eyebrow}>{home.pillars.eyebrow}</p>
+    <h2 id="pillars-title" class={`${heading} mb-8`}>
+      {home.pillars.title}
+    </h2>
+  </div>
+  <ul
+    data-pillar-spotlight
+    class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-3"
+  >
+    {pillars.map((pillar, position) => (
+      <li
+        class={`scroll-reveal spotlight flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 ${position === 0 ? 'min-[860px]:col-span-2 min-[860px]:row-span-2 min-[860px]:justify-between min-[860px]:p-8' : ''} ${position === 3 ? 'min-[860px]:col-span-3' : ''}`}
+      >
+        <Emoji
+          id={pillar.icon}
+          size={position === 0 ? 120 : 40}
+          playOnHover={position === 0}
+          autoPlay={position !== 0}
+          alt=""
+        />
+        <div class="flex flex-col gap-1">
+          <h3 class="text-lg font-extrabold text-balance">{pillar.title}</h3>
+          <p class="text-pretty text-muted-foreground">{pillar.body}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  import { attachPillarSpotlight } from '../../scripts/pillar-spotlight'
+
+  const cards = document.querySelectorAll<HTMLElement>(
+    '[data-pillar-spotlight] > .spotlight',
+  )
+  attachPillarSpotlight(cards)
+</script>
