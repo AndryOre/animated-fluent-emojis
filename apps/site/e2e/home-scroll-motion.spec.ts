@@ -46,6 +46,9 @@ const readOpacity = (locator: Locator) =>
 
 const TEASER_LINK = '.scroll-drift-scope'
 const PILLAR_INDICES = [0, 1, 2, 3]
+const BENTO_CURSOR = `${PILLAR_CARD} .bento-cursor`
+const BENTO_STAGE = `${PILLAR_CARD} .bento-stage`
+const BENTO_SWITCH_THUMB = `${PILLAR_CARD} .bento-switch-thumb`
 
 test.describe('with motion allowed', () => {
   test.use({ reducedMotion: 'no-preference' })
@@ -167,6 +170,37 @@ test.describe('with motion allowed', () => {
     await expect.poll(() => readTranslateX(row)).toBeLessThan(centred - 1)
   })
 
+  test('the bento cursors loop and every stage keeps a fixed height', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const cursors = page.locator(BENTO_CURSOR)
+    await expect(cursors).toHaveCount(2)
+    const names = await cursors.evaluateAll((elements) =>
+      elements.map((element) => getComputedStyle(element).animationName),
+    )
+    expect(names).toEqual(['fake-cursor-loop', 'fake-cursor-loop'])
+
+    const heights = await page
+      .locator(BENTO_STAGE)
+      .evaluateAll((elements) =>
+        elements.map((element) => (element as HTMLElement).offsetHeight),
+      )
+    expect(heights).toEqual([168, 168, 168, 168])
+  })
+
+  test('the considerate switch moves while the cursor loops', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const thumb = page.locator(BENTO_SWITCH_THUMB)
+    await expect(thumb).toBeAttached()
+    const name = await thumb.evaluate(
+      (element) => getComputedStyle(element).animationName,
+    )
+    expect(name).toBe('bento-switch-thumb')
+  })
+
   test('the pillar spotlight variables follow the mouse', async ({ page }) => {
     await page.goto('/')
     const card = page.locator(PILLAR_CARD).nth(1)
@@ -260,6 +294,42 @@ test.describe('with reduced motion', () => {
     const row = await readAnimationState(page.locator(TEASER_ROW))
     expect(row.name).toBe('none')
     expect(row.opacity).toBe('1')
+  })
+
+  test('the bento shows no cursor and rests on the switch on', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const cursorDisplays = await page
+      .locator(BENTO_CURSOR)
+      .evaluateAll((elements) =>
+        elements.map((element) => getComputedStyle(element).display),
+      )
+    expect(cursorDisplays).toEqual(['none', 'none'])
+
+    const thumb = page.locator(BENTO_SWITCH_THUMB)
+    const resting = await thumb.evaluate((element) => {
+      const style = getComputedStyle(element)
+      return { name: style.animationName, translate: style.translate }
+    })
+    expect(resting.name).toBe('none')
+    expect(resting.translate).toBe('18px')
+
+    const playing = await page
+      .locator(
+        `${PILLAR_CARD} .bento-play-first, ${PILLAR_CARD} .bento-play-second, ${PILLAR_CARD} .bento-motion-on`,
+      )
+      .evaluateAll((elements) =>
+        elements.map((element) => {
+          const style = getComputedStyle(element)
+          return { name: style.animationName, opacity: style.opacity }
+        }),
+      )
+    expect(playing).toHaveLength(3)
+    for (const state of playing) {
+      expect(state.name).toBe('none')
+      expect(state.opacity).toBe('0')
+    }
   })
 
   test('the hero is static and fully visible', async ({ page }) => {
