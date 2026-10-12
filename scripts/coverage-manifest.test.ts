@@ -86,8 +86,6 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/home/sections/PillarsSection.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/home/sections/NoCodeSection.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/home/sections/InstallSection.astro': ASTRO_PRESENTATION_REASON,
-  'apps/site/src/home/sections/SnippetsSection.astro':
-    ASTRO_PRESENTATION_REASON,
   'apps/site/src/home/sections/FaqSection.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/home/sections/ClosingPanel.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/home/sections/Dock.astro': ASTRO_PRESENTATION_REASON,
