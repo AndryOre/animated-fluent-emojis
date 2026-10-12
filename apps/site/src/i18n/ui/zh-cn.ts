@@ -125,18 +125,6 @@ export const zh_CN: UiStrings = {
       copy: '复制代码',
       copied: '已复制',
     },
-    noCode: {
-      eyebrow: '无需代码',
-      formats: {
-        gif: '适用于任何聊天',
-        webp: '动画，体积更小',
-        png: '静态图片',
-      },
-      title: '不写代码？没问题。',
-      body: '把任意 emoji 下载为 GIF、动画 WebP 或静态 PNG，放进聊天或文档里就行。',
-      cta: '浏览 emoji',
-      teaserLabel: '图库中的几个 emoji',
-    },
     stats: {
       emojis: '个动画表情符号',
       adapters: '个适配器，一个标签',
