@@ -5,7 +5,7 @@ import { buttonVariants } from '@/components/ui/button'
 
 import { type Locale } from '../../i18n/locales'
 import { getUi } from '../../i18n/ui'
-import { REPOSITORY_URL } from '../../site-links'
+import { externalLinkAttributes, REPOSITORY_URL } from '../../site-links'
 import { section } from './styles'
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const { locale } = Astro.props
-const { home } = getUi(locale)
+const { home, common } = getUi(locale)
 
 const decorations = [
   { id: '1f389_partypopper', placement: 'top-4 left-4', tilt: '-rotate-12' },
@@ -54,8 +54,13 @@ const primaryButton = buttonVariants({
       <p class="text-lg text-pretty text-muted-foreground">
         {home.closing.body}
       </p>
-      <a href={REPOSITORY_URL} class={primaryButton}>
+      <a
+        href={REPOSITORY_URL}
+        class={primaryButton}
+        {...externalLinkAttributes()}
+      >
         {home.closing.cta}
+        <span class="sr-only"> ({common.opensInNewTab})</span>
       </a>
     </div>
   </div>
