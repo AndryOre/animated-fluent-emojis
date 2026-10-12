@@ -178,6 +178,55 @@ export async function buildInstallHtml(): Promise<
   return Object.fromEntries(entries) as Record<PackageManager, string>
 }
 
+const CODE_POINT_PREFIX = /^[\da-f]+(?:_[\da-f]+)*_/
+
+/**
+ * Finds the emoji a shortcode names: its full id, or its id without the
+ * code-point prefix. There are no aliases. It throws when nothing matches or
+ * when two ids would answer to the same shortcode, so the build fails instead
+ * of showing a demo that does not resolve.
+ * @param emojis - The public index.
+ * @param shortcode - The code between the colons, such as `fire`.
+ * @returns The single matching emoji.
+ */
+export function resolveShortcodeEmoji(
+  emojis: readonly PublicEmoji[],
+  shortcode: string,
+): PublicEmoji {
+  const matches = emojis.filter(
+    (emoji) =>
+      emoji.id === shortcode ||
+      emoji.id.replace(CODE_POINT_PREFIX, '') === shortcode,
+  )
+  const [match] = matches
+  if (!match) {
+    throw new Error(`The public index has no emoji for :${shortcode}:`)
+  }
+  if (matches.length > 1) {
+    throw new Error(`The shortcode :${shortcode}: is ambiguous`)
+  }
+  return match
+}
+
+/**
+ * Checks that every shortcode of a static demo still resolves to the id the
+ * demo renders, so a renamed or removed emoji fails the build instead of
+ * leaving a stale demo.
+ * @param emojis - The public index.
+ * @param demo - The shortcodes shown and the full id each one renders.
+ */
+export function verifyShortcodeDemo(
+  emojis: readonly PublicEmoji[],
+  demo: readonly { code: string; id: string }[],
+): void {
+  for (const { code, id } of demo) {
+    const resolved = resolveShortcodeEmoji(emojis, code).id
+    if (resolved !== id) {
+      throw new Error(`:${code}: resolves to ${resolved}, the demo shows ${id}`)
+    }
+  }
+}
+
 /**
  * Picks the emojis for the gallery teaser grid, evenly spread over the index
  * so the teaser shows variety and stays stable between builds.

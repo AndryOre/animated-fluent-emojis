@@ -11,7 +11,9 @@ import {
   buildSnippetTabs,
   pickMarqueeRows,
   pickTeaserEmojis,
+  resolveShortcodeEmoji,
   SNIPPET_TABS,
+  verifyShortcodeDemo,
 } from './content'
 
 const emojis = parsePublicIndex(publicIndexFixture)
@@ -187,5 +189,54 @@ describe('marquee rows', () => {
   it('returns what it can when the index is small', () => {
     const [top, bottom] = pickMarqueeRows(emojis, 4)
     expect(top.length + bottom.length).toBe(3)
+  })
+})
+
+describe('shortcode resolution', () => {
+  const template = emojis[0]
+  if (!template) throw new Error('fixture is empty')
+  const fire = { ...template, id: '1f525_fire' }
+  const launch = { ...template, id: 'launch' }
+  const prefixedLaunch = { ...template, id: '1f680_launch' }
+
+  it('matches the full id', () => {
+    expect(resolveShortcodeEmoji([fire], '1f525_fire').id).toBe('1f525_fire')
+  })
+
+  it('matches the id without its code-point prefix', () => {
+    expect(resolveShortcodeEmoji([fire], 'fire').id).toBe('1f525_fire')
+  })
+
+  it('fails loudly for an unknown shortcode', () => {
+    expect(() => resolveShortcodeEmoji([fire, launch], 'missing')).toThrow(
+      /missing/,
+    )
+  })
+
+  it('accepts a demo whose ids all resolve', () => {
+    expect(() => {
+      verifyShortcodeDemo(
+        [fire, launch],
+        [
+          { code: 'fire', id: '1f525_fire' },
+          { code: 'launch', id: 'launch' },
+        ],
+      )
+    }).not.toThrow()
+  })
+
+  it('fails loudly when a demo id drifts from its shortcode', () => {
+    expect(() => {
+      verifyShortcodeDemo([fire], [{ code: 'fire', id: 'fire' }])
+    }).toThrow(/1f525_fire/)
+    expect(() => {
+      verifyShortcodeDemo([fire], [{ code: 'launch', id: 'launch' }])
+    }).toThrow(/:launch:/)
+  })
+
+  it('fails loudly when two ids share a shortcode', () => {
+    expect(() =>
+      resolveShortcodeEmoji([launch, prefixedLaunch], 'launch'),
+    ).toThrow(/ambiguous/i)
   })
 })
