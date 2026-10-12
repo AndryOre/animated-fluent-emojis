@@ -47,6 +47,20 @@ export const pt_BR: UiStrings = {
     title: 'Animated Fluent Emojis',
     tagline: 'Os emojis Fluent ganham vida.',
     hero: {
+      badge: 'Os emojis Fluent da Microsoft, agora em movimento',
+      titleLead: 'Emojis que se mexem,',
+      titleAccent: 'em qualquer site.',
+      subtitle:
+        'Adicione uma tag e sua página ganha emojis 3D animados. Sem salto de layout, sem runtime pesado, e eles ficam parados se alguém pedir menos movimento.',
+      ctaDocs: 'Ler a documentação',
+      ctaGallery: 'Explorar a galeria',
+      ready: {
+        react: 'Pronto para React',
+        vue: 'Pronto para Vue',
+        svelte: 'Pronto para Svelte',
+        astro: 'Pronto para Astro',
+        html: 'Pronto para HTML',
+      },
       sub: 'Passe o mouse e ele acena de volta.',
       installLabel: 'Comando de instalação',
       copy: 'Copiar',
@@ -123,23 +137,112 @@ export const pt_BR: UiStrings = {
       cta: 'Ver os emojis',
       teaserLabel: 'Alguns emojis da galeria',
     },
+    stats: {
+      emojis: 'emojis animados',
+      adapters: 'adaptadores, uma tag',
+      languages: 'idiomas do site',
+      license: 'código aberto',
+    },
+    playground: {
+      eyebrow: 'Área de testes',
+      title: 'O mesmo emoji, do seu jeito',
+      body: 'Escolha um emoji, um tamanho e quando ele anima. O trecho de código acompanha.',
+    },
+    bento: {
+      eyebrow: 'Recursos',
+      title: 'Feito para ser agradável de usar',
+      alive: {
+        title: 'Cheio de vida',
+        body: 'Ele acena de volta. Passe o mouse e veja.',
+      },
+      light: {
+        title: 'Leve',
+        body: 'A página não se mexe enquanto os emojis carregam.',
+      },
+      considerate: {
+        title: 'Atencioso',
+        body: 'Se o dispositivo está configurado para reduzir movimento, os emojis ficam parados.',
+      },
+      credit: {
+        title: 'Créditos claros',
+        body: 'A arte dos emojis é da Microsoft. O código é aberto.',
+      },
+      layoutShift: 'salto de layout: 0 px',
+      reduceMotion: {
+        off: 'Reduzir movimento: desligado',
+        on: 'Reduzir movimento: ligado',
+      },
+      artwork: {
+        label: 'Arte',
+        value: '© Microsoft',
+      },
+      code: {
+        label: 'Código',
+        value: 'MIT · código aberto',
+      },
+    },
+    teaser: {
+      title: 'Escolha um, ele já está se mexendo',
+      cta: 'Abrir a galeria',
+    },
+    install: {
+      eyebrow: 'Instalação',
+      title: 'Uma tag, em qualquer site',
+      body: 'Escolha seu framework, copie o código e o emoji aparece na página.',
+      steps: {
+        import: {
+          title: 'Importar',
+          body: 'Adicione o pacote e importe o componente do seu framework.',
+        },
+        render: {
+          title: 'Exibir',
+          body: 'Use a tag onde quiser que o emoji apareça.',
+        },
+        shortcodes: {
+          title: 'Shortcodes',
+          body: 'Use o id do emoji, ou o id sem o prefixo do ponto de código. Nenhum nome novo para aprender.',
+        },
+      },
+      shortcodeBody:
+        'Use o id do emoji, ou o id sem o prefixo do ponto de código. Nenhum nome novo para aprender.',
+      architecture: {
+        title: 'Como se encaixa',
+        nodes: {
+          page: 'Sua página',
+          adapter: 'Adaptador',
+          lookup: 'Busca',
+          assets: 'Emoji animado',
+        },
+      },
+    },
+    closing: {
+      titleLead: 'Comece a usar emojis',
+      titleAccent: 'em minutos.',
+      body: 'Código aberto, licença MIT, uma tag.',
+      cta: 'Ver no GitHub',
+    },
+    dock: {
+      label: 'Comando de instalação',
+      copy: 'Copiar',
+      copied: 'Copiado',
+      tabsLabel: 'Frameworks',
+    },
     faq: {
       eyebrow: 'Perguntas',
       title: 'Perguntas frequentes',
       chat: {
         question: 'Posso usar os emojis em chats e documentos?',
         answer:
-          'Sim. Baixe um emoji da galeria como GIF, WebP animado ou PNG estático e adicione a mensagens e arquivos como qualquer outra imagem.',
+          'Sim, como arquivos de imagem. O pacote em si é feito para páginas web.',
       },
       speed: {
         question: 'Eles deixam minha página lenta?',
         answer:
-          'Não. Cada emoji reserva seu espaço enquanto carrega, então a página não se mexe, e o arquivo da animação só é buscado quando o emoji aparece.',
+          'Não. Só os emojis que você exibe são baixados, e o espaço deles fica reservado para nada pular.',
       },
       motion: {
         question: 'E para quem reduz o movimento?',
-        answer:
-          'O emoji fica parado no primeiro quadro. Ele só se move se a pessoa ativar o movimento.',
+        answer: 'O emoji fica parado no primeiro quadro.',
       },
     },
   },

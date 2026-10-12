@@ -47,6 +47,20 @@ export const zh_CN: UiStrings = {
     title: 'Animated Fluent Emojis',
     tagline: 'Fluent emoji，会动的那种。',
     hero: {
+      badge: '微软 Fluent 表情符号，现在会动了',
+      titleLead: '会动的表情符号，',
+      titleAccent: '适用于任何网站。',
+      subtitle:
+        '只需放入一个标签，页面就有了 3D 动画表情符号。没有布局偏移，没有沉重的运行时，有人希望减少动效时它们会保持静止。',
+      ctaDocs: '阅读文档',
+      ctaGallery: '浏览图库',
+      ready: {
+        react: '支持 React',
+        vue: '支持 Vue',
+        svelte: '支持 Svelte',
+        astro: '支持 Astro',
+        html: '支持 HTML',
+      },
       sub: '把鼠标移上去，它会向你挥手。',
       installLabel: '安装命令',
       copy: '复制',
@@ -123,23 +137,111 @@ export const zh_CN: UiStrings = {
       cta: '浏览 emoji',
       teaserLabel: '图库中的几个 emoji',
     },
+    stats: {
+      emojis: '个动画表情符号',
+      adapters: '个适配器，一个标签',
+      languages: '种网站语言',
+      license: '开源代码',
+    },
+    playground: {
+      eyebrow: '试玩区',
+      title: '同一个表情符号，你的风格',
+      body: '选择表情符号、尺寸和播放时机，代码片段会随之更新。',
+    },
+    bento: {
+      eyebrow: '特性',
+      title: '用起来省心',
+      alive: {
+        title: '灵动',
+        body: '它们会向你挥手。把鼠标移上去看看。',
+      },
+      light: {
+        title: '轻盈',
+        body: '加载时绝不会把你的页面顶来顶去。',
+      },
+      considerate: {
+        title: '体贴',
+        body: '如果有人在设备上选择减少动态效果，emoji 就会保持静止。',
+      },
+      credit: {
+        title: '归属清楚',
+        body: 'emoji 图稿归 Microsoft 所有，代码是开源的。',
+      },
+      layoutShift: '布局偏移：0 px',
+      reduceMotion: {
+        off: '减少动效：关',
+        on: '减少动效：开',
+      },
+      artwork: {
+        label: '美术作品',
+        value: '© Microsoft',
+      },
+      code: {
+        label: '代码',
+        value: 'MIT · 开源',
+      },
+    },
+    teaser: {
+      title: '选一个，它已经动起来了',
+      cta: '打开图库',
+    },
+    install: {
+      eyebrow: '安装',
+      title: '一个标签，任何网站',
+      body: '选好框架，复制代码，emoji 就出现在页面上了。',
+      steps: {
+        import: {
+          title: '导入',
+          body: '添加软件包，并导入适用于你的框架的组件。',
+        },
+        render: {
+          title: '渲染',
+          body: '在想要显示表情符号的地方放上标签。',
+        },
+        shortcodes: {
+          title: '短代码',
+          body: '使用表情符号的 id，或去掉码位前缀的 id。无需学习新的名称。',
+        },
+      },
+      shortcodeBody:
+        '使用表情符号的 id，或去掉码位前缀的 id。无需学习新的名称。',
+      architecture: {
+        title: '工作方式',
+        nodes: {
+          page: '你的页面',
+          adapter: '适配器',
+          lookup: '查找',
+          assets: '动画表情符号',
+        },
+      },
+    },
+    closing: {
+      titleLead: '几分钟内用上表情符号',
+      titleAccent: '几分钟即可。',
+      body: '开源，MIT 许可，一个标签。',
+      cta: '在 GitHub 上查看',
+    },
+    dock: {
+      label: '安装命令',
+      copy: '复制',
+      copied: '已复制',
+      tabsLabel: '框架',
+    },
     faq: {
       eyebrow: '常见问题',
       title: '常见问题',
       chat: {
         question: '可以在聊天或文档里用吗？',
-        answer:
-          '可以。从图库里把 emoji 下载为 GIF、动画 WebP 或静态 PNG，然后像添加普通图片一样加进消息或文件即可。',
+        answer: '可以，以图片文件的形式使用。软件包本身是为网页设计的。',
       },
       speed: {
         question: '会拖慢我的页面吗？',
         answer:
-          '不会。每个 emoji 在加载时都会先占好位置，所以页面不会跳动，动画文件也只在 emoji 显示时才会加载。',
+          '不会。只会加载你渲染的表情符号，并预留好它们的空间，所以不会跳动。',
       },
       motion: {
         question: '如果有人想减少动态效果，会怎么样？',
-        answer:
-          'emoji 会停在第一帧，保持静止。只有访客保持开启动态效果时，它才会动。',
+        answer: '表情符号会停在第一帧。',
       },
     },
   },

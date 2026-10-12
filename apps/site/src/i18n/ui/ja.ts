@@ -47,6 +47,20 @@ export const ja: UiStrings = {
     title: 'Animated Fluent Emojis',
     tagline: 'Fluent 絵文字が、動きだす。',
     hero: {
+      badge: 'Microsoft の Fluent 絵文字が、動きだす',
+      titleLead: '動く絵文字を、',
+      titleAccent: 'どんなサイトにも。',
+      subtitle:
+        'タグをひとつ置くだけで、ページに 3D のアニメーション絵文字が加わります。レイアウトのずれも重いランタイムもなく、動きを減らす設定の人には静止したままです。',
+      ctaDocs: 'ドキュメントを読む',
+      ctaGallery: 'ギャラリーを見る',
+      ready: {
+        react: 'React 対応',
+        vue: 'Vue 対応',
+        svelte: 'Svelte 対応',
+        astro: 'Astro 対応',
+        html: 'HTML 対応',
+      },
       sub: 'ホバーすると、手を振り返します。',
       installLabel: 'インストールコマンド',
       copy: 'コピー',
@@ -123,23 +137,112 @@ export const ja: UiStrings = {
       cta: '絵文字を見る',
       teaserLabel: 'ギャラリーの絵文字から一部',
     },
+    stats: {
+      emojis: 'アニメーション絵文字',
+      adapters: 'アダプター、タグはひとつ',
+      languages: 'サイトの言語',
+      license: 'オープンソースのコード',
+    },
+    playground: {
+      eyebrow: 'プレイグラウンド',
+      title: '同じ絵文字を、好みのスタイルで',
+      body: '絵文字、サイズ、再生のタイミングを選ぶと、スニペットも更新されます。',
+    },
+    bento: {
+      eyebrow: '特長',
+      title: '気持ちよく使えるように',
+      alive: {
+        title: '生きている',
+        body: '手を振り返してくれます。ホバーして確かめてください。',
+      },
+      light: {
+        title: '軽い',
+        body: '読み込み中もページがずれません。',
+      },
+      considerate: {
+        title: '思いやり',
+        body: '端末で動きを減らす設定にしていれば、絵文字は静止したままです。',
+      },
+      credit: {
+        title: '誰のものか、はっきり',
+        body: '絵文字のアートワークは Microsoft のものです。コードはオープンソースです。',
+      },
+      layoutShift: 'レイアウトのずれ: 0 px',
+      reduceMotion: {
+        off: '動きを減らす: オフ',
+        on: '動きを減らす: オン',
+      },
+      artwork: {
+        label: 'アートワーク',
+        value: '© Microsoft',
+      },
+      code: {
+        label: 'コード',
+        value: 'MIT · オープンソース',
+      },
+    },
+    teaser: {
+      title: 'ひとつ選ぶと、もう動いています',
+      cta: 'ギャラリーを開く',
+    },
+    install: {
+      eyebrow: 'インストール',
+      title: 'タグ一つで、どのサイトにも',
+      body: 'フレームワークを選んでコードをコピーすれば、絵文字がページに現れます。',
+      steps: {
+        import: {
+          title: 'インポート',
+          body: 'パッケージを追加し、お使いのフレームワーク用のコンポーネントをインポートします。',
+        },
+        render: {
+          title: '表示',
+          body: '絵文字を表示したい場所にタグを置きます。',
+        },
+        shortcodes: {
+          title: 'ショートコード',
+          body: '絵文字の ID、またはコードポイントの接頭辞を除いた ID を使います。新しい名前を覚える必要はありません。',
+        },
+      },
+      shortcodeBody:
+        '絵文字の ID、またはコードポイントの接頭辞を除いた ID を使います。新しい名前を覚える必要はありません。',
+      architecture: {
+        title: 'しくみ',
+        nodes: {
+          page: 'あなたのページ',
+          adapter: 'アダプター',
+          lookup: '検索',
+          assets: 'アニメーション絵文字',
+        },
+      },
+    },
+    closing: {
+      titleLead: '絵文字を、数分で',
+      titleAccent: '届けよう。',
+      body: 'オープンソース、MIT ライセンス、タグはひとつ。',
+      cta: 'GitHub で見る',
+    },
+    dock: {
+      label: 'インストールコマンド',
+      copy: 'コピー',
+      copied: 'コピーしました',
+      tabsLabel: 'フレームワーク',
+    },
     faq: {
       eyebrow: 'よくある質問',
       title: 'よくある質問',
       chat: {
         question: 'チャットや文書でも使えますか？',
         answer:
-          'はい。ギャラリーから絵文字を GIF、アニメーション WebP、静止画 PNG でダウンロードして、ふつうの画像と同じようにメッセージやファイルに追加してください。',
+          'はい、画像ファイルとして使えます。パッケージ自体は Web ページ向けに作られています。',
       },
       speed: {
         question: 'ページが重くなりませんか？',
         answer:
-          'いいえ。各絵文字は読み込み中も場所を確保するのでページがずれず、アニメーションのファイルは絵文字が表示されるときにだけ取得されます。',
+          'いいえ。表示した絵文字だけが取得され、場所もあらかじめ確保されるのでずれません。',
       },
       motion: {
         question: '動きを減らす設定の人にはどうなりますか？',
-        answer:
-          '絵文字は最初のフレームで静止したままです。訪問者が動きをオンにしていない限り、動きません。',
+        answer: '絵文字は最初のフレームで静止したままです。',
       },
     },
   },

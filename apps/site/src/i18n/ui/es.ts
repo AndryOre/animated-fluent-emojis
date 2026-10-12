@@ -46,6 +46,20 @@ export const es: UiStrings = {
     title: 'Animated Fluent Emojis',
     tagline: 'Emojis Fluent, pero se mueven.',
     hero: {
+      badge: 'Los emojis Fluent de Microsoft, ahora en movimiento',
+      titleLead: 'Emojis que se mueven,',
+      titleAccent: 'en cualquier sitio.',
+      subtitle:
+        'Añade una etiqueta y tu página tiene emojis 3D animados. Sin saltos de diseño, sin runtime pesado, y se quedan quietos si alguien pide menos movimiento.',
+      ctaDocs: 'Lee la documentación',
+      ctaGallery: 'Explorar la galería',
+      ready: {
+        react: 'Listo para React',
+        vue: 'Listo para Vue',
+        svelte: 'Listo para Svelte',
+        astro: 'Listo para Astro',
+        html: 'Listo para HTML',
+      },
       sub: 'Pasa el cursor. Te saluda.',
       installLabel: 'Comando de instalación',
       copy: 'Copiar',
@@ -122,23 +136,112 @@ export const es: UiStrings = {
       cta: 'Explorar los emojis',
       teaserLabel: 'Algunos emojis de la galería',
     },
+    stats: {
+      emojis: 'emojis animados',
+      adapters: 'adaptadores, una etiqueta',
+      languages: 'idiomas del sitio',
+      license: 'código abierto',
+    },
+    playground: {
+      eyebrow: 'Zona de pruebas',
+      title: 'El mismo emoji, a tu manera',
+      body: 'Elige un emoji, un tamaño y cuándo se anima. El fragmento se actualiza con él.',
+    },
+    bento: {
+      eyebrow: 'Características',
+      title: 'Pensados para que sea fácil convivir con ellos',
+      alive: {
+        title: 'Vivos',
+        body: 'Te saludan. Pasa el cursor sobre uno y míralo.',
+      },
+      light: {
+        title: 'Ligeros',
+        body: 'Nunca mueven tu página mientras cargan.',
+      },
+      considerate: {
+        title: 'Considerados',
+        body: 'Si alguien le pide a su dispositivo menos movimiento, el emoji se queda quieto.',
+      },
+      credit: {
+        title: 'Claros sobre qué es de quién',
+        body: 'Las ilustraciones de los emojis son de Microsoft. El código es de código abierto.',
+      },
+      layoutShift: 'salto de diseño: 0 px',
+      reduceMotion: {
+        off: 'Reducir movimiento: no',
+        on: 'Reducir movimiento: sí',
+      },
+      artwork: {
+        label: 'Ilustración',
+        value: '© Microsoft',
+      },
+      code: {
+        label: 'Código',
+        value: 'MIT · código abierto',
+      },
+    },
+    teaser: {
+      title: 'Elige uno, ya se está moviendo',
+      cta: 'Abrir la galería',
+    },
+    install: {
+      eyebrow: 'Instalación',
+      title: 'Una etiqueta, cualquier sitio',
+      body: 'Elige tu framework, copia el código y el emoji ya está en la página.',
+      steps: {
+        import: {
+          title: 'Importar',
+          body: 'Añade el paquete e importa el componente de tu framework.',
+        },
+        render: {
+          title: 'Mostrar',
+          body: 'Usa la etiqueta donde quieras que aparezca el emoji.',
+        },
+        shortcodes: {
+          title: 'Códigos cortos',
+          body: 'Usa el id del emoji, o el id sin su prefijo de punto de código. Sin nombres nuevos que aprender.',
+        },
+      },
+      shortcodeBody:
+        'Usa el id del emoji, o el id sin su prefijo de punto de código. Sin nombres nuevos que aprender.',
+      architecture: {
+        title: 'Cómo encaja',
+        nodes: {
+          page: 'Tu página',
+          adapter: 'Adaptador',
+          lookup: 'Búsqueda',
+          assets: 'Emoji animado',
+        },
+      },
+    },
+    closing: {
+      titleLead: 'Empieza a usar emojis',
+      titleAccent: 'en minutos.',
+      body: 'Código abierto, licencia MIT, una etiqueta.',
+      cta: 'Ver en GitHub',
+    },
+    dock: {
+      label: 'Comando de instalación',
+      copy: 'Copiar',
+      copied: 'Copiado',
+      tabsLabel: 'Framework',
+    },
     faq: {
       eyebrow: 'Preguntas',
       title: 'Preguntas',
       chat: {
         question: '¿Puedo usarlos en un chat o en un documento?',
         answer:
-          'Sí. Descarga el emoji como GIF, WebP animado o PNG estático desde la galería y agrégalo a tu mensaje o archivo como cualquier imagen.',
+          'Sí, como archivos de imagen. El paquete en sí está pensado para páginas web.',
       },
       speed: {
         question: '¿Harán más lenta mi página?',
         answer:
-          'No. Cada emoji reserva su espacio mientras carga, así que nada salta, y los archivos de animación solo se descargan cuando se muestra un emoji.',
+          'No. Solo se descargan los emojis que muestras, y su espacio queda reservado para que nada salte.',
       },
       motion: {
         question: '¿Qué pasa si alguien prefiere menos movimiento?',
-        answer:
-          'El emoji se queda quieto en su primer fotograma. Nunca se mueve, salvo que la persona haya dejado el movimiento activado.',
+        answer: 'El emoji se queda en su primer fotograma.',
       },
     },
   },
