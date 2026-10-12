@@ -1,15 +1,14 @@
 import { TerminalIcon } from 'lucide-react'
-import { useMemo, useState, useSyncExternalStore } from 'react'
+import { useState } from 'react'
 
 import {
-  createPackageManagerStore,
-  DEFAULT_PACKAGE_MANAGER,
   installCommand,
   isPackageManager,
   PACKAGE_MANAGERS,
   type PackageManager,
   type PackageManagerStore,
 } from '@/lib/package-manager'
+import { usePackageManager } from '@/lib/use-package-manager'
 
 import CodeBlock, { type CodeBlockLabels } from './CodeBlock'
 import CopyBurst from './CopyBurst'
@@ -38,15 +37,7 @@ export default function InstallBlock({
   labels,
   store: providedStore,
 }: InstallBlockProps) {
-  const store = useMemo(
-    () => providedStore ?? createPackageManagerStore(),
-    [providedStore],
-  )
-  const manager = useSyncExternalStore(
-    store.subscribe,
-    store.get,
-    () => DEFAULT_PACKAGE_MANAGER,
-  )
+  const [manager, setManager] = usePackageManager(providedStore)
 
   const [burst, setBurst] = useState(0)
 
@@ -71,7 +62,7 @@ export default function InstallBlock({
       }}
       copyEffect={<CopyBurst burst={burst} />}
       onActiveChange={(id) => {
-        if (isPackageManager(id)) store.set(id)
+        if (isPackageManager(id)) setManager(id)
       }}
     />
   )
