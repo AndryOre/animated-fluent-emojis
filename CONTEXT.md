@@ -57,6 +57,9 @@ site keeps the current generation and the one before it. _Avoid_: Release, build
 description query) to catalog emojis without rendering them. _Avoid_: Search
 API, finder, resolver
 
+**Shortcode**: A `:name:` token that names a catalog emoji by its id, with or
+without the code point prefix, in text. _Avoid_: Alias, emoji code, slug
+
 **Skipped emoji**: An emoji the sync failed to build because of an error
 (download, decode, conversion). It is left out of the catalog, recorded in
 `version.json`, and the next sync rebuilds it. An HD sheet whose frame count
