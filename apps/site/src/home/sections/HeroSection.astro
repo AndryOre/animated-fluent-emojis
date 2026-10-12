@@ -1,19 +1,13 @@
 ---
+import Emoji from 'animated-fluent-emojis/astro'
+
 import { buttonVariants } from '@/components/ui/button'
 
-import libraryPackage from '../../../../../packages/animated-fluent-emojis/package.json'
 import InstallBlock from '../../components/InstallBlock'
 import { loadPublicIndex } from '../../gallery/public-index'
 import { localePath, type Locale } from '../../i18n/locales'
 import { getUi } from '../../i18n/ui'
-import { buildCodeBlockTabs, buildInstallHtml } from '../content'
-import {
-  DEMO_EMOJIS,
-  DEMO_PLAYS,
-  INITIAL_DEMO_STATE,
-  type DemoTabs,
-} from '../demo'
-import DemoPlayground from '../DemoPlayground'
+import { buildInstallHtml } from '../content'
 import { wrap } from './styles'
 
 interface Props {
@@ -25,50 +19,43 @@ const { home } = getUi(locale)
 
 const galleryHref = localePath(locale, '/emojis/')
 const docsHref = localePath(locale, '/docs/')
-const index = await loadPublicIndex()
-const snippetEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
-if (!snippetEmoji) throw new Error('The public index has no waving hand')
-const demoEmojis = index.filter((emoji) =>
-  DEMO_EMOJIS.some(({ id }) => id === emoji.id),
-)
-const demoTabs = Object.fromEntries(
-  await Promise.all(
-    DEMO_PLAYS.map(async ({ id: play }) => [
-      play,
-      {
-        plain: await buildCodeBlockTabs(
-          snippetEmoji,
-          undefined,
-          INITIAL_DEMO_STATE.size,
-          play,
-        ),
-        toned: await buildCodeBlockTabs(
-          snippetEmoji,
-          'light',
-          INITIAL_DEMO_STATE.size,
-          play,
-        ),
-      },
-    ]),
-  ),
-) as DemoTabs
 const installHtml = await buildInstallHtml()
+const index = await loadPublicIndex()
 
-const demoLabels = {
-  emojiLabel: home.demo.emojiLabel,
-  sizeLabel: home.demo.sizeLabel,
-  toneLabel: home.demo.toneLabel,
-  playsLabel: home.demo.playsLabel,
-  reset: home.demo.reset,
-  emojis: home.demo.emojis,
-  tones: home.demo.tones,
-  plays: home.demo.plays,
-  code: {
-    tabsLabel: home.snippets.tabsLabel,
-    copy: home.snippets.copy,
-    copied: home.snippets.copied,
+const decorations = [
+  {
+    id: '1f44b_wavinghand',
+    placement: 'min-[860px]:top-[6%] min-[860px]:left-[-2%]',
+    tilt: '-rotate-12',
+    playOnHover: true,
   },
-}
+  {
+    id: '1f389_partypopper',
+    placement: 'min-[860px]:top-[2%] min-[860px]:right-[-2%]',
+    tilt: 'rotate-12',
+    playOnHover: false,
+  },
+  {
+    id: 'fire',
+    placement: 'min-[860px]:bottom-[16%] min-[860px]:left-[2%]',
+    tilt: 'rotate-6',
+    playOnHover: false,
+  },
+  {
+    id: 'launch',
+    placement: 'min-[860px]:bottom-[12%] min-[860px]:right-[1%]',
+    tilt: '-rotate-6',
+    playOnHover: false,
+  },
+].filter((decoration) => index.some((emoji) => emoji.id === decoration.id))
+
+const readyChips = [
+  { id: 'react', label: home.hero.ready.react },
+  { id: 'vue', label: home.hero.ready.vue },
+  { id: 'svelte', label: home.hero.ready.svelte },
+  { id: 'astro', label: home.hero.ready.astro },
+  { id: 'html', label: home.hero.ready.html },
+]
 
 const secondaryButton = buttonVariants({
   variant: 'outline',
@@ -81,43 +68,64 @@ const primaryButton = buttonVariants({
 })
 ---
 
-<section class="relative -mt-[65px]">
+<section class="relative -mt-[65px] overflow-x-clip">
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-x-0 top-0 h-[520px] [background:radial-gradient(60%_80%_at_0%_0%,color-mix(in_oklab,var(--primary)_16%,transparent),transparent_70%),radial-gradient(50%_70%_at_100%_0%,color-mix(in_oklab,var(--primary)_7%,transparent),transparent_70%)] [mask-image:linear-gradient(to_bottom,black_40%,transparent)]"
+    class="pointer-events-none absolute inset-x-0 top-0 h-[520px] [background:radial-gradient(60%_80%_at_50%_0%,color-mix(in_oklab,var(--primary)_16%,transparent),transparent_70%)] [mask-image:linear-gradient(to_bottom,black_40%,transparent)]"
   ></div>
   <div
-    class={`${wrap} relative grid grid-cols-[minmax(0,1fr)] items-center gap-12 pt-[calc(65px+56px)] pb-10 min-[860px]:grid-cols-[1fr_1.05fr]`}
+    class={`${wrap} relative flex flex-col items-center pt-[calc(65px+40px)] pb-16 text-center md:pb-24 min-[860px]:pt-[calc(65px+72px)]`}
   >
-    <div class="flex min-w-0 flex-col items-start gap-5">
+    <div
+      data-hero-emojis
+      class="hero-demo-enter pointer-events-none mb-6 flex justify-center gap-3 min-[860px]:absolute min-[860px]:inset-0 min-[860px]:mb-0 min-[860px]:block"
+    >
+      {decorations.map((decoration) => (
+        <span
+          class={`pointer-events-auto block size-24 shrink-0 ${decoration.tilt} min-[860px]:absolute min-[860px]:size-[150px] ${decoration.placement}`}
+        >
+          <Emoji
+            id={decoration.id}
+            size="100%"
+            alt=""
+            playOnHover={decoration.playOnHover}
+          />
+        </span>
+      ))}
+    </div>
+    <div class="relative flex min-w-0 max-w-3xl flex-col items-center gap-5">
       <p
-        class="hero-enter font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase"
+        class="hero-enter inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase"
         style="--enter-index: 0"
       >
-        v{libraryPackage.version} · {home.hero.eyebrow}
+        {home.hero.badge}
       </p>
       <h1 class="text-[clamp(36px,6vw,60px)] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance">
-        {home.tagline}
+        {home.hero.titleLead}
+        <span class="text-primary">{home.hero.titleAccent}</span>
       </h1>
       <p
-        class="hero-enter text-xl text-pretty text-muted-foreground"
+        class="hero-enter max-w-2xl text-lg text-pretty text-muted-foreground md:text-xl"
         style="--enter-index: 1"
       >
-        {home.hero.sub}
+        {home.hero.subtitle}
       </p>
-      <div class="hero-enter flex flex-wrap gap-3" style="--enter-index: 2">
+      <div
+        class="hero-enter flex flex-wrap justify-center gap-3"
+        style="--enter-index: 2"
+      >
         <a href={galleryHref} class={primaryButton}>
-          {home.hero.browse}
+          {home.hero.ctaGallery}
         </a>
         <a href={docsHref} class={secondaryButton}>
-          {home.hero.docs}
+          {home.hero.ctaDocs}
         </a>
       </div>
       <div
-        class="hero-enter flex w-full flex-col gap-3"
+        class="hero-enter flex w-full flex-col items-center gap-4"
         style="--enter-index: 3"
       >
-        <div class="w-full max-w-lg">
+        <div class="w-full max-w-lg text-left">
           <InstallBlock
             client:load
             htmlByManager={installHtml}
@@ -128,16 +136,21 @@ const primaryButton = buttonVariants({
             }}
           />
         </div>
+        <ul
+          class="m-0 flex list-none flex-wrap justify-center gap-2 p-0"
+          data-hero-ready
+        >
+          {readyChips.map((chip) => (
+            <li
+              class="rounded-full border border-border bg-card px-3 py-1 text-sm font-semibold text-muted-foreground"
+              data-ready-chip={chip.id}
+            >
+              {chip.label}
+            </li>
+          ))}
+        </ul>
         <p class="text-sm text-muted-foreground">{home.hero.attribution}</p>
       </div>
-    </div>
-    <div class="hero-demo-enter min-w-0">
-      <DemoPlayground
-        client:idle
-        emojis={demoEmojis}
-        tabs={demoTabs}
-        labels={demoLabels}
-      />
     </div>
   </div>
 </section>

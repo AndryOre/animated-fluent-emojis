@@ -6,8 +6,10 @@ import { generateSnippet, type SnippetKind } from '../gallery/snippets'
 import {
   buildCodeBlockTabs,
   buildEmojiPageTabs,
+  buildHomeStats,
   buildInstallHtml,
   buildSnippetTabs,
+  pickMarqueeRows,
   pickTeaserEmojis,
   SNIPPET_TABS,
 } from './content'
@@ -154,5 +156,36 @@ describe('emoji page tabs', () => {
     const { plain, toned } = await buildEmojiPageTabs(withoutTones, 200)
     expect(plain).toHaveLength(5)
     expect(toned).toEqual([])
+  })
+})
+
+describe('home stats', () => {
+  it('derives every stat from the given facts, in display order', () => {
+    expect(
+      buildHomeStats({
+        emojiCount: 1500,
+        localeCount: 10,
+        license: 'MIT',
+      }),
+    ).toEqual([
+      { id: 'emojis', value: '1500' },
+      { id: 'adapters', value: String(SNIPPET_TABS.length) },
+      { id: 'languages', value: '10' },
+      { id: 'license', value: 'MIT' },
+    ])
+  })
+})
+
+describe('marquee rows', () => {
+  it('splits distinct emojis into two rows of the requested length', () => {
+    const [top, bottom] = pickMarqueeRows(emojis, 1)
+    expect(top).toHaveLength(1)
+    expect(bottom).toHaveLength(1)
+    expect(top[0]?.id).not.toBe(bottom[0]?.id)
+  })
+
+  it('returns what it can when the index is small', () => {
+    const [top, bottom] = pickMarqueeRows(emojis, 4)
+    expect(top.length + bottom.length).toBe(3)
   })
 })
