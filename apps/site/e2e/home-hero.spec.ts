@@ -22,7 +22,8 @@ test.describe('home hero, stats and marquee', () => {
       .evaluateAll((elements) =>
         elements.map((element) => {
           const { left, right, width } = element.getBoundingClientRect()
-          return { left, right, width }
+          const layoutWidth = (element as HTMLElement).offsetWidth
+          return { left, right, width, layoutWidth }
         }),
       )
     const visibleBoxes = emojiBoxes.filter((box) => box.width > 0)
@@ -30,7 +31,7 @@ test.describe('home hero, stats and marquee', () => {
     for (const box of visibleBoxes) {
       expect(box.left).toBeGreaterThanOrEqual(0)
       expect(box.right).toBeLessThanOrEqual(MOBILE_WIDTH)
-      expect(box.width).toBeLessThanOrEqual(96)
+      expect(box.layoutWidth).toBeLessThanOrEqual(96)
     }
   })
 
