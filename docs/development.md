@@ -95,8 +95,8 @@ except `i18n:status`, which also has a root script:
 
 ### Scroll-driven motion
 
-The landing page reveals and drifts elements with CSS view timelines, defined as
-the `scroll-reveal` and `scroll-drift` utilities in
+The landing page reveals elements with CSS view timelines, defined as the
+`scroll-reveal` utility in
 [`apps/site/src/styles/global.css`](../apps/site/src/styles/global.css). The
 decision is recorded in [ADR 0021](adr/0021-css-scroll-driven-motion.md). When
 adding or changing one:
