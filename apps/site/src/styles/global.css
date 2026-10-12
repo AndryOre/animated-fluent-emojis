@@ -387,3 +387,323 @@
     display: none;
   }
 }
+
+.tab-pill-list {
+  position: relative;
+}
+
+.tab-pill-list [data-slot='tabs-trigger'][role='tab'] {
+  position: relative;
+  z-index: 1;
+}
+
+.tab-pill-list [data-slot='tabs-trigger'][role='tab'][aria-selected='true'] {
+  background: transparent;
+}
+
+.tab-pill {
+  position: absolute;
+  top: var(--active-tab-top, 0);
+  left: 0;
+  z-index: 0;
+  width: var(--active-tab-width, 0);
+  height: var(--active-tab-height, 0);
+  border-radius: var(--tab-pill-radius, 9999px);
+  background: var(--tab-pill-background, var(--primary));
+  pointer-events: none;
+  transform: translateX(var(--active-tab-left, 0));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tab-pill {
+    transition-property: transform, width;
+    transition-duration: 200ms;
+    transition-timing-function: var(--ease-out-strong);
+  }
+}
+
+@keyframes fake-cursor-loop {
+  0%,
+  8% {
+    translate: var(--cursor-x0, 0px) var(--cursor-y0, 0px);
+    scale: 1;
+  }
+  34% {
+    translate: var(--cursor-x1, 40px) var(--cursor-y1, 24px);
+    scale: 1;
+  }
+  40% {
+    translate: var(--cursor-x1, 40px) var(--cursor-y1, 24px);
+    scale: 0.82;
+  }
+  48% {
+    translate: var(--cursor-x1, 40px) var(--cursor-y1, 24px);
+    scale: 1;
+  }
+  74% {
+    translate: var(--cursor-x2, 80px) var(--cursor-y2, 0px);
+    scale: 1;
+  }
+  100% {
+    translate: var(--cursor-x0, 0px) var(--cursor-y0, 0px);
+    scale: 1;
+  }
+}
+
+@keyframes fake-cursor-target-press {
+  0%,
+  36%,
+  52%,
+  100% {
+    transform: none;
+  }
+  42%,
+  46% {
+    transform: scale(0.96);
+  }
+}
+
+.fake-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  translate: var(--cursor-x1, 40px) var(--cursor-y1, 24px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fake-cursor {
+    translate: var(--cursor-x0, 0px) var(--cursor-y0, 0px);
+    animation-name: fake-cursor-loop;
+    animation-duration: var(--cursor-duration, 6s);
+    animation-timing-function: var(--ease-in-out-strong);
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+  }
+
+  .fake-cursor-target {
+    animation-name: fake-cursor-target-press;
+    animation-duration: var(--cursor-duration, 6s);
+    animation-timing-function: var(--ease-out-strong);
+    animation-iteration-count: infinite;
+  }
+
+  .fake-cursor[data-paused],
+  .fake-cursor-target[data-paused] {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes burst-fly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(cos(var(--burst-angle)) * var(--burst-distance, 36px)),
+        calc(sin(var(--burst-angle)) * var(--burst-distance, 36px))
+      )
+      scale(1);
+  }
+}
+
+.burst {
+  position: relative;
+}
+
+.burst-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.burst-particle:nth-child(1) {
+  --burst-angle: -90deg;
+  --burst-index: 0;
+}
+
+.burst-particle:nth-child(2) {
+  --burst-angle: -30deg;
+  --burst-index: 1;
+}
+
+.burst-particle:nth-child(3) {
+  --burst-angle: 30deg;
+  --burst-index: 2;
+}
+
+.burst-particle:nth-child(4) {
+  --burst-angle: 90deg;
+  --burst-index: 3;
+}
+
+.burst-particle:nth-child(5) {
+  --burst-angle: 150deg;
+  --burst-index: 4;
+}
+
+.burst-particle:nth-child(6) {
+  --burst-angle: 210deg;
+  --burst-index: 5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .burst[data-burst='active'] .burst-particle {
+    animation-name: burst-fly;
+    animation-duration: 600ms;
+    animation-delay: calc(var(--burst-index, 0) * 20ms);
+    animation-timing-function: var(--ease-out-strong);
+    animation-fill-mode: both;
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: -50%;
+  }
+}
+
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+.marquee-track > [aria-hidden='true'] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track > [aria-hidden='true'] {
+    display: flex;
+  }
+
+  .marquee-track {
+    animation-name: marquee-scroll;
+    animation-duration: var(--marquee-duration, 40s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .marquee-track[data-direction='reverse'] {
+    animation-direction: reverse;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+.glow {
+  position: relative;
+  isolation: isolate;
+}
+
+.glow::before {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle closest-side,
+    oklch(0.8 0.15 var(--glow-hue, 60) / var(--glow-strength, 0.45)),
+    transparent
+  );
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glow::before {
+    transition-property: opacity;
+    transition-duration: 200ms;
+    transition-timing-function: var(--ease-out-strong);
+  }
+}
+
+.glow[data-glow='dim']::before {
+  opacity: 0.4;
+}
+
+@keyframes dock-in {
+  from {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(calc(100% + 1.5rem));
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+}
+
+@keyframes dock-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(calc(100% + 1.5rem));
+  }
+}
+
+.dock-reveal {
+  position: fixed;
+  right: 0;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  z-index: 40;
+  width: fit-content;
+  max-width: calc(100% - 2 * var(--site-gutter));
+  margin-inline: auto;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dock-scope {
+      timeline-scope: --dock-hero, --dock-end;
+    }
+
+    .dock-hero {
+      view-timeline-name: --dock-hero;
+      view-timeline-axis: block;
+    }
+
+    .dock-end {
+      view-timeline-name: --dock-end;
+      view-timeline-axis: block;
+    }
+
+    .dock-reveal {
+      animation-name: dock-in, dock-out;
+      animation-fill-mode: both, both;
+      animation-timing-function: var(--ease-out-strong), var(--ease-out-strong);
+      animation-timeline: --dock-hero, --dock-end;
+      animation-range:
+        exit 20% exit 80%,
+        entry 0% entry 60%;
+    }
+  }
+}

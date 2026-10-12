@@ -168,6 +168,53 @@ transitions, in a block of `global.css` gated by
 - **Longhands only**, and visitors who prefer reduced motion get a static, fully
   visible hero.
 
+### Landing motion utilities
+
+Reusable utilities at the end of `global.css` for the landing sections. Each is
+longhand only, and every moving part sits behind
+`prefers-reduced-motion: no-preference`, so visitors who prefer reduced motion
+get the end state and nothing is hidden. None of them uses JavaScript observers.
+
+- **`tab-pill`**: a sliding indicator for Base UI tabs. Pass `pill` to
+  `TabsList`, which adds `tab-pill-list` and renders the indicator, and the pill
+  follows the selected tab through the `--active-tab-left`,
+  `--active-tab-width`, `--active-tab-top` and `--active-tab-height` variables
+  that Base UI measures. It moves with `transform` and `width` over 200ms with
+  `--ease-out-strong`. Triggers inside `tab-pill-list` lose their own selected
+  background; set `--tab-pill-background` and `--tab-pill-radius` to restyle the
+  pill. Use it for the hero, install and dock tab sets.
+- **`fake-cursor`**: a looping cursor for demos. Declare the waypoints with
+  `--cursor-x0`/`--cursor-y0` (start), `--cursor-x1`/`--cursor-y1` (the press)
+  and `--cursor-x2`/`--cursor-y2` (after), plus `--cursor-duration` (6s by
+  default). The cursor moves with the `translate` property and dips with `scale`
+  on the press. Add `fake-cursor-target` to the element being clicked so it
+  presses in sync. The reduced-motion state rests on the press waypoint. Set
+  `data-paused` to freeze the loop.
+- **`burst`**: six particles that fly out from the center of `.burst`. Render
+  six `.burst-particle` children and set `data-burst="active"` on the parent;
+  remove and re-add the attribute to replay. `--burst-distance` sets the travel
+  (36px by default). Use it for one-shot feedback such as a copy; the older
+  `copy-burst-particle` stays for `CopyBurst`. Under reduced motion the
+  particles stay invisible.
+- **`marquee`**: an endless row. Put two identical rows in `.marquee-track`, the
+  second with `aria-hidden="true"`, and give each row trailing padding instead
+  of a `gap` so `translate: -50%` loops seamlessly. `data-direction="reverse"`
+  flips it, `--marquee-duration` sets the speed (40s) and it pauses on hover
+  with a fine pointer. Under reduced motion the duplicate row is hidden and the
+  track is static.
+- **`glow`**: a radial glow behind an emoji, colored by `--glow-hue` (an OKLCH
+  hue, 60 by default) and `--glow-strength` (0.45). `data-glow="dim"` fades it
+  with a 200ms opacity transition.
+- **Dock reveal**: a fixed dock that appears after the hero and hides near the
+  closing panel, driven by two named view timelines. Put `dock-scope` on a
+  common ancestor of the hero, the closing panel and the dock, `dock-hero` on
+  the hero, `dock-end` on the closing panel and `dock-reveal` on the dock. Named
+  timelines are required because the dock cannot reach its siblings through an
+  anonymous `view()`, and a clipping ancestor would otherwise capture it. The
+  dock respects `safe-area-inset-bottom` and never exceeds the page gutters, so
+  it cannot overflow horizontally; keep its tap targets at 44px. Browsers
+  without view timelines and reduced-motion visitors always see it.
+
 ### Brand assets
 
 `bun run brand:export` regenerates the PNG marks, the social preview, the Open
