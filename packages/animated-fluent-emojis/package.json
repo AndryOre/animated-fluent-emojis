@@ -215,7 +215,7 @@
         "dist/lookup.js",
         "dist/chunks/manifest-*.js"
       ],
-      "limit": "2.8 kB"
+      "limit": "3 kB"
     },
     {
       "name": "Stylesheet",

@@ -42,6 +42,8 @@ const EMOJI_CLUSTER =
 
 const ZERO_WIDTH_JOINER = '\u{200D}'
 const CODE_POINT_PREFIX = /^[\da-f]+(?:_[\da-f]+)*_/
+const SHORTCODE = /^:([^\s:]+):$/
+const SHORTCODES_IN_TEXT = /:[^\s:]+:/g
 
 /**
  * Glyphs whose first entry in catalog order is the wrong emoji, mapped to the
@@ -187,6 +189,28 @@ function resolveEmoji(
 }
 
 /**
+ * Resolves one `:name:` shortcode against an already loaded catalog: the exact
+ * id wins, otherwise the first entry in catalog order whose id matches once its
+ * code point prefix is removed.
+ * @param manifest - The loaded manifest.
+ * @param text - A shortcode with both colons.
+ * @returns The match, or undefined when the text is not a known shortcode.
+ */
+function resolveShortcode(
+  manifest: ManifestRecord,
+  text: string,
+): EmojiMatch | undefined {
+  const name = SHORTCODE.exec(text)?.[1]?.toLowerCase()
+  if (!name) return undefined
+  let stripped: string | undefined
+  for (const { id } of Object.values(manifest)) {
+    if (id === name) return { id }
+    if (!stripped && id.replace(CODE_POINT_PREFIX, '') === name) stripped = id
+  }
+  return stripped ? { id: stripped } : undefined
+}
+
+/**
  * Splits text into graphemes, falling back to a code point grouper that keeps
  * ZWJ sequences, variation selectors, skin tones, keycaps and flags together
  * when the runtime has no `Intl.Segmenter`.
@@ -233,22 +257,41 @@ export async function findEmojiByUnicode(
 }
 
 /**
+ * Finds the catalog emoji for a `:name:` shortcode. The name is matched against
+ * ids, ignoring case: first the exact id, then the id without its code point
+ * prefix. Shortcodes derive from ids, not from the manifest.
+ * @param shortcode - A shortcode with both colons, such as `:fire:`.
+ * @returns The match, or undefined when unknown or when the manifest failed to load.
+ */
+export async function findEmojiByShortcode(
+  shortcode: string,
+): Promise<EmojiMatch | undefined> {
+  const manifest = await loadManifestOrUndefined()
+  return manifest ? resolveShortcode(manifest, shortcode) : undefined
+}
+
+/**
  * Finds every catalog emoji in a text, segmenting it by grapheme so ZWJ
- * sequences stay whole.
- * @param text - Free text that may contain emojis.
+ * sequences stay whole. Known `:shortcodes:` count too; unknown ones are left
+ * alone.
+ * @param text - Free text that may contain emojis or shortcodes.
  * @returns The emojis in order of appearance; empty when there are none or the manifest failed to load.
  */
 export async function extractEmojis(text: string): Promise<ExtractedEmoji[]> {
   const manifest = await loadManifestOrUndefined()
   if (!manifest) return []
   const found: ExtractedEmoji[] = []
-  for (const { segment, index } of segmentText(text)) {
-    const match = resolveEmoji(manifest, segment)
-    if (match) {
-      found.push({ ...match, text: segment, index, length: segment.length })
-    }
+  const add = (match: EmojiMatch | undefined, part: string, index: number) => {
+    if (match) found.push({ ...match, text: part, index, length: part.length })
   }
-  return found
+  for (const { segment, index } of segmentText(text)) {
+    add(resolveEmoji(manifest, segment), segment, index)
+  }
+  for (const { 0: code, index } of text.matchAll(SHORTCODES_IN_TEXT)) {
+    add(resolveShortcode(manifest, code), code, index)
+  }
+  // eslint-disable-next-line unicorn/no-array-sort -- sorts a fresh array; toSorted is outside the ES2022 build lib
+  return found.sort((left, right) => left.index - right.index)
 }
 
 /**

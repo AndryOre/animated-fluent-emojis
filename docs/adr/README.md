@@ -34,3 +34,4 @@ column.
 | 0019   | [shadcn on Base UI for the website](0019-shadcn-on-base-ui-for-the-website.md)                                 | Accepted | -                        |
 | 0020   | [Build-time code highlighting](0020-build-time-code-highlighting.md)                                           | Accepted | -                        |
 | 0021   | [CSS scroll-driven motion](0021-css-scroll-driven-motion.md)                                                   | Accepted | -                        |
+| 0022   | [Shortcodes derive from ids](0022-shortcodes-derive-from-ids.md)                                               | Accepted | -                        |
