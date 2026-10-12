@@ -27,21 +27,32 @@ function Tabs(props: TabsPrimitive.Root.Props & TabsStyleProps) {
 
 /**
  * The `role="tablist"` row that holds the tabs and scrolls horizontally when
- * it overflows.
- * @param props - Base UI tabs list props.
+ * it overflows. With `pill` it also renders the sliding `tab-pill` indicator
+ * behind the selected tab: Base UI measures the active tab into
+ * `--active-tab-*` and the utility moves `transform` and `width` with them.
+ * @param props - Base UI tabs list props and the optional `pill` flag.
  * @returns The tab list element.
  */
-function TabsList(props: TabsPrimitive.List.Props) {
-  const { className, ...rest } = props
+function TabsList(props: TabsPrimitive.List.Props & { pill?: boolean }) {
+  const { className, pill = false, children, ...rest } = props
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'flex gap-1 overflow-x-auto group-data-[variant=segmented]/tabs:w-fit group-data-[variant=segmented]/tabs:gap-0.5 group-data-[variant=segmented]/tabs:rounded-lg group-data-[variant=segmented]/tabs:bg-muted group-data-[variant=segmented]/tabs:p-0.5',
+        'relative flex gap-1 overflow-x-auto group-data-[variant=segmented]/tabs:w-fit group-data-[variant=segmented]/tabs:gap-0.5 group-data-[variant=segmented]/tabs:rounded-lg group-data-[variant=segmented]/tabs:bg-muted group-data-[variant=segmented]/tabs:p-0.5',
+        pill && 'tab-pill-list',
         className,
       )}
       {...rest}
-    />
+    >
+      {children}
+      {pill ? (
+        <TabsPrimitive.Indicator
+          data-slot="tabs-indicator"
+          className="tab-pill"
+        />
+      ) : null}
+    </TabsPrimitive.List>
   )
 }
 
