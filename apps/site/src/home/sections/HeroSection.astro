@@ -82,7 +82,7 @@ const primaryButton = buttonVariants({
     >
       {decorations.map((decoration) => (
         <span
-          class={`pointer-events-auto block size-24 shrink-0 ${decoration.tilt} min-[860px]:absolute min-[860px]:size-[150px] ${decoration.placement}`}
+          class={`pointer-events-auto block aspect-square min-w-0 max-w-24 flex-1 ${decoration.tilt} min-[860px]:absolute min-[860px]:size-[150px] min-[860px]:max-w-none min-[860px]:flex-none ${decoration.placement}`}
         >
           <Emoji
             id={decoration.id}

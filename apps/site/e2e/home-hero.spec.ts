@@ -17,11 +17,21 @@ test.describe('home hero, stats and marquee', () => {
       'document.documentElement.scrollWidth',
     )
     expect(scrollWidth).toBeLessThanOrEqual(MOBILE_WIDTH)
-    const emojiWidth = await page
+    const emojiBoxes = await page
       .locator('[data-hero-emojis] > span')
-      .first()
-      .evaluate((element) => (element as HTMLElement).offsetWidth)
-    expect(emojiWidth).toBe(96)
+      .evaluateAll((elements) =>
+        elements.map((element) => {
+          const { left, right, width } = element.getBoundingClientRect()
+          return { left, right, width }
+        }),
+      )
+    expect(emojiBoxes).toHaveLength(4)
+    for (const box of emojiBoxes) {
+      expect(box.left).toBeGreaterThanOrEqual(0)
+      expect(box.right).toBeLessThanOrEqual(MOBILE_WIDTH)
+      expect(box.width).toBeGreaterThan(0)
+      expect(box.width).toBeLessThanOrEqual(96)
+    }
   })
 
   test('the two marquee rows run in opposite directions', async ({ page }) => {
