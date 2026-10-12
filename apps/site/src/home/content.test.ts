@@ -9,6 +9,7 @@ import {
   buildHomeStats,
   buildInstallHtml,
   buildSnippetTabs,
+  MARQUEE_EMOJI_IDS,
   pickMarqueeRows,
   pickTeaserEmojis,
   resolveShortcodeEmoji,
@@ -189,6 +190,18 @@ describe('marquee rows', () => {
   it('returns what it can when the index is small', () => {
     const [top, bottom] = pickMarqueeRows(emojis, 4)
     expect(top.length + bottom.length).toBe(3)
+  })
+
+  it('puts the preferred still emojis first and never repeats one', () => {
+    const template = emojis[0]
+    if (!template) throw new Error('fixture is empty')
+    const [preferredId] = MARQUEE_EMOJI_IDS
+    if (!preferredId) throw new Error('no preferred marquee emoji')
+    const withPreferred = [...emojis, { ...template, id: preferredId }]
+    const [top, bottom] = pickMarqueeRows(withPreferred, 2)
+    const ids = [...top, ...bottom].map((emoji) => emoji.id)
+    expect(ids[0]).toBe(preferredId)
+    expect(new Set(ids).size).toBe(ids.length)
   })
 })
 

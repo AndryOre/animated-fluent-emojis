@@ -276,8 +276,43 @@ export function buildHomeStats(facts: {
 }
 
 /**
- * Picks the emojis of the two marquee rows, evenly spread over the index and
- * dealt alternately so the rows never repeat an emoji.
+ * Single-frame emojis the marquee prefers. The marquee never plays its
+ * emojis, so a still sprite looks the same as the first frame of an animated
+ * one while weighing a few kilobytes instead of hundreds, which keeps the
+ * landing page inside its Lighthouse performance budget.
+ */
+export const MARQUEE_EMOJI_IDS: readonly string[] = [
+  'salute',
+  '1f4ab_dizzysymbol',
+  'wiltedflower',
+  'deciduoustree',
+  '1f33a_hibiscus',
+  '1f33f_herb',
+  'watermelon',
+  '1f350_pear',
+  '1f35e_bread',
+  '1f368_icecream',
+  'bubbletea',
+  '1f32e_taco',
+  '1f356_meatonbone',
+  '1f30f_earthglobeasiaaustralia',
+  '1f3d6_beachwithumbrella',
+  '1f3aa_circustent',
+  '1f68d_oncomingbus',
+  '1f3a9_tophat',
+  '1f511_key',
+  '1f4dd_memo',
+  '1fa89_harp',
+  '1f4c8_chartwithupwardstrend',
+  'computer',
+  '1f393_graduationcap',
+]
+
+/**
+ * Picks the emojis of the two marquee rows and deals them alternately so the
+ * rows never repeat an emoji. The still emojis of `MARQUEE_EMOJI_IDS` come
+ * first; when the index lacks some of them, the rest is filled with emojis
+ * spread evenly over the index.
  * @param emojis - The full public index.
  * @param perRow - How many emojis each row holds.
  * @returns The top row and the bottom row.
@@ -286,7 +321,17 @@ export function pickMarqueeRows(
   emojis: readonly PublicEmoji[],
   perRow: number,
 ): [PublicEmoji[], PublicEmoji[]] {
-  const picked = pickTeaserEmojis(emojis, perRow * 2)
+  const wanted = perRow * 2
+  const byId = new Map(emojis.map((emoji) => [emoji.id, emoji]))
+  const preferred = MARQUEE_EMOJI_IDS.flatMap((id) => {
+    const emoji = byId.get(id)
+    return emoji ? [emoji] : []
+  }).slice(0, wanted)
+  const taken = new Set(preferred.map((emoji) => emoji.id))
+  const filler = pickTeaserEmojis(emojis, wanted + taken.size).filter(
+    (emoji) => !taken.has(emoji.id),
+  )
+  const picked = [...preferred, ...filler].slice(0, wanted)
   return [
     picked.filter((_, position) => position % 2 === 0),
     picked.filter((_, position) => position % 2 === 1),

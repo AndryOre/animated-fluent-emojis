@@ -28,24 +28,28 @@ const decorations = [
     placement: 'min-[860px]:top-[6%] min-[860px]:left-[-2%]',
     tilt: '-rotate-12',
     playOnHover: true,
+    showOnMobile: true,
   },
   {
-    id: '1f389_partypopper',
+    id: '2728_sparkles',
     placement: 'min-[860px]:top-[2%] min-[860px]:right-[-2%]',
     tilt: 'rotate-12',
     playOnHover: false,
+    showOnMobile: true,
   },
   {
     id: 'fire',
     placement: 'min-[860px]:bottom-[16%] min-[860px]:left-[2%]',
     tilt: 'rotate-6',
     playOnHover: false,
+    showOnMobile: false,
   },
   {
     id: 'launch',
     placement: 'min-[860px]:bottom-[12%] min-[860px]:right-[1%]',
     tilt: '-rotate-6',
     playOnHover: false,
+    showOnMobile: false,
   },
 ].filter((decoration) => index.some((emoji) => emoji.id === decoration.id))
 
@@ -82,7 +86,7 @@ const primaryButton = buttonVariants({
     >
       {decorations.map((decoration) => (
         <span
-          class={`pointer-events-auto block aspect-square min-w-0 max-w-24 flex-1 ${decoration.tilt} min-[860px]:absolute min-[860px]:size-[150px] min-[860px]:max-w-none min-[860px]:flex-none ${decoration.placement}`}
+          class={`pointer-events-auto ${decoration.showOnMobile ? 'block' : 'hidden min-[860px]:block'} aspect-square min-w-0 max-w-24 flex-1 ${decoration.tilt} min-[860px]:absolute min-[860px]:size-[150px] min-[860px]:max-w-none min-[860px]:flex-none ${decoration.placement}`}
         >
           <Emoji
             id={decoration.id}

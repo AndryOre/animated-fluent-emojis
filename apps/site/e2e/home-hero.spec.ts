@@ -25,11 +25,11 @@ test.describe('home hero, stats and marquee', () => {
           return { left, right, width }
         }),
       )
-    expect(emojiBoxes).toHaveLength(4)
-    for (const box of emojiBoxes) {
+    const visibleBoxes = emojiBoxes.filter((box) => box.width > 0)
+    expect(visibleBoxes).toHaveLength(2)
+    for (const box of visibleBoxes) {
       expect(box.left).toBeGreaterThanOrEqual(0)
       expect(box.right).toBeLessThanOrEqual(MOBILE_WIDTH)
-      expect(box.width).toBeGreaterThan(0)
       expect(box.width).toBeLessThanOrEqual(96)
     }
   })
