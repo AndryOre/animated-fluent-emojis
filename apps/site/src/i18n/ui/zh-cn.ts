@@ -185,30 +185,14 @@ export const zh_CN: UiStrings = {
         use: '使用',
       },
       steps: {
-        import: {
-          title: '导入',
-          body: '添加软件包，并导入适用于你的框架的组件。',
-        },
-        render: {
-          title: '渲染',
-          body: '在想要显示表情符号的地方放上标签。',
-        },
         shortcodes: {
           title: '短代码',
           body: '使用表情符号的 id，或去掉码位前缀的 id。无需学习新的名称。',
         },
       },
-      shortcodeBody:
-        '使用表情符号的 id，或去掉码位前缀的 id。无需学习新的名称。',
       architecture: {
         title: '工作方式',
         core: '表情数据',
-        nodes: {
-          page: '你的页面',
-          adapter: '适配器',
-          lookup: '查找',
-          assets: '动画表情符号',
-        },
       },
     },
     closing: {

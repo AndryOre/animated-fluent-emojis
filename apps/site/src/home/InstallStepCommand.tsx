@@ -4,7 +4,7 @@ import { usePackageManager } from '@/lib/use-package-manager'
 /**
  * The install command of the landing install step. It follows the page-wide
  * package manager choice, so it matches the hero block and the floating dock.
- * @returns A mono chip with the install command of the chosen manager.
+ * @returns A muted mono line with the install command of the chosen manager.
  */
 export default function InstallStepCommand() {
   const [manager] = usePackageManager()
@@ -12,7 +12,7 @@ export default function InstallStepCommand() {
   return (
     <code
       data-install-command
-      className="mt-auto block min-w-0 truncate rounded-xl border border-border bg-muted/40 px-4 py-3 font-mono text-xs font-semibold sm:text-sm"
+      className="block min-w-0 truncate font-mono text-xs text-muted-foreground"
     >
       {installCommand(manager)}
     </code>
