@@ -132,13 +132,21 @@ test.describe('install card', () => {
           .trim()
         animation.pause()
         animation.currentTime = (timing?.delay ?? 0) + 100
-        const border = getComputedStyle(card).borderTopColor
-        const probe = document.createElement('span')
-        probe.style.color = primary
-        document.body.append(probe)
-        const expected = getComputedStyle(probe).color
-        probe.remove()
-        return { border, expected, delay: timing?.delay }
+        const context = document.createElement('canvas').getContext('2d', {
+          willReadFrequently: true,
+        })
+        const toRgb = (color: string) => {
+          if (!context) return ''
+          context.clearRect(0, 0, 1, 1)
+          context.fillStyle = color
+          context.fillRect(0, 0, 1, 1)
+          return [...context.getImageData(0, 0, 1, 1).data].join(',')
+        }
+        return {
+          border: toRgb(getComputedStyle(card).borderTopColor),
+          expected: toRgb(primary),
+          delay: timing?.delay,
+        }
       }),
     )
     expect(lit.map((entry) => entry?.delay)).toEqual([0, 2000, 4000])
