@@ -596,9 +596,10 @@
 
   .marquee-track {
     animation-name: marquee-scroll;
-    animation-duration: 30s;
+    animation-duration: var(--marquee-duration, 60s);
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+    will-change: translate;
   }
 }
 
