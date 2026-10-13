@@ -80,6 +80,13 @@ test('renders the ready image with the description, lazy loading and sprite sour
   expect(image.style.animationDuration).toBe(`${String(21 / 24)}s`)
 })
 
+test('omits sizes for a CSS length size so the lazy image is not size-contained', async () => {
+  mount({ id: 'waving-hand', size: '100%' })
+
+  const image = await waitForImage()
+  expect(image.hasAttribute('sizes')).toBe(false)
+})
+
 test('an unknown id renders nothing, or the fallback node', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => 0 as never)
   mount({ id: 'no-such-emoji' })

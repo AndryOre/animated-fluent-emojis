@@ -79,6 +79,19 @@ test('play on hover with autoplay off starts with the hover class', () => {
   expect(html).toContain('class="afe-hover"')
 })
 
+test('a ready emoji sizes the image for numeric sizes and omits sizes otherwise', () => {
+  const image = { source: 'https://site.test/cat.png', alt: 'Cat' }
+
+  expect(buildReadyHtml(root, image, '')).toContain('sizes="48px"')
+  expect(
+    buildReadyHtml(
+      { ...root, size: '100%', config: { ...config, size: '100%' } },
+      image,
+      '',
+    ),
+  ).not.toContain('sizes=')
+})
+
 test('a fallback with no content renders nothing', () => {
   expect(buildFallbackHtml(root, '')).toBe('')
   expect(buildFallbackHtml(root, '<i>x</i>')).toContain('<i>x</i>')

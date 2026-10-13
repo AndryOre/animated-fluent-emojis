@@ -189,7 +189,7 @@ const EmojiComponent = (
         draggable="false"
         src={source}
         srcSet={getSpriteSourceSet(emoji, skinTone)}
-        sizes={typeof size === 'number' ? cssSize : 'auto'}
+        sizes={typeof size === 'number' ? cssSize : undefined}
         style={animationStyle}
         className={styles.emojiImage}
         onLoad={onLoad}

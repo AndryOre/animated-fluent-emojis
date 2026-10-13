@@ -209,10 +209,10 @@ test('an empty string size uses the default size', async () => {
   expect(root.style.height).toBe('100px')
 })
 
-test('a CSS length size lets the browser pick the sheet with sizes=auto', async () => {
+test('a CSS length size omits sizes so the lazy sheet keeps its intrinsic height', async () => {
   const { container } = await render(<Emoji id="waving-hand" size="2rem" />)
   const image = await waitForImage(container)
-  expect(image.getAttribute('sizes')).toBe('auto')
+  expect(image.hasAttribute('sizes')).toBe(false)
   expect((container.firstElementChild as HTMLElement).style.width).toBe('2rem')
 })
 
