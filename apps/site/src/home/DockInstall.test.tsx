@@ -53,4 +53,5 @@ test('DockInstall labels the group, the tab list and the copy button', () => {
   expect(html).toContain('aria-label="Package manager"')
   expect(html).toContain('aria-label="Copy"')
   expect(html).toContain('tab-pill')
+  expect(html).toContain('data-variant="dock"')
 })

@@ -21,6 +21,7 @@ test('InstallCard renders the code block and a preview per framework', () => {
 
   expect(html).toContain('role="tablist"')
   expect(html).toContain('tab-pill-list')
+  expect(html).toContain('data-variant="card"')
   expect(html).toContain('data-testid="install-preview"')
   expect(html.match(/data-preview-id=/g)).toHaveLength(2)
 })
