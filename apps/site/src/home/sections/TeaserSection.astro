@@ -8,13 +8,13 @@ import { loadPublicIndex } from '../../gallery/public-index'
 import { localePath, type Locale } from '../../i18n/locales'
 import { getUi } from '../../i18n/ui'
 import { pickTeaserEmojis } from '../content'
-import { heading, section } from './styles'
+import { eyebrow, heading, section } from './styles'
 
 interface Props {
   locale: Locale
 }
 
-const TEASER_EMOJI_SIZE = 64
+const TEASER_EMOJI_SIZE = 56
 
 const { locale } = Astro.props
 const { home } = getUi(locale)
@@ -44,9 +44,12 @@ const secondaryButton = buttonVariants({
 <section class={section} aria-labelledby="teaser-title">
   <div class="flex flex-col gap-8">
     <div class="scroll-reveal flex flex-wrap items-end justify-between gap-4">
-      <h2 id="teaser-title" class={heading}>
-        {home.teaser.title}
-      </h2>
+      <div>
+        <p class={eyebrow}>{home.teaser.eyebrow}</p>
+        <h2 id="teaser-title" class={heading}>
+          {home.teaser.title}
+        </h2>
+      </div>
       <a href={galleryHref} class={secondaryButton}>
         {home.teaser.cta}
       </a>
@@ -56,11 +59,11 @@ const secondaryButton = buttonVariants({
         <li class="contents">
           <a
             href={galleryHref}
-            class="teaser-tile relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-[18px] border border-border bg-card px-1.5 pt-5 pb-3.5 outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            class="teaser-tile relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-[18px] border border-border bg-card px-1.5 pt-[22px] pb-3.5 outline-none focus-visible:ring-2 focus-visible:ring-primary"
             style={`--glow-hue: ${tile.hue}`}
           >
             <Emoji id={tile.id} size={TEASER_EMOJI_SIZE} alt="" />
-            <small class="max-w-full truncate font-mono text-[11px] text-muted-foreground">
+            <small class="max-w-full truncate font-mono text-[11px] lowercase text-muted-foreground">
               {tile.name}
             </small>
           </a>
@@ -71,37 +74,31 @@ const secondaryButton = buttonVariants({
 </section>
 
 <style>
-  .teaser-tile::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(
-      circle closest-side,
-      oklch(0.8 0.15 var(--glow-hue, 60)),
-      transparent
+  .teaser-tile {
+    background-image: radial-gradient(
+      circle at 50% 35%,
+      hsl(var(--glow-hue, 60) 90% 55% / 0.38),
+      transparent 66%
     );
-    opacity: 0.4;
-    pointer-events: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .teaser-tile::before {
-      transition-property: opacity, scale;
-      transition-duration: 200ms;
+    .teaser-tile {
+      transition-property: transform, border-color;
+      transition-duration: 300ms;
       transition-timing-function: var(--ease-out-strong);
     }
+  }
 
-    .teaser-tile:focus-visible::before {
-      opacity: 0.85;
-      scale: 1.5;
+  @media (hover: hover) and (pointer: fine) {
+    .teaser-tile:hover {
+      border-color: hsl(var(--glow-hue, 60) 90% 55%);
     }
   }
 
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .teaser-tile:hover::before {
-      opacity: 0.85;
-      scale: 1.5;
+    .teaser-tile:hover {
+      transform: translateY(-6px) rotate(-1.5deg);
     }
   }
 </style>
