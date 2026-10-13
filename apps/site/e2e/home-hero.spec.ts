@@ -72,6 +72,28 @@ test.describe('home hero, stats and marquee', () => {
     expect(directions).toEqual(['normal'])
   })
 
+  test('the marquee moves at the canvas speed with a compositor loop', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const measured = await page
+      .locator('[data-marquee-row] .marquee-track')
+      .evaluate((track) => {
+        const styles = getComputedStyle(track)
+        const half = track.firstElementChild?.getBoundingClientRect().width ?? 0
+        return {
+          half,
+          seconds: Number(styles.animationDuration.replace('s', '')),
+          timing: styles.animationTimingFunction,
+          willChange: styles.willChange,
+        }
+      })
+    expect(measured.timing).toBe('linear')
+    expect(measured.willChange).toBe('translate')
+    expect(measured.half).toBeGreaterThanOrEqual(2560)
+    expect(measured.half / measured.seconds).toBeCloseTo(47, 0)
+  })
+
   test('selecting another package manager slides the install pill', async ({
     page,
   }) => {

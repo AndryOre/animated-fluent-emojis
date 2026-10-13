@@ -3,7 +3,11 @@ import Emoji from 'animated-fluent-emojis/astro'
 
 import { loadPublicIndex } from '../../gallery/public-index'
 import type { Locale } from '../../i18n/locales'
-import { pickMarqueeEmojis, repeatMarqueeEmojis } from '../content'
+import {
+  marqueeDurationSeconds,
+  pickMarqueeEmojis,
+  repeatMarqueeEmojis,
+} from '../content'
 
 interface Props {
   locale: Locale
@@ -20,6 +24,9 @@ const half = repeatMarqueeEmojis(
   MARQUEE_EMOJI_SIZE + MARQUEE_GAP,
   MARQUEE_HALF_MIN_WIDTH,
 )
+const marqueeDuration = marqueeDurationSeconds(
+  half.length * (MARQUEE_EMOJI_SIZE + MARQUEE_GAP),
+).toFixed(2)
 ---
 
 <section class="py-10 md:py-14" aria-hidden="true" data-marquee>
@@ -27,7 +34,11 @@ const half = repeatMarqueeEmojis(
     class="marquee border-y border-border py-3 motion-reduce:flex motion-reduce:justify-center"
     data-marquee-row
   >
-    <div class="marquee-track" data-direction="normal">
+    <div
+      class="marquee-track"
+      data-direction="normal"
+      style={`--marquee-duration: ${marqueeDuration}s`}
+    >
       {[false, true].map((duplicate) => (
         <div
           class="flex shrink-0 items-center gap-[26px] pr-[26px]"
