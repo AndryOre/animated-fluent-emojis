@@ -12,7 +12,7 @@ test.describe('home hero, stats and marquee', () => {
     await expect(page.locator('h1')).toBeVisible()
     await expect(page.locator('[data-hero-ready] li')).toHaveCount(5)
     await expect(page.locator('[data-stat]')).toHaveCount(4)
-    await expect(page.locator('[data-marquee-row]')).toHaveCount(2)
+    await expect(page.locator('[data-marquee-row]')).toHaveCount(1)
     const scrollWidth = await page.evaluate(
       'document.documentElement.scrollWidth',
     )
@@ -62,14 +62,29 @@ test.describe('home hero, stats and marquee', () => {
     expect(styles.columnGap).toBe('8px')
   })
 
-  test('the two marquee rows run in opposite directions', async ({ page }) => {
+  test('the marquee is one row that scrolls forward', async ({ page }) => {
     await page.goto('/')
     const directions = await page
       .locator('[data-marquee-row] .marquee-track')
       .evaluateAll((tracks) =>
         tracks.map((track) => getComputedStyle(track).animationDirection),
       )
-    expect(directions).toEqual(['normal', 'reverse'])
+    expect(directions).toEqual(['normal'])
+  })
+
+  test('selecting another package manager slides the install pill', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const hero = page.locator('[data-slot="tabs"]').first()
+    const pill = hero.locator('.tab-pill')
+    await expect(pill).toHaveCount(1)
+    await page.waitForLoadState('load')
+    const readTransform = () =>
+      pill.evaluate((element) => getComputedStyle(element).transform)
+    const before = await readTransform()
+    await hero.getByRole('tab', { name: 'npm' }).click()
+    await expect.poll(readTransform).not.toBe(before)
   })
 })
 
@@ -81,16 +96,14 @@ test.describe('with reduced motion', () => {
   }) => {
     await page.goto('/')
     const tracks = page.locator('[data-marquee-row] .marquee-track')
-    await expect(tracks).toHaveCount(2)
-    for (const index of [0, 1]) {
-      const track = tracks.nth(index)
-      expect(
-        await track.evaluate(
-          (element) => getComputedStyle(element).animationName,
-        ),
-      ).toBe('none')
-      await expect(track.locator('> [aria-hidden="true"]')).toBeHidden()
-    }
+    await expect(tracks).toHaveCount(1)
+    const track = tracks.first()
+    expect(
+      await track.evaluate(
+        (element) => getComputedStyle(element).animationName,
+      ),
+    ).toBe('none')
+    await expect(track.locator('> [aria-hidden="true"]')).toBeHidden()
     const justify = await page
       .locator('[data-marquee-row]')
       .first()

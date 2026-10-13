@@ -20,8 +20,8 @@ export interface InstallBlockProps {
 }
 
 /**
- * The install command block: a terminal icon, one tab per package manager and
- * a copy button, without line numbers. The chosen manager is shared with every
+ * The install command block: a terminal icon, one sliding-pill tab per package
+ * manager and a copy button, without line numbers. The chosen manager is shared with every
  * other install block on the page and persists across visits through the
  * package manager store. A successful copy sets off a party-popper burst
  * from the copy button. The server and the first client render show the
@@ -49,21 +49,24 @@ export default function InstallBlock({
   }))
 
   return (
-    <CodeBlock
-      tabs={tabs}
-      labels={labels}
-      lineNumbers={false}
-      leading={
-        <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
-      }
-      activeId={manager}
-      onCopied={() => {
-        setBurst((count) => count + 1)
-      }}
-      copyEffect={<CopyBurst burst={burst} />}
-      onActiveChange={(id) => {
-        if (isPackageManager(id)) setManager(id)
-      }}
-    />
+    <div className="[--tab-pill-background:var(--foreground)] [--tab-pill-foreground:var(--background)]">
+      <CodeBlock
+        pill
+        tabs={tabs}
+        labels={labels}
+        lineNumbers={false}
+        leading={
+          <TerminalIcon className="size-4 shrink-0 text-muted-foreground" />
+        }
+        activeId={manager}
+        onCopied={() => {
+          setBurst((count) => count + 1)
+        }}
+        copyEffect={<CopyBurst burst={burst} />}
+        onActiveChange={(id) => {
+          if (isPackageManager(id)) setManager(id)
+        }}
+      />
+    </div>
   )
 }
