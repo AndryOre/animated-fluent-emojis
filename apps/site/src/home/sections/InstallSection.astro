@@ -135,10 +135,10 @@ const adapterTiles = [
     >
       {SHORTCODE_DEMO.map((shortcode, position) => (
         <span
-          class="sc-item flex items-center gap-4"
+          class="sc-item flex items-center gap-2 sm:gap-4"
           style={`--chars: ${shortcode.code.length + 2}; --delay: ${position * 4}s`}
         >
-          <code class="sc-text block overflow-hidden font-mono text-lg font-semibold whitespace-nowrap sm:text-2xl">
+          <code class="sc-text block overflow-hidden font-mono text-[13px] font-semibold whitespace-nowrap sm:text-lg">
             :{shortcode.code}:
           </code>
           <span class="sc-emoji">
@@ -220,7 +220,10 @@ const adapterTiles = [
   }
 
   @keyframes sc-show {
-    0%,
+    0% {
+      opacity: 0;
+    }
+    0.1%,
     32% {
       opacity: 1;
     }
