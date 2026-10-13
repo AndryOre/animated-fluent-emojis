@@ -2,7 +2,13 @@ import { CheckIcon, CopyIcon } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type CanvasTabsVariant,
+} from '@/components/ui/tabs'
 import { copyWithFeedback } from '@/lib/copy-feedback'
 import { cn } from '@/lib/utilities'
 
@@ -39,7 +45,11 @@ export interface CodeBlockProps {
   onCopied?: () => void
   copyEffect?: ReactNode
   pill?: boolean
+  variant?: CanvasTabsVariant
 }
+
+const PANEL_CLASS =
+  'col-start-1 row-start-1 min-w-0 motion-safe:transition-[opacity,translate,visibility] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1'
 
 const CODE_LINE_HEIGHT_REM = 1.5
 const CODE_PADDING_LINES = 1
@@ -83,6 +93,9 @@ function bodyMinHeight(tabs: readonly CodeBlockTab[]): string {
  * burst of particles; it must not affect layout.
  * @param props.pill - Swaps the line tab bar for brand pills with a sliding
  * indicator behind the active tab; off by default.
+ * @param props.variant - A canvas tab style; it implies `pill`. With `cmd` the
+ * tab bar is its own row and the command row below shows the plain mono
+ * command of the active tab, without syntax colours, next to the copy button.
  * @returns The code block card.
  */
 export default function CodeBlock({
@@ -95,8 +108,10 @@ export default function CodeBlock({
   slotValues,
   onCopied,
   copyEffect,
-  pill = false,
+  pill: pillProperty = false,
+  variant,
 }: CodeBlockProps) {
+  const pill = pillProperty || variant !== undefined
   const [ownActive, setOwnActive] = useState(tabs[0]?.id ?? '')
   const [copied, setCopied] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -125,15 +140,91 @@ export default function CodeBlock({
     )
   }, [slotValues])
 
+  function handleValueChange(value: unknown) {
+    const id = String(value)
+    setOwnActive(id)
+    onActiveChange?.(id)
+  }
+
+  const copyControl = (
+    <span className="relative flex shrink-0">
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label={copied ? labels.copied : labels.copy}
+        onClick={() =>
+          void copyWithFeedback(activeCode, setCopied, setCopied, onCopied)
+        }
+      >
+        <span className="grid *:col-start-1 *:row-start-1">
+          <CopyIcon
+            data-copy-icon
+            className={cn(ICON_FADE, copied && ICON_HIDDEN)}
+          />
+          <CheckIcon
+            data-check-icon
+            className={cn(ICON_FADE, !copied && ICON_HIDDEN)}
+          />
+        </span>
+      </Button>
+      {copyEffect}
+    </span>
+  )
+
+  if (variant === 'cmd') {
+    return (
+      <Tabs
+        variant="cmd"
+        value={active}
+        onValueChange={handleValueChange}
+        className="overflow-hidden rounded-[14px] border border-border bg-card"
+      >
+        <div ref={tabsRef}>
+          <TabsList
+            pill
+            activateOnFocus
+            aria-label={labels.tabsLabel}
+            className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.id} value={tab.id}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+        <div
+          data-command-row
+          className="flex items-center justify-between gap-2.5 py-2.5 pr-2.5 pl-3"
+        >
+          <div className="grid min-w-0 flex-1">
+            {tabs.map((tab) => (
+              <TabsContent
+                key={tab.id}
+                value={tab.id}
+                keepMounted
+                className={PANEL_CLASS}
+              >
+                <code className="block overflow-x-auto font-mono text-[13px] whitespace-pre text-foreground outline-none [scrollbar-width:none] focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
+                  {tab.code}
+                </code>
+              </TabsContent>
+            ))}
+          </div>
+          {copyControl}
+        </div>
+        <span role="status" className="sr-only">
+          {copied ? labels.copied : ''}
+        </span>
+      </Tabs>
+    )
+  }
+
   return (
     <Tabs
-      variant={pill ? 'default' : 'line'}
+      variant={variant ?? (pill ? 'default' : 'line')}
       value={active}
-      onValueChange={(value) => {
-        const id = String(value)
-        setOwnActive(id)
-        onActiveChange?.(id)
-      }}
+      onValueChange={handleValueChange}
       className="overflow-hidden rounded-xl border border-border bg-card"
     >
       <div
@@ -159,28 +250,7 @@ export default function CodeBlock({
             </TabsList>
           )}
         </div>
-        <span className="relative flex shrink-0">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label={copied ? labels.copied : labels.copy}
-            onClick={() =>
-              void copyWithFeedback(activeCode, setCopied, setCopied, onCopied)
-            }
-          >
-            <span className="grid *:col-start-1 *:row-start-1">
-              <CopyIcon
-                data-copy-icon
-                className={cn(ICON_FADE, copied && ICON_HIDDEN)}
-              />
-              <CheckIcon
-                data-check-icon
-                className={cn(ICON_FADE, !copied && ICON_HIDDEN)}
-              />
-            </span>
-          </Button>
-          {copyEffect}
-        </span>
+        {copyControl}
       </div>
       <div
         ref={bodyRef}
@@ -192,7 +262,7 @@ export default function CodeBlock({
             key={tab.id}
             value={tab.id}
             keepMounted
-            className="col-start-1 row-start-1 min-w-0 motion-safe:transition-[opacity,translate,visibility] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1"
+            className={PANEL_CLASS}
           >
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex, @eslint-react/dom-no-dangerously-set-innerhtml -- the scrollable code must be keyboard reachable and the markup is trusted build-time output */}
             <div

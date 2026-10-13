@@ -2,9 +2,18 @@ import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 
 import { cn } from '@/lib/utilities'
 
-/** The look of a tabs set: the brand pills, a `line` bar or a `segmented` track. */
+/** The tab styles of the landing canvas, each needing the `pill` list. */
+export type CanvasTabsVariant = 'cmd' | 'card' | 'dock' | 'segmented'
+
+/**
+ * The look of a tabs set: the brand pills, a `line` bar, or one of the canvas
+ * variants (`cmd` command bar, `card` tabs, `dock` capsule, `segmented` track)
+ * whose pill geometry comes from the `--tab-pill-*` variables in `global.css`.
+ */
+type TabsVariant = 'default' | 'line' | CanvasTabsVariant
+
 interface TabsStyleProps {
-  variant?: 'default' | 'line' | 'segmented'
+  variant?: TabsVariant
 }
 
 /**
@@ -39,7 +48,10 @@ function TabsList(props: TabsPrimitive.List.Props & { pill?: boolean }) {
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'relative flex gap-1 overflow-x-auto group-data-[variant=segmented]/tabs:w-fit group-data-[variant=segmented]/tabs:gap-0.5 group-data-[variant=segmented]/tabs:rounded-lg group-data-[variant=segmented]/tabs:bg-muted group-data-[variant=segmented]/tabs:p-0.5',
+        'relative flex gap-1 overflow-x-auto',
+        'group-data-[variant=cmd]/tabs:gap-0.5 group-data-[variant=cmd]/tabs:border-b group-data-[variant=cmd]/tabs:border-border group-data-[variant=cmd]/tabs:bg-muted group-data-[variant=cmd]/tabs:p-1.5',
+        'group-data-[variant=dock]/tabs:w-fit group-data-[variant=dock]/tabs:gap-0.5 group-data-[variant=dock]/tabs:rounded-full group-data-[variant=dock]/tabs:border group-data-[variant=dock]/tabs:border-border group-data-[variant=dock]/tabs:bg-muted group-data-[variant=dock]/tabs:p-[3px]',
+        'group-data-[variant=segmented]/tabs:w-fit group-data-[variant=segmented]/tabs:max-w-full group-data-[variant=segmented]/tabs:gap-0.5 group-data-[variant=segmented]/tabs:rounded-xl group-data-[variant=segmented]/tabs:border group-data-[variant=segmented]/tabs:border-border group-data-[variant=segmented]/tabs:bg-muted group-data-[variant=segmented]/tabs:p-[3px]',
         pill && 'tab-pill-list',
         className,
       )}
@@ -57,7 +69,8 @@ function TabsList(props: TabsPrimitive.List.Props & { pill?: boolean }) {
 }
 
 /**
- * One tab button, filled with the primary color while selected.
+ * One tab button, filled with the primary color while selected. Every tab
+ * shrinks to `scale(.94)` while pressed.
  * @param props - Base UI tab props, including the tab `value`.
  * @returns The tab element.
  */
@@ -67,9 +80,12 @@ function TabsTrigger(props: TabsPrimitive.Tab.Props) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        'h-8 shrink-0 cursor-pointer rounded-full px-3 text-xs font-semibold outline-none transition-colors hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary',
+        'h-8 shrink-0 cursor-pointer rounded-full px-3 text-xs font-semibold outline-none transition-[color,background-color,transform] [transition-duration:200ms,200ms,120ms] motion-safe:active:scale-[.94] hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary',
         'group-data-[variant=line]/tabs:h-7 group-data-[variant=line]/tabs:rounded-md group-data-[variant=line]/tabs:border group-data-[variant=line]/tabs:border-transparent group-data-[variant=line]/tabs:font-medium group-data-[variant=line]/tabs:text-muted-foreground group-data-[variant=line]/tabs:ease-[ease] group-data-[variant=line]/tabs:hover:bg-muted group-data-[variant=line]/tabs:hover:text-foreground group-data-[variant=line]/tabs:aria-selected:border-border group-data-[variant=line]/tabs:aria-selected:bg-background group-data-[variant=line]/tabs:aria-selected:text-foreground group-data-[variant=line]/tabs:aria-selected:hover:bg-background',
-        'group-data-[variant=segmented]/tabs:h-7 group-data-[variant=segmented]/tabs:rounded-md group-data-[variant=segmented]/tabs:font-medium group-data-[variant=segmented]/tabs:text-muted-foreground group-data-[variant=segmented]/tabs:hover:bg-transparent group-data-[variant=segmented]/tabs:hover:text-foreground group-data-[variant=segmented]/tabs:aria-selected:bg-background group-data-[variant=segmented]/tabs:aria-selected:text-foreground group-data-[variant=segmented]/tabs:aria-selected:hover:bg-background',
+        'group-data-[variant=cmd]/tabs:h-auto group-data-[variant=cmd]/tabs:rounded-[7px] group-data-[variant=cmd]/tabs:px-2.5 group-data-[variant=cmd]/tabs:py-[3px] group-data-[variant=cmd]/tabs:font-mono group-data-[variant=cmd]/tabs:font-normal group-data-[variant=cmd]/tabs:text-muted-foreground group-data-[variant=cmd]/tabs:hover:bg-transparent',
+        'group-data-[variant=card]/tabs:h-auto group-data-[variant=card]/tabs:rounded-[9px] group-data-[variant=card]/tabs:border group-data-[variant=card]/tabs:border-transparent group-data-[variant=card]/tabs:px-3 group-data-[variant=card]/tabs:py-[5px] group-data-[variant=card]/tabs:text-sm group-data-[variant=card]/tabs:font-normal group-data-[variant=card]/tabs:text-muted-foreground group-data-[variant=card]/tabs:hover:bg-transparent group-data-[variant=card]/tabs:hover:text-foreground',
+        'group-data-[variant=dock]/tabs:h-auto group-data-[variant=dock]/tabs:rounded-full group-data-[variant=dock]/tabs:px-2.5 group-data-[variant=dock]/tabs:py-[3px] group-data-[variant=dock]/tabs:font-mono group-data-[variant=dock]/tabs:text-[11px] group-data-[variant=dock]/tabs:font-normal group-data-[variant=dock]/tabs:text-muted-foreground group-data-[variant=dock]/tabs:hover:bg-transparent',
+        'group-data-[variant=segmented]/tabs:h-auto group-data-[variant=segmented]/tabs:rounded-[9px] group-data-[variant=segmented]/tabs:px-[11px] group-data-[variant=segmented]/tabs:py-[5px] group-data-[variant=segmented]/tabs:font-mono group-data-[variant=segmented]/tabs:font-normal group-data-[variant=segmented]/tabs:text-muted-foreground group-data-[variant=segmented]/tabs:hover:bg-transparent group-data-[variant=segmented]/tabs:disabled:cursor-not-allowed group-data-[variant=segmented]/tabs:disabled:opacity-35',
         className,
       )}
       {...rest}
