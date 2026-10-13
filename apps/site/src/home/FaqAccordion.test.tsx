@@ -29,7 +29,18 @@ test('FaqAccordion keeps every question and answer in the server HTML', () => {
     expect(html).toContain(item.question)
     expect(html).toContain(item.answer)
   }
-  expect(html.match(/aria-expanded="false"/g)).toHaveLength(items.length)
+})
+
+test('FaqAccordion opens only the first item by default', () => {
+  const html = render()
+
+  expect(html.match(/aria-expanded="true"/g)).toHaveLength(1)
+  expect(html.match(/aria-expanded="false"/g)).toHaveLength(items.length - 1)
+  const openTag = (id: string) =>
+    new RegExp(`<div[^>]*data-faq="${id}"[^>]*>`).exec(html)?.[0] ?? ''
+
+  expect(openTag('chat')).toContain('data-open')
+  expect(openTag('speed')).not.toContain('data-open')
 })
 
 test('FaqAccordion tags each item so the mascot can follow the open one', () => {

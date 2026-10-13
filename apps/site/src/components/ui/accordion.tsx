@@ -29,8 +29,8 @@ function AccordionItem(props: AccordionPrimitive.Item.Props) {
 }
 
 /**
- * The heading button that opens and closes its item, with a chevron that
- * rotates while the item is open.
+ * The heading button that opens and closes its item, with a plus that
+ * rotates into an x while the item is open.
  * @param props - Base UI accordion trigger props.
  * @returns The accordion header with its trigger button.
  */
@@ -55,9 +55,9 @@ function AccordionTrigger(props: AccordionPrimitive.Trigger.Props) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-[rotate] duration-200 ease-(--ease-out-strong) group-aria-expanded/accordion-trigger:rotate-180"
+          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-[rotate] duration-250 ease-(--ease-out-strong) group-aria-expanded/accordion-trigger:rotate-45"
         >
-          <path d="m4 6 4 4 4-4" />
+          <path d="M8 3v10M3 8h10" />
         </svg>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
