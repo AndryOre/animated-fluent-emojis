@@ -88,6 +88,27 @@ test.describe('install card', () => {
     )
   })
 
+  test('the steps read Install, Import, Use and the panels follow the canvas', async ({
+    page,
+  }) => {
+    const section = await openInstall(page)
+    const titles = section.locator('[data-install-steps] h3')
+    await expect(titles).toHaveText(['Install', 'Import', 'Use'])
+    await expect(section.locator('[data-install-steps] p')).toHaveCount(0)
+
+    const demo = await section.locator('[data-shortcode-demo]').boundingBox()
+    expect(demo?.height).toBeGreaterThanOrEqual(48)
+    await expect(section.locator('[data-shortcode-panel]')).toContainText(
+      'Shortcodes',
+    )
+
+    const cells = section.locator('[data-install-architecture] li')
+    await expect(cells).toHaveCount(6)
+    await expect(cells.first()).toContainText('manifest + CSS')
+    await expect(cells.nth(1)).toContainText('React')
+    await expect(cells.nth(1)).toContainText('ready')
+  })
+
   test('the preview chip names the active tab and the shortcode panel shares a row with the architecture', async ({
     page,
   }) => {

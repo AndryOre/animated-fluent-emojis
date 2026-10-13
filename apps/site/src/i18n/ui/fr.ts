@@ -184,30 +184,14 @@ export const fr: UiStrings = {
         use: 'Utiliser',
       },
       steps: {
-        import: {
-          title: 'Importer',
-          body: 'Ajoutez le paquet et importez le composant de votre framework.',
-        },
-        render: {
-          title: 'Afficher',
-          body: 'Utilisez la balise là où vous voulez voir l’emoji.',
-        },
         shortcodes: {
           title: 'Codes courts',
           body: 'Utilisez l’identifiant de l’emoji, ou l’identifiant sans son préfixe de point de code. Aucun nouveau nom à apprendre.',
         },
       },
-      shortcodeBody:
-        'Utilisez l’identifiant de l’emoji, ou l’identifiant sans son préfixe de point de code. Aucun nouveau nom à apprendre.',
       architecture: {
         title: 'Comment ça s’emboîte',
         core: 'Données des emojis',
-        nodes: {
-          page: 'Votre page',
-          adapter: 'Adaptateur',
-          lookup: 'Recherche',
-          assets: 'Emoji animé',
-        },
       },
     },
     closing: {
