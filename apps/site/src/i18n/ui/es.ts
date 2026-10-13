@@ -54,11 +54,12 @@ export const es: UiStrings = {
       ctaDocs: 'Lee la documentación',
       ctaGallery: 'Explorar la galería',
       ready: {
-        react: 'Listo para React',
-        vue: 'Listo para Vue',
-        svelte: 'Listo para Svelte',
-        astro: 'Listo para Astro',
-        html: 'Listo para HTML',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: 'listo',
       },
       sub: 'Pasa el cursor. Te saluda.',
       installLabel: 'Comando de instalación',
@@ -169,6 +170,7 @@ export const es: UiStrings = {
       },
     },
     teaser: {
+      eyebrow: 'Galería',
       title: 'Elige uno, ya se está moviendo',
       cta: 'Abrir la galería',
     },
@@ -217,6 +219,7 @@ export const es: UiStrings = {
     faq: {
       eyebrow: 'Preguntas',
       title: 'Preguntas',
+      mascotLabel: 'respuesta',
       chat: {
         question: '¿Puedo usarlos en un chat o en un documento?',
         answer:

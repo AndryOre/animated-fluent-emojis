@@ -357,31 +357,43 @@ export const MARQUEE_EMOJI_IDS: readonly string[] = [
 ]
 
 /**
- * Picks the emojis of the two marquee rows and deals them alternately so the
- * rows never repeat an emoji. The still emojis of `MARQUEE_EMOJI_IDS` come
- * first; when the index lacks some of them, the rest is filled with emojis
- * spread evenly over the index.
+ * Picks the emojis of the marquee row. The still emojis of
+ * `MARQUEE_EMOJI_IDS` come first; when the index lacks some of them, the rest
+ * is filled with emojis spread evenly over the index.
  * @param emojis - The full public index.
- * @param perRow - How many emojis each row holds.
- * @returns The top row and the bottom row.
+ * @param count - How many emojis the row holds.
+ * @returns The distinct emojis of the row, fewer when the index is small.
  */
-export function pickMarqueeRows(
+export function pickMarqueeEmojis(
   emojis: readonly PublicEmoji[],
-  perRow: number,
-): [PublicEmoji[], PublicEmoji[]] {
-  const wanted = perRow * 2
+  count: number,
+): PublicEmoji[] {
   const byId = new Map(emojis.map((emoji) => [emoji.id, emoji]))
   const preferred = MARQUEE_EMOJI_IDS.flatMap((id) => {
     const emoji = byId.get(id)
     return emoji ? [emoji] : []
-  }).slice(0, wanted)
+  }).slice(0, count)
   const taken = new Set(preferred.map((emoji) => emoji.id))
-  const filler = spreadEmojis(emojis, wanted + taken.size).filter(
+  const filler = spreadEmojis(emojis, count + taken.size).filter(
     (emoji) => !taken.has(emoji.id),
   )
-  const picked = [...preferred, ...filler].slice(0, wanted)
-  return [
-    picked.filter((_, position) => position % 2 === 0),
-    picked.filter((_, position) => position % 2 === 1),
-  ]
+  return [...preferred, ...filler].slice(0, count)
+}
+
+/**
+ * Repeats the picked emojis until one half of the marquee track is wider than
+ * `minWidth`, so the loop has no gap and no jump at its seam.
+ * @param emojis - The picked emojis of the row.
+ * @param itemWidth - The width of one emoji including its gap, in pixels.
+ * @param minWidth - The width a half must exceed, in pixels.
+ * @returns The emojis of one half, the picked ones repeated whole times.
+ */
+export function repeatMarqueeEmojis(
+  emojis: readonly PublicEmoji[],
+  itemWidth: number,
+  minWidth: number,
+): PublicEmoji[] {
+  if (emojis.length === 0) return []
+  const repeats = Math.floor(minWidth / (emojis.length * itemWidth)) + 1
+  return Array.from({ length: repeats }, () => emojis).flat()
 }

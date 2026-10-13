@@ -10,6 +10,7 @@ import {
   verifyShortcodeDemo,
 } from '../content'
 import InstallCard from '../InstallCard'
+import InstallStepCommand from '../InstallStepCommand'
 import { eyebrow, heading, section } from './styles'
 
 interface Props {
@@ -30,13 +31,25 @@ const PREVIEW_EMOJI_BY_KIND: Readonly<Record<string, string>> = {
 
 const SHORTCODE_DEMO = [
   { code: 'fire', id: 'fire' },
-  { code: 'grinningfacewithbigeyes', id: '1f603_grinningfacewithbigeyes' },
   { code: 'launch', id: 'launch' },
+  { code: 'grinningfacewithbigeyes', id: '1f603_grinningfacewithbigeyes' },
+] as const
+
+const STEP_EMOJI_IDS = [
+  '1f4e6_package',
+  '1f50c_electricplug',
+  '1f389_partypopper',
 ] as const
 
 const index = await loadPublicIndex()
 const indexIsFiltered = Boolean(process.env.SITE_EMOJI_SLUGS)
-if (!indexIsFiltered) verifyShortcodeDemo(index, SHORTCODE_DEMO)
+if (!indexIsFiltered) {
+  verifyShortcodeDemo(index, SHORTCODE_DEMO)
+  verifyShortcodeDemo(
+    index,
+    STEP_EMOJI_IDS.map((id) => ({ code: id, id })),
+  )
+}
 
 const fallbackEmoji = index.find((emoji) => emoji.id === '1f44b_wavinghand')
 
@@ -58,9 +71,9 @@ const tabs = await Promise.all(
 )
 
 const steps = [
-  { number: 1, ...install.steps.import },
-  { number: 2, ...install.steps.render },
-  { number: 3, ...install.steps.shortcodes },
+  { number: 1, emojiId: STEP_EMOJI_IDS[0], ...install.steps.import },
+  { number: 2, emojiId: STEP_EMOJI_IDS[1], ...install.steps.render },
+  { number: 3, emojiId: STEP_EMOJI_IDS[2], ...install.steps.shortcodes },
 ]
 
 const adapterTiles = [
@@ -101,55 +114,61 @@ const adapterTiles = [
       >
         <span
           aria-hidden="true"
-          class="grid size-7 place-items-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground"
+          class="step-emoji grid size-12 place-items-center"
         >
-          {step.number}
+          <Emoji id={step.emojiId} size={40} alt="" autoPlay />
         </span>
         <div class="flex flex-col gap-1">
           <h3 class="text-lg font-extrabold text-balance">{step.title}</h3>
           <p class="text-pretty text-muted-foreground">{step.body}</p>
         </div>
-        {step.number === 3 && (
-          <div
-            data-shortcode-demo
-            aria-hidden="true"
-            class="sc-demo mt-auto grid h-14 grid-cols-[minmax(0,1fr)] items-center overflow-hidden rounded-xl border border-border bg-muted/40 px-4"
-          >
-            {SHORTCODE_DEMO.map((shortcode) => (
-              <span class="sc-item flex items-center gap-3">
-                <code class="min-w-0 truncate font-mono text-xs font-semibold sm:text-sm">
-                  :{shortcode.code}:
-                </code>
-                <span class="text-muted-foreground">→</span>
-                <Emoji id={shortcode.id} size={36} alt="" autoPlay />
-              </span>
-            ))}
-          </div>
-        )}
+        {step.number === 1 && <InstallStepCommand client:visible />}
       </li>
     ))}
   </ol>
 
-  <figure
-    data-install-architecture
-    class="scroll-reveal mt-3 flex flex-col gap-4 rounded-2xl border border-border bg-card p-5"
-  >
-    <figcaption class="text-lg font-extrabold text-balance">
-      {install.architecture.title}
-    </figcaption>
-    <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0 min-[860px]:grid-cols-4">
-      {adapterTiles.map((tile) => (
-        <li
-          class={`flex flex-col gap-0.5 rounded-xl border bg-background/60 p-3 text-sm ${tile.core ? 'border-primary' : 'border-border'}`}
+  <div class="mt-3 grid grid-cols-1 gap-3 min-[860px]:grid-cols-2">
+    <div
+      data-shortcode-demo
+      aria-hidden="true"
+      class="sc-demo scroll-reveal grid min-h-32 grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden rounded-2xl border border-border bg-card p-5"
+    >
+      {SHORTCODE_DEMO.map((shortcode, position) => (
+        <span
+          class="sc-item flex items-center gap-2 sm:gap-4"
+          style={`--chars: ${shortcode.code.length + 2}; --delay: ${position * 4}s`}
         >
-          <span class="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-            {tile.label}
+          <code class="sc-text block overflow-hidden font-mono text-[13px] font-semibold whitespace-nowrap sm:text-lg">
+            :{shortcode.code}:
+          </code>
+          <span class="sc-emoji">
+            <Emoji id={shortcode.id} size={56} alt="" autoPlay />
           </span>
-          <span class="font-semibold">{tile.names}</span>
-        </li>
+        </span>
       ))}
-    </ul>
-  </figure>
+    </div>
+
+    <figure
+      data-install-architecture
+      class="scroll-reveal flex flex-col gap-4 rounded-2xl border border-border bg-card p-5"
+    >
+      <figcaption class="text-lg font-extrabold text-balance">
+        {install.architecture.title}
+      </figcaption>
+      <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
+        {adapterTiles.map((tile) => (
+          <li
+            class={`flex flex-col gap-0.5 rounded-xl border bg-background/60 p-3 text-sm ${tile.core ? 'border-primary' : 'border-border'}`}
+          >
+            <span class="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+              {tile.label}
+            </span>
+            <span class="font-semibold">{tile.names}</span>
+          </li>
+        ))}
+      </ul>
+    </figure>
+  </div>
 </section>
 
 <style>
@@ -173,6 +192,19 @@ const adapterTiles = [
     }
   }
 
+  @keyframes lit-e {
+    0%,
+    33% {
+      scale: 1.12;
+      rotate: -6deg;
+    }
+    34%,
+    100% {
+      scale: 1;
+      rotate: 0deg;
+    }
+  }
+
   .sc-demo > .sc-item {
     grid-area: 1 / 1;
     opacity: 0;
@@ -182,37 +214,88 @@ const adapterTiles = [
     opacity: 1;
   }
 
-  @keyframes sc-cycle {
+  .sc-text {
+    width: calc(var(--chars) * 1ch);
+    border-right: 2px solid transparent;
+  }
+
+  @keyframes sc-show {
     0% {
       opacity: 0;
-      translate: 0 6px;
     }
-    6% {
+    0.1%,
+    32% {
       opacity: 1;
-      translate: 0 0;
     }
-    30% {
-      opacity: 1;
-      translate: 0 0;
-    }
-    36%,
+    33%,
     100% {
       opacity: 0;
-      translate: 0 -6px;
+    }
+  }
+
+  @keyframes sc-type {
+    0% {
+      width: 0;
+    }
+    14%,
+    100% {
+      width: calc(var(--chars) * 1ch);
+    }
+  }
+
+  @keyframes sc-caret {
+    0%,
+    100% {
+      border-right-color: var(--primary);
+    }
+    50% {
+      border-right-color: transparent;
+    }
+  }
+
+  @keyframes sc-pop {
+    0%,
+    14% {
+      opacity: 0;
+      scale: 0.6;
+    }
+    19% {
+      opacity: 1;
+      scale: 1.12;
+    }
+    22%,
+    32% {
+      opacity: 1;
+      scale: 1;
+    }
+    33%,
+    100% {
+      opacity: 0;
+      scale: 1;
     }
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .step-emoji {
+      animation: lit-e 6s var(--ease-out-strong) infinite;
+      animation-delay: calc(var(--step-index, 0) * 2s);
+    }
+
     .sc-demo > .sc-item {
-      animation: sc-cycle 6s var(--ease-out-strong) infinite backwards;
+      animation: sc-show 12s linear infinite backwards;
+      animation-delay: var(--delay, 0s);
     }
 
-    .sc-demo > .sc-item:nth-child(2) {
-      animation-delay: 2s;
+    .sc-text {
+      animation:
+        sc-type 12s steps(var(--chars), end) infinite backwards,
+        sc-caret 0.8s steps(1) infinite;
+      animation-delay: var(--delay, 0s), 0s;
     }
 
-    .sc-demo > .sc-item:nth-child(3) {
-      animation-delay: 4s;
+    .sc-emoji {
+      animation: sc-pop 12s var(--ease-out-strong) infinite backwards;
+      animation-delay: var(--delay, 0s);
     }
   }
 </style>

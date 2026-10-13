@@ -55,11 +55,12 @@ export const ru: UiStrings = {
       ctaDocs: 'Читать документацию',
       ctaGallery: 'Открыть галерею',
       ready: {
-        react: 'Готово для React',
-        vue: 'Готово для Vue',
-        svelte: 'Готово для Svelte',
-        astro: 'Готово для Astro',
-        html: 'Готово для HTML',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: 'готово',
       },
       sub: 'Наведите курсор, и эмодзи помашет в ответ.',
       installLabel: 'Команда установки',
@@ -170,6 +171,7 @@ export const ru: UiStrings = {
       },
     },
     teaser: {
+      eyebrow: 'Галерея',
       title: 'Выберите один, он уже движется',
       cta: 'Открыть галерею',
     },
@@ -218,6 +220,7 @@ export const ru: UiStrings = {
     faq: {
       eyebrow: 'Вопросы',
       title: 'Частые вопросы',
+      mascotLabel: 'ответ',
       chat: {
         question: 'Можно ли использовать их в чатах и документах?',
         answer:

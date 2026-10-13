@@ -32,6 +32,13 @@ test('InstallCard shows only the first framework preview before any choice', () 
   expect(html).toMatch(/data-preview-id="vue"[^>]*data-active="false"/)
 })
 
+test('InstallCard shows the active tab id in a chip and no line numbers', () => {
+  const html = render()
+
+  expect(html).toMatch(/data-testid="install-preview-chip"[^>]*>react</)
+  expect(html).toContain('data-line-numbers="false"')
+})
+
 test('InstallCard hides the decorative preview from assistive technology', () => {
   expect(render()).toMatch(
     /data-testid="install-preview"[^>]*aria-hidden="true"/,

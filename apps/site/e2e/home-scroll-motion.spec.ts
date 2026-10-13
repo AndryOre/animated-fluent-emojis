@@ -38,6 +38,9 @@ const PILLAR_INDICES = [0, 1, 2, 3]
 const BENTO_CURSOR = `${PILLAR_CARD} .bento-cursor`
 const BENTO_STAGE = `${PILLAR_CARD} .bento-stage`
 const BENTO_SWITCH_THUMB = `${PILLAR_CARD} .bento-switch-thumb`
+const BENTO_MOON = `${PILLAR_CARD} .bento-moon`
+const BENTO_WAKE = `${PILLAR_CARD} .bento-cell[data-wake]`
+const BENTO_LINK = `${PILLAR_CARD} .bento-link path`
 
 test.describe('with motion allowed', () => {
   test.use({ reducedMotion: 'no-preference' })
@@ -145,6 +148,31 @@ test.describe('with motion allowed', () => {
       (element) => getComputedStyle(element).animationName,
     )
     expect(name).toBe('bento-switch-thumb')
+  })
+
+  test('the bento moon bobs, the wall wakes and the license line draws', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const moon = await page
+      .locator(BENTO_MOON)
+      .evaluate((element) => getComputedStyle(element).animationName)
+    expect(moon).toBe('bento-bob')
+
+    const wake = await page
+      .locator(BENTO_WAKE)
+      .evaluateAll((elements) =>
+        elements.map((element) => getComputedStyle(element).animationName),
+      )
+    expect(wake).toHaveLength(8)
+    expect(new Set(wake)).toEqual(new Set(['bento-wave']))
+
+    const link = await page.locator(BENTO_LINK).evaluate((element) => {
+      const style = getComputedStyle(element)
+      return { name: style.animationName, dasharray: style.strokeDasharray }
+    })
+    expect(link.name).toBe('bento-draw')
+    expect(link.dasharray).toBe('60px')
   })
 
   test('the pillar spotlight variables follow the mouse', async ({ page }) => {
@@ -270,6 +298,30 @@ test.describe('with reduced motion', () => {
       expect(state.name).toBe('none')
       expect(state.opacity).toBe('0')
     }
+  })
+
+  test('the bento moon is still and the license line is drawn', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const moon = await page
+      .locator(BENTO_MOON)
+      .evaluate((element) => getComputedStyle(element).animationName)
+    expect(moon).toBe('none')
+
+    const wake = await page
+      .locator(BENTO_WAKE)
+      .evaluateAll((elements) =>
+        elements.map((element) => getComputedStyle(element).animationName),
+      )
+    expect(new Set(wake)).toEqual(new Set(['none']))
+
+    const link = await page.locator(BENTO_LINK).evaluate((element) => {
+      const style = getComputedStyle(element)
+      return { name: style.animationName, offset: style.strokeDashoffset }
+    })
+    expect(link.name).toBe('none')
+    expect(link.offset).toBe('0px')
   })
 
   test('the hero is static and fully visible', async ({ page }) => {
