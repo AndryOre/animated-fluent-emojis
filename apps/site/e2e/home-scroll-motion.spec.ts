@@ -2,6 +2,8 @@
 import { expect, test, type Locator } from '@playwright/test'
 
 const PILLAR_CARD = '[aria-labelledby="pillars-title"] li.scroll-reveal'
+const TEASER_CELL = '[aria-labelledby="teaser-title"] .teaser-cell'
+const TEASER_TILE = `${TEASER_CELL} .teaser-tile`
 const HERO_HEADING = 'main > section:first-child h1'
 const HERO_ENTER = 'main > section:first-child .hero-enter'
 const HERO_DEMO_ENTER = 'main > section:first-child .hero-demo-enter'
@@ -196,6 +198,46 @@ test.describe('with motion allowed', () => {
     await expect.poll(readSpotlight).toBe('60px')
   })
 
+  test('a bento card border warms on hover over 250ms', async ({ page }) => {
+    await page.goto('/')
+    const card = page.locator(PILLAR_CARD).nth(1)
+    await card.evaluate((element) => {
+      element.scrollIntoView({ block: 'center' })
+    })
+    await expect.poll(() => readOpacity(card)).toBe(1)
+    const readBorder = () =>
+      card.evaluate((element) => getComputedStyle(element).borderTopColor)
+    const resting = await readBorder()
+    const duration = await card.evaluate(
+      (element) => getComputedStyle(element).transitionDuration,
+    )
+    expect(duration).toContain('0.25s')
+    await card.hover()
+    await expect.poll(readBorder).not.toBe(resting)
+  })
+
+  test('a teaser tile lifts and tilts while its cell stays still', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const cell = page.locator(TEASER_CELL).first()
+    const tile = page.locator(TEASER_TILE).first()
+    await cell.evaluate((element) => {
+      element.scrollIntoView({ block: 'center' })
+    })
+    await expect.poll(() => readOpacity(tile)).toBe(1)
+    const readBorder = () =>
+      tile.evaluate((element) => getComputedStyle(element).borderTopColor)
+    const resting = await readBorder()
+    await cell.hover()
+    await expect.poll(readBorder).not.toBe(resting)
+    await expect.poll(() => readTranslateY(tile)).toBeLessThan(-5)
+    const cellTransform = await cell.evaluate(
+      (element) => getComputedStyle(element).transform,
+    )
+    expect(cellTransform).toBe('none')
+  })
+
   test('the hero secondary content settles in without touching the h1', async ({
     page,
   }) => {
@@ -256,6 +298,23 @@ test.describe('with motion allowed', () => {
 
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' })
+
+  test('a teaser tile changes border but does not move on hover', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const cell = page.locator(TEASER_CELL).first()
+    const tile = page.locator(TEASER_TILE).first()
+    await cell.evaluate((element) => {
+      element.scrollIntoView({ block: 'center' })
+    })
+    const readBorder = () =>
+      tile.evaluate((element) => getComputedStyle(element).borderTopColor)
+    const resting = await readBorder()
+    await cell.hover()
+    await expect.poll(readBorder).not.toBe(resting)
+    expect(await readTranslateY(tile)).toBe(0)
+  })
 
   test('the pillar card stays static and visible', async ({ page }) => {
     await page.goto('/')
