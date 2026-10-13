@@ -72,7 +72,7 @@ export default function DockInstall({
             <TabsTrigger
               key={id}
               value={id}
-              className="min-w-11 touch-manipulation select-none group-data-[variant=dock]/tabs:h-11"
+              className="min-w-11 touch-manipulation select-none"
             >
               {id}
             </TabsTrigger>
