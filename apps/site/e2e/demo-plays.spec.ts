@@ -8,15 +8,15 @@ test('the landing demo snippet follows the selected play', async ({ page }) => {
 
   await expect(demo).toContainText('playOnHover')
 
-  await page.getByRole('button', { name: 'Loop' }).click()
+  await page.getByRole('tab', { name: 'Loop' }).click()
   await expect(demo).toContainText('animationIterations="infinite"')
   await expect(demo).not.toContainText('playOnHover')
 
-  await page.getByRole('button', { name: 'On load' }).click()
+  await page.getByRole('tab', { name: 'On load' }).click()
   await expect(demo).not.toContainText('animationIterations')
   await expect(demo).not.toContainText('playOnHover')
 
-  await page.getByRole('button', { name: 'Loop' }).click()
+  await page.getByRole('tab', { name: 'Loop' }).click()
   await page.getByRole('button', { name: 'Reset' }).click()
   await expect(demo).toContainText('playOnHover')
 })

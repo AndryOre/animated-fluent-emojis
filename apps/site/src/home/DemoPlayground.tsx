@@ -14,7 +14,7 @@ import 'animated-fluent-emojis/style.css'
 import CodeBlock, { type CodeBlockLabels } from '@/components/CodeBlock'
 import { ToneDot } from '@/components/ToneDot'
 import { Button } from '@/components/ui/button'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import type { PublicEmoji } from '../gallery/public-index'
 import type { SnippetKind } from '../gallery/snippets'
@@ -99,37 +99,37 @@ function Segmented<Value extends string | number>({
       >
         {label}
       </span>
-      <ToggleGroup
-        aria-label={label}
-        disabled={disabled}
-        value={[String(selected)]}
-        onValueChange={(groupValue: string[]) => {
+      <Tabs
+        variant="segmented"
+        value={String(selected)}
+        onValueChange={(tabValue) => {
           const next = options.find(
-            (option) => String(option.value) === groupValue[0],
+            (option) => String(option.value) === tabValue,
           )
           if (next) onSelect(next.value)
         }}
-        className="w-full gap-0.5 rounded-xl border border-border bg-muted p-[3px]"
       >
-        {options.map((option) => (
-          <ToggleGroupItem
-            key={option.value}
-            value={String(option.value)}
-            size="compact"
-            aria-label={option.name}
-            className="h-auto flex-1 cursor-pointer rounded-[9px] border border-transparent px-[11px] py-[5px] font-mono text-xs font-normal text-muted-foreground hover:bg-transparent disabled:opacity-35 aria-pressed:border-border aria-pressed:bg-background aria-pressed:text-foreground aria-pressed:hover:bg-background"
-          >
-            {option.leading === undefined ? (
-              <OptionText option={option} />
-            ) : (
-              <span className="inline-flex items-center gap-1.5">
-                {option.leading}
-                {option.text}
-              </span>
-            )}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+        <TabsList pill aria-label={label} className="w-full">
+          {options.map((option) => (
+            <TabsTrigger
+              key={option.value}
+              value={String(option.value)}
+              disabled={disabled}
+              aria-label={option.name}
+              className="flex-1 text-xs"
+            >
+              {option.leading === undefined ? (
+                <OptionText option={option} />
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  {option.leading}
+                  {option.text}
+                </span>
+              )}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
     </div>
   )
 }
