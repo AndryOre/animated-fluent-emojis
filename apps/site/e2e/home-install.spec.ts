@@ -118,13 +118,13 @@ test.describe('install card', () => {
     await section.getByRole('tab', { name: 'Vue' }).click()
     await expect(chip).toHaveText('vue')
 
-    const demoTop = await section
-      .locator('[data-shortcode-demo]')
+    const panelTop = await section
+      .locator('[data-shortcode-panel]')
       .evaluate((element) => Math.round(element.getBoundingClientRect().top))
     const architectureTop = await section
       .locator('[data-install-architecture]')
       .evaluate((element) => Math.round(element.getBoundingClientRect().top))
-    expect(demoTop).toBe(architectureTop)
+    expect(panelTop).toBe(architectureTop)
     await expect(section.locator('[data-install-command]')).toContainText(
       'animated-fluent-emojis',
     )
