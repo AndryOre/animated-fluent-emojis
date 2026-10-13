@@ -177,6 +177,11 @@ export const en = {
       eyebrow: 'Install',
       title: 'One tag, any site',
       body: 'Pick your framework, copy the code, and the emoji is on the page.',
+      stepLabels: {
+        install: 'Install',
+        import: 'Import',
+        use: 'Use',
+      },
       steps: {
         import: {
           title: 'Import',
@@ -195,6 +200,7 @@ export const en = {
         'Use the emoji id, or the id without its code-point prefix. No new names to learn.',
       architecture: {
         title: 'How it fits',
+        core: 'Emoji data',
         nodes: {
           page: 'Your page',
           adapter: 'Adapter',
