@@ -60,6 +60,7 @@ const faq = [
   }
 
   .faq-scope:has([data-faq='chat'][data-open]) [data-faq-mascot='chat'],
+  .faq-scope:not(:has([data-faq][data-open])) [data-faq-mascot='chat'],
   .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='speed'],
   .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='motion'] {
     opacity: 1;
@@ -74,6 +75,7 @@ const faq = [
     }
 
     .faq-scope:has([data-faq='chat'][data-open]) [data-faq-mascot='chat'],
+    .faq-scope:not(:has([data-faq][data-open])) [data-faq-mascot='chat'],
     .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='speed'],
     .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='motion'] {
       animation: faq-mascot-pop 500ms cubic-bezier(0.2, 1.4, 0.4, 1);
