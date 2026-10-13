@@ -46,6 +46,7 @@ export default function InstallCard({
     <div className="grid min-w-0 gap-2 rounded-2xl border border-border bg-muted/40 p-2 min-[860px]:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
       <CodeBlock
         pill
+        lineNumbers={false}
         tabs={tabs}
         labels={labels}
         activeId={active}
@@ -58,30 +59,38 @@ export default function InstallCard({
       <div
         data-testid="install-preview"
         aria-hidden="true"
-        className="grid h-36 place-items-center rounded-xl border border-border bg-card bg-[radial-gradient(circle_at_50%_40%,color-mix(in_oklab,var(--primary)_20%,transparent),transparent_70%)] min-[860px]:h-auto"
+        className="flex h-40 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card bg-[radial-gradient(circle_at_50%_40%,color-mix(in_oklab,var(--primary)_20%,transparent),transparent_70%)] min-[860px]:h-auto"
       >
-        {tabs.map((tab) => {
-          const emojiId = previews[tab.id]
-          const isActive = tab.id === active
-          return emojiId ? (
-            <span
-              key={tab.id}
-              data-preview-id={tab.id}
-              data-active={isActive}
-              className={cn(
-                'col-start-1 row-start-1 grid size-24 place-items-center motion-safe:transition-[opacity,scale,filter] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong)',
-                !isActive && 'scale-90 opacity-0 motion-safe:blur-[2px]',
-              )}
-            >
-              <Emoji
-                id={emojiId}
-                size={PREVIEW_SIZE}
-                alt=""
-                playing={isActive}
-              />
-            </span>
-          ) : null
-        })}
+        <div className="grid size-24 place-items-center">
+          {tabs.map((tab) => {
+            const emojiId = previews[tab.id]
+            const isActive = tab.id === active
+            return emojiId ? (
+              <span
+                key={tab.id}
+                data-preview-id={tab.id}
+                data-active={isActive}
+                className={cn(
+                  'col-start-1 row-start-1 grid size-24 place-items-center motion-safe:transition-[opacity,scale,filter] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong)',
+                  !isActive && 'scale-90 opacity-0 motion-safe:blur-[2px]',
+                )}
+              >
+                <Emoji
+                  id={emojiId}
+                  size={PREVIEW_SIZE}
+                  alt=""
+                  playing={isActive}
+                />
+              </span>
+            ) : null
+          })}
+        </div>
+        <span
+          data-testid="install-preview-chip"
+          className="rounded-full border border-border bg-background/60 px-2.5 py-0.5 font-mono text-[11px] leading-4 text-muted-foreground"
+        >
+          {active}
+        </span>
       </div>
     </div>
   )
