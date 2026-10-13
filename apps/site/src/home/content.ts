@@ -397,3 +397,20 @@ export function repeatMarqueeEmojis(
   const repeats = Math.floor(minWidth / (emojis.length * itemWidth)) + 1
   return Array.from({ length: repeats }, () => emojis).flat()
 }
+
+/** The marquee scroll speed of the landing canvas, in pixels per second. */
+export const MARQUEE_SPEED = 47
+
+/**
+ * Computes how long one loop of the marquee takes so the track moves at
+ * `MARQUEE_SPEED` whatever the width of one half.
+ * @param halfWidth - The width of one half of the track, in pixels.
+ * @returns The loop duration in seconds.
+ * @throws {RangeError} When `halfWidth` is not a positive finite number.
+ */
+export function marqueeDurationSeconds(halfWidth: number): number {
+  if (!Number.isFinite(halfWidth) || halfWidth <= 0) {
+    throw new RangeError('The marquee half width must be positive.')
+  }
+  return halfWidth / MARQUEE_SPEED
+}

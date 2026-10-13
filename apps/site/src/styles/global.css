@@ -403,10 +403,39 @@
   z-index: 0;
   width: var(--active-tab-width, 0);
   height: var(--active-tab-height, 0);
+  border: 1px solid var(--tab-pill-border, transparent);
   border-radius: var(--tab-pill-radius, 9999px);
   background: var(--tab-pill-background, var(--primary));
   pointer-events: none;
   transform: translateX(var(--active-tab-left, 0));
+}
+
+[data-slot='tabs'][data-variant='cmd'] {
+  --tab-pill-radius: 7px;
+  --tab-pill-background: var(--foreground);
+  --tab-pill-border: var(--foreground);
+  --tab-pill-foreground: var(--background);
+}
+
+[data-slot='tabs'][data-variant='card'] {
+  --tab-pill-radius: 9px;
+  --tab-pill-background: var(--muted);
+  --tab-pill-border: var(--border);
+  --tab-pill-foreground: var(--foreground);
+}
+
+[data-slot='tabs'][data-variant='dock'] {
+  --tab-pill-radius: 9999px;
+  --tab-pill-background: var(--foreground);
+  --tab-pill-border: var(--foreground);
+  --tab-pill-foreground: var(--background);
+}
+
+[data-slot='tabs'][data-variant='segmented'] {
+  --tab-pill-radius: 9px;
+  --tab-pill-background: var(--background);
+  --tab-pill-border: var(--border);
+  --tab-pill-foreground: var(--foreground);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -596,9 +625,10 @@
 
   .marquee-track {
     animation-name: marquee-scroll;
-    animation-duration: 30s;
+    animation-duration: var(--marquee-duration, 60s);
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+    will-change: translate;
   }
 }
 

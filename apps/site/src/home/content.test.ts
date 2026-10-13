@@ -10,6 +10,8 @@ import {
   buildInstallHtml,
   buildSnippetTabs,
   MARQUEE_EMOJI_IDS,
+  MARQUEE_SPEED,
+  marqueeDurationSeconds,
   pickMarqueeEmojis,
   pickTeaserEmojis,
   repeatMarqueeEmojis,
@@ -241,6 +243,22 @@ describe('marquee row', () => {
 
   it('returns nothing for an empty row', () => {
     expect(repeatMarqueeEmojis([], 60, 2560)).toEqual([])
+  })
+
+  it('derives the loop duration from the half width at the canvas speed', () => {
+    expect(MARQUEE_SPEED).toBe(47)
+    expect(marqueeDurationSeconds(2820)).toBe(60)
+    expect(marqueeDurationSeconds(2880)).toBeCloseTo(61.28, 2)
+  })
+
+  it('keeps the effective speed constant as the half grows', () => {
+    for (const halfWidth of [1410, 2820, 5640]) {
+      expect(halfWidth / marqueeDurationSeconds(halfWidth)).toBeCloseTo(47, 5)
+    }
+  })
+
+  it('rejects a half without width', () => {
+    expect(() => marqueeDurationSeconds(0)).toThrow(RangeError)
   })
 })
 

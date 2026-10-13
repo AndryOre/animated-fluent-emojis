@@ -87,7 +87,8 @@ test('InstallBlock renders a tab per package manager with bun selected', () => {
 
   expect(html.match(/role="tab"/g)).toHaveLength(4)
   expect(html).toMatch(/aria-selected="true"[^>]*>bun</)
-  expect(html).toContain('data-line-numbers="false"')
+  expect(html).toContain('data-command-row')
+  expect(html).toContain('bun add animated-fluent-emojis')
 })
 
 test('CodeBlock keeps both copy icons mounted so the swap can crossfade', () => {

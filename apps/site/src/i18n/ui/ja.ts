@@ -179,6 +179,11 @@ export const ja: UiStrings = {
       eyebrow: 'インストール',
       title: 'タグ一つで、どのサイトにも',
       body: 'フレームワークを選んでコードをコピーすれば、絵文字がページに現れます。',
+      stepLabels: {
+        install: 'インストール',
+        import: 'インポート',
+        use: '使う',
+      },
       steps: {
         import: {
           title: 'インポート',
@@ -197,6 +202,7 @@ export const ja: UiStrings = {
         '絵文字の ID、またはコードポイントの接頭辞を除いた ID を使います。新しい名前を覚える必要はありません。',
       architecture: {
         title: 'しくみ',
+        core: '絵文字データ',
         nodes: {
           page: 'あなたのページ',
           adapter: 'アダプター',
