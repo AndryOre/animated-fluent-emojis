@@ -78,6 +78,12 @@ export default function DockInstall({
           ))}
         </TabsList>
       </Tabs>
+      <code
+        data-dock-command
+        className="mx-1 hidden shrink-0 truncate font-mono text-[13px] text-muted-foreground min-[640px]:inline"
+      >
+        {installCommand(manager)}
+      </code>
       <Button
         variant="ghost"
         size="icon-sm"

@@ -33,8 +33,8 @@ function throwingStorage(): PackageManagerStorage {
 }
 
 describe('package manager commands', () => {
-  it('supports bun, npm, pnpm and yarn', () => {
-    expect(PACKAGE_MANAGERS).toEqual(['bun', 'npm', 'pnpm', 'yarn'])
+  it('supports bun, pnpm, npm and yarn', () => {
+    expect(PACKAGE_MANAGERS).toEqual(['bun', 'pnpm', 'npm', 'yarn'])
   })
 
   it.each([

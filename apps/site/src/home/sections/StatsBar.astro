@@ -28,16 +28,16 @@ const labels = {
 ---
 
 <section class={wrap} data-stats-bar>
-  <ul class="m-0 grid list-none grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border p-0 min-[560px]:grid-cols-4">
+  <ul class="scroll-reveal m-0 mt-3.5 grid list-none grid-cols-2 gap-2.5 p-0 min-[560px]:grid-cols-4">
     {stats.map((stat) => (
       <li
-        class="flex flex-col items-center gap-1 bg-card px-4 py-6 text-center"
+        class="flex flex-col gap-0.5 rounded-2xl border border-border bg-card px-[18px] py-4"
         data-stat={stat.id}
       >
-        <span class="text-3xl font-extrabold tracking-[-0.03em] tabular-nums">
+        <span class="text-3xl leading-[1.1] font-extrabold tracking-[-0.02em] tabular-nums">
           {stat.value}
         </span>
-        <span class="text-sm text-muted-foreground">{labels[stat.id]}</span>
+        <span class="text-[13px] text-muted-foreground">{labels[stat.id]}</span>
       </li>
     ))}
   </ul>

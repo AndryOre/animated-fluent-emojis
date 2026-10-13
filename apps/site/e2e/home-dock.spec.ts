@@ -189,7 +189,7 @@ test.describe('faq mascot', () => {
 
   test('the closing panel links to GitHub', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator(CLOSING).getByRole('link')
+    const link = page.locator(`${CLOSING} [data-closing-github]`)
     await expect(link).toHaveAttribute('href', /github\.com\/AndryOre/)
   })
 })

@@ -186,6 +186,23 @@
   }
 }
 
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .emoji-float {
+    animation: floaty 7s ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+}
+
 @layer base {
   html {
     scroll-padding-top: var(--site-header-height);

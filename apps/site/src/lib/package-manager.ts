@@ -5,7 +5,7 @@ import {
   type PreferenceStore,
 } from './persisted-preference'
 
-export const PACKAGE_MANAGERS = ['bun', 'npm', 'pnpm', 'yarn'] as const
+export const PACKAGE_MANAGERS = ['bun', 'pnpm', 'npm', 'yarn'] as const
 
 export type PackageManager = (typeof PACKAGE_MANAGERS)[number]
 
