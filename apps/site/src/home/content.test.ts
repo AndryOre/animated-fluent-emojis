@@ -10,8 +10,9 @@ import {
   buildInstallHtml,
   buildSnippetTabs,
   MARQUEE_EMOJI_IDS,
-  pickMarqueeRows,
+  pickMarqueeEmojis,
   pickTeaserEmojis,
+  repeatMarqueeEmojis,
   resolveShortcodeEmoji,
   SNIPPET_TABS,
   TEASER_EMOJIS,
@@ -202,17 +203,14 @@ describe('home stats', () => {
   })
 })
 
-describe('marquee rows', () => {
-  it('splits distinct emojis into two rows of the requested length', () => {
-    const [top, bottom] = pickMarqueeRows(emojis, 1)
-    expect(top).toHaveLength(1)
-    expect(bottom).toHaveLength(1)
-    expect(top[0]?.id).not.toBe(bottom[0]?.id)
+describe('marquee row', () => {
+  it('picks distinct emojis up to the requested count', () => {
+    const row = pickMarqueeEmojis(emojis, 1)
+    expect(row).toHaveLength(1)
   })
 
   it('returns what it can when the index is small', () => {
-    const [top, bottom] = pickMarqueeRows(emojis, 4)
-    expect(top.length + bottom.length).toBe(3)
+    expect(pickMarqueeEmojis(emojis, 4)).toHaveLength(3)
   })
 
   it('puts the preferred still emojis first and never repeats one', () => {
@@ -221,10 +219,28 @@ describe('marquee rows', () => {
     const [preferredId] = MARQUEE_EMOJI_IDS
     if (!preferredId) throw new Error('no preferred marquee emoji')
     const withPreferred = [...emojis, { ...template, id: preferredId }]
-    const [top, bottom] = pickMarqueeRows(withPreferred, 2)
-    const ids = [...top, ...bottom].map((emoji) => emoji.id)
+    const ids = pickMarqueeEmojis(withPreferred, 2).map((emoji) => emoji.id)
     expect(ids[0]).toBe(preferredId)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('repeats the row until a half is wider than the minimum', () => {
+    const row = pickMarqueeEmojis(emojis, 3)
+    const half = repeatMarqueeEmojis(row, 60, 2560)
+    expect(half.length * 60).toBeGreaterThan(2560)
+    expect(half.length % row.length).toBe(0)
+    expect((half.length - row.length) * 60).toBeLessThanOrEqual(2560)
+  })
+
+  it('repeats 24 emojis twice for 2560 pixels', () => {
+    const template = emojis[0]
+    if (!template) throw new Error('fixture is empty')
+    const row = Array.from({ length: 24 }, () => template)
+    expect(repeatMarqueeEmojis(row, 60, 2560)).toHaveLength(48)
+  })
+
+  it('returns nothing for an empty row', () => {
+    expect(repeatMarqueeEmojis([], 60, 2560)).toEqual([])
   })
 })
 
