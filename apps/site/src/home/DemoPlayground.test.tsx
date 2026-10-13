@@ -155,3 +155,14 @@ test('the segmented groups use the track and the 35% disabled opacity of the seg
   expect(html).toContain('font-mono')
   expect(html).toContain('disabled:opacity-35')
 })
+
+test('the segmented groups render as tabs with the sliding pill indicator', () => {
+  const html = renderToString(
+    <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
+  )
+
+  expect(html).toContain('role="tab"')
+  expect(html).toContain('data-variant="segmented"')
+  expect(html).toContain('tab-pill')
+  expect(html).not.toContain('aria-pressed')
+})
