@@ -87,6 +87,27 @@ test.describe('install card', () => {
       'core',
     )
   })
+
+  test('the preview chip names the active tab and the shortcode panel shares a row with the architecture', async ({
+    page,
+  }) => {
+    const section = await openInstall(page)
+    const chip = section.getByTestId('install-preview-chip')
+    await expect(chip).toHaveText('react')
+    await section.getByRole('tab', { name: 'Vue' }).click()
+    await expect(chip).toHaveText('vue')
+
+    const demoTop = await section
+      .locator('[data-shortcode-demo]')
+      .evaluate((element) => Math.round(element.getBoundingClientRect().top))
+    const architectureTop = await section
+      .locator('[data-install-architecture]')
+      .evaluate((element) => Math.round(element.getBoundingClientRect().top))
+    expect(demoTop).toBe(architectureTop)
+    await expect(section.locator('[data-install-command]')).toContainText(
+      'animated-fluent-emojis',
+    )
+  })
 })
 
 test.describe('narrow viewports', () => {
@@ -120,12 +141,12 @@ test.describe('reduced motion', () => {
     permissions: ['clipboard-read', 'clipboard-write'],
   })
 
-  test('the shortcode demo rests on :launch: and copying shows no burst', async ({
+  test('the shortcode demo rests on the last shortcode and copying shows no burst', async ({
     page,
   }) => {
     const section = await openInstall(page)
     const opacities = await section
-      .locator('[data-shortcode-demo] > span')
+      .locator('[data-shortcode-demo] > .sc-item')
       .evaluateAll((items) =>
         items.map((item) => getComputedStyle(item).opacity),
       )
