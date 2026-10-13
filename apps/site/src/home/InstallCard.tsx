@@ -10,7 +10,7 @@ import { cn } from '@/lib/utilities'
 
 import 'animated-fluent-emojis/style.css'
 
-const PREVIEW_SIZE = 72
+const PREVIEW_SIZE = 96
 
 /**
  * Properties of {@link InstallCard}.
@@ -43,7 +43,7 @@ export default function InstallCard({
   const [burst, setBurst] = useState(0)
 
   return (
-    <div className="grid min-w-0 gap-2 rounded-2xl border border-border bg-muted/40 p-2 min-[860px]:grid-cols-[minmax(0,1fr)_11rem]">
+    <div className="grid min-w-0 gap-2 rounded-2xl border border-border bg-muted/40 p-2 min-[860px]:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
       <CodeBlock
         pill
         tabs={tabs}
@@ -58,7 +58,7 @@ export default function InstallCard({
       <div
         data-testid="install-preview"
         aria-hidden="true"
-        className="grid h-36 place-items-center rounded-xl border border-border bg-card min-[860px]:h-auto"
+        className="grid h-36 place-items-center rounded-xl border border-border bg-card bg-[radial-gradient(circle_at_50%_40%,color-mix(in_oklab,var(--primary)_20%,transparent),transparent_70%)] min-[860px]:h-auto"
       >
         {tabs.map((tab) => {
           const emojiId = previews[tab.id]
@@ -69,7 +69,7 @@ export default function InstallCard({
               data-preview-id={tab.id}
               data-active={isActive}
               className={cn(
-                'col-start-1 row-start-1 grid size-[72px] place-items-center motion-safe:transition-[opacity,scale,filter] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong)',
+                'col-start-1 row-start-1 grid size-24 place-items-center motion-safe:transition-[opacity,scale,filter] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong)',
                 !isActive && 'scale-90 opacity-0 motion-safe:blur-[2px]',
               )}
             >
