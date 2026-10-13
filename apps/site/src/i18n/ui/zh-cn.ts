@@ -55,11 +55,12 @@ export const zh_CN: UiStrings = {
       ctaDocs: '阅读文档',
       ctaGallery: '浏览图库',
       ready: {
-        react: '支持 React',
-        vue: '支持 Vue',
-        svelte: '支持 Svelte',
-        astro: '支持 Astro',
-        html: '支持 HTML',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: '支持',
       },
       sub: '把鼠标移上去，它会向你挥手。',
       installLabel: '安装命令',
@@ -170,6 +171,7 @@ export const zh_CN: UiStrings = {
       },
     },
     teaser: {
+      eyebrow: '图库',
       title: '选一个，它已经动起来了',
       cta: '打开图库',
     },
@@ -218,6 +220,7 @@ export const zh_CN: UiStrings = {
     faq: {
       eyebrow: '常见问题',
       title: '常见问题',
+      mascotLabel: '回答',
       chat: {
         question: '可以在聊天或文档里用吗？',
         answer:

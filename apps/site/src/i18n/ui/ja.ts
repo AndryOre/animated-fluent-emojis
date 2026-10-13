@@ -55,11 +55,12 @@ export const ja: UiStrings = {
       ctaDocs: 'ドキュメントを読む',
       ctaGallery: 'ギャラリーを見る',
       ready: {
-        react: 'React 対応',
-        vue: 'Vue 対応',
-        svelte: 'Svelte 対応',
-        astro: 'Astro 対応',
-        html: 'HTML 対応',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: '対応',
       },
       sub: 'ホバーすると、手を振り返します。',
       installLabel: 'インストールコマンド',
@@ -170,6 +171,7 @@ export const ja: UiStrings = {
       },
     },
     teaser: {
+      eyebrow: 'ギャラリー',
       title: 'ひとつ選ぶと、もう動いています',
       cta: 'ギャラリーを開く',
     },
@@ -218,6 +220,7 @@ export const ja: UiStrings = {
     faq: {
       eyebrow: 'よくある質問',
       title: 'よくある質問',
+      mascotLabel: '回答',
       chat: {
         question: 'チャットや文書でも使えますか？',
         answer:

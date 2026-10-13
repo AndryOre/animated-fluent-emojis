@@ -55,11 +55,12 @@ export const pt_BR: UiStrings = {
       ctaDocs: 'Ler a documentação',
       ctaGallery: 'Explorar a galeria',
       ready: {
-        react: 'Pronto para React',
-        vue: 'Pronto para Vue',
-        svelte: 'Pronto para Svelte',
-        astro: 'Pronto para Astro',
-        html: 'Pronto para HTML',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: 'pronto',
       },
       sub: 'Passe o mouse e ele acena de volta.',
       installLabel: 'Comando de instalação',
@@ -170,6 +171,7 @@ export const pt_BR: UiStrings = {
       },
     },
     teaser: {
+      eyebrow: 'Galeria',
       title: 'Escolha um, ele já está se mexendo',
       cta: 'Abrir a galeria',
     },
@@ -218,6 +220,7 @@ export const pt_BR: UiStrings = {
     faq: {
       eyebrow: 'Perguntas',
       title: 'Perguntas frequentes',
+      mascotLabel: 'resposta',
       chat: {
         question: 'Posso usar os emojis em chats e documentos?',
         answer:

@@ -53,11 +53,12 @@ export const en = {
       ctaDocs: 'Read the docs',
       ctaGallery: 'Browse the gallery',
       ready: {
-        react: 'React ready',
-        vue: 'Vue ready',
-        svelte: 'Svelte ready',
-        astro: 'Astro ready',
-        html: 'HTML ready',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: 'ready',
       },
       sub: 'Hover it. It waves back.',
       installLabel: 'Install command',
@@ -168,6 +169,7 @@ export const en = {
       },
     },
     teaser: {
+      eyebrow: 'Gallery',
       title: "Pick one, it's already moving",
       cta: 'Open the gallery',
     },
@@ -216,6 +218,7 @@ export const en = {
     faq: {
       eyebrow: 'FAQ',
       title: 'Questions',
+      mascotLabel: 'answer',
       chat: {
         question: 'Can I use these in a chat or a document?',
         answer:
