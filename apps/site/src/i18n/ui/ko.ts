@@ -185,30 +185,14 @@ export const ko: UiStrings = {
         use: '사용',
       },
       steps: {
-        import: {
-          title: '가져오기',
-          body: '패키지를 추가하고 사용하는 프레임워크의 컴포넌트를 가져오세요.',
-        },
-        render: {
-          title: '표시',
-          body: '이모지를 보여 줄 자리에 태그를 넣으세요.',
-        },
         shortcodes: {
           title: '숏코드',
           body: '이모지 id나 코드 포인트 접두사를 뺀 id를 쓰세요. 새로 배울 이름은 없습니다.',
         },
       },
-      shortcodeBody:
-        '이모지 id나 코드 포인트 접두사를 뺀 id를 쓰세요. 새로 배울 이름은 없습니다.',
       architecture: {
         title: '구성 방식',
         core: '이모지 데이터',
-        nodes: {
-          page: '내 페이지',
-          adapter: '어댑터',
-          lookup: '조회',
-          assets: '애니메이션 이모지',
-        },
       },
     },
     closing: {

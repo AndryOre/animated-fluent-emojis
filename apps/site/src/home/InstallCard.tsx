@@ -45,7 +45,7 @@ export default function InstallCard({
   return (
     <div className="grid min-w-0 gap-2 rounded-2xl border border-border bg-muted/40 p-2 min-[860px]:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
       <CodeBlock
-        pill
+        variant="card"
         lineNumbers={false}
         tabs={tabs}
         labels={labels}

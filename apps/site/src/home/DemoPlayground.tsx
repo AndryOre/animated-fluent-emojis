@@ -109,7 +109,7 @@ function Segmented<Value extends string | number>({
           )
           if (next) onSelect(next.value)
         }}
-        className="w-full gap-0.5 rounded-lg border border-border bg-background p-0.5"
+        className="w-full gap-0.5 rounded-xl border border-border bg-muted p-[3px]"
       >
         {options.map((option) => (
           <ToggleGroupItem
@@ -117,7 +117,7 @@ function Segmented<Value extends string | number>({
             value={String(option.value)}
             size="compact"
             aria-label={option.name}
-            className="flex-1 cursor-pointer aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
+            className="h-auto flex-1 cursor-pointer rounded-[9px] border border-transparent px-[11px] py-[5px] font-mono text-xs font-normal text-muted-foreground hover:bg-transparent disabled:opacity-35 aria-pressed:border-border aria-pressed:bg-background aria-pressed:text-foreground aria-pressed:hover:bg-background"
           >
             {option.leading === undefined ? (
               <OptionText option={option} />

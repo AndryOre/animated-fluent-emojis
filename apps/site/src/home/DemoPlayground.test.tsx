@@ -145,3 +145,13 @@ test('the first render of the stage emoji is visible, never held at opacity 0', 
 
   expect(html).not.toContain('scale-[0.96]')
 })
+
+test('the segmented groups use the track and the 35% disabled opacity of the segmented tabs', () => {
+  const html = renderToString(
+    <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
+  )
+
+  expect(html).toContain('rounded-xl')
+  expect(html).toContain('font-mono')
+  expect(html).toContain('disabled:opacity-35')
+})

@@ -183,30 +183,14 @@ export const en = {
         use: 'Use',
       },
       steps: {
-        import: {
-          title: 'Import',
-          body: 'Add the package and import the component for your framework.',
-        },
-        render: {
-          title: 'Render',
-          body: 'Use the tag wherever you want the emoji to appear.',
-        },
         shortcodes: {
           title: 'Shortcodes',
           body: 'Use the emoji id, or the id without its code-point prefix. No new names to learn.',
         },
       },
-      shortcodeBody:
-        'Use the emoji id, or the id without its code-point prefix. No new names to learn.',
       architecture: {
         title: 'How it fits',
         core: 'Emoji data',
-        nodes: {
-          page: 'Your page',
-          adapter: 'Adapter',
-          lookup: 'Lookup',
-          assets: 'Animated emoji',
-        },
       },
     },
     closing: {

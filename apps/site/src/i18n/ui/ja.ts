@@ -185,30 +185,14 @@ export const ja: UiStrings = {
         use: '使う',
       },
       steps: {
-        import: {
-          title: 'インポート',
-          body: 'パッケージを追加し、お使いのフレームワーク用のコンポーネントをインポートします。',
-        },
-        render: {
-          title: '表示',
-          body: '絵文字を表示したい場所にタグを置きます。',
-        },
         shortcodes: {
           title: 'ショートコード',
           body: '絵文字の ID、またはコードポイントの接頭辞を除いた ID を使います。新しい名前を覚える必要はありません。',
         },
       },
-      shortcodeBody:
-        '絵文字の ID、またはコードポイントの接頭辞を除いた ID を使います。新しい名前を覚える必要はありません。',
       architecture: {
         title: 'しくみ',
         core: '絵文字データ',
-        nodes: {
-          page: 'あなたのページ',
-          adapter: 'アダプター',
-          lookup: '検索',
-          assets: 'アニメーション絵文字',
-        },
       },
     },
     closing: {

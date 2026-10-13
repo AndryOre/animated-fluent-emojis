@@ -31,8 +31,8 @@ const PREVIEW_EMOJI_BY_KIND: Readonly<Record<string, string>> = {
 
 const SHORTCODE_DEMO = [
   { code: 'fire', id: 'fire' },
-  { code: 'launch', id: 'launch' },
   { code: 'grinningfacewithbigeyes', id: '1f603_grinningfacewithbigeyes' },
+  { code: 'launch', id: 'launch' },
 ] as const
 
 const STEP_EMOJI_IDS = [
@@ -71,17 +71,30 @@ const tabs = await Promise.all(
 )
 
 const steps = [
-  { number: 1, emojiId: STEP_EMOJI_IDS[0], ...install.steps.import },
-  { number: 2, emojiId: STEP_EMOJI_IDS[1], ...install.steps.render },
-  { number: 3, emojiId: STEP_EMOJI_IDS[2], ...install.steps.shortcodes },
+  { number: 1, emojiId: STEP_EMOJI_IDS[0], title: install.stepLabels.install },
+  {
+    number: 2,
+    emojiId: STEP_EMOJI_IDS[1],
+    title: install.stepLabels.import,
+    line: "import { Emoji } from 'animated-fluent-emojis/react'",
+  },
+  {
+    number: 3,
+    emojiId: STEP_EMOJI_IDS[2],
+    title: install.stepLabels.use,
+    line: '<Emoji id="fire" size={64} />',
+  },
 ]
 
-const adapterTiles = [
-  { label: 'core', names: 'manifest + CSS', core: true },
-  { label: 'react', names: 'React', core: false },
-  { label: 'vue / svelte', names: 'Vue, Svelte', core: false },
-  { label: 'astro / html', names: 'Astro, HTML', core: false },
-] as const
+const { ready } = home.hero
+const adapterCells = [
+  { label: 'core', title: install.architecture.core, line: 'manifest + CSS' },
+  { label: 'adapter', title: ready.react, line: ready.status },
+  { label: 'adapter', title: ready.vue, line: ready.status },
+  { label: 'adapter', title: ready.svelte, line: ready.status },
+  { label: 'adapter', title: ready.astro, line: ready.status },
+  { label: 'adapter', title: ready.html, line: ready.status },
+]
 ---
 
 <section class={section} aria-labelledby="install-title">
@@ -118,52 +131,69 @@ const adapterTiles = [
         >
           <Emoji id={step.emojiId} size={40} alt="" autoPlay />
         </span>
-        <div class="flex flex-col gap-1">
+        <div class="flex min-w-0 flex-col gap-1">
           <h3 class="text-lg font-extrabold text-balance">{step.title}</h3>
-          <p class="text-pretty text-muted-foreground">{step.body}</p>
+          {step.number === 1 ? (
+            <InstallStepCommand client:visible />
+          ) : (
+            <code class="block min-w-0 truncate font-mono text-xs text-muted-foreground">
+              {step.line}
+            </code>
+          )}
         </div>
-        {step.number === 1 && <InstallStepCommand client:visible />}
       </li>
     ))}
   </ol>
 
   <div class="mt-3 grid grid-cols-1 gap-3 min-[860px]:grid-cols-2">
     <div
-      data-shortcode-demo
-      aria-hidden="true"
-      class="sc-demo scroll-reveal grid min-h-32 grid-cols-[minmax(0,1fr)] place-items-center overflow-hidden rounded-2xl border border-border bg-card p-5"
+      data-shortcode-panel
+      class="scroll-reveal flex flex-col gap-3 rounded-2xl border border-border bg-card p-5"
     >
-      {SHORTCODE_DEMO.map((shortcode, position) => (
-        <span
-          class="sc-item flex items-center gap-2 sm:gap-4"
-          style={`--chars: ${shortcode.code.length + 2}; --delay: ${position * 4}s`}
-        >
-          <code class="sc-text block overflow-hidden font-mono text-[13px] font-semibold whitespace-nowrap sm:text-lg">
-            :{shortcode.code}:
-          </code>
-          <span class="sc-emoji">
-            <Emoji id={shortcode.id} size={56} alt="" autoPlay />
+      <p class="m-0 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+        {install.steps.shortcodes.title}
+      </p>
+      <div
+        data-shortcode-demo
+        aria-hidden="true"
+        class="sc-demo grid min-h-12 grid-cols-[minmax(0,1fr)] items-center overflow-hidden rounded-xl border border-border bg-background/60 px-4 py-2"
+      >
+        {SHORTCODE_DEMO.map((shortcode, position) => (
+          <span
+            class="sc-item flex items-center gap-2 sm:gap-3"
+            style={`--chars: ${shortcode.code.length + 2}; --delay: ${position * 4}s`}
+          >
+            <code class="sc-text block overflow-hidden font-mono text-[13px] font-semibold whitespace-nowrap sm:text-base">
+              :{shortcode.code}:
+            </code>
+            <span class="sc-emoji">
+              <Emoji id={shortcode.id} size={32} alt="" autoPlay />
+            </span>
           </span>
-        </span>
-      ))}
+        ))}
+      </div>
+      <p class="m-0 text-pretty text-sm text-muted-foreground">
+        {install.steps.shortcodes.body}
+      </p>
     </div>
 
     <figure
       data-install-architecture
-      class="scroll-reveal flex flex-col gap-4 rounded-2xl border border-border bg-card p-5"
+      class="scroll-reveal m-0 flex flex-col gap-3 rounded-2xl border border-border bg-card p-5"
     >
-      <figcaption class="text-lg font-extrabold text-balance">
+      <figcaption class="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
         {install.architecture.title}
       </figcaption>
       <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
-        {adapterTiles.map((tile) => (
+        {adapterCells.map((cell, position) => (
           <li
-            class={`flex flex-col gap-0.5 rounded-xl border bg-background/60 p-3 text-sm ${tile.core ? 'border-primary' : 'border-border'}`}
+            class={`flex min-w-0 flex-col gap-0.5 rounded-xl border bg-background/60 p-3 text-sm ${position === 0 ? 'border-primary' : 'border-border'}`}
           >
             <span class="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-              {tile.label}
+              {cell.label}
             </span>
-            <span class="font-semibold">{tile.names}</span>
+            <span class="font-extrabold">{cell.title}</span>
+            <span class="text-xs font-semibold text-primary">{cell.line}</span>
           </li>
         ))}
       </ul>
