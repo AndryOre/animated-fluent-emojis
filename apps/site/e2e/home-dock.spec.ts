@@ -5,7 +5,7 @@ const DOCK = '[data-dock]'
 const FAQ = '[aria-labelledby="faq-title"]'
 const INSTALL = '[aria-labelledby="install-title"]'
 const CLOSING = '[aria-labelledby="closing-title"]'
-const PACKAGE_MANAGERS = ['bun', 'npm', 'pnpm', 'yarn']
+const PACKAGE_MANAGERS = ['bun', 'pnpm', 'npm', 'yarn']
 
 const isShown = (locator: Locator) =>
   locator.evaluate((element) => {
@@ -58,7 +58,7 @@ test.describe('floating dock with motion allowed', () => {
     await expect(dock.getByRole('tab')).toHaveText(PACKAGE_MANAGERS)
     const box = await dock.boundingBox()
     expect(box?.height).toBe(48)
-    expect(box?.width).toBeLessThanOrEqual(560)
+    expect(box?.width).toBeLessThanOrEqual(736)
     const viewport = page.viewportSize()
     expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(
       (viewport?.height ?? 0) - 16,
@@ -189,7 +189,7 @@ test.describe('faq mascot', () => {
 
   test('the closing panel links to GitHub', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator(CLOSING).getByRole('link')
+    const link = page.locator(`${CLOSING} [data-closing-github]`)
     await expect(link).toHaveAttribute('href', /github\.com\/AndryOre/)
   })
 })

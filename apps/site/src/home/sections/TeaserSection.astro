@@ -35,34 +35,38 @@ const tiles = pickTeaserEmojis(
   hue,
   name: names.get(emoji.slug) ?? emoji.description,
 }))
-const primaryButton = buttonVariants({
-  shape: 'pill',
-  className: 'h-auto min-h-11 px-6 text-base font-bold',
+const secondaryButton = buttonVariants({
+  variant: 'outline',
+  className: 'h-auto min-h-11 rounded-xl px-5 text-base font-semibold',
 })
 ---
 
 <section class={section} aria-labelledby="teaser-title">
-  <div class="flex flex-col items-center gap-8 text-center">
-    <h2 id="teaser-title" class={`scroll-reveal ${heading}`}>
-      {home.teaser.title}
-    </h2>
-    <ul class="scroll-reveal m-0 grid w-full list-none grid-cols-3 gap-3 p-0 min-[860px]:grid-cols-6">
+  <div class="flex flex-col gap-8">
+    <div class="scroll-reveal flex flex-wrap items-end justify-between gap-4">
+      <h2 id="teaser-title" class={heading}>
+        {home.teaser.title}
+      </h2>
+      <a href={galleryHref} class={secondaryButton}>
+        {home.teaser.cta}
+      </a>
+    </div>
+    <ul class="scroll-reveal m-0 grid w-full list-none grid-cols-3 gap-2.5 p-0 min-[860px]:grid-cols-6">
       {tiles.map((tile) => (
         <li class="contents">
           <a
             href={galleryHref}
-            aria-label={tile.name}
-            class="teaser-tile relative isolate flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            class="teaser-tile relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-[18px] border border-border bg-card px-1.5 pt-5 pb-3.5 outline-none focus-visible:ring-2 focus-visible:ring-primary"
             style={`--glow-hue: ${tile.hue}`}
           >
             <Emoji id={tile.id} size={TEASER_EMOJI_SIZE} alt="" />
+            <small class="max-w-full truncate font-mono text-[11px] text-muted-foreground">
+              {tile.name}
+            </small>
           </a>
         </li>
       ))}
     </ul>
-    <a href={galleryHref} class={primaryButton}>
-      {home.teaser.cta}
-    </a>
   </div>
 </section>
 

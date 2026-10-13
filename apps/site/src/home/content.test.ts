@@ -90,7 +90,7 @@ describe('highlighted blocks', () => {
 
   it('highlights the install command of every package manager', async () => {
     const html = await buildInstallHtml()
-    expect(Object.keys(html)).toEqual(['bun', 'npm', 'pnpm', 'yarn'])
+    expect(Object.keys(html)).toEqual(['bun', 'pnpm', 'npm', 'yarn'])
     expect(html.npm).toContain('install')
     expect(html.bun).not.toContain('class="gutter"')
   })
