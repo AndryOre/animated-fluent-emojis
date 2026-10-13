@@ -131,7 +131,8 @@ test.describe('with motion allowed', () => {
       .evaluateAll((elements) =>
         elements.map((element) => (element as HTMLElement).offsetHeight),
       )
-    expect(heights).toEqual([168, 168, 168, 168])
+    expect(heights[0]).toBeGreaterThanOrEqual(168)
+    expect(heights.slice(1)).toEqual([168, 168, 168])
   })
 
   test('the considerate switch moves while the cursor loops', async ({

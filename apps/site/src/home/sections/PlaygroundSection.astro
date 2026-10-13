@@ -65,14 +65,14 @@ const demoLabels = {
 ---
 
 <section class={section} aria-labelledby="playground-title">
-  <div class="mx-auto mb-8 flex max-w-2xl flex-col items-center gap-3 text-center">
+  <div class="scroll-reveal mb-8 flex max-w-2xl flex-col gap-3">
     <p class={`${eyebrow} mb-0`}>{home.playground.eyebrow}</p>
     <h2 id="playground-title" class={heading}>
       {home.playground.title}
     </h2>
     <p class="text-pretty text-muted-foreground">{home.playground.body}</p>
   </div>
-  <div class="mx-auto min-w-0 max-w-3xl">
+  <div class="scroll-reveal min-w-0">
     <DemoPlayground
       client:idle
       emojis={demoEmojis}

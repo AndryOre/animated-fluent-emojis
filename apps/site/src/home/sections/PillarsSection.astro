@@ -21,6 +21,10 @@ const wall = [
   'sweatgrinning',
   'rofl',
   '1f44b_wavinghand',
+  'smile',
+  'wink',
+  'stareyes',
+  'fire',
 ]
 const wallPlayingFirst = 1
 const wallPlayingSecond = 7
@@ -42,11 +46,15 @@ const cursorMarkup =
   </div>
   <ul
     data-pillar-spotlight
-    class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-3"
+    class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-[1.6fr_1fr]"
   >
-    <li class={`${cardClass} min-[860px]:col-span-2`}>
-      <div class={stageClass} style="--stage-base: 168" aria-hidden="true">
-        <div class="relative grid h-[108px] w-[228px] grid-cols-4 gap-3">
+    <li class={`${cardClass} min-[860px]:row-span-2`}>
+      <div
+        class={`${stageClass} min-[860px]:flex-1`}
+        style="--stage-base: 168"
+        aria-hidden="true"
+      >
+        <div class="relative grid h-[168px] w-[228px] grid-cols-4 gap-3">
           {wall.map((id, position) => (
             <span
               class={`bento-cell relative block size-12 ${position === wallPlayingFirst ? 'fake-cursor-target' : ''}`}

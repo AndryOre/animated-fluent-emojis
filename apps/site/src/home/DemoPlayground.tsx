@@ -226,9 +226,9 @@ export default function DemoPlayground({
     ]
 
   return (
-    <div className="min-w-0 overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="grid min-w-0 gap-3 min-[860px]:grid-cols-[1fr_1.2fr]">
       <div
-        className="relative flex h-[180px] items-center justify-center border-b border-border bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-[length:16px_16px]"
+        className="relative flex h-[220px] items-center justify-center overflow-hidden rounded-[22px] border border-border bg-card bg-[radial-gradient(circle_at_50%_45%,color-mix(in_oklab,var(--primary)_22%,transparent),transparent_70%)] min-[860px]:h-auto min-[860px]:min-h-[320px]"
         data-testid="demo-stage"
         onPointerDown={startTapPlay}
       >
@@ -255,66 +255,69 @@ export default function DemoPlayground({
           {labels.reset}
         </Button>
       </div>
-      <div className="grid grid-cols-2 gap-x-3 gap-y-2 p-3">
-        <Segmented
-          className="col-span-2"
-          label={labels.emojiLabel}
-          options={DEMO_EMOJIS.filter((option) =>
-            emojis.some((candidate) => candidate.id === option.id),
-          ).map((option) => ({
-            value: option.id,
-            text:
-              emojis.find((candidate) => candidate.id === option.id)?.unicode ??
-              '',
-            name: labels.emojis[option.name],
-          }))}
-          selected={state.emojiId}
-          onSelect={(emojiId) => {
-            setState((previous) => ({ ...previous, emojiId }))
-          }}
-        />
-        <Segmented
-          className="col-span-2 sm:col-span-1"
-          label={labels.sizeLabel}
-          options={DEMO_SIZES.map((size) => ({
-            value: size,
-            text: String(size),
-          }))}
-          selected={state.size}
-          onSelect={(size) => {
-            setState((previous) => ({ ...previous, size }))
-          }}
-        />
-        <Segmented
-          className="col-span-2 sm:col-span-1"
-          label={labels.playsLabel}
-          options={DEMO_PLAYS.map((play) => ({
-            value: play.id,
-            text: labels.plays[play.id],
-            coarseText: play.id === 'hover' ? labels.plays.hoverTap : undefined,
-          }))}
-          selected={state.play}
-          onSelect={(play) => {
-            setState((previous) => ({ ...previous, play }))
-          }}
-        />
-        <Segmented
-          className="col-span-2"
-          label={labels.toneLabel}
-          disabled={!hasTones}
-          options={DEMO_TONES.map((tone) => ({
-            value: tone.id,
-            text: labels.tones[tone.id],
-            leading: <ToneDot tone={tone.id} />,
-          }))}
-          selected={state.tone}
-          onSelect={(tone) => {
-            setState((previous) => ({ ...previous, tone }))
-          }}
-        />
-      </div>
-      <div className="demo-code px-3 pb-3">
-        <CodeBlock tabs={tabs} labels={labels.code} slotValues={slotValues} />
+      <div className="flex min-w-0 flex-col gap-3">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-[22px] border border-border bg-card p-4">
+          <Segmented
+            className="col-span-2"
+            label={labels.emojiLabel}
+            options={DEMO_EMOJIS.filter((option) =>
+              emojis.some((candidate) => candidate.id === option.id),
+            ).map((option) => ({
+              value: option.id,
+              text:
+                emojis.find((candidate) => candidate.id === option.id)
+                  ?.unicode ?? '',
+              name: labels.emojis[option.name],
+            }))}
+            selected={state.emojiId}
+            onSelect={(emojiId) => {
+              setState((previous) => ({ ...previous, emojiId }))
+            }}
+          />
+          <Segmented
+            className="col-span-2 sm:col-span-1"
+            label={labels.sizeLabel}
+            options={DEMO_SIZES.map((size) => ({
+              value: size,
+              text: String(size),
+            }))}
+            selected={state.size}
+            onSelect={(size) => {
+              setState((previous) => ({ ...previous, size }))
+            }}
+          />
+          <Segmented
+            className="col-span-2 sm:col-span-1"
+            label={labels.playsLabel}
+            options={DEMO_PLAYS.map((play) => ({
+              value: play.id,
+              text: labels.plays[play.id],
+              coarseText:
+                play.id === 'hover' ? labels.plays.hoverTap : undefined,
+            }))}
+            selected={state.play}
+            onSelect={(play) => {
+              setState((previous) => ({ ...previous, play }))
+            }}
+          />
+          <Segmented
+            className="col-span-2"
+            label={labels.toneLabel}
+            disabled={!hasTones}
+            options={DEMO_TONES.map((tone) => ({
+              value: tone.id,
+              text: labels.tones[tone.id],
+              leading: <ToneDot tone={tone.id} />,
+            }))}
+            selected={state.tone}
+            onSelect={(tone) => {
+              setState((previous) => ({ ...previous, tone }))
+            }}
+          />
+        </div>
+        <div className="demo-code">
+          <CodeBlock tabs={tabs} labels={labels.code} slotValues={slotValues} />
+        </div>
       </div>
     </div>
   )
