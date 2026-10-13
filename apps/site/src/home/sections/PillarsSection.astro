@@ -26,8 +26,18 @@ const wall = [
   'stareyes',
   'fire',
 ]
-const wallPlayingFirst = 1
-const wallPlayingSecond = 7
+const wallColumns = 6
+const wallPlayingFirst = 3
+const wallPlayingSecond = 8
+const wakeLastColumn = 3
+
+const wakeDelay = (position: number) => {
+  const column = position % wallColumns
+  const row = Math.floor(position / wallColumns)
+  return column <= wakeLastColumn
+    ? `${(0.5 + column * 0.45 + row * 0.15).toFixed(2)}s`
+    : undefined
+}
 
 const cardClass =
   'scroll-reveal spotlight flex flex-col gap-4 rounded-2xl border border-border bg-card p-5'
@@ -49,42 +59,58 @@ const cursorMarkup =
     class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-[1.6fr_1fr]"
   >
     <li class={`${cardClass} min-[860px]:row-span-2`}>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-lg font-extrabold text-balance">
+          {home.bento.alive.title}
+        </h3>
+        <p class="text-pretty text-muted-foreground">{home.bento.alive.body}</p>
+      </div>
       <div
         class={`${stageClass} min-[860px]:flex-1`}
         style="--stage-base: 168"
         aria-hidden="true"
       >
-        <div class="relative grid h-[168px] w-[228px] grid-cols-4 gap-3">
+        <div class="relative grid h-[94px] w-[294px] grid-cols-6 gap-1.5">
           {wall.map((id, position) => (
             <span
-              class={`bento-cell relative block size-12 ${position === wallPlayingFirst ? 'fake-cursor-target' : ''}`}
+              class="bento-cell relative block size-11 rounded-[14px] border border-border bg-card"
+              data-wake={wakeDelay(position) ? '' : undefined}
+              style={
+                wakeDelay(position)
+                  ? `--wake-delay: ${wakeDelay(position)}`
+                  : undefined
+              }
             >
-              <span class="absolute inset-1 block">
-                <Emoji id={id} size={40} autoPlay={false} alt="" />
-                {position === wallPlayingFirst && (
-                  <Emoji
-                    id={id}
-                    size={40}
-                    animationIterations="infinite"
-                    alt=""
-                    class="bento-play-first absolute inset-0"
-                  />
-                )}
-                {position === wallPlayingSecond && (
-                  <Emoji
-                    id={id}
-                    size={40}
-                    animationIterations="infinite"
-                    alt=""
-                    class="bento-play-second absolute inset-0"
-                  />
-                )}
+              <span
+                class={`absolute inset-0 grid place-items-center ${position === wallPlayingFirst ? 'fake-cursor-target' : ''}`}
+              >
+                <span class="relative block size-[38px]">
+                  <Emoji id={id} size={38} autoPlay={false} alt="" />
+                  {position === wallPlayingFirst && (
+                    <Emoji
+                      id={id}
+                      size={38}
+                      animationIterations="infinite"
+                      alt=""
+                      class="bento-play-first absolute inset-0"
+                    />
+                  )}
+                  {position === wallPlayingSecond && (
+                    <Emoji
+                      id={id}
+                      size={38}
+                      animationIterations="infinite"
+                      alt=""
+                      class="bento-play-second absolute inset-0"
+                    />
+                  )}
+                </span>
               </span>
             </span>
           ))}
           <span
             class={cursorMarkup}
-            style="--cursor-x0: 120px; --cursor-y0: 56px; --cursor-x1: 80px; --cursor-y1: 20px; --cursor-x2: 200px; --cursor-y2: 80px"
+            style="--cursor-x0: 4px; --cursor-y0: 70px; --cursor-x1: 168px; --cursor-y1: 20px; --cursor-x2: 118px; --cursor-y2: 68px"
           >
             <svg viewBox="0 0 16 16" class="size-full" fill="currentColor">
               <path
@@ -97,15 +123,15 @@ const cursorMarkup =
           </span>
         </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <h3 class="text-lg font-extrabold text-balance">
-          {home.bento.alive.title}
-        </h3>
-        <p class="text-pretty text-muted-foreground">{home.bento.alive.body}</p>
-      </div>
     </li>
 
     <li class={cardClass}>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-lg font-extrabold text-balance">
+          {home.bento.light.title}
+        </h3>
+        <p class="text-pretty text-muted-foreground">{home.bento.light.body}</p>
+      </div>
       <div class={`${stageClass} flex-col gap-3`} style="--stage-base: 168">
         <span
           class="relative block size-14 rounded-xl border border-dashed border-border"
@@ -120,18 +146,20 @@ const cursorMarkup =
           {home.bento.layoutShift}
         </span>
       </div>
-      <div class="flex flex-col gap-1">
-        <h3 class="text-lg font-extrabold text-balance">
-          {home.bento.light.title}
-        </h3>
-        <p class="text-pretty text-muted-foreground">{home.bento.light.body}</p>
-      </div>
     </li>
 
     <li class={cardClass}>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-lg font-extrabold text-balance">
+          {home.bento.considerate.title}
+        </h3>
+        <p class="text-pretty text-muted-foreground">
+          {home.bento.considerate.body}
+        </p>
+      </div>
       <div class={stageClass} style="--stage-base: 168" aria-hidden="true">
-        <div class="relative h-[72px] w-[220px]">
-          <span class="absolute top-0 left-0 block size-10">
+        <div class="flex items-center gap-4">
+          <span class="bento-moon relative block size-10">
             <Emoji id="1f319_crescentmoon" size={40} autoPlay={false} alt="" />
             <Emoji
               id="1f319_crescentmoon"
@@ -141,11 +169,26 @@ const cursorMarkup =
               class="bento-motion-on absolute inset-0"
             />
           </span>
-          <span class="bento-switch fake-cursor-target absolute top-[7px] left-[176px] block h-[26px] w-11 rounded-full border border-border bg-muted">
-            <span class="bento-switch-track absolute inset-0 block rounded-full bg-primary"></span>
-            <span class="bento-switch-thumb absolute top-[3px] left-[3px] block size-5 rounded-full bg-background shadow-sm"></span>
+          <span class="relative block h-[26px] w-11 shrink-0">
+            <span class="bento-switch fake-cursor-target absolute inset-0 block rounded-full border border-border bg-muted">
+              <span class="bento-switch-track absolute inset-0 block rounded-full bg-primary"></span>
+              <span class="bento-switch-thumb absolute top-[3px] left-[3px] block size-5 rounded-full bg-background shadow-sm"></span>
+            </span>
+            <span
+              class={cursorMarkup}
+              style="--cursor-x0: 52px; --cursor-y0: 40px; --cursor-x1: 20px; --cursor-y1: 12px; --cursor-x2: -8px; --cursor-y2: 44px"
+            >
+              <svg viewBox="0 0 16 16" class="size-full" fill="currentColor">
+                <path
+                  d="M2 1.5v11l3-2.8 2 4.3 2-.9-2-4.2h4.2z"
+                  class="stroke-background"
+                  stroke-width="1"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </span>
           </span>
-          <span class="absolute top-[52px] left-0 grid w-full font-mono text-xs text-muted-foreground">
+          <span class="grid font-mono text-xs text-muted-foreground">
             <span class="bento-label-off col-start-1 row-start-1">
               {home.bento.reduceMotion.off}
             </span>
@@ -153,53 +196,11 @@ const cursorMarkup =
               {home.bento.reduceMotion.on}
             </span>
           </span>
-          <span
-            class={cursorMarkup}
-            style="--cursor-x0: 120px; --cursor-y0: 52px; --cursor-x1: 192px; --cursor-y1: 16px; --cursor-x2: 140px; --cursor-y2: 58px"
-          >
-            <svg viewBox="0 0 16 16" class="size-full" fill="currentColor">
-              <path
-                d="M2 1.5v11l3-2.8 2 4.3 2-.9-2-4.2h4.2z"
-                class="stroke-background"
-                stroke-width="1"
-                stroke-linejoin="round"
-              ></path>
-            </svg>
-          </span>
         </div>
-      </div>
-      <div class="flex flex-col gap-1">
-        <h3 class="text-lg font-extrabold text-balance">
-          {home.bento.considerate.title}
-        </h3>
-        <p class="text-pretty text-muted-foreground">
-          {home.bento.considerate.body}
-        </p>
       </div>
     </li>
 
     <li class={`${cardClass} min-[860px]:col-span-2`}>
-      <div
-        class={`${stageClass} grid grid-cols-2 divide-x divide-border`}
-        style="--stage-base: 168"
-      >
-        <span class="flex h-full flex-col items-center justify-center gap-1 px-3 text-center">
-          <span class="font-mono text-xs text-muted-foreground">
-            {home.bento.artwork.label}
-          </span>
-          <span class="text-sm font-semibold text-balance">
-            {home.bento.artwork.value}
-          </span>
-        </span>
-        <span class="flex h-full flex-col items-center justify-center gap-1 px-3 text-center">
-          <span class="font-mono text-xs text-muted-foreground">
-            {home.bento.code.label}
-          </span>
-          <span class="text-sm font-semibold text-balance">
-            {home.bento.code.value}
-          </span>
-        </span>
-      </div>
       <div class="flex flex-col gap-1">
         <h3 class="text-lg font-extrabold text-balance">
           {home.bento.credit.title}
@@ -207,6 +208,44 @@ const cursorMarkup =
         <p class="text-pretty text-muted-foreground">
           {home.bento.credit.body}
         </p>
+      </div>
+      <div
+        class={`${stageClass} grid grid-cols-[1fr_auto_1fr] gap-2 px-3`}
+        style="--stage-base: 168"
+      >
+        <span class="flex flex-col items-center gap-1 rounded-xl border border-border bg-card px-3 py-4 text-center">
+          <span class="font-mono text-xs text-muted-foreground">
+            {home.bento.artwork.label}
+          </span>
+          <span class="text-sm font-semibold text-balance">
+            {home.bento.artwork.value}
+          </span>
+        </span>
+        <svg
+          viewBox="0 0 40 24"
+          class="bento-link h-6 w-10 text-primary"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M2 12C14 2 26 22 38 12" pathLength="60"></path>
+        </svg>
+        <span class="flex flex-col items-center gap-1 rounded-xl border border-border bg-card px-3 py-4 text-center">
+          <span class="font-mono text-xs text-muted-foreground">
+            {home.bento.code.label}
+          </span>
+          <span class="text-sm font-semibold text-balance">
+            {home.bento.code.value}
+          </span>
+        </span>
+        <span
+          class="pointer-events-none absolute right-[-8px] bottom-[-30px] block size-[86px]"
+          aria-hidden="true"
+        >
+          <Emoji id="handshake" size={86} alt="" />
+        </span>
       </div>
     </li>
   </ul>
@@ -239,6 +278,24 @@ const cursorMarkup =
 
   .bento-switch-thumb {
     translate: 18px 0;
+  }
+
+  .bento-link path {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .bento-cell {
+      transition-property: scale, rotate;
+      transition-duration: 150ms;
+      transition-timing-function: var(--ease-out-strong);
+    }
+
+    .bento-cell:hover {
+      scale: 1.18;
+      rotate: -6deg;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -286,6 +343,20 @@ const cursorMarkup =
       animation-name: bento-switch-thumb;
     }
 
+    .bento-moon {
+      animation: bento-bob 6s var(--ease-in-out-strong) infinite both;
+    }
+
+    .bento-cell[data-wake] {
+      animation: bento-wave 6s var(--ease-in-out-strong) var(--wake-delay, 0s)
+        infinite both;
+    }
+
+    .bento-link path {
+      stroke-dashoffset: 60;
+      animation: bento-draw 3s var(--ease-in-out-strong) infinite both;
+    }
+
     .bento-play-first,
     .bento-play-second,
     .bento-skeleton,
@@ -304,6 +375,52 @@ const cursorMarkup =
     .bento-skeleton,
     .bento-loaded {
       animation-duration: 5s;
+    }
+  }
+
+  @keyframes bento-wave {
+    0%,
+    24%,
+    100% {
+      transform: none;
+      background-color: var(--card);
+    }
+    6% {
+      transform: translateY(-14px) rotate(-10deg);
+      background-color: var(--muted);
+    }
+    12% {
+      transform: translateY(2px) rotate(6deg);
+      background-color: var(--muted);
+    }
+  }
+
+  @keyframes bento-bob {
+    0%,
+    26.67%,
+    46%,
+    100% {
+      transform: none;
+    }
+    13.33%,
+    40% {
+      transform: translateY(-8px) rotate(8deg);
+    }
+  }
+
+  @keyframes bento-draw {
+    0% {
+      stroke-dashoffset: 60;
+      opacity: 1;
+    }
+    50%,
+    90% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
     }
   }
 
