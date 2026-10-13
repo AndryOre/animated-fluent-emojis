@@ -46,7 +46,7 @@ const wakeDelay = (position: number) => {
 }
 
 const cardClass =
-  'scroll-reveal spotlight flex flex-col gap-4 rounded-2xl border border-border bg-card p-5'
+  'scroll-reveal spotlight flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 transition-colors duration-250 ease-(--ease-out-strong) [@media(hover:hover)_and_(pointer:fine)]:hover:border-[color-mix(in_oklab,var(--primary)_45%,var(--border))]'
 const stageClass =
   'bento-stage relative flex items-center justify-center overflow-hidden rounded-xl border border-border bg-background/60'
 const cursorMarkup =

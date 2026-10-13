@@ -14,7 +14,7 @@ interface Props {
   locale: Locale
 }
 
-const TEASER_EMOJI_SIZE = 56
+const TEASER_EMOJI_SIZE = 46
 
 const { locale } = Astro.props
 const { home } = getUi(locale)
@@ -92,7 +92,7 @@ const secondaryButton = buttonVariants({
 
   @media (hover: hover) and (pointer: fine) {
     .teaser-cell:hover .teaser-tile {
-      border-color: hsl(var(--glow-hue, 60) 90% 55%);
+      border-color: hsl(var(--glow-hue, 60) 80% 60%);
     }
   }
 
