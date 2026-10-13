@@ -19,7 +19,7 @@ export interface FaqEntry {
 }
 
 /**
- * Landing FAQ: every item can be open at once and every answer is present in
+ * Landing FAQ: one item is open at a time, the first by default, and every answer is present in
  * the server-rendered HTML. Each item carries `data-faq` with its id, so the
  * mascot beside the list can follow the open question with CSS alone, and a
  * small decorative emoji in a reserved box so nothing shifts when it loads.
@@ -30,7 +30,11 @@ export interface FaqEntry {
  */
 export default function FaqAccordion({ items }: { items: FaqEntry[] }) {
   return (
-    <Accordion multiple hiddenUntilFound className="max-w-3xl">
+    <Accordion
+      hiddenUntilFound
+      defaultValue={items.slice(0, 1).map((item) => item.id)}
+      className="max-w-3xl"
+    >
       {items.map((item) => (
         <AccordionItem
           key={item.id}
@@ -42,7 +46,7 @@ export default function FaqAccordion({ items }: { items: FaqEntry[] }) {
             <span
               data-faq-emoji
               aria-hidden="true"
-              className="grid size-7 shrink-0 place-items-center"
+              className="grid size-7 shrink-0 place-items-center motion-safe:transition-[scale,rotate] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(.2,1.4,.4,1)] motion-safe:group-aria-expanded/accordion-trigger:scale-[1.35] motion-safe:group-aria-expanded/accordion-trigger:-rotate-10"
             >
               <Emoji
                 id={item.emojiId}

@@ -179,12 +179,18 @@ test.describe('faq mascot', () => {
         .locator(`[data-faq-mascot="${id}"]`)
         .evaluate((element) => getComputedStyle(element).opacity)
 
+    await expect(
+      faq.getByRole('button', { name: /in a chat or a document/i }),
+    ).toHaveAttribute('aria-expanded', 'true')
     await expect.poll(() => mascot('chat')).toBe('1')
     await expect.poll(() => mascot('speed')).toBe('0')
 
     await faq.getByRole('button', { name: /slow my page/i }).click()
     await expect.poll(() => mascot('speed')).toBe('1')
     await expect.poll(() => mascot('chat')).toBe('0')
+    await expect(
+      faq.getByRole('button', { name: /in a chat or a document/i }),
+    ).toHaveAttribute('aria-expanded', 'false')
   })
 
   test('the closing panel links to GitHub', async ({ page }) => {
