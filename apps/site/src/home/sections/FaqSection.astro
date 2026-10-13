@@ -36,6 +36,9 @@ const faq = [
       data-faq-mascots
       class="relative hidden min-h-[300px] min-w-0 overflow-hidden rounded-[22px] border border-border bg-card min-[860px]:block [background-image:radial-gradient(circle_at_40%_50%,color-mix(in_oklab,var(--primary)_24%,transparent),transparent_70%)]"
     >
+      <span class="absolute top-4 left-4 font-mono text-[11px] leading-4 text-muted-foreground">
+        {home.faq.mascotLabel}
+      </span>
       {faq.map((entry) => (
         <span
           data-faq-mascot={entry.id}
@@ -56,18 +59,8 @@ const faq = [
     pointer-events: none;
   }
 
-  [data-faq-mascot='chat'] {
-    opacity: 1;
-    scale: 1;
-  }
-
-  .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='chat'],
-  .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='chat'],
-  .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='speed'] {
-    opacity: 0;
-    scale: 0.9;
-  }
-
+  .faq-scope:has([data-faq='chat'][data-open]) [data-faq-mascot='chat'],
+  .faq-scope:not(:has([data-faq][data-open])) [data-faq-mascot='chat'],
   .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='speed'],
   .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='motion'] {
     opacity: 1;
@@ -76,15 +69,16 @@ const faq = [
 
   @media (prefers-reduced-motion: no-preference) {
     [data-faq-mascot] {
-      transition-property: opacity, scale, filter;
+      transition-property: opacity, scale;
       transition-duration: 220ms;
       transition-timing-function: var(--ease-out-strong);
     }
 
-    .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='chat'],
-    .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='chat'],
-    .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='speed'] {
-      filter: blur(2px);
+    .faq-scope:has([data-faq='chat'][data-open]) [data-faq-mascot='chat'],
+    .faq-scope:not(:has([data-faq][data-open])) [data-faq-mascot='chat'],
+    .faq-scope:has([data-faq='speed'][data-open]) [data-faq-mascot='speed'],
+    .faq-scope:has([data-faq='motion'][data-open]) [data-faq-mascot='motion'] {
+      animation: faq-mascot-pop 500ms cubic-bezier(0.2, 1.4, 0.4, 1);
     }
   }
 
@@ -92,6 +86,15 @@ const faq = [
     [data-faq-mascot] {
       transition: opacity 150ms ease;
       scale: 1;
+    }
+  }
+
+  @keyframes faq-mascot-pop {
+    from {
+      transform: scale(0.5) rotate(-12deg);
+    }
+    to {
+      transform: scale(1) rotate(0deg);
     }
   }
 </style>

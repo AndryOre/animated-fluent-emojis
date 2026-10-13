@@ -164,7 +164,7 @@ test.describe('with motion allowed', () => {
       .evaluateAll((elements) =>
         elements.map((element) => getComputedStyle(element).animationName),
       )
-    expect(wake).toHaveLength(8)
+    expect(wake).toHaveLength(12)
     expect(new Set(wake)).toEqual(new Set(['bento-wave']))
 
     const link = await page.locator(BENTO_LINK).evaluate((element) => {

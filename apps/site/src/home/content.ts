@@ -234,7 +234,7 @@ export interface TeaserEmoji {
 
 /**
  * The emojis of the landing gallery teaser, in display order, each with the
- * OKLCH hue of its glow.
+ * HSL hue of its glow.
  */
 export const TEASER_EMOJIS: readonly TeaserEmoji[] = [
   { id: 'fire', hue: 40 },
