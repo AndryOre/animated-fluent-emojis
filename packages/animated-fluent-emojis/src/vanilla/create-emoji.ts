@@ -294,12 +294,13 @@ export const createEmoji = (
     if (!currentImage) return
     currentImage.alt = current.alt ?? emoji.description
     const sourceSet = getSpriteSourceSet(emoji, current.skinTone)
-    const nextSizes = typeof size === 'number' ? cssSize : 'auto'
+    const nextSizes = typeof size === 'number' ? cssSize : null
     if (currentImage.srcset !== (sourceSet ?? '')) {
       currentImage.srcset = sourceSet ?? ''
     }
     if (currentImage.getAttribute('sizes') !== nextSizes) {
-      currentImage.sizes = nextSizes
+      if (nextSizes === null) currentImage.removeAttribute('sizes')
+      else currentImage.sizes = nextSizes
     }
     if (isNewImage) currentImage.src = source
 

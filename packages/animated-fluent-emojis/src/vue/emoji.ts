@@ -315,7 +315,7 @@ export const Emoji: DefineSetupFnComponent<
             draggable: 'false',
             src: source,
             srcset: getSpriteSourceSet(entry, skinTone),
-            sizes: typeof size.value === 'number' ? cssSize : 'auto',
+            sizes: typeof size.value === 'number' ? cssSize : undefined,
             style: currentView?.style,
             class: styles.emojiImage,
             onLoad: (event: Event) => {

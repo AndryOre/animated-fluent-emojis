@@ -164,13 +164,13 @@ export const buildReadyHtml = (
   const sizes =
     typeof options.config.size === 'number'
       ? toCssLength(options.config.size)
-      : 'auto'
+      : ''
   const attributes = [
     `class="${IMAGE_CLASS}"`,
     `alt="${escapeHtml(image.alt)}"`,
     `src="${escapeHtml(image.source)}"`,
     image.sourceSet ? `srcset="${escapeHtml(image.sourceSet)}"` : '',
-    `sizes="${escapeHtml(sizes)}"`,
+    sizes ? `sizes="${escapeHtml(sizes)}"` : '',
     'loading="lazy"',
     'decoding="async"',
     'draggable="false"',
