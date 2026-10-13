@@ -1,9 +1,67 @@
 ---
-import type { Locale } from '../../i18n/locales'
+import Emoji from 'animated-fluent-emojis/astro'
+
+import { buttonVariants } from '@/components/ui/button'
+
+import { type Locale } from '../../i18n/locales'
+import { getUi } from '../../i18n/ui'
+import { externalLinkAttributes, REPOSITORY_URL } from '../../site-links'
+import { section } from './styles'
 
 interface Props {
   locale: Locale
 }
+
+const { locale } = Astro.props
+const { home, common } = getUi(locale)
+
+const decorations = [
+  { id: '1f389_partypopper', placement: 'top-4 left-4', tilt: '-rotate-12' },
+  { id: '2728_sparkles', placement: 'top-4 right-4', tilt: 'rotate-12' },
+  { id: 'launch', placement: 'bottom-4 left-6', tilt: 'rotate-6' },
+  { id: 'fire', placement: 'bottom-4 right-6', tilt: '-rotate-6' },
+]
+
+const primaryButton = buttonVariants({
+  shape: 'pill',
+  className: 'h-auto min-h-11 px-6 text-base font-bold',
+})
 ---
 
-<Fragment />
+<section class={section} aria-labelledby="closing-title">
+  <div class="dock-end scroll-reveal scroll-reveal-last relative isolate overflow-hidden rounded-3xl border border-border bg-card px-6 py-16 text-center md:py-24">
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(60%_90%_at_50%_100%,color-mix(in_oklab,var(--primary)_18%,transparent),transparent_70%)]"
+    ></div>
+    <div aria-hidden="true" class="pointer-events-none">
+      {decorations.map((decoration) => (
+        <span
+          class={`absolute hidden size-20 min-[860px]:block lg:size-28 ${decoration.placement} ${decoration.tilt}`}
+        >
+          <Emoji id={decoration.id} size="100%" alt="" />
+        </span>
+      ))}
+    </div>
+    <div class="relative mx-auto flex max-w-xl flex-col items-center gap-5">
+      <h2
+        id="closing-title"
+        class="text-[clamp(28px,5vw,44px)] leading-tight font-extrabold tracking-[-0.03em] text-balance"
+      >
+        {home.closing.titleLead}
+        <span class="text-primary">{home.closing.titleAccent}</span>
+      </h2>
+      <p class="text-lg text-pretty text-muted-foreground">
+        {home.closing.body}
+      </p>
+      <a
+        href={REPOSITORY_URL}
+        class={primaryButton}
+        {...externalLinkAttributes()}
+      >
+        {home.closing.cta}
+        <span class="sr-only"> ({common.opensInNewTab})</span>
+      </a>
+    </div>
+  </div>
+</section>
