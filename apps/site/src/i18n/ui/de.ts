@@ -178,6 +178,11 @@ export const de: UiStrings = {
       eyebrow: 'Installation',
       title: 'Ein Tag, jede Website',
       body: 'Wähle dein Framework, kopiere den Code, und das Emoji ist auf der Seite.',
+      stepLabels: {
+        install: 'Installieren',
+        import: 'Importieren',
+        use: 'Verwenden',
+      },
       steps: {
         import: {
           title: 'Importieren',
@@ -196,6 +201,7 @@ export const de: UiStrings = {
         'Nutze die Emoji-ID oder die ID ohne ihr Codepoint-Präfix. Keine neuen Namen zu lernen.',
       architecture: {
         title: 'So passt es zusammen',
+        core: 'Emoji-Daten',
         nodes: {
           page: 'Deine Seite',
           adapter: 'Adapter',

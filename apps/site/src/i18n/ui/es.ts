@@ -178,6 +178,11 @@ export const es: UiStrings = {
       eyebrow: 'Instalación',
       title: 'Una etiqueta, cualquier sitio',
       body: 'Elige tu framework, copia el código y el emoji ya está en la página.',
+      stepLabels: {
+        install: 'Instalar',
+        import: 'Importar',
+        use: 'Usar',
+      },
       steps: {
         import: {
           title: 'Importar',
@@ -196,6 +201,7 @@ export const es: UiStrings = {
         'Usa el id del emoji, o el id sin su prefijo de punto de código. Sin nombres nuevos que aprender.',
       architecture: {
         title: 'Cómo encaja',
+        core: 'Datos de emojis',
         nodes: {
           page: 'Tu página',
           adapter: 'Adaptador',

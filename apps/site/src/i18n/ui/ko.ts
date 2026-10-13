@@ -179,6 +179,11 @@ export const ko: UiStrings = {
       eyebrow: '설치',
       title: '태그 하나면 어느 사이트에서든',
       body: '프레임워크를 고르고 코드를 복사하면 이모지가 페이지에 나타납니다.',
+      stepLabels: {
+        install: '설치',
+        import: '가져오기',
+        use: '사용',
+      },
       steps: {
         import: {
           title: '가져오기',
@@ -197,6 +202,7 @@ export const ko: UiStrings = {
         '이모지 id나 코드 포인트 접두사를 뺀 id를 쓰세요. 새로 배울 이름은 없습니다.',
       architecture: {
         title: '구성 방식',
+        core: '이모지 데이터',
         nodes: {
           page: '내 페이지',
           adapter: '어댑터',

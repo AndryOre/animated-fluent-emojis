@@ -179,6 +179,11 @@ export const zh_CN: UiStrings = {
       eyebrow: '安装',
       title: '一个标签，任何网站',
       body: '选好框架，复制代码，emoji 就出现在页面上了。',
+      stepLabels: {
+        install: '安装',
+        import: '导入',
+        use: '使用',
+      },
       steps: {
         import: {
           title: '导入',
@@ -197,6 +202,7 @@ export const zh_CN: UiStrings = {
         '使用表情符号的 id，或去掉码位前缀的 id。无需学习新的名称。',
       architecture: {
         title: '工作方式',
+        core: '表情数据',
         nodes: {
           page: '你的页面',
           adapter: '适配器',
