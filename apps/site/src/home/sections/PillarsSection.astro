@@ -25,6 +25,12 @@ const wall = [
   'wink',
   'stareyes',
   'fire',
+  'heart',
+  'star',
+  '1f4a7_droplet',
+  '1f33f_herb',
+  '1f52e_crystalball',
+  '1f389_partypopper',
 ]
 const wallColumns = 6
 const wallPlayingFirst = 3
@@ -70,10 +76,10 @@ const cursorMarkup =
         style="--stage-base: 168"
         aria-hidden="true"
       >
-        <div class="relative grid h-[94px] w-[294px] grid-cols-6 gap-1.5">
+        <div class="relative grid h-[248px] w-[506px] grid-cols-6 gap-2.5 max-[859px]:[zoom:0.55]">
           {wall.map((id, position) => (
             <span
-              class="bento-cell relative block size-11 rounded-[14px] border border-border bg-card"
+              class="bento-cell relative block size-[76px] rounded-[18px] border border-border bg-card"
               data-wake={wakeDelay(position) ? '' : undefined}
               style={
                 wakeDelay(position)
@@ -84,12 +90,12 @@ const cursorMarkup =
               <span
                 class={`absolute inset-0 grid place-items-center ${position === wallPlayingFirst ? 'fake-cursor-target' : ''}`}
               >
-                <span class="relative block size-[38px]">
-                  <Emoji id={id} size={38} autoPlay={false} alt="" />
+                <span class="relative block size-[62px]">
+                  <Emoji id={id} size={62} autoPlay={false} alt="" />
                   {position === wallPlayingFirst && (
                     <Emoji
                       id={id}
-                      size={38}
+                      size={62}
                       animationIterations="infinite"
                       alt=""
                       class="bento-play-first absolute inset-0"
@@ -98,7 +104,7 @@ const cursorMarkup =
                   {position === wallPlayingSecond && (
                     <Emoji
                       id={id}
-                      size={38}
+                      size={62}
                       animationIterations="infinite"
                       alt=""
                       class="bento-play-second absolute inset-0"
@@ -110,7 +116,7 @@ const cursorMarkup =
           ))}
           <span
             class={cursorMarkup}
-            style="--cursor-x0: 4px; --cursor-y0: 70px; --cursor-x1: 168px; --cursor-y1: 20px; --cursor-x2: 118px; --cursor-y2: 68px"
+            style="--cursor-x0: 4px; --cursor-y0: 224px; --cursor-x1: 292px; --cursor-y1: 34px; --cursor-x2: 206px; --cursor-y2: 120px"
           >
             <svg viewBox="0 0 16 16" class="size-full" fill="currentColor">
               <path

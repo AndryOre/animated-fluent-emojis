@@ -83,7 +83,7 @@ test.describe('home hero, stats and marquee', () => {
     const readTransform = () =>
       pill.evaluate((element) => getComputedStyle(element).transform)
     const before = await readTransform()
-    await hero.getByRole('tab', { name: 'npm' }).click()
+    await hero.getByRole('tab', { name: 'npm', exact: true }).click()
     await expect.poll(readTransform).not.toBe(before)
   })
 })
