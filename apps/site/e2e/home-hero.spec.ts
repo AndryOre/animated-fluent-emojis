@@ -35,6 +35,33 @@ test.describe('home hero, stats and marquee', () => {
     }
   })
 
+  test('each ready chip pairs the framework name with an accent status', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const chips = page.locator('[data-hero-ready] li[data-ready-chip]')
+    await expect(chips).toHaveCount(5)
+    await expect(chips.first().locator('i')).toHaveText('ready')
+    const styles = await chips.first().evaluate((chip) => {
+      const chipStyle = getComputedStyle(chip)
+      const status = getComputedStyle(chip.querySelector('i') ?? chip)
+      return {
+        fontSize: status.fontSize,
+        letterSpacing: status.letterSpacing,
+        textTransform: status.textTransform,
+        fontStyle: status.fontStyle,
+        fontFamily: status.fontFamily,
+        columnGap: chipStyle.columnGap,
+      }
+    })
+    expect(styles.fontSize).toBe('10px')
+    expect(styles.letterSpacing).toBe('0.8px')
+    expect(styles.textTransform).toBe('uppercase')
+    expect(styles.fontStyle).toBe('normal')
+    expect(styles.fontFamily).toMatch(/mono/i)
+    expect(styles.columnGap).toBe('8px')
+  })
+
   test('the two marquee rows run in opposite directions', async ({ page }) => {
     await page.goto('/')
     const directions = await page

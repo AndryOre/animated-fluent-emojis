@@ -55,11 +55,12 @@ export const ko: UiStrings = {
       ctaDocs: '문서 읽기',
       ctaGallery: '갤러리 둘러보기',
       ready: {
-        react: 'React 지원',
-        vue: 'Vue 지원',
-        svelte: 'Svelte 지원',
-        astro: 'Astro 지원',
-        html: 'HTML 지원',
+        react: 'React',
+        vue: 'Vue',
+        svelte: 'Svelte',
+        astro: 'Astro',
+        html: 'HTML',
+        status: '지원',
       },
       sub: '마우스를 올리면 손을 흔들어 줍니다.',
       installLabel: '설치 명령어',
@@ -170,6 +171,7 @@ export const ko: UiStrings = {
       },
     },
     teaser: {
+      eyebrow: '갤러리',
       title: '하나 골라 보세요, 벌써 움직이고 있어요',
       cta: '갤러리 열기',
     },
@@ -218,6 +220,7 @@ export const ko: UiStrings = {
     faq: {
       eyebrow: '자주 묻는 질문',
       title: '자주 묻는 질문',
+      mascotLabel: '답변',
       chat: {
         question: '채팅이나 문서에서도 쓸 수 있나요?',
         answer:
