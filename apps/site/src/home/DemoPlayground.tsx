@@ -109,7 +109,11 @@ function Segmented<Value extends string | number>({
           if (next) onSelect(next.value)
         }}
       >
-        <TabsList pill aria-label={label} className="w-full">
+        <TabsList
+          pill
+          aria-label={label}
+          className="group-data-[variant=segmented]/tabs:w-full"
+        >
           {options.map((option) => (
             <TabsTrigger
               key={option.value}
