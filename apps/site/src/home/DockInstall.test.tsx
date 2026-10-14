@@ -55,3 +55,11 @@ test('DockInstall labels the group, the tab list and the copy button', () => {
   expect(html).toContain('tab-pill')
   expect(html).toContain('data-variant="dock"')
 })
+
+test('DockInstall tabs are compact rect pills, not forced to a 44px circle', () => {
+  const html = render()
+
+  expect(html).not.toContain('variant=dock]/tabs:h-11')
+  expect(html).toContain('variant=dock]/tabs:rounded-[7px]')
+  expect(html).not.toMatch(/variant=dock\]\/tabs:rounded-full/)
+})

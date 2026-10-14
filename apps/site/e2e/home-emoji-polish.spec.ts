@@ -33,9 +33,7 @@ test.describe('touch emulation', () => {
     await page.goto('/')
     const island = page.locator('astro-island[component-url*="DemoPlayground"]')
     await expect(island).not.toHaveAttribute('ssr', /.*/)
-    await expect(
-      page.getByRole('button', { name: 'Hover / tap' }),
-    ).toBeVisible()
+    await expect(page.getByRole('tab', { name: 'Hover / tap' })).toBeVisible()
 
     const stage = page.getByTestId('demo-stage')
     await stage.tap({ position: { x: 20, y: 90 } })

@@ -103,10 +103,54 @@ test.describe('install card', () => {
     )
 
     const cells = section.locator('[data-install-architecture] li')
-    await expect(cells).toHaveCount(6)
+    await expect(cells).toHaveCount(4)
     await expect(cells.first()).toContainText('manifest + CSS')
     await expect(cells.nth(1)).toContainText('React')
     await expect(cells.nth(1)).toContainText('ready')
+    await expect(cells.nth(2)).toContainText('vue / svelte')
+    await expect(cells.nth(2)).toContainText('Vue, Svelte')
+    await expect(cells.nth(3)).toContainText('astro / html')
+    await expect(cells.nth(3)).toContainText('Astro, HTML')
+    await expect(
+      section.locator('[data-install-architecture]'),
+    ).not.toContainText('adapter')
+  })
+
+  test('each step card lights its border in turn', async ({ page }) => {
+    const section = await openInstall(page)
+    const cards = section.locator('[data-install-steps] > li > .install-step')
+    await expect(cards).toHaveCount(3)
+    const lit = await cards.evaluateAll((items) =>
+      items.map((card) => {
+        const animation = card
+          .getAnimations()
+          .find((entry) => (entry as CSSAnimation).animationName === 'step-lit')
+        if (!animation) return null
+        const timing = animation.effect?.getComputedTiming()
+        const primary = getComputedStyle(card)
+          .getPropertyValue('--primary')
+          .trim()
+        animation.pause()
+        animation.currentTime = (timing?.delay ?? 0) + 100
+        const context = document.createElement('canvas').getContext('2d', {
+          willReadFrequently: true,
+        })
+        const toRgb = (color: string) => {
+          if (!context) return ''
+          context.clearRect(0, 0, 1, 1)
+          context.fillStyle = color
+          context.fillRect(0, 0, 1, 1)
+          return [...context.getImageData(0, 0, 1, 1).data].join(',')
+        }
+        return {
+          border: toRgb(getComputedStyle(card).borderTopColor),
+          expected: toRgb(primary),
+          delay: timing?.delay,
+        }
+      }),
+    )
+    expect(lit.map((entry) => entry?.delay)).toEqual([0, 2000, 4000])
+    for (const entry of lit) expect(entry?.border).toBe(entry?.expected)
   })
 
   test('the preview chip names the active tab and the shortcode panel shares a row with the architecture', async ({

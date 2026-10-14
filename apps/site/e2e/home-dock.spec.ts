@@ -142,8 +142,15 @@ test.describe('floating dock on a phone', () => {
     expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(390)
     const tabs = await dock.getByRole('tab').all()
     for (const tab of tabs) {
-      const tabBox = await tab.boundingBox()
-      expect(tabBox?.height).toBeGreaterThanOrEqual(44)
+      const hits = await tab.evaluate((element) => {
+        const rect = element.getBoundingClientRect()
+        const x = rect.left + rect.width / 2
+        const centreY = rect.top + rect.height / 2
+        return [-20, 20].map((offset) =>
+          element.contains(document.elementFromPoint(x, centreY + offset)),
+        )
+      })
+      expect(hits).toEqual([true, true])
     }
     const overflow = await page.evaluate(
       () =>

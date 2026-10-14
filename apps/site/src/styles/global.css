@@ -425,7 +425,7 @@
 }
 
 [data-slot='tabs'][data-variant='dock'] {
-  --tab-pill-radius: 9999px;
+  --tab-pill-radius: 7px;
   --tab-pill-background: var(--foreground);
   --tab-pill-border: var(--foreground);
   --tab-pill-foreground: var(--background);
