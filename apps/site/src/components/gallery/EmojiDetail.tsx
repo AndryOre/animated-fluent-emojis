@@ -241,7 +241,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
                 onClick={() => {
                   setZoom(level)
                 }}
-                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground active:scale-[0.97] pointer-coarse:size-9 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:bg-muted aria-pressed:text-foreground"
+                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97] aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
               >
                 {level}×
               </button>
