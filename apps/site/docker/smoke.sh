@@ -48,8 +48,10 @@ for header in content-security-policy x-content-type-options referrer-policy per
 done
 csp="$(grep -i '^content-security-policy:' <<<"$headers")"
 grep -qF "frame-ancestors 'none'" <<<"$csp" || fail "CSP header lacks frame-ancestors"
-meta_csp="$(curl -s "$base/" | grep -Eo '<meta http-equiv="content-security-policy" content="[^"]*"' | head -n1 || true)"
-[ -n "$meta_csp" ] || fail "page has no CSP meta tag"
+if curl -s "$base/" | grep -qi 'http-equiv="content-security-policy"'; then
+  fail "page still has a CSP meta tag"
+fi
+meta_csp="$csp"
 cdn="https://animated-fluent-emojis-cdn.andryore.dev"
 files="https://animated-fluent-emojis-files.andryore.dev"
 if sed "s#$cdn##g;s#$files##g" <<<"$meta_csp" | grep -Eq 'https?://'; then
@@ -63,6 +65,16 @@ done
 script_src="$(tr ';' '\n' <<<"$meta_csp" | grep -E 'script-src ')"
 case "$script_src" in *"'unsafe-inline'"*) fail "script-src allows unsafe-inline" ;; esac
 grep -qF "base-uri 'none'" <<<"$meta_csp" || fail "CSP lacks base-uri"
+grep -qF "require-trusted-types-for 'script'" <<<"$meta_csp" || fail "CSP lacks Trusted Types"
+grep -qF "__SCRIPT_HASHES__" <<<"$meta_csp" && fail "CSP template was not rendered"
+grep -qE "script-src [^;]*'sha256-" <<<"$meta_csp" || fail "script-src has no hashes"
+[ "$(header_of cross-origin-resource-policy "$base/")" = same-origin ] || fail "pages are not same-origin"
+emoji_path="$(curl -s "$base/sitemap.xml" | grep -Eo '/emojis/[a-z0-9-]+/' | head -n1 || true)"
+og="$(curl -s "$base$emoji_path" | grep -Eo '/og/[A-Za-z0-9._-]+\.png' | head -n1 || true)"
+[ -n "$og" ] || fail "no /og/ image referenced from an emoji page"
+[ "$(header_of cross-origin-resource-policy "$base$og")" = cross-origin ] || fail "$og is not cross-origin"
+[ "$(status "$base/.well-known/security.txt")" = 200 ] || fail "security.txt is not 200"
+grep -q '^Contact: ' <<<"$(curl -s "$base/.well-known/security.txt")" || fail "security.txt lacks Contact"
 
 [ "$(header_of cache-control "$base/")" = no-cache ] || fail "HTML lacks no-cache"
 asset="$(curl -s "$base/" | grep -Eo '/_astro/[A-Za-z0-9._-]+' | head -n1 || true)"

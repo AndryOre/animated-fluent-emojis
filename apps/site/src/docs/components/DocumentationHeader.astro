@@ -19,3 +19,15 @@ const searchStyle = [
     <Search />
   </div>
 </Header>
+
+<script>
+  import {
+    installSearchTrustedTypesPolicy,
+    type TrustedTypesFactory,
+  } from '../search-trusted-types'
+
+  installSearchTrustedTypesPolicy(
+    (window as Window & { trustedTypes?: TrustedTypesFactory }).trustedTypes,
+    window.location.origin,
+  )
+</script>

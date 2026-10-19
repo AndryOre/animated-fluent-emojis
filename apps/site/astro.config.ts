@@ -5,6 +5,7 @@ import { defineConfig } from 'astro/config'
 import starlightLlmsTxt from 'starlight-llms-txt'
 
 import { docSlug, PUBLISHED_DOCS } from './src/docs/published'
+import { collectStarlightInlineScriptHashes } from './src/docs/starlight-inline-hashes'
 import { sharedCodeConfig } from './src/highlight/code-config'
 import {
   LOCALE_NAMES,
@@ -20,18 +21,6 @@ import { REPOSITORY_URL } from './src/site-links'
 
 const CDN_ORIGIN = 'https://animated-fluent-emojis-cdn.andryore.dev'
 const FILES_ORIGIN = 'https://animated-fluent-emojis-files.andryore.dev'
-
-/**
- * Hashes of the inline scripts Starlight ships in its sidebar, mobile menu and
- * theme picker components, which Astro does not hash into the policy itself.
- * `src/seo/distribution-audit.ts` fails the build-output test when a Starlight upgrade
- * changes one of them.
- */
-const STARLIGHT_INLINE_SCRIPT_HASHES = [
-  'sha256-f/zAUE74ucc3JYp4r4QQvkJofoQdkOIhHYK+jeZ6eko=',
-  'sha256-wX2yOADeV+NMngflD5uYi3vl50SHC4sfM1EmylVjlX4=',
-  'sha256-7eCV4jtsr4t4knb3c4FCRPeu7GGZeOUGE3XvWix0XOQ=',
-] as const
 
 function localized(pick: (locale: Locale) => string): Record<string, string> {
   return Object.fromEntries(
@@ -63,7 +52,7 @@ export default defineConfig({
     csp: {
       scriptDirective: {
         resources: ["'self'", "'wasm-unsafe-eval'"],
-        hashes: [THEME_INIT_HASH, ...STARLIGHT_INLINE_SCRIPT_HASHES],
+        hashes: [THEME_INIT_HASH, ...collectStarlightInlineScriptHashes()],
       },
       styleDirective: { resources: ["'self'", "'unsafe-inline'"] },
       directives: [
