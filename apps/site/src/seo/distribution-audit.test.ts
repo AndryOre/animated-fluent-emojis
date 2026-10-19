@@ -11,7 +11,7 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { LOCALES, localeUrl } from '../i18n/locales'
-import { auditDistribution } from './distribution-audit'
+import { auditDistribution, readHeaderPolicy } from './distribution-audit'
 
 const CSP =
   '<meta http-equiv="content-security-policy" content="default-src \'none\'">'
@@ -228,6 +228,33 @@ describe('auditDistribution', () => {
     expect(auditDistribution(distribution).join('\n')).toContain(
       '/emojis/fire/',
     )
+  })
+
+  it('accepts pages without a meta policy when the server header carries one', () => {
+    const script = 'window.a = 1'
+    write('index.html', pageHtml('/', `<script>${script}</script>`, ''))
+    write('emojis/fire/index.html', pageHtml('/emojis/fire/', '', ''))
+    const header = `script-src 'self' '${sha256Source(script)}'`
+
+    expect(auditDistribution(distribution, header)).toEqual([])
+    expect(auditDistribution(distribution).join('\n')).toContain(
+      'missing content security policy',
+    )
+    expect(
+      auditDistribution(distribution, "script-src 'self'").join('\n'),
+    ).toContain('inline script')
+  })
+
+  it('reads the policy out of the rendered nginx snippet', () => {
+    write(
+      'headers.conf',
+      'add_header Content-Security-Policy "default-src \'none\'" always;\nadd_header X-Frame-Options "DENY" always;\n',
+    )
+
+    expect(readHeaderPolicy(path.join(distribution, 'headers.conf'))).toBe(
+      "default-src 'none'",
+    )
+    expect(readHeaderPolicy(path.join(distribution, 'missing.conf'))).toBe('')
   })
 
   it('flags an inline script the policy does not allow', () => {
