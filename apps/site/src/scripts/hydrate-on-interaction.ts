@@ -19,7 +19,8 @@ const HYDRATION_SETTLE_MS = 50
 /**
  * Hydrate an island on its first interaction. A click that lands while the
  * island's code is still loading would hit inert server HTML, so those clicks
- * are recorded and replayed once hydration finishes.
+ * are recorded, their native action is suppressed, and they are replayed once
+ * hydration finishes so a native control such as `<summary>` acts only once.
  * @param root - The island element.
  * @param load - Resolves to the island's hydrate function once its code has
  * loaded, as Astro's client directive `load` does.
@@ -30,7 +31,9 @@ export function hydrateOnInteraction(
 ): void {
   const earlyClickTargets: EventTarget[] = []
   const recordClick = (event: Event) => {
-    if (event.target) earlyClickTargets.push(event.target)
+    if (!event.target) return
+    event.preventDefault()
+    earlyClickTargets.push(event.target)
   }
 
   const hydrateAndReplay = async () => {

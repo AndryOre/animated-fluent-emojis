@@ -51,6 +51,14 @@ describe('hydrateOnInteraction', () => {
     expect(hydrate).toHaveBeenCalledTimes(1)
   })
 
+  it('suppresses the native action of a click that landed before hydration', () => {
+    const { root } = setup()
+    root.dispatchEvent(new Event('touchstart'))
+    const click = new Event('click', { cancelable: true })
+    root.dispatchEvent(click)
+    expect(click.defaultPrevented).toBe(true)
+  })
+
   it('does not replay without an early click', async () => {
     const { root, hydrate, finishLoading } = setup()
     root.dispatchEvent(new Event('focusin'))
