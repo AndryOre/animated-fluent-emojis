@@ -12,8 +12,16 @@ dependencies are optional. See
 
 ## Rules
 
-- Tests need Playwright's Chromium installed first:
+- Tests need Playwright's Chromium, Firefox and WebKit installed first:
   [`docs/development.md#testing`](../../docs/development.md#testing).
+- The `browser` project runs on three engines (`browser (chromium)`,
+  `browser (firefox)`, `browser (webkit)`). Coverage is collected on Chromium
+  only, because v8 coverage needs it: `test:coverage` runs Chromium, and
+  `test:cross-browser` runs Firefox and WebKit (CI runs both). Never use CDP
+  (`cdp()`) in tests; use a custom command from `vitest.config.ts`
+  (`commands.emulateReducedMotion`) so it works on every engine. A test that
+  cannot work on an engine is skipped with the reason in its title and listed in
+  the ticket for ADR 0023.
 - Component and hook tests run in a real browser, pure logic in a `node`
   project, and the `.astro` component in an `astro` project; put new tests where
   the project globs match:

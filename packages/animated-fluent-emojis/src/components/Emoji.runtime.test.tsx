@@ -1,16 +1,14 @@
 /// <reference types="@vitest/browser-playwright" />
 import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { cdp, page, userEvent } from 'vitest/browser'
+import { cdp, commands, page, server, userEvent } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
 
 const getImage = (name: string) => page.getByRole('img', { name })
 
 const emulateReducedMotion = async (value: 'reduce' | 'no-preference') => {
-  await cdp().send('Emulation.setEmulatedMedia', {
-    features: [{ name: 'prefers-reduced-motion', value }],
-  })
+  await commands.emulateReducedMotion(value)
   await expect
     .poll(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
     .toBe(value === 'reduce')
@@ -161,31 +159,34 @@ test('marks the emoji as decorative with an empty alt', async () => {
   expect(image?.parentElement?.getAttribute('aria-hidden')).toBe('true')
 })
 
-test('still animates an hd emoji at device scale factor 2', async () => {
-  await cdp().send('Emulation.setDeviceMetricsOverride', {
-    width: 0,
-    height: 0,
-    deviceScaleFactor: 2,
-    mobile: false,
-  })
-  try {
-    await expect.poll(() => window.devicePixelRatio).toBe(2)
-    await render(<Emoji id="waving-hand" animationIterations="infinite" />)
+test.skipIf(server.browser !== 'chromium')(
+  'still animates an hd emoji at device scale factor 2 (chromium only: Playwright cannot change the device scale factor of a live page in Firefox or WebKit)',
+  async () => {
+    await cdp().send('Emulation.setDeviceMetricsOverride', {
+      width: 0,
+      height: 0,
+      deviceScaleFactor: 2,
+      mobile: false,
+    })
+    try {
+      await expect.poll(() => window.devicePixelRatio).toBe(2)
+      await render(<Emoji id="waving-hand" animationIterations="infinite" />)
 
-    const image = getImage('Waving hand')
-    await expect.element(image).toBeVisible()
-    await expect
-      .poll(() => {
-        const element = image.element()
-        return element instanceof HTMLImageElement && element.currentSrc
-      })
-      .toContain('@2x.png')
-    const initial = getTransform(image)
-    await expect.poll(() => getTransform(image)).not.toBe(initial)
-  } finally {
-    await cdp().send('Emulation.clearDeviceMetricsOverride')
-  }
-})
+      const image = getImage('Waving hand')
+      await expect.element(image).toBeVisible()
+      await expect
+        .poll(() => {
+          const element = image.element()
+          return element instanceof HTMLImageElement && element.currentSrc
+        })
+        .toContain('@2x.png')
+      const initial = getTransform(image)
+      await expect.poll(() => getTransform(image)).not.toBe(initial)
+    } finally {
+      await cdp().send('Emulation.clearDeviceMetricsOverride')
+    }
+  },
+)
 
 test('loads the image lazily and decodes it asynchronously', async () => {
   await render(<Emoji id="cat" />)
