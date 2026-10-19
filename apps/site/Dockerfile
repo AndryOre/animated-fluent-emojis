@@ -1,7 +1,7 @@
 FROM oven/bun:1.4.2-alpine AS build
 WORKDIR /repo
 
-COPY package.json bun.lock bunfig.toml ./
+COPY package.json bun.lock bunfig.toml tsconfig.base.json ./
 COPY apps/site/package.json apps/site/package.json
 COPY packages/animated-fluent-emojis/package.json packages/animated-fluent-emojis/package.json
 RUN bun install --frozen-lockfile --filter @animated-fluent-emojis/site --ignore-scripts
