@@ -166,6 +166,23 @@ describe('ensureLycheeBinary', () => {
     expect(statSync(binaryPath).mode & 0o111).not.toBe(0)
   })
 
+  test('releases the download lock after fetching', async () => {
+    const archive = createArchive(root, { lychee: 'binary' })
+    const fetchArchive = vi.fn().mockResolvedValue(new Response(archive))
+    await ensureLycheeBinary('v1', createDependencies(fetchArchive))
+    expect(existsSync(path.join(root, 'cache', 'lychee-v1.lock'))).toBe(false)
+  })
+
+  test('releases the download lock when the download fails', async () => {
+    const fetchArchive = vi
+      .fn()
+      .mockResolvedValue(new Response('', { status: 500 }))
+    await expect(
+      ensureLycheeBinary('v1', createDependencies(fetchArchive)),
+    ).rejects.toThrow(/HTTP 500/)
+    expect(existsSync(path.join(root, 'cache', 'lychee-v1.lock'))).toBe(false)
+  })
+
   test('throws on an HTTP error', async () => {
     const fetchArchive = vi
       .fn()
