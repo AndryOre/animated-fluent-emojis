@@ -6,6 +6,7 @@ import {
   isTheme,
   readStoredTheme,
   storeTheme,
+  subscribeTheme,
 } from './theme'
 import { THEME_STORAGE_KEY } from './theme-keys'
 
@@ -65,6 +66,10 @@ function stubBrowser(
   return { classes, root, frames, metas, startViewTransition }
 }
 
+function blockedStorage(): never {
+  throw new Error('blocked')
+}
+
 describe('theme', () => {
   const storage = new Map<string, string>()
 
@@ -88,6 +93,28 @@ describe('theme', () => {
     expect(readStoredTheme()).toBe('dark')
     storeTheme('system')
     expect(readStoredTheme()).toBe('system')
+  })
+
+  it('notifies subscribers until they unsubscribe', () => {
+    stubBrowser(false, storage)
+    const listener = vi.fn()
+    const unsubscribe = subscribeTheme(listener)
+    storeTheme('dark')
+    unsubscribe()
+    storeTheme('light')
+    expect(listener).toHaveBeenCalledTimes(1)
+  })
+
+  it('falls back to system and flags the page when storage is blocked', () => {
+    const { root } = stubBrowser(false, storage)
+    vi.stubGlobal('localStorage', {
+      getItem: blockedStorage,
+      setItem: blockedStorage,
+      removeItem: blockedStorage,
+    })
+    expect(readStoredTheme()).toBe('system')
+    storeTheme('dark')
+    expect(root.dataset.themeStorage).toBe('unavailable')
   })
 
   it('applies system by following the OS color scheme', () => {

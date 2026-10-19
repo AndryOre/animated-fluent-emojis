@@ -50,6 +50,25 @@ describe('public index validation', () => {
     )
   })
 
+  it('rejects entries and tones that are not objects', () => {
+    expect(() => parsePublicIndex(['nope'])).toThrow(/not an object/)
+    expect(() => parsePublicIndex([{ ...entry(), tones: ['nope'] }])).toThrow(
+      /tone 0 is not an object/,
+    )
+  })
+
+  it('rejects bad keywords, tones and urls containers', () => {
+    expect(() => parsePublicIndex([{ ...entry(), keywords: [1] }])).toThrow(
+      /"keywords"/,
+    )
+    expect(() => parsePublicIndex([{ ...entry(), tones: undefined }])).toThrow(
+      /"tones"/,
+    )
+    expect(() => parsePublicIndex([{ ...entry(), urls: undefined }])).toThrow(
+      /"urls"/,
+    )
+  })
+
   it('rejects a duplicate slug', () => {
     expect(() => parsePublicIndex([entry(), entry()])).toThrow(/duplicate slug/)
   })
@@ -90,6 +109,24 @@ describe('loadPublicIndex', () => {
     const second = await loadPublicIndex()
     expect(second).toBe(first)
     expect(fetchStub).toHaveBeenCalledTimes(1)
+  })
+
+  it('restricts the index to SITE_EMOJI_SLUGS and retries after a failure', async () => {
+    vi.resetModules()
+    const { loadPublicIndex } = await import('./public-index')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(new Response('', { status: 500 }))),
+    )
+    await expect(loadPublicIndex()).rejects.toThrow(/500/)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(Response.json(publicIndexFixture))),
+    )
+    vi.stubEnv('SITE_EMOJI_SLUGS', 'fire')
+    const restricted = await loadPublicIndex()
+    vi.unstubAllEnvs()
+    expect(restricted.map((emoji) => emoji.slug)).toEqual(['fire'])
   })
 
   it('builds absolute file URLs', () => {
