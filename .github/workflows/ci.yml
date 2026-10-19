@@ -95,7 +95,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: bunx playwright install --with-deps chromium
+        run: bunx playwright install --with-deps chromium firefox webkit
 
       - name: Install ffmpeg
         run: |
@@ -116,6 +116,9 @@ jobs:
         run:
           bunx turbo run test:coverage ${{ github.event_name == 'pull_request'
           && '--affected' || '' }}
+
+      - name: Run library browser tests on Firefox and WebKit
+        run: bun run --cwd packages/animated-fluent-emojis test:cross-browser
 
       - name: Run root tests with coverage
         run: bunx turbo run test:coverage:root

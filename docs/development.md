@@ -4,7 +4,7 @@
 
 ```sh
 bun install
-bunx playwright install chromium
+bunx playwright install chromium firefox webkit
 ```
 
 Bun `1.4.2` is required (see `packageManager` in `package.json`). Husky installs
@@ -312,10 +312,11 @@ that workspace):
 
 - **`browser`**: tests under `src/components`, `src/hooks`, `src/react`,
   `src/vanilla`, `src/element` and `src/vue`, plus `src/astro/client.test.ts`
-  and the conformance suite, run in headless Chromium through Playwright, with
-  MSW mocking the slim manifest request (`src/test/browser-setup.ts`). The
-  manifest is fetched lazily, so a test that needs a fresh load resets the
-  module state first. Run `bunx playwright install chromium` once.
+  and the conformance suite, run in headless Chromium, Firefox and WebKit
+  through Playwright, with MSW mocking the slim manifest request
+  (`src/test/browser-setup.ts`). The manifest is fetched lazily, so a test that
+  needs a fresh load resets the module state first. Run
+  `bunx playwright install chromium firefox webkit` once.
 - **`node`**: tests under `src/core`, `src/utils`, `src/lookup` and `src/test`
   (except the conformance suite), plus `src/astro/markup.test.ts` and
   `src/astro/server.test.ts`.

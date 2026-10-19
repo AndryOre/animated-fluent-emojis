@@ -18,7 +18,7 @@ describe('seo sources', () => {
   it('renders the home page, the gallery, every doc and every emoji page in every locale from the registered sources', async () => {
     const xml = buildSitemapXml(await collectSitemapRoutes(SITEMAP_SOURCES))
     expect(xml.match(/<loc>/g)).toHaveLength(
-      170 + parsePublicIndex(fixture).length * 10,
+      180 + parsePublicIndex(fixture).length * 10,
     )
   })
 

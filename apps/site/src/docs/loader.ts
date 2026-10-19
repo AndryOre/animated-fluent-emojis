@@ -2,10 +2,11 @@ import type { Loader, LoaderContext } from 'astro/loaders'
 
 import type { Locale } from '../i18n/locales'
 import { loadCatalog } from './catalog'
+import { loadChangelogPages } from './changelog-pages'
 import { markExternalLinks } from './external-links'
 import { transformInstallBlocks } from './install-block'
 import { rewriteMarkdownLinks } from './markdown'
-import { DOCS_DIR, TRANSLATIONS_DIR } from './paths'
+import { CHANGELOG_FILE, DOCS_DIR, TRANSLATIONS_DIR } from './paths'
 
 async function renderDocument(
   context: LoaderContext,
@@ -18,10 +19,13 @@ async function renderDocument(
 
 async function loadPages(context: LoaderContext): Promise<void> {
   context.store.clear()
-  const pages = loadCatalog({
-    docsDirectory: DOCS_DIR,
-    translationsDirectory: TRANSLATIONS_DIR,
-  })
+  const pages = [
+    ...loadCatalog({
+      docsDirectory: DOCS_DIR,
+      translationsDirectory: TRANSLATIONS_DIR,
+    }),
+    ...loadChangelogPages(CHANGELOG_FILE),
+  ]
   for (const page of pages) {
     const data = await context.parseData({
       id: page.id,
@@ -49,7 +53,7 @@ async function loadPages(context: LoaderContext): Promise<void> {
 /**
  * Content loader for the Starlight `docs` collection. It emits one entry per
  * published doc and locale from the repository `docs/` folder and the site's
- * translation files, and records each entry's translation status for the
+ * translation files, plus the changelog page from `CHANGELOG.md`, and records each entry's translation status for the
  * notice.
  * @returns A loader that fills the store on every build and file change.
  */
@@ -58,9 +62,13 @@ export function docsCatalogLoader(): Loader {
     name: 'docs-catalog-loader',
     async load(context) {
       await loadPages(context)
-      context.watcher?.add([DOCS_DIR, TRANSLATIONS_DIR])
+      context.watcher?.add([DOCS_DIR, TRANSLATIONS_DIR, CHANGELOG_FILE])
       context.watcher?.on('change', (file) => {
-        if (file.startsWith(DOCS_DIR) || file.startsWith(TRANSLATIONS_DIR)) {
+        if (
+          file === CHANGELOG_FILE ||
+          file.startsWith(DOCS_DIR) ||
+          file.startsWith(TRANSLATIONS_DIR)
+        ) {
           void loadPages(context)
         }
       })

@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 import starlightLlmsTxt from 'starlight-llms-txt'
 
+import { CHANGELOG_SLUG } from './src/docs/changelog-pages'
 import { docSlug, PUBLISHED_DOCS } from './src/docs/published'
 import { collectStarlightInlineScriptHashes } from './src/docs/starlight-inline-hashes'
 import { sharedCodeConfig } from './src/highlight/code-config'
@@ -135,6 +136,13 @@ export default defineConfig({
           label: getUi('en').docs.howToGroup,
           translations: localized((locale) => getUi(locale).docs.howToGroup),
           items: howToItems,
+        },
+        {
+          label: getUi('en').docs.changelogLabel,
+          translations: localized(
+            (locale) => getUi(locale).docs.changelogLabel,
+          ),
+          slug: CHANGELOG_SLUG,
         },
       ],
       plugins: [

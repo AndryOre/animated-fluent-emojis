@@ -22,6 +22,17 @@ function status(code: number, headers?: Record<string, string>): Response {
   return new Response('x', { status: code, headers })
 }
 
+async function settle(
+  promise: Promise<unknown>,
+): Promise<'rejected' | 'resolved'> {
+  try {
+    await promise
+    return 'resolved'
+  } catch {
+    return 'rejected'
+  }
+}
+
 describe('fetchOk', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -98,7 +109,7 @@ describe('fetchOk', () => {
 
   it('backs off exponentially between attempts', async () => {
     const { fetch, calls } = sequence(status(500))
-    const pending = expect(fetchOk(fetch, 'https://x.test/a')).rejects.toThrow()
+    const pending = settle(fetchOk(fetch, 'https://x.test/a'))
     await vi.advanceTimersByTimeAsync(0)
     expect(calls()).toBe(1)
     await vi.advanceTimersByTimeAsync(500)
@@ -109,7 +120,7 @@ describe('fetchOk', () => {
     expect(calls()).toBe(4)
     await vi.advanceTimersByTimeAsync(4000)
     expect(calls()).toBe(5)
-    await pending
+    expect(await pending).toBe('rejected')
   })
 
   it.each([400, 401, 403, 404])('does not retry status %i', async (code) => {
@@ -128,9 +139,9 @@ describe('fetchOk', () => {
       status(503),
       new TypeError('last'),
     )
-    const pending = expect(fetchOk(fetch, 'https://x.test/a')).rejects.toThrow()
+    const pending = settle(fetchOk(fetch, 'https://x.test/a'))
     await vi.runAllTimersAsync()
-    await pending
+    expect(await pending).toBe('rejected')
     expect(calls()).toBe(5)
   })
 })

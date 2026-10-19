@@ -2,8 +2,9 @@
 import type { CSSProperties } from 'react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { cdp, page } from 'vitest/browser'
+import { page } from 'vitest/browser'
 
+import { setReducedMotion } from '../test/set-reduced-motion.js'
 import { Emoji } from './Emoji.js'
 
 const getImage = () => page.getByRole('img', { name: 'Cat' })
@@ -31,9 +32,7 @@ const pause = () =>
   })
 
 const emulateReducedMotion = async (value: 'reduce' | 'no-preference') => {
-  await cdp().send('Emulation.setEmulatedMedia', {
-    features: [{ name: 'prefers-reduced-motion', value }],
-  })
+  await setReducedMotion(value)
   await expect
     .poll(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
     .toBe(value === 'reduce')

@@ -230,6 +230,7 @@ export const en = {
     guideGroup: 'Guide',
     helpGroup: 'Help',
     howToGroup: 'How-to guides',
+    changelogLabel: 'Changelog',
     copyMarkdown: 'Copy page as Markdown',
     copiedMarkdown: 'Copied',
     search: {
