@@ -15,7 +15,7 @@ for (const path of SAMPLED_PATHS) {
     const menuTrigger = header
       .locator('[data-slot="dropdown-menu-trigger"]')
       .first()
-    await expect(nav.or(menuTrigger)).toBeVisible()
+    await expect(nav.or(menuTrigger).filter({ visible: true })).toHaveCount(1)
 
     const heading = page.locator('h1').first()
     await expect(heading).toBeVisible()

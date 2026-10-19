@@ -10,6 +10,20 @@ import { localeUrl, SITE_ORIGIN } from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { buildLlmsFullTxt, buildLlmsTxt, emojiEntry } from './llms'
 
+const DOCS_DIRECTORY = fileURLToPath(
+  new URL('../../../../docs/', import.meta.url),
+)
+
+/**
+ * Reads a published doc's title from its first level-one heading.
+ * @param docPath - A path relative to the repository `docs/` folder.
+ * @returns The heading text, or the path itself when the file has none.
+ */
+async function documentTitle(docPath: string): Promise<string> {
+  const source = await readFile(path.join(DOCS_DIRECTORY, docPath), 'utf8')
+  return /^# (.+)$/m.exec(source)?.[1]?.trim() ?? docPath
+}
+
 /**
  * Astro integration that rewrites `llms.txt` and `llms-full.txt` once the
  * build is done. The `starlight-llms-txt` plugin still generates the docs
@@ -32,10 +46,12 @@ export function composedLlmsFiles(): AstroIntegration {
           siteName: meta.siteName,
           description: meta.description,
           landing: { title: meta.siteName, url: localeUrl('en') },
-          docs: PUBLISHED_DOCS.map((docPath) => ({
-            title: docPath,
-            url: `${SITE_ORIGIN}${docRoute('en', docPath)}`,
-          })),
+          docs: await Promise.all(
+            PUBLISHED_DOCS.map(async (docPath) => ({
+              title: await documentTitle(docPath),
+              url: `${SITE_ORIGIN}${docRoute('en', docPath)}`,
+            })),
+          ),
           emojis,
         }
         const docsMarkdown = await readFile(

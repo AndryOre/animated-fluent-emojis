@@ -32,6 +32,7 @@ describe('composedLlmsFiles', () => {
       const full = await readFile(path.join(directory, 'llms-full.txt'), 'utf8')
       expect(index).toContain('## Emojis')
       expect(index).toContain('/emojis/fire/')
+      expect(index).not.toMatch(/\[[^\]]*\.md\]/)
       expect(full).toContain('## Documentation\n\n# Plugin docs')
       expect(full).toContain('Keywords: flame')
     } finally {
