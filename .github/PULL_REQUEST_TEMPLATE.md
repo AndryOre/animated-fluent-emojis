@@ -32,6 +32,8 @@ Refs: AO-<!-- Linear ticket number, delete this line if not applicable -->
 ## Checklist
 
 - [ ] Added/updated tests for changes in `src/`
+- [ ] Keyboard navigation + ARIA attributes verified (if UI change)
+- [ ] Translations added/updated for all locales (if user-facing strings)
 - [ ] Docs updated (`README.md` or `docs/usage.md` and `docs/guide/`) if the
       public API changed
 - [ ] Passes `bun run check`
