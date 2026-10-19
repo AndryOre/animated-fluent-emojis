@@ -35,3 +35,4 @@ column.
 | 0020   | [Build-time code highlighting](0020-build-time-code-highlighting.md)                                           | Accepted | -                        |
 | 0021   | [CSS scroll-driven motion](0021-css-scroll-driven-motion.md)                                                   | Accepted | -                        |
 | 0022   | [Shortcodes derive from ids](0022-shortcodes-derive-from-ids.md)                                               | Accepted | -                        |
+| 0023   | [Practices parity with Snug](0023-practices-parity-with-snug.md)                                               | Accepted | -                        |
