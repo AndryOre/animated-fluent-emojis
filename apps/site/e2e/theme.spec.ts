@@ -97,6 +97,24 @@ test('the system theme follows the browser color scheme', async ({ page }) => {
   await expect(html).not.toHaveClass(/dark/)
 })
 
+test('a stored override ignores system changes and sets theme-color', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'light' })
+  await page.addInitScript(
+    `localStorage.setItem('${THEME_STORAGE_KEY}', 'dark')`,
+  )
+  await page.goto('/')
+  const html = page.locator('html')
+  await expect(html).toHaveClass(/dark/)
+  await expect(
+    page.locator('meta[name="theme-color"]').first(),
+  ).toHaveAttribute('content', '#0d1715')
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(html).toHaveClass(/dark/)
+})
+
 test('a stored theme is applied before the body is parsed', async ({
   page,
 }) => {
