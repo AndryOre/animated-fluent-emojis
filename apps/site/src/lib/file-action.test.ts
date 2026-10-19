@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import {
   createFileActionStore,
   DEFAULT_FILE_ACTION,
+  downloadFile,
   FILE_ACTION_STORAGE_KEY,
   FILE_ACTIONS,
   isFileAction,
@@ -87,5 +88,45 @@ describe('file actions', () => {
     expect(store.get()).toBe('download-webp')
     store.set('copy-gif')
     expect(values.get('afe:file-action')).toBe('copy-gif')
+  })
+})
+
+describe('downloadFile', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('saves the response blob through a temporary link', async () => {
+    const link = { href: '', download: '', click: vi.fn(), remove: vi.fn() }
+    const append = vi.fn()
+    const revoke = vi.fn()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(new Response('data'))),
+    )
+    vi.stubGlobal('document', {
+      createElement: () => link,
+      body: { append },
+    })
+    vi.stubGlobal('URL', {
+      createObjectURL: () => 'blob:x',
+      revokeObjectURL: revoke,
+    })
+    await downloadFile('https://files.test/a.webp', 'a.webp')
+    expect(link).toMatchObject({ href: 'blob:x', download: 'a.webp' })
+    expect(append).toHaveBeenCalledWith(link)
+    expect(link.click).toHaveBeenCalled()
+    expect(link.remove).toHaveBeenCalled()
+    expect(revoke).toHaveBeenCalledWith('blob:x')
+  })
+
+  it('rejects when the file answers an error', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(new Response('', { status: 404 }))),
+    )
+    await expect(downloadFile('https://files.test/a', 'a')).rejects.toThrow(
+      /404/,
+    )
   })
 })

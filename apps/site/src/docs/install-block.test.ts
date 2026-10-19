@@ -105,4 +105,9 @@ describe('transformInstallBlocks', () => {
   ])('leaves %j untouched', (source) => {
     expect(transformInstallBlocks(source)).toBe(source)
   })
+
+  it('keeps an unclosed fence and everything after it as written', () => {
+    const source = 'before\n```sh\nnpm install a\nstill open'
+    expect(transformInstallBlocks(source)).toBe(source)
+  })
 })
