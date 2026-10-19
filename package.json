@@ -1,10 +1,48 @@
 {
-  "description": "Microsoft's animated Fluent emojis as one component. They play on load or hover, rest under reduced motion and hold their space while they load.",
-  "author": "Andry Orellana",
-  "license": "MIT",
   "name": "animated-fluent-emojis-monorepo",
+  "description": "Microsoft's animated Fluent emojis as one component. They play on load or hover, rest under reduced motion and hold their space while they load.",
+  "keywords": [
+    "react",
+    "react-component",
+    "vue",
+    "vue-component",
+    "svelte",
+    "svelte-component",
+    "astro-component",
+    "web-component",
+    "custom-element",
+    "angular",
+    "solid",
+    "preact",
+    "emoji",
+    "emojis",
+    "animated",
+    "animated-emoji",
+    "animated-emojis",
+    "fluent",
+    "fluent-emoji",
+    "fluent-emojis",
+    "microsoft",
+    "animation",
+    "emoticons",
+    "typescript"
+  ],
+  "homepage": "https://animated-fluent-emojis.andryore.dev",
+  "bugs": {
+    "url": "https://github.com/AndryOre/animated-fluent-emojis/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndryOre/animated-fluent-emojis.git"
+  },
+  "license": "MIT",
+  "author": "Andry Orellana",
   "private": true,
   "type": "module",
+  "packageManager": "bun@1.4.2",
+  "engines": {
+    "bun": "1.4.2"
+  },
   "workspaces": {
     "packages": [
       "apps/*",
@@ -22,37 +60,6 @@
       "vitest": "^5",
       "vue": "^3.5.43"
     }
-  },
-  "scripts": {
-    "dev": "bun run --cwd packages/animated-fluent-emojis dev",
-    "build": "turbo run build",
-    "lint": "eslint . --max-warnings=0 --cache --cache-strategy content",
-    "lint:fix": "eslint . --fix --cache --cache-strategy content",
-    "typecheck": "turbo run typecheck && tsc --noEmit",
-    "knip": "knip",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,astro,json,json5,md,css,yml,yaml}\" --cache",
-    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,astro,json,json5,md,css,yml,yaml}\" --cache",
-    "check:root": "bun run format:check && bun run lint && tsc --noEmit && bun run knip",
-    "lint:package": "turbo run lint:package",
-    "check": "turbo run check check:root",
-    "fix": "bun run format:write && bun run lint:fix && bun run typecheck",
-    "size": "turbo run size",
-    "prepare": "husky",
-    "test": "turbo run test test:root",
-    "test:root": "vitest run",
-    "test:watch": "bun run --cwd packages/animated-fluent-emojis test:watch",
-    "test:coverage": "turbo run test:coverage test:coverage:root",
-    "test:coverage:root": "vitest run --coverage",
-    "lint:docs": "bun scripts/lint-docs.ts",
-    "lint:commits": "bun scripts/lint-commits.ts",
-    "assets:detect": "bun run --cwd apps/assets sync:detect",
-    "assets:build": "bun run --cwd apps/assets sync:build",
-    "assets:verify-live": "bun run --cwd apps/assets sync:verify-live",
-    "assets:lists": "bun run --cwd apps/assets sync:lists",
-    "assets:files": "bun run --cwd apps/assets sync:files",
-    "i18n:status": "bun run --cwd apps/site i18n:status",
-    "brand:export": "bun docs/brand/tools/export.mjs",
-    "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
@@ -83,5 +90,37 @@
     "vitest": "catalog:",
     "yaml": "^2.9.1"
   },
-  "packageManager": "bun@1.4.2"
+  "scripts": {
+    "clean": "rm -rf apps/assets/node_modules apps/assets/dist-assets apps/assets/dist-files apps/assets/.cache apps/site/node_modules apps/site/dist apps/site/.astro packages/animated-fluent-emojis/node_modules packages/animated-fluent-emojis/dist .turbo node_modules",
+    "cache:clear": "rm -rf .eslintcache .turbo node_modules/.cache",
+    "dev": "bun run --cwd packages/animated-fluent-emojis dev",
+    "build": "turbo run build",
+    "lint": "eslint . --max-warnings=0 --cache --cache-strategy content",
+    "lint:fix": "eslint . --fix --cache --cache-strategy content",
+    "typecheck": "turbo run typecheck && tsc --noEmit",
+    "knip": "knip",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,astro,json,json5,md,css,yml,yaml}\" --cache",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,astro,json,json5,md,css,yml,yaml}\" --cache",
+    "check:root": "bun run format:check && bun run lint && tsc --noEmit && bun run knip",
+    "lint:package": "turbo run lint:package",
+    "check": "turbo run check check:root",
+    "fix": "bun run format:write && bun run lint:fix && bun run typecheck",
+    "size": "turbo run size",
+    "prepare": "husky",
+    "test": "turbo run test test:root",
+    "test:root": "vitest run",
+    "test:watch": "bun run --cwd packages/animated-fluent-emojis test:watch",
+    "test:coverage": "turbo run test:coverage test:coverage:root",
+    "test:coverage:root": "vitest run --coverage",
+    "lint:docs": "bun scripts/lint-docs.ts",
+    "lint:commits": "bun scripts/lint-commits.ts",
+    "assets:detect": "bun run --cwd apps/assets sync:detect",
+    "assets:build": "bun run --cwd apps/assets sync:build",
+    "assets:verify-live": "bun run --cwd apps/assets sync:verify-live",
+    "assets:lists": "bun run --cwd apps/assets sync:lists",
+    "assets:files": "bun run --cwd apps/assets sync:files",
+    "i18n:status": "bun run --cwd apps/site i18n:status",
+    "brand:export": "bun docs/brand/tools/export.mjs",
+    "ci:local": "bun install --frozen-lockfile && bun run lint:commits && bun run lint:docs && bun run check && bun run test:coverage && bun run build && bun run size"
+  }
 }
