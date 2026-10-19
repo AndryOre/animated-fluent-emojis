@@ -1,5 +1,6 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import eslintReact from '@eslint-react/eslint-plugin'
+import vitest from '@vitest/eslint-plugin'
 import prettierConfig from 'eslint-config-prettier'
 import astro from 'eslint-plugin-astro'
 import jsdoc from 'eslint-plugin-jsdoc'
@@ -97,6 +98,18 @@ export default defineConfig([
       'unicorn/filename-case': [
         'error',
         { cases: { kebabCase: true, pascalCase: true } },
+      ],
+    },
+  },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/valid-expect': ['error', { maxArgs: 2 }],
+      'vitest/expect-expect': [
+        'error',
+        { assertFunctionNames: ['expect', 'expectTypeOf'] },
       ],
     },
   },

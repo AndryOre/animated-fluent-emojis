@@ -62,6 +62,7 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "catalog:",
+    "@vitest/eslint-plugin": "^1.6.27",
     "eslint": "^10",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^3.2.1",
