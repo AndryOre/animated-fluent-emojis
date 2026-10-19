@@ -80,6 +80,16 @@ md_headers="$(curl -s -o /dev/null -D - "$base/docs/guide/assets.md" | tr -d '\r
 grep -qi '^content-type: text/markdown; charset=utf-8' <<<"$md_headers" || fail "markdown twin is not text/markdown"
 grep -qi '^link: <https://animated-fluent-emojis.andryore.dev/docs/guide/assets/>; rel="canonical"' <<<"$md_headers" || fail "markdown twin lacks the canonical Link"
 
+[ "$(header_of speculation-rules "$base/")" = '"/speculation-rules.json"' ] || fail "missing Speculation-Rules"
+[ "$(status "$base/speculation-rules.json")" = 200 ] || fail "speculation rules are not 200"
+[ "$(header_of content-type "$base/speculation-rules.json")" = application/speculationrules+json ] || fail "speculation rules have the wrong content-type"
+[ "$(header_of content-type "$base/manifest.webmanifest")" = application/manifest+json ] || fail "manifest has the wrong content-type"
+grep -qF 'rel="manifest"' <<<"$(curl -s "$base/")" || fail "home page does not link the manifest"
+for llms in llms.txt llms-full.txt; do
+  [ "$(status "$base/$llms")" = 200 ] || fail "/$llms is not 200"
+  grep -q '^## Emojis' <<<"$(curl -s "$base/$llms")" || fail "/$llms lacks the emoji section"
+done
+
 [ "$(header_of cache-control "$base/")" = no-cache ] || fail "HTML lacks no-cache"
 asset="$(curl -s "$base/" | grep -Eo '/_astro/[A-Za-z0-9._-]+' | head -n1 || true)"
 [ -n "$asset" ] || fail "no /_astro/ asset referenced from /"
