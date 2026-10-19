@@ -2,7 +2,7 @@
 
 Instructions for coding agents working in this repository.
 
-## Stack
+## Layout
 
 A bun-workspaces monorepo ([ADR 0016](docs/adr/0016-bun-workspaces-monorepo.md))
 orchestrated by Turborepo. TypeScript (strict), ESM-only, managed with bun. The
@@ -16,7 +16,8 @@ root holds tooling only:
 - [`apps/site`](apps/site/AGENTS.md): the private static website (Astro,
   Starlight, Tailwind).
 
-See [`docs/architecture.md`](docs/architecture.md) for the code map.
+The code map is [`docs/architecture.md`](docs/architecture.md). Skills stay in
+the root `.claude/skills`.
 
 ## Running scripts
 
@@ -46,6 +47,14 @@ Every code comment is a TSDoc block on a non-obvious export. No `//` or
 non-JSDoc `/* */` comments, except lint or type directives. Detail:
 [`docs/development.md#code-documentation`](docs/development.md#code-documentation),
 [ADR 0002](docs/adr/0002-tsdoc-only-code-comments.md).
+
+## Escalating a `@shadcn/lint` finding
+
+Stub: the style-lint ticket (AO-2184) adds the `shadcn/*` rules to
+`bun run lint` and fills this section with the escalation ladder. Until it
+lands, use the website's `src/components/ui` primitives and their variants
+([ADR 0019](docs/adr/0019-shadcn-on-base-ui-for-the-website.md)), and never
+disable a lint rule file-wide or project-wide.
 
 ## Quirks and gotchas
 

@@ -19,6 +19,8 @@ An index of every document in this repository.
 - [`security.md`](security.md): the security design and assurance case.
 - Website: <https://animated-fluent-emojis.andryore.dev>, the landing page,
   emoji gallery and docs in ten languages (`apps/site`).
+- [`PRODUCT.md`](../PRODUCT.md): product context for agents.
+- [`apps/site/DESIGN.md`](../apps/site/DESIGN.md): the website's design rules.
 - [`AGENTS.md`](../AGENTS.md): instructions for coding agents (`CLAUDE.md`
   imports it).
 
@@ -76,6 +78,22 @@ An index of every document in this repository.
 - [`adr/0016-bun-workspaces-monorepo.md`](adr/0016-bun-workspaces-monorepo.md)
 - [`adr/0017-personal-token-for-the-emoji-lists-pr.md`](adr/0017-personal-token-for-the-emoji-lists-pr.md)
 - [`adr/0018-website-on-coolify-with-astro-and-starlight.md`](adr/0018-website-on-coolify-with-astro-and-starlight.md)
+- [`adr/0019-shadcn-on-base-ui-for-the-website.md`](adr/0019-shadcn-on-base-ui-for-the-website.md)
+- [`adr/0020-build-time-code-highlighting.md`](adr/0020-build-time-code-highlighting.md)
+- [`adr/0021-css-scroll-driven-motion.md`](adr/0021-css-scroll-driven-motion.md)
+- [`adr/0022-shortcodes-derive-from-ids.md`](adr/0022-shortcodes-derive-from-ids.md)
+- [`adr/0023-practices-parity-with-snug.md`](adr/0023-practices-parity-with-snug.md)
+- [`adr/0024-site-csp-served-as-a-header-with-build-time-hashes.md`](adr/0024-site-csp-served-as-a-header-with-build-time-hashes.md)
+- [`adr/0025-release-notes-on-the-website.md`](adr/0025-release-notes-on-the-website.md)
+- [`adr/0026-robots-allows-search-and-answer-crawlers-and-blocks-ai-training-crawlers.md`](adr/0026-robots-allows-search-and-answer-crawlers-and-blocks-ai-training-crawlers.md)
+- [`adr/0019-shadcn-on-base-ui-for-the-website.md`](adr/0019-shadcn-on-base-ui-for-the-website.md)
+- [`adr/0020-build-time-code-highlighting.md`](adr/0020-build-time-code-highlighting.md)
+- [`adr/0021-css-scroll-driven-motion.md`](adr/0021-css-scroll-driven-motion.md)
+- [`adr/0022-shortcodes-derive-from-ids.md`](adr/0022-shortcodes-derive-from-ids.md)
+- [`adr/0023-practices-parity-with-snug.md`](adr/0023-practices-parity-with-snug.md)
+- [`adr/0024-site-csp-served-as-a-header-with-build-time-hashes.md`](adr/0024-site-csp-served-as-a-header-with-build-time-hashes.md)
+- [`adr/0025-release-notes-on-the-website.md`](adr/0025-release-notes-on-the-website.md)
+- [`adr/0026-robots-allows-search-and-answer-crawlers-and-blocks-ai-training-crawlers.md`](adr/0026-robots-allows-search-and-answer-crawlers-and-blocks-ai-training-crawlers.md)
 
 ## Brand
 
