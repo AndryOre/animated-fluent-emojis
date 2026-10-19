@@ -232,6 +232,7 @@ export const ko: UiStrings = {
     guideGroup: '가이드',
     helpGroup: '도움말',
     howToGroup: '사용 가이드',
+    changelogLabel: '변경 기록',
     copyMarkdown: '페이지를 Markdown으로 복사',
     copiedMarkdown: '복사했어요',
     search: {

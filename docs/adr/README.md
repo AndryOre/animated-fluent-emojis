@@ -37,3 +37,4 @@ column.
 | 0022   | [Shortcodes derive from ids](0022-shortcodes-derive-from-ids.md)                                                 | Accepted | -                        |
 | 0023   | [Practices parity with Snug](0023-practices-parity-with-snug.md)                                                 | Accepted | -                        |
 | 0024   | [Site CSP served as a header with build-time hashes](0024-site-csp-served-as-a-header-with-build-time-hashes.md) | Accepted | -                        |
+| 0025   | [Release notes on the website](0025-release-notes-on-the-website.md)                                             | Accepted | -                        |

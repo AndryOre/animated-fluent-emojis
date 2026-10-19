@@ -232,6 +232,7 @@ export const zh_CN: UiStrings = {
     guideGroup: '指南',
     helpGroup: '帮助',
     howToGroup: '操作指南',
+    changelogLabel: '更新日志',
     copyMarkdown: '复制本页 Markdown',
     copiedMarkdown: '已复制',
     search: {
