@@ -1,3 +1,4 @@
+import noAstroStyleBlocks from './no-astro-style-blocks.mjs'
 import rule from './no-non-doc-comments.mjs'
 
 /**
@@ -6,6 +7,7 @@ import rule from './no-non-doc-comments.mjs'
  */
 const localPlugin = {
   rules: {
+    'no-astro-style-blocks': noAstroStyleBlocks,
     'no-non-doc-comments': rule,
   },
 }

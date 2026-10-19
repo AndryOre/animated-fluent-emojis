@@ -121,7 +121,10 @@ export default defineConfig([
   {
     files: ['**/*.astro'],
     plugins: { local: localPlugin },
-    rules: { 'local/no-non-doc-comments': 'error' },
+    rules: {
+      'local/no-non-doc-comments': 'error',
+      'local/no-astro-style-blocks': 'error',
+    },
   },
   {
     files: ['**/*.{ts,tsx,mjs}'],

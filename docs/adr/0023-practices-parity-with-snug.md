@@ -39,6 +39,7 @@ structured data). A fix in one repo rarely reached the other.
 | Umami analytics                           | Applies     | N/A        | AFE has no analytics, same reason as the privacy page                                                                                          |
 | Cross-browser library tests               | N/A         | Applies    | Snug is Chromium-only; AFE is a multi-browser library                                                                                          |
 | `llms.txt` generator                      | Custom      | Equivalent | AFE keeps `starlight-llms-txt` for the docs text and composes `llms.txt` and `llms-full.txt` with landing and emoji pages in `src/seo/llms.ts` |
+| Style lint (no `<style>` in `.astro`)     | Same        | Same       | Both repos ban the blocks with `local/no-astro-style-blocks`; styling lives in Tailwind classes and the site stylesheets                       |
 
 ## Alternatives considered
 

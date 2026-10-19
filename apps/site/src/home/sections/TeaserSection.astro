@@ -72,33 +72,3 @@ const secondaryButton = buttonVariants({
     </ul>
   </div>
 </section>
-
-<style>
-  .teaser-tile {
-    background-image: radial-gradient(
-      circle at 50% 35%,
-      hsl(var(--glow-hue, 60) 90% 55% / 0.38),
-      transparent 66%
-    );
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .teaser-tile {
-      transition-property: transform, border-color;
-      transition-duration: 300ms;
-      transition-timing-function: var(--ease-out-strong);
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .teaser-cell:hover .teaser-tile {
-      border-color: hsl(var(--glow-hue, 60) 80% 60%);
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .teaser-cell:hover .teaser-tile {
-      transform: translateY(-6px) rotate(-1.5deg);
-    }
-  }
-</style>
