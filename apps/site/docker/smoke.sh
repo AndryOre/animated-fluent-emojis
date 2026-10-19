@@ -64,6 +64,10 @@ script_src="$(tr ';' '\n' <<<"$meta_csp" | grep -E 'script-src ')"
 case "$script_src" in *"'unsafe-inline'"*) fail "script-src allows unsafe-inline" ;; esac
 grep -qF "base-uri 'none'" <<<"$meta_csp" || fail "CSP lacks base-uri"
 
+md_headers="$(curl -s -o /dev/null -D - "$base/docs/guide/assets.md" | tr -d '\r')"
+grep -qi '^content-type: text/markdown; charset=utf-8' <<<"$md_headers" || fail "markdown twin is not text/markdown"
+grep -qi '^link: <https://animated-fluent-emojis.andryore.dev/docs/guide/assets/>; rel="canonical"' <<<"$md_headers" || fail "markdown twin lacks the canonical Link"
+
 [ "$(header_of cache-control "$base/")" = no-cache ] || fail "HTML lacks no-cache"
 asset="$(curl -s "$base/" | grep -Eo '/_astro/[A-Za-z0-9._-]+' | head -n1 || true)"
 [ -n "$asset" ] || fail "no /_astro/ asset referenced from /"
