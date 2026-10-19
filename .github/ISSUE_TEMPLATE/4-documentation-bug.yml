@@ -1,5 +1,5 @@
-name: Documentation
-description: Report missing, unclear, or incorrect documentation
+name: Documentation Bug
+description: Report incorrect, missing, or outdated documentation
 title: 'docs: '
 labels: ['Type: Docs', 'Status: Needs Info']
 

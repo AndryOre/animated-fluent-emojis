@@ -298,6 +298,23 @@ lowercase kebab-case, for example `feat/add-confetti-emoji`.
 a bulleted body when it helps. PRs are squash-merged, so the PR title follows
 the same format. The hook does not enforce the emoji; it is a convention.
 
+## Accessibility
+
+- **Linting**: `eslint-plugin-jsx-a11y`'s `recommended` config runs as part of
+  `bun run lint`, so an a11y violation fails like any other lint error.
+- **Library**: `Emoji.a11y.test.tsx` runs axe against the rendered component.
+  Every emoji ships descriptive `alt` text, and reduced motion shows a still
+  poster frame.
+- **Website**: `apps/site/e2e/accessibility.spec.ts` runs axe on the key pages.
+  Interactive UI is built from `src/components/ui` (shadcn on Base UI), which
+  ships correct ARIA roles, keyboard handling and focus management; prefer
+  composing it over hand-rolling controls from `div` or `span`.
+- **Keyboard and labels**: every interactive control is reachable and operable
+  by keyboard, every form control has an accessible name and icon-only buttons
+  carry an `aria-label`.
+- **Focus**: never remove the focus ring (`outline: none`) without a replacement
+  focus style.
+
 ## Code documentation
 
 Comments are TSDoc blocks only, on non-obvious exports. A local ESLint rule
@@ -435,3 +452,17 @@ Two more settings are part of the same posture:
   [ADR 0017](adr/0017-personal-token-for-the-emoji-lists-pr.md).
 - Actions cannot create or approve pull requests
   (`can_approve_pull_request_reviews=false`). Auto-merge stays enabled.
+
+## Agent skills
+
+Third-party skills live in `.claude/skills` and are installed with
+`bunx skills add <owner>/<repo>#<commit> -s <skill> -a claude-code`, always
+pinned to a commit so `skills-lock.json` records the exact `ref`. Read each
+`SKILL.md` and any bundled script before committing it. `bunx skills update`
+moves the pins, so review the diff the same way.
+
+The skills installed today all come from `emilkowalski/skills` and cover design
+and motion work on the website: `animate`, `animation-vocabulary`, `break-ui`,
+`emil-design-eng`, `find-animation-opportunities`, `improve-animations`,
+`mobile-native`, `pick-ui-library` and `review-animations`. The `/forge`
+workflow is configured in [`agents/forge.md`](agents/forge.md).
