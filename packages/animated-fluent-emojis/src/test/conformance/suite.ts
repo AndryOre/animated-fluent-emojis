@@ -6,10 +6,10 @@ import {
   expect,
   vi,
 } from 'vitest'
-import { commands } from 'vitest/browser'
 
 import { configureEmojis } from '../../utils/index.js'
 import { FIXTURE_MANIFEST } from '../manifest-fixture.js'
+import { setReducedMotion } from '../set-reduced-motion.js'
 import type { ConformanceDriverFactory, ConformanceOptions } from './driver.js'
 
 const pause = (milliseconds: number) =>
@@ -26,7 +26,7 @@ const setDocumentHidden = (hidden: boolean) => {
 }
 
 const emulateReducedMotion = async (value: 'reduce' | 'no-preference') => {
-  await commands.emulateReducedMotion(value)
+  await setReducedMotion(value)
   await expect
     .poll(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
     .toBe(value === 'reduce')

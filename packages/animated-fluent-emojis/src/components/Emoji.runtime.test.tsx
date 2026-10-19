@@ -1,14 +1,15 @@
 /// <reference types="@vitest/browser-playwright" />
 import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { cdp, commands, page, server, userEvent } from 'vitest/browser'
+import { cdp, page, server, userEvent } from 'vitest/browser'
 
+import { setReducedMotion } from '../test/set-reduced-motion.js'
 import { Emoji } from './Emoji.js'
 
 const getImage = (name: string) => page.getByRole('img', { name })
 
 const emulateReducedMotion = async (value: 'reduce' | 'no-preference') => {
-  await commands.emulateReducedMotion(value)
+  await setReducedMotion(value)
   await expect
     .poll(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
     .toBe(value === 'reduce')
