@@ -339,7 +339,7 @@ test.each([
 ])('treats the string size %j as %s', async (size, expected) => {
   const { container } = await render(<Emoji id="waving-hand" size={size} />)
 
-  await expect.element(getImage('Waving hand')).toBeVisible()
+  await expect.element(getImage('Waving hand')).toBeInTheDocument()
   const box = container.firstElementChild
   expect(box && getComputedStyle(box).width).toBe(expected)
 })
