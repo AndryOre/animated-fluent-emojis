@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
@@ -38,9 +39,19 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
 
+      - name: Compute last-modified dates
+        id: dates
+        run:
+          echo "map=$(bash apps/site/docker/last-modified.sh)" >>
+          "$GITHUB_OUTPUT"
+
       - name: Build and start the container
+        env:
+          LAST_MODIFIED_DATES: ${{ steps.dates.outputs.map }}
         run: |
-          docker build -f apps/site/Dockerfile -t animated-fluent-emojis-site:ci .
+          docker build -f apps/site/Dockerfile \
+            --build-arg LAST_MODIFIED_DATES="${LAST_MODIFIED_DATES}" \
+            -t animated-fluent-emojis-site:ci .
           docker run -d --name site-ci -p 127.0.0.1:8080:80 animated-fluent-emojis-site:ci
           for _ in $(seq 1 30); do
             curl -fs -o /dev/null http://127.0.0.1:8080/ && exit 0

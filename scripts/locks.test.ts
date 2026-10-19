@@ -70,6 +70,11 @@ describe('locks', () => {
     ).rejects.toThrow(/timed out after 300ms/)
   })
 
+  it('rethrows an acquire error that is not a lock collision', () => {
+    const missingParent = path.join(lockDirectory, 'missing', 'child.lock')
+    expect(() => didAcquireLock(missingParent, buildHolder())).toThrow(/ENOENT/)
+  })
+
   it('reclaims a lock whose holder pid is dead', async () => {
     didAcquireLock(lockDirectory, buildHolder({ pid: deadPid() }))
     await acquireLock(lockDirectory, () => buildHolder(), OPTIONS)
