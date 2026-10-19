@@ -44,6 +44,34 @@ export const LOCALE_NAMES: Record<Locale, string> = {
 }
 
 /**
+ * A font subset worth preloading for a locale's first paint.
+ */
+export type FontPreload = 'figtree-latin'
+
+const LATIN_PRELOAD: readonly FontPreload[] = ['figtree-latin']
+
+/**
+ * Per-locale font subsets to preload. Latin locales preload Figtree latin;
+ * Russian and the CJK locales render mostly in fallback faces, so they
+ * preload nothing.
+ */
+export const LOCALE_CONFIG: Record<
+  Locale,
+  { preloadFonts: readonly FontPreload[] }
+> = {
+  en: { preloadFonts: LATIN_PRELOAD },
+  es: { preloadFonts: LATIN_PRELOAD },
+  de: { preloadFonts: LATIN_PRELOAD },
+  fr: { preloadFonts: LATIN_PRELOAD },
+  it: { preloadFonts: LATIN_PRELOAD },
+  ja: { preloadFonts: [] },
+  ko: { preloadFonts: [] },
+  'pt-BR': { preloadFonts: LATIN_PRELOAD },
+  ru: { preloadFonts: [] },
+  'zh-CN': { preloadFonts: [] },
+}
+
+/**
  * Lowercase URL segment for a locale (`pt-BR` becomes `pt-br`).
  * @param locale - A supported locale.
  * @returns The path segment, without slashes.
