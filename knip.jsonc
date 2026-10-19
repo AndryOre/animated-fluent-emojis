@@ -16,6 +16,7 @@
         "src/docs/install-block-client.ts",
         "src/docs/code-focus.ts",
         "src/scripts/emoji-transition.ts",
+        "src/scripts/render-security-headers.ts",
         "playwright.visual.config.ts",
         "e2e-visual/*.spec.ts",
       ],

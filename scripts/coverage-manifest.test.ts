@@ -109,6 +109,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/layouts/Layout.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/pages/robots.txt.ts':
     'Thin endpoint that feeds contributions to buildRobotsTxt, tested in seo/robots.test.ts.',
+  'apps/site/src/pages/.well-known/security.txt.ts':
+    'Thin endpoint that feeds buildSecurityTxt, tested in seo/security-txt.test.ts.',
+  'apps/site/src/scripts/render-security-headers.ts':
+    'Docker build step that reads dist and writes the header snippet; its logic lives in security-headers.ts, tested in security-headers.test.ts.',
   'apps/site/src/pages/sitemap.xml.ts':
     'Thin endpoint that feeds route sources to buildSitemapXml, tested in seo/sitemap.test.ts.',
   'apps/site/src/scripts/theme-keys.ts':
