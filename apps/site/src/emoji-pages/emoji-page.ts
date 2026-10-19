@@ -5,6 +5,7 @@ import {
 } from '../gallery/public-index'
 import { fillTemplate } from '../gallery/template'
 import { localeUrl, type Locale } from '../i18n/locales'
+import { lastCommitDate } from '../seo/last-modified'
 import type { SitemapSource } from '../seo/sitemap'
 
 /**
@@ -115,7 +116,17 @@ export function fillName(pattern: string, name: string): string {
 }
 
 /**
- * Sitemap source with one localized route per emoji page.
+ * Source files that change what an emoji page shows, relative to `apps/site`.
+ */
+const EMOJI_PAGE_SOURCES = [
+  'src/components/EmojiPage.astro',
+  'src/emoji-pages',
+  'src/pages/emojis/[slug].astro',
+] as const
+
+/**
+ * Sitemap source with one localized route per emoji page, dated by the newest
+ * emoji page source file. The public index carries no version date.
  * @param load - Loads the public index.
  * @returns A source that lists every base slug in every locale.
  */
@@ -124,9 +135,11 @@ export function createEmojiSitemapSource(
 ): SitemapSource {
   return async () => {
     const emojis = await load()
+    const lastmod = lastCommitDate(EMOJI_PAGE_SOURCES)
     return emojis.map((emoji) => ({
       path: emojiPagePath(emoji.slug),
       localized: true,
+      lastmod,
     }))
   }
 }

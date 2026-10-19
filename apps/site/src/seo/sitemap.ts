@@ -4,6 +4,7 @@ import {
   localeUrl,
   SITE_ORIGIN,
 } from '../i18n/locales'
+import { lastCommitDate } from './last-modified'
 
 /**
  * One page to list in the sitemap. A `localized` route expands to every locale
@@ -23,11 +24,21 @@ export type SitemapSource = () =>
   readonly SitemapRoute[] | Promise<readonly SitemapRoute[]>
 
 /**
- * Routes every site has: the localized home page.
+ * Source files that change what the home page shows, relative to `apps/site`.
+ */
+const HOME_SOURCES = [
+  'src/components/HomePage.astro',
+  'src/home',
+  'src/pages/index.astro',
+] as const
+
+/**
+ * Routes every site has: the localized home page, dated by the newest home
+ * source file.
  * @returns The core routes.
  */
 export const coreSitemapSource = (): SitemapRoute[] => [
-  { path: '/', localized: true },
+  { path: '/', localized: true, lastmod: lastCommitDate(HOME_SOURCES) },
 ]
 
 function escapeXml(value: string): string {

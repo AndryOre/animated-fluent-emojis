@@ -136,6 +136,41 @@ function thirdPartyProblems(route: string, urls: readonly string[]): string[] {
     .map((url) => `${route}: third-party request to ${url}`)
 }
 
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}(?:T[\d:.]+(?:Z|[+-]\d{2}:\d{2}))?$/
+
+function isValidDate(value: string): boolean {
+  return ISO_DATE_PATTERN.test(value) && !Number.isNaN(Date.parse(value))
+}
+
+function lastmodProblems(sitemap: string, requireLastmod: boolean): string[] {
+  const problems: string[] = []
+  for (const [, block = ''] of sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+    const location = /<loc>([^<]+)<\/loc>/.exec(block)?.[1] ?? 'unknown'
+    const lastmod = /<lastmod>([^<]*)<\/lastmod>/.exec(block)?.[1]
+    if (lastmod === undefined) {
+      if (requireLastmod)
+        problems.push(`sitemap.xml: ${location} has no lastmod`)
+    } else if (!isValidDate(lastmod)) {
+      problems.push(
+        `sitemap.xml: ${location} has an invalid lastmod "${lastmod}"`,
+      )
+    }
+  }
+  return problems
+}
+
+/**
+ * Options for {@link auditDistribution}.
+ */
+export interface AuditOptions {
+  /**
+   * Flag sitemap URLs that carry no `lastmod`. A build without git history
+   * omits the dates on purpose, so only CI turns this on. A present but
+   * malformed `lastmod` is always flagged.
+   */
+  requireLastmod?: boolean
+}
+
 function walk(directory: string): string[] {
   const files: string[] = []
   const entries = readdirSync(directory, { withFileTypes: true })
@@ -227,16 +262,20 @@ function auditPage(
  * `x-default`; no page or stylesheet may request a resource
  * from a host outside `andryore.dev`. Every `<a href>` pointing to an
  * absolute `http(s)` URL outside the site origin needs `target="_blank"` and
- * a `rel` containing both `noopener` and `noreferrer`.
+ * a `rel` containing both `noopener` and `noreferrer`. Every sitemap `lastmod`
+ * must be a valid ISO date, and with `requireLastmod` every URL needs one.
  * @param distribution - The build output folder.
  * @param headerPolicy - The Content-Security-Policy the web server sends as a
  * header, for builds whose pages carry no `<meta>` policy. Empty when the
  * pages carry their own.
+ * @param options - Audit switches.
+ * @param options.requireLastmod - Whether a URL without `lastmod` is a problem.
  * @returns One message per problem, empty when the build is clean.
  */
 export function auditDistribution(
   distribution: string,
   headerPolicy = '',
+  { requireLastmod = false }: AuditOptions = {},
 ): string[] {
   if (!existsSync(distribution))
     return [`${distribution}: build output folder does not exist`]
@@ -247,7 +286,10 @@ export function auditDistribution(
   const sitemapLocations = new Set(
     sitemap.matchAll(/<loc>([^<]+)<\/loc>/g).map((match) => match[1] ?? ''),
   )
-  const problems = sitemap === '' ? ['sitemap.xml: missing or empty'] : []
+  const problems =
+    sitemap === ''
+      ? ['sitemap.xml: missing or empty']
+      : lastmodProblems(sitemap, requireLastmod)
   for (const icon of ICON_FILES) {
     if (!existsSync(path.join(distribution, icon))) {
       problems.push(`${icon}: missing from the build output`)

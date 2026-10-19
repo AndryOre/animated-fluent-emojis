@@ -80,6 +80,30 @@ describe('auditDistribution', () => {
     expect(auditDistribution(distribution)).toEqual([])
   })
 
+  it('flags a sitemap URL without lastmod only when it is required', () => {
+    expect(auditDistribution(distribution)).toEqual([])
+    expect(
+      auditDistribution(distribution, '', { requireLastmod: true }),
+    ).toEqual([
+      `sitemap.xml: ${localeUrl('en', '/')} has no lastmod`,
+      `sitemap.xml: ${localeUrl('en', '/emojis/fire/')} has no lastmod`,
+    ])
+  })
+
+  it('accepts ISO lastmod dates and flags malformed ones', () => {
+    const url = (route: string, lastmod: string) =>
+      `<url><loc>${localeUrl('en', route)}</loc><lastmod>${lastmod}</lastmod></url>`
+    write(
+      'sitemap.xml',
+      `<urlset>${url('/', '2026-10-19')}${url('/emojis/fire/', 'yesterday')}</urlset>`,
+    )
+    expect(
+      auditDistribution(distribution, '', { requireLastmod: true }),
+    ).toEqual([
+      `sitemap.xml: ${localeUrl('en', '/emojis/fire/')} has an invalid lastmod "yesterday"`,
+    ])
+  })
+
   it('flags a page without favicon links', () => {
     write('emojis/fire/index.html', pageHtml('/emojis/fire/', '', CSP, ''))
     const problems = auditDistribution(distribution)
