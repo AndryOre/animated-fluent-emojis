@@ -74,6 +74,10 @@ const nextHref = navigationLinks.find((link) => link.rel === 'next')?.href
   description={fillName(emojiPage.description, localized.name)}
   path={emojiPagePath(slug)}
   image={`${SITE_ORIGIN}${ogImagePath(slug)}`}
+  trail={[
+    { name: gallery.title, path: '/emojis/' },
+    { name: localized.name, path: emojiPagePath(slug) },
+  ]}
   jsonLd={imageObjectJsonLd(emoji, localized.name, locale)}
   previousHref={previousHref}
   nextHref={nextHref}

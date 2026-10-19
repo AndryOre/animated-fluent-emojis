@@ -112,6 +112,7 @@ export default defineConfig({
           attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         },
       ],
+      routeMiddleware: './src/docs/route-metadata.ts',
       components: {
         EditLink: './src/docs/components/DocumentationEditLink.astro',
         Footer: './src/docs/components/DocumentationFooter.astro',
