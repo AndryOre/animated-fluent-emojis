@@ -16,7 +16,9 @@ describe.skipIf(!REQUIRED && !existsSync(path.join(DIST, 'index.html')))(
       { timeout: 120_000 },
       () => {
         expect(
-          auditDistribution(DIST, HEADERS ? readHeaderPolicy(HEADERS) : ''),
+          auditDistribution(DIST, HEADERS ? readHeaderPolicy(HEADERS) : '', {
+            requireLastmod: Boolean(process.env.CI),
+          }),
         ).toEqual([])
       },
     )

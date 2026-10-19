@@ -22,6 +22,13 @@ describe('seo sources', () => {
     )
   })
 
+  it('stamps every route with an ISO lastmod', async () => {
+    const routes = await collectSitemapRoutes(SITEMAP_SOURCES)
+    for (const route of routes) {
+      expect(route.lastmod, route.path).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    }
+  })
+
   it('renders a valid robots.txt from the registered contributions', () => {
     expect(buildRobotsTxt(ROBOTS_CONTRIBUTIONS)).toContain('Sitemap:')
   })

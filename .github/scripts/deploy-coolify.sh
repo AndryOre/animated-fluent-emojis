@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Triggers a Coolify deploy and waits for its result.
 # Requires COOLIFY_API_TOKEN (repository secret) and
-# SITE_COOLIFY_APP_UUID (repository variable).
+# SITE_COOLIFY_APP_UUID (repository variable). When LAST_MODIFIED_DATES (the
+# JSON printed by apps/site/docker/last-modified.sh) is set, it is published as
+# the app's build-time variable first, because Coolify builds without commit
+# history; when unset the stored value is left untouched.
 set -euo pipefail
 
 api_base="${COOLIFY_API_BASE:-https://app.coolify.io/api/v1}"
@@ -16,14 +19,35 @@ if ((${#missing[@]} > 0)); then
   exit 1
 fi
 
+if [[ -n "${LAST_MODIFIED_DATES:-}" ]] && ! jq -e 'type == "object" and length > 0' >/dev/null 2>&1 <<<"${LAST_MODIFIED_DATES}"; then
+  echo "::error::LAST_MODIFIED_DATES is not a non-empty JSON object."
+  exit 1
+fi
+
 coolify_request() {
   local method="$1"
   local path="$2"
-  curl --silent --show-error --fail --max-time 30 \
-    --request "${method}" \
-    --header "Authorization: Bearer ${COOLIFY_API_TOKEN}" \
-    "${api_base}/${path}"
+  local body="${3:-}"
+  local args=(
+    --silent --show-error --fail --max-time 30
+    --request "${method}"
+    --header "Authorization: Bearer ${COOLIFY_API_TOKEN}"
+  )
+  if [[ -n "${body}" ]]; then
+    args+=(--header "Content-Type: application/json" --data "${body}")
+  fi
+  curl "${args[@]}" "${api_base}/${path}"
 }
+
+if [[ -n "${LAST_MODIFIED_DATES:-}" ]]; then
+  envs_payload=$(jq -cn --arg value "${LAST_MODIFIED_DATES}" \
+    '{data: [{key: "LAST_MODIFIED_DATES", value: $value, is_buildtime: true, is_runtime: false, is_literal: true}]}')
+  coolify_request PATCH "applications/${SITE_COOLIFY_APP_UUID}/envs/bulk" "${envs_payload}" >/dev/null || {
+    echo "::error::Coolify rejected the LAST_MODIFIED_DATES update. Check that the token has the write ability."
+    exit 1
+  }
+  echo "LAST_MODIFIED_DATES updated ($(jq 'length' <<<"${LAST_MODIFIED_DATES}") entries)."
+fi
 
 trigger_response=$(coolify_request POST "deploy?uuid=${SITE_COOLIFY_APP_UUID}&force=false") || {
   echo "::error::Coolify rejected the deploy request."

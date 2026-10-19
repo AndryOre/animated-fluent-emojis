@@ -1,4 +1,12 @@
 import { spawnSync } from 'node:child_process'
+import {
+  chmodSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
@@ -40,6 +48,90 @@ describe('deploy-coolify.sh', () => {
   })
 })
 
+describe('deploy-coolify.sh last-modified dates', () => {
+  const credentials = {
+    COOLIFY_API_TOKEN: 'token',
+    SITE_COOLIFY_APP_UUID: 'app-uuid',
+  }
+
+  test('rejects dates that are not a non-empty JSON object', () => {
+    for (const dates of ['not json', '[]', '{}']) {
+      const result = runDeployScript({
+        ...credentials,
+        LAST_MODIFIED_DATES: dates,
+      })
+      expect(result.status).toBe(1)
+      expect(result.stdout).toContain('LAST_MODIFIED_DATES')
+    }
+  })
+
+  test('publishes the dates as a build variable before triggering the deploy', () => {
+    const directory = mkdtempSync(path.join(tmpdir(), 'deploy-coolify-'))
+    try {
+      const log = path.join(directory, 'curl.log')
+      const curlStub = path.join(directory, 'curl')
+      writeFileSync(
+        curlStub,
+        String.raw`#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${log}"
+case "$*" in
+  *envs/bulk*) echo '{}' ;;
+  *"/deploy?"*) echo '{"deployments":[{"deployment_uuid":"d1"}]}' ;;
+  *) echo '{"status":"finished"}' ;;
+esac
+`,
+      )
+      chmodSync(curlStub, 0o755)
+      const result = spawnSync('bash', [DEPLOY_SCRIPT], {
+        encoding: 'utf8',
+        env: {
+          PATH: `${directory}:${process.env.PATH ?? ''}`,
+          ...credentials,
+          LAST_MODIFIED_DATES: '{"src/home":"2026-10-19"}',
+        },
+      })
+      expect(result.status).toBe(0)
+      const calls = readFileSync(log, 'utf8').split('\n')
+      const patch = calls.findIndex((call) => call.includes('--request PATCH'))
+      const trigger = calls.findIndex((call) => call.includes('/deploy?'))
+      expect(patch).toBeGreaterThan(-1)
+      expect(trigger).toBeGreaterThan(patch)
+      expect(calls[patch]).toContain('applications/app-uuid/envs/bulk')
+      expect(calls[patch]).toContain('LAST_MODIFIED_DATES')
+      expect(calls[patch]).toContain('"is_buildtime":true')
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+    }
+  })
+
+  test('skips the build variable update when no dates are provided', () => {
+    const directory = mkdtempSync(path.join(tmpdir(), 'deploy-coolify-'))
+    try {
+      const log = path.join(directory, 'curl.log')
+      const curlStub = path.join(directory, 'curl')
+      writeFileSync(
+        curlStub,
+        String.raw`#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${log}"
+case "$*" in
+  *"/deploy?"*) echo '{"deployments":[{"deployment_uuid":"d1"}]}' ;;
+  *) echo '{"status":"finished"}' ;;
+esac
+`,
+      )
+      chmodSync(curlStub, 0o755)
+      const result = spawnSync('bash', [DEPLOY_SCRIPT], {
+        encoding: 'utf8',
+        env: { PATH: `${directory}:${process.env.PATH ?? ''}`, ...credentials },
+      })
+      expect(result.status).toBe(0)
+      expect(readFileSync(log, 'utf8')).not.toContain('PATCH')
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+    }
+  })
+})
+
 describe('deploy-site.yml', () => {
   const workflow = readWorkflow('deploy-site.yml')
   const job = workflow.jobs?.deploy
@@ -54,6 +146,25 @@ describe('deploy-site.yml', () => {
       'packages/animated-fluent-emojis/**',
     ])
       expect(raw).toContain(`"${path}"`)
+  })
+
+  test('can be started by hand', () => {
+    expect(workflow.on).toHaveProperty('workflow_dispatch')
+  })
+
+  test('checks out the full history and passes the dates to the build and the deploy', () => {
+    const checkout = steps.find((step) =>
+      step.uses?.startsWith('actions/checkout'),
+    )
+    expect(checkout?.with?.['fetch-depth']).toBe(0)
+    const names = steps.map((step) => step.name)
+    expect(names.indexOf('Compute last-modified dates')).toBeLessThan(
+      names.indexOf('Build container'),
+    )
+    const dates = '${{ steps.dates.outputs.map }}'
+    const build = steps.find((step) => step.name === 'Build container')
+    expect(build?.env?.LAST_MODIFIED_DATES).toBe(dates)
+    expect(steps.at(-1)?.env?.LAST_MODIFIED_DATES).toBe(dates)
   })
 
   test('is serialized and never cancels a running deploy', () => {
