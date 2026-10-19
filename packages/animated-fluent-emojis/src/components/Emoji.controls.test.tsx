@@ -2,7 +2,7 @@
 import type { CSSProperties } from 'react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { cdp, page } from 'vitest/browser'
+import { commands, page } from 'vitest/browser'
 
 import { Emoji } from './Emoji.js'
 
@@ -31,9 +31,7 @@ const pause = () =>
   })
 
 const emulateReducedMotion = async (value: 'reduce' | 'no-preference') => {
-  await cdp().send('Emulation.setEmulatedMedia', {
-    features: [{ name: 'prefers-reduced-motion', value }],
-  })
+  await commands.emulateReducedMotion(value)
   await expect
     .poll(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
     .toBe(value === 'reduce')

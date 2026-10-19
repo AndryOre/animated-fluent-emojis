@@ -2,6 +2,7 @@
 import { StrictMode } from 'react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
+import { server } from 'vitest/browser'
 
 import { configureEmojis } from '../utils/index.js'
 import { Emoji } from './Emoji.js'
@@ -80,7 +81,9 @@ test('a held emoji rests on its poster frame with no animation', async () => {
   )
 
   const image = await waitForImage(container)
-  await expect.poll(() => image.complete).toBe(true)
+  if (server.browser === 'chromium') {
+    await expect.poll(() => image.complete).toBe(true)
+  }
   await new Promise((resolve) => {
     setTimeout(resolve, 100)
   })

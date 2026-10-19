@@ -5,6 +5,8 @@ import { getViteConfig } from 'astro/config'
 import { msw } from 'msw/vite'
 import { defineConfig } from 'vitest/config'
 
+const isCoverageRun = process.argv.includes('--coverage')
+
 const astroProject = await getViteConfig({
   test: {
     name: 'astro',
@@ -54,7 +56,21 @@ export default defineConfig({
             enabled: true,
             headless: true,
             provider: playwright(),
-            instances: [{ browser: 'chromium' }],
+            commands: {
+              emulateReducedMotion: async (
+                { page },
+                value: 'reduce' | 'no-preference',
+              ) => {
+                await page.emulateMedia({ reducedMotion: value })
+              },
+            },
+            instances: isCoverageRun
+              ? [{ browser: 'chromium' }]
+              : [
+                  { browser: 'chromium' },
+                  { browser: 'firefox' },
+                  { browser: 'webkit' },
+                ],
           },
         },
       },
