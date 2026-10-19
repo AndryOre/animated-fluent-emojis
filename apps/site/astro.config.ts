@@ -19,6 +19,7 @@ import { getUi } from './src/i18n/ui'
 import { interactionDirective } from './src/scripts/interaction-integration'
 import { THEME_INIT_HASH } from './src/scripts/theme-init'
 import { THEME_COLORS } from './src/scripts/theme-keys'
+import { composedLlmsFiles } from './src/seo/llms-integration'
 import { REPOSITORY_URL } from './src/site-links'
 
 const CDN_ORIGIN = 'https://animated-fluent-emojis-cdn.andryore.dev'
@@ -113,6 +114,10 @@ export default defineConfig({
           tag: 'link',
           attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         },
+        {
+          tag: 'link',
+          attrs: { rel: 'manifest', href: '/manifest.webmanifest' },
+        },
       ],
       routeMiddleware: './src/docs/route-metadata.ts',
       components: {
@@ -155,6 +160,7 @@ export default defineConfig({
         }),
       ],
     }),
+    composedLlmsFiles(),
   ],
   vite: { plugins: [tailwindcss()] },
 })
