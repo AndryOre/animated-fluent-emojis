@@ -14,6 +14,8 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { acquireLock, releaseLock } from './locks'
+
 /**
  * Pinned lychee release. It is the default `lycheeVersion` of the
  * `lycheeverse/lychee-action` version in {@link EXPECTED_LYCHEE_ACTION_VERSION}.
@@ -27,6 +29,9 @@ export const LYCHEE_VERSION = 'v0.24.2'
  * {@link LYCHEE_VERSION} is re-checked against the new action default.
  */
 export const EXPECTED_LYCHEE_ACTION_VERSION = 'v2.9.0'
+
+const LYCHEE_LOCK_TIMEOUT_MS = 60_000
+const LYCHEE_LOCK_POLL_INTERVAL_MS = 500
 
 /**
  * Arguments passed to lychee, identical to the `args:` of the workflow.
@@ -174,7 +179,9 @@ function defaultLycheeDependencies(): LycheeBinaryDependencies {
 }
 
 /**
- * Returns a cached lychee binary, downloading it on first use.
+ * Returns a cached lychee binary, downloading it on first use. The download
+ * is serialised by a lock directory next to the cache, so parallel worktrees
+ * never download into the same destination at once.
  * @param version The lychee release version to ensure is cached.
  * @param dependencies The cache root, fetch and platform, defaulting to the real ones.
  * @returns The absolute path of the cached binary.
@@ -188,10 +195,32 @@ export async function ensureLycheeBinary(
     buildLycheeCacheRelativePath(version),
   )
   if (existsSync(binaryPath)) return binaryPath
-  console.log(`lint-docs: lychee ${version} not cached, downloading...`)
-  await downloadLycheeBinary(version, binaryPath, dependencies)
-  console.log(`lint-docs: cached lychee ${version} at ${binaryPath}.`)
-  return binaryPath
+  const cacheRoot = dependencies.resolveCacheRoot()
+  mkdirSync(cacheRoot, { recursive: true })
+  const lockDirectory = path.join(cacheRoot, `lychee-${version}.lock`)
+  await acquireLock(
+    lockDirectory,
+    () => ({
+      pid: process.pid,
+      worktree: process.cwd(),
+      acquiredAt: Date.now(),
+    }),
+    {
+      timeoutMs: LYCHEE_LOCK_TIMEOUT_MS,
+      pollIntervalMs: LYCHEE_LOCK_POLL_INTERVAL_MS,
+      maxAgeMs: LYCHEE_LOCK_TIMEOUT_MS,
+      logLabel: 'lint-docs',
+    },
+  )
+  try {
+    if (existsSync(binaryPath)) return binaryPath
+    console.log(`lint-docs: lychee ${version} not cached, downloading...`)
+    await downloadLycheeBinary(version, binaryPath, dependencies)
+    console.log(`lint-docs: cached lychee ${version} at ${binaryPath}.`)
+    return binaryPath
+  } finally {
+    releaseLock(lockDirectory)
+  }
 }
 
 function exitCodeOf(code: number | null): number {

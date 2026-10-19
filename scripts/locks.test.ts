@@ -1,0 +1,108 @@
+import { spawnSync } from 'node:child_process'
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+
+import {
+  acquireLock,
+  didAcquireLock,
+  isLockStale,
+  readLockHolder,
+  releaseLock,
+  type LockHolder,
+} from './locks'
+
+function deadPid(): number {
+  const child = spawnSync(process.execPath, ['-e', '0'])
+  return child.pid
+}
+
+const OPTIONS = {
+  timeoutMs: 300,
+  pollIntervalMs: 10,
+  maxAgeMs: 60_000,
+  logLabel: 'test',
+}
+
+describe('locks', () => {
+  let workingDirectory: string
+  let lockDirectory: string
+
+  beforeEach(() => {
+    workingDirectory = mkdtempSync(path.join(tmpdir(), 'locks-test-'))
+    lockDirectory = path.join(workingDirectory, 'some.lock')
+  })
+
+  afterEach(() => {
+    rmSync(workingDirectory, { recursive: true, force: true })
+  })
+
+  function buildHolder(overrides: Partial<LockHolder> = {}): LockHolder {
+    return {
+      pid: process.pid,
+      worktree: workingDirectory,
+      acquiredAt: Date.now(),
+      ...overrides,
+    }
+  }
+
+  it('acquires the lock and writes the holder payload', async () => {
+    const holder = buildHolder()
+    await acquireLock(lockDirectory, () => holder, OPTIONS)
+    const raw = readFileSync(path.join(lockDirectory, 'holder.json'), 'utf8')
+    expect(JSON.parse(raw)).toEqual(holder)
+    expect(readLockHolder(lockDirectory)).toEqual(holder)
+  })
+
+  it('refuses a second acquire while the first holder is alive', async () => {
+    expect(didAcquireLock(lockDirectory, buildHolder())).toBe(true)
+    expect(didAcquireLock(lockDirectory, buildHolder())).toBe(false)
+    await expect(
+      acquireLock(lockDirectory, () => buildHolder(), OPTIONS),
+    ).rejects.toThrow(/timed out after 300ms/)
+  })
+
+  it('reclaims a lock whose holder pid is dead', async () => {
+    didAcquireLock(lockDirectory, buildHolder({ pid: deadPid() }))
+    await acquireLock(lockDirectory, () => buildHolder(), OPTIONS)
+    expect(readLockHolder(lockDirectory)?.pid).toBe(process.pid)
+  })
+
+  it('does not reclaim a live holder that merely outlived maxAgeMs', () => {
+    didAcquireLock(lockDirectory, buildHolder({ acquiredAt: 0 }))
+    expect(isLockStale(lockDirectory, 1)).toBe(false)
+  })
+
+  it('reclaims an old lock whose worktree is gone', () => {
+    didAcquireLock(
+      lockDirectory,
+      buildHolder({
+        acquiredAt: 0,
+        worktree: path.join(workingDirectory, 'missing'),
+      }),
+    )
+    expect(isLockStale(lockDirectory, 1)).toBe(true)
+  })
+
+  it('treats a fresh holder-less directory as live and an old one as stale', () => {
+    mkdirSync(lockDirectory)
+    expect(isLockStale(lockDirectory, 60_000)).toBe(false)
+    writeFileSync(path.join(lockDirectory, 'holder.json'), 'not json')
+    expect(readLockHolder(lockDirectory)).toBeUndefined()
+  })
+
+  it('releases the lock so it can be acquired again', () => {
+    didAcquireLock(lockDirectory, buildHolder())
+    releaseLock(lockDirectory)
+    expect(existsSync(lockDirectory)).toBe(false)
+    expect(didAcquireLock(lockDirectory, buildHolder())).toBe(true)
+  })
+})
