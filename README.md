@@ -13,6 +13,7 @@
   <a href="https://www.npmjs.com/package/animated-fluent-emojis"><img src="https://img.shields.io/npm/v/animated-fluent-emojis" alt="npm version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/npm/l/animated-fluent-emojis" alt="License"></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/AndryOre/animated-fluent-emojis"><img src="https://api.scorecard.dev/projects/github.com/AndryOre/animated-fluent-emojis/badge" alt="OpenSSF Scorecard"></a>
+  <a href="https://www.bestpractices.dev/projects?q=animated-fluent-emojis"><img src="https://img.shields.io/badge/OpenSSF%20Best%20Practices-pending-lightgrey" alt="OpenSSF Best Practices"></a>
   <a href="https://www.npmjs.com/package/animated-fluent-emojis"><img src="https://img.shields.io/npm/dm/animated-fluent-emojis" alt="npm downloads"></a>
   <a href="https://bundlephobia.com/package/animated-fluent-emojis"><img src="https://img.shields.io/bundlephobia/minzip/animated-fluent-emojis" alt="Bundle size"></a>
   <a href="https://www.npmjs.com/package/animated-fluent-emojis"><img src="https://img.shields.io/npm/types/animated-fluent-emojis" alt="Types"></a>
