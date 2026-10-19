@@ -11,27 +11,29 @@ To add one, copy the next number, write the file, and add a row below. Never
 rewrite an accepted ADR; supersede or amend it with a new one and fill the last
 column.
 
-| Number | Title                                                                                                          | Status   | Superseded or amended by |
-| ------ | -------------------------------------------------------------------------------------------------------------- | -------- | ------------------------ |
-| 0001   | [Public repo security posture](0001-public-repo-security-posture.md)                                           | Accepted | -                        |
-| 0002   | [TSDoc-only code comments](0002-tsdoc-only-code-comments.md)                                                   | Accepted | -                        |
-| 0003   | [ESM-only and Vite 8](0003-esm-only-and-vite-8.md)                                                             | Accepted | -                        |
-| 0004   | [Vitest Browser Mode](0004-vitest-browser-mode.md)                                                             | Accepted | 0008                     |
-| 0005   | [npm trusted publishing](0005-npm-trusted-publishing.md)                                                       | Accepted | -                        |
-| 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md)                                       | Accepted | 0007, 0009, 0010         |
-| 0007   | [Pinned official emoji ids](0007-pinned-official-emoji-ids.md)                                                 | Accepted | -                        |
-| 0008   | [Static sprite keyframes and a lazy slim manifest](0008-static-keyframes-and-lazy-slim-manifest.md)            | Accepted | 0010                     |
-| 0009   | [HD sprite sheets, content-hashed etags and strict validation](0009-hd-sprite-sheets-and-strict-validation.md) | Accepted | 0011                     |
-| 0010   | [Versioned asset layout and live seeding](0010-versioned-asset-layout-and-live-seeding.md)                     | Accepted | 0011                     |
-| 0011   | [Compact slim manifest, HD frame cap and layout-aware sync](0011-compact-slim-manifest-and-hd-frame-cap.md)    | Accepted | -                        |
-| 0012   | [Brand kit lives in docs/brand](0012-brand-kit-in-docs-brand.md)                                               | Accepted | -                        |
-| 0013   | [Relicense to MIT](0013-relicense-to-mit.md)                                                                   | Accepted | -                        |
-| 0014   | [Multi-framework support through subpath adapters](0014-multi-framework-support.md)                            | Accepted | -                        |
-| 0015   | [Public files site on a second Pages project](0015-public-files-site.md)                                       | Accepted | 0018                     |
-| 0016   | [Bun-workspaces monorepo](0016-bun-workspaces-monorepo.md)                                                     | Accepted | -                        |
-| 0017   | [Personal token for the emoji-lists pull request](0017-personal-token-for-the-emoji-lists-pr.md)               | Accepted | -                        |
-| 0018   | [Website on Coolify with Astro and Starlight](0018-website-on-coolify-with-astro-and-starlight.md)             | Accepted | -                        |
-| 0019   | [shadcn on Base UI for the website](0019-shadcn-on-base-ui-for-the-website.md)                                 | Accepted | -                        |
-| 0020   | [Build-time code highlighting](0020-build-time-code-highlighting.md)                                           | Accepted | -                        |
-| 0021   | [CSS scroll-driven motion](0021-css-scroll-driven-motion.md)                                                   | Accepted | -                        |
-| 0022   | [Shortcodes derive from ids](0022-shortcodes-derive-from-ids.md)                                               | Accepted | -                        |
+| Number | Title                                                                                                            | Status   | Superseded or amended by |
+| ------ | ---------------------------------------------------------------------------------------------------------------- | -------- | ------------------------ |
+| 0001   | [Public repo security posture](0001-public-repo-security-posture.md)                                             | Accepted | -                        |
+| 0002   | [TSDoc-only code comments](0002-tsdoc-only-code-comments.md)                                                     | Accepted | -                        |
+| 0003   | [ESM-only and Vite 8](0003-esm-only-and-vite-8.md)                                                               | Accepted | -                        |
+| 0004   | [Vitest Browser Mode](0004-vitest-browser-mode.md)                                                               | Accepted | 0008                     |
+| 0005   | [npm trusted publishing](0005-npm-trusted-publishing.md)                                                         | Accepted | -                        |
+| 0006   | [Cloudflare Pages asset hosting](0006-cloudflare-pages-asset-hosting.md)                                         | Accepted | 0007, 0009, 0010         |
+| 0007   | [Pinned official emoji ids](0007-pinned-official-emoji-ids.md)                                                   | Accepted | -                        |
+| 0008   | [Static sprite keyframes and a lazy slim manifest](0008-static-keyframes-and-lazy-slim-manifest.md)              | Accepted | 0010                     |
+| 0009   | [HD sprite sheets, content-hashed etags and strict validation](0009-hd-sprite-sheets-and-strict-validation.md)   | Accepted | 0011                     |
+| 0010   | [Versioned asset layout and live seeding](0010-versioned-asset-layout-and-live-seeding.md)                       | Accepted | 0011                     |
+| 0011   | [Compact slim manifest, HD frame cap and layout-aware sync](0011-compact-slim-manifest-and-hd-frame-cap.md)      | Accepted | -                        |
+| 0012   | [Brand kit lives in docs/brand](0012-brand-kit-in-docs-brand.md)                                                 | Accepted | -                        |
+| 0013   | [Relicense to MIT](0013-relicense-to-mit.md)                                                                     | Accepted | -                        |
+| 0014   | [Multi-framework support through subpath adapters](0014-multi-framework-support.md)                              | Accepted | -                        |
+| 0015   | [Public files site on a second Pages project](0015-public-files-site.md)                                         | Accepted | 0018                     |
+| 0016   | [Bun-workspaces monorepo](0016-bun-workspaces-monorepo.md)                                                       | Accepted | -                        |
+| 0017   | [Personal token for the emoji-lists pull request](0017-personal-token-for-the-emoji-lists-pr.md)                 | Accepted | -                        |
+| 0018   | [Website on Coolify with Astro and Starlight](0018-website-on-coolify-with-astro-and-starlight.md)               | Accepted | -                        |
+| 0019   | [shadcn on Base UI for the website](0019-shadcn-on-base-ui-for-the-website.md)                                   | Accepted | -                        |
+| 0020   | [Build-time code highlighting](0020-build-time-code-highlighting.md)                                             | Accepted | -                        |
+| 0021   | [CSS scroll-driven motion](0021-css-scroll-driven-motion.md)                                                     | Accepted | -                        |
+| 0022   | [Shortcodes derive from ids](0022-shortcodes-derive-from-ids.md)                                                 | Accepted | -                        |
+| 0023   | [Practices parity with Snug](0023-practices-parity-with-snug.md)                                                 | Accepted | -                        |
+| 0024   | [Site CSP served as a header with build-time hashes](0024-site-csp-served-as-a-header-with-build-time-hashes.md) | Accepted | -                        |

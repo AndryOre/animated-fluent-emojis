@@ -97,8 +97,6 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Styled wrapper over the Base UI dialog, exercised in a real browser through the gallery mobile sheet.',
   'apps/site/src/components/ui/tabs.tsx':
     'Styled wrapper over the Base UI tabs, covered by EmojiDetail.test.tsx and the gallery e2e spec.',
-  'apps/site/src/components/InstallBlock.tsx':
-    'Install block React island that wires Base UI tabs to the package manager store, which is tested in apps/site/src/highlight.',
   'apps/site/src/docs/components/DocumentationPagination.astro':
     'Presentational Astro override with no logic of its own, exercised in a real browser by the accessibility e2e spec.',
   'apps/site/src/docs/code-focus.ts':
@@ -109,6 +107,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/layouts/Layout.astro': ASTRO_PRESENTATION_REASON,
   'apps/site/src/pages/robots.txt.ts':
     'Thin endpoint that feeds contributions to buildRobotsTxt, tested in seo/robots.test.ts.',
+  'apps/site/src/pages/.well-known/security.txt.ts':
+    'Thin endpoint that feeds buildSecurityTxt, tested in seo/security-txt.test.ts.',
+  'apps/site/src/scripts/render-security-headers.ts':
+    'Docker build step that reads dist and writes the header snippet; its logic lives in security-headers.ts, tested in security-headers.test.ts.',
   'apps/site/src/pages/sitemap.xml.ts':
     'Thin endpoint that feeds route sources to buildSitemapXml, tested in seo/sitemap.test.ts.',
   'apps/site/src/scripts/theme-keys.ts':

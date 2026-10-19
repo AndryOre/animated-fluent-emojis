@@ -1,9 +1,17 @@
+/* eslint-disable unicorn/isolated-functions -- the evaluated callback runs in the browser */
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 import { SAMPLED_PATHS } from './routes'
 
-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
+const AXE_TAGS = [
+  'wcag2a',
+  'wcag2aa',
+  'wcag21a',
+  'wcag21aa',
+  'wcag22aa',
+  'best-practice',
+]
 
 for (const colorScheme of ['light', 'dark'] as const) {
   test.describe(`${colorScheme} scheme`, () => {
@@ -31,6 +39,24 @@ for (const colorScheme of ['light', 'dark'] as const) {
   })
 }
 
+test.describe('320px viewport', () => {
+  test.use({ viewport: { width: 320, height: 640 } })
+
+  for (const path of SAMPLED_PATHS) {
+    test(`${path} has no horizontal scroll`, async ({ page }) => {
+      const response = await page.goto(path)
+      expect(response?.status()).toBe(200)
+      await expect(page.locator('h1').first()).toBeVisible()
+      const overflow = await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth,
+      )
+      expect(overflow).toBeLessThanOrEqual(1)
+    })
+  }
+})
+
 test('the language menu opens by role and navigates to the Japanese site', async ({
   page,
 }) => {
@@ -55,3 +81,5 @@ test('the language menu opens by role and navigates to the Japanese site', async
   await page.getByRole('menuitem', { name: /日本語/ }).click()
   await expect(page).toHaveURL(/\/ja\/$/)
 })
+
+/* eslint-enable unicorn/isolated-functions -- end of browser-evaluated code */

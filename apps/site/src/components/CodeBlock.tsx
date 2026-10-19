@@ -10,6 +10,7 @@ import {
   type CanvasTabsVariant,
 } from '@/components/ui/tabs'
 import { copyWithFeedback } from '@/lib/copy-feedback'
+import { trustedCodeHtml } from '@/lib/trusted-code-html'
 import { cn } from '@/lib/utilities'
 
 import { markHighlightedLine } from '../highlight/snippet-html'
@@ -270,9 +271,11 @@ export default function CodeBlock({
               data-line-numbers={lineNumbers}
               className="afe-code overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
               dangerouslySetInnerHTML={{
-                __html: tab.highlightLine
-                  ? markHighlightedLine(tab.html, tab.highlightLine)
-                  : tab.html,
+                __html: trustedCodeHtml(
+                  tab.highlightLine
+                    ? markHighlightedLine(tab.html, tab.highlightLine)
+                    : tab.html,
+                ),
               }}
             />
             {/* eslint-enable jsx-a11y/no-noninteractive-tabindex, @eslint-react/dom-no-dangerously-set-innerhtml -- end of the scrollable code */}

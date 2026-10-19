@@ -14,8 +14,20 @@ const searchStyle = [
 ].join(';')
 ---
 
-<Header locale={locale} path={path} skipTarget="#_top">
+<Header locale={locale} path={path} skipTarget="#_top" embedded>
   <div slot="search" style={`display:contents;${searchStyle}`}>
     <Search />
   </div>
 </Header>
+
+<script>
+  import {
+    installSearchTrustedTypesPolicy,
+    type TrustedTypesFactory,
+  } from '../search-trusted-types'
+
+  installSearchTrustedTypesPolicy(
+    (window as Window & { trustedTypes?: TrustedTypesFactory }).trustedTypes,
+    window.location.origin,
+  )
+</script>

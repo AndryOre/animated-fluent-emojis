@@ -56,7 +56,8 @@ jobs:
         run: |
           rm -rf apps/site/dist
           docker cp site-ci:/usr/share/nginx/html apps/site/dist
-          bun run --cwd apps/site test:dist
+          docker cp site-ci:/etc/nginx/snippets/security-headers.conf apps/site/dist-security-headers.conf
+          SITE_DIST_HEADERS=dist-security-headers.conf bun run --cwd apps/site test:dist
 
       - name: Install Playwright browser
         working-directory: apps/site

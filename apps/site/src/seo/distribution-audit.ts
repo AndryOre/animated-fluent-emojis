@@ -158,16 +158,18 @@ function auditPage(
   route: string,
   html: string,
   sitemapLocations: ReadonlySet<string>,
+  headerPolicy: string,
 ): string[] {
   const problems: string[] = []
-  if (!/http-equiv=["']content-security-policy["']/i.test(html)) {
+  const hasMetaPolicy = /http-equiv=["']content-security-policy["']/i.test(html)
+  if (!hasMetaPolicy && headerPolicy === '') {
     problems.push(`${route}: missing content security policy`)
   }
   const policy =
     /http-equiv=["']content-security-policy["'][^>]*content="([^"]*)"|content="([^"]*)"[^>]*http-equiv=["']content-security-policy["']/i.exec(
       html,
     )
-  const policyText = policy?.[1] ?? policy?.[2] ?? ''
+  const policyText = `${policy?.[1] ?? policy?.[2] ?? ''} ${headerPolicy}`
   for (const script of inlineScripts(html)) {
     const hash = createHash('sha256').update(script).digest('base64')
     if (!policyText.includes(`'sha256-${hash}'`)) {
@@ -227,9 +229,15 @@ function auditPage(
  * absolute `http(s)` URL outside the site origin needs `target="_blank"` and
  * a `rel` containing both `noopener` and `noreferrer`.
  * @param distribution - The build output folder.
+ * @param headerPolicy - The Content-Security-Policy the web server sends as a
+ * header, for builds whose pages carry no `<meta>` policy. Empty when the
+ * pages carry their own.
  * @returns One message per problem, empty when the build is clean.
  */
-export function auditDistribution(distribution: string): string[] {
+export function auditDistribution(
+  distribution: string,
+  headerPolicy = '',
+): string[] {
   if (!existsSync(distribution))
     return [`${distribution}: build output folder does not exist`]
   const sitemapFile = path.join(distribution, 'sitemap.xml')
@@ -254,7 +262,7 @@ export function auditDistribution(distribution: string): string[] {
         ...externalLinkProblems(route, html),
       )
       if (path.basename(file) === 'index.html' && isIndexable(html)) {
-        problems.push(...auditPage(route, html, sitemapLocations))
+        problems.push(...auditPage(route, html, sitemapLocations, headerPolicy))
       }
     } else if (file.endsWith('.css')) {
       const css = readFileSync(file, 'utf8')
@@ -262,4 +270,18 @@ export function auditDistribution(distribution: string): string[] {
     }
   }
   return problems
+}
+
+/**
+ * Reads the Content-Security-Policy value out of the nginx snippet the image
+ * build renders from `docker/security-headers.conf`.
+ * @param snippetFile - Path to the rendered nginx security headers snippet.
+ * @returns The policy text, or an empty string when the file has none.
+ */
+export function readHeaderPolicy(snippetFile: string): string {
+  if (!existsSync(snippetFile)) return ''
+  const match = /add_header Content-Security-Policy "([^"]*)"/.exec(
+    readFileSync(snippetFile, 'utf8'),
+  )
+  return match?.[1] ?? ''
 }
