@@ -9,6 +9,7 @@ RUN bun install --frozen-lockfile --filter @animated-fluent-emojis/site --ignore
 COPY packages/animated-fluent-emojis packages/animated-fluent-emojis
 COPY apps/site apps/site
 COPY docs docs
+COPY CHANGELOG.md CHANGELOG.md
 RUN bun run --cwd packages/animated-fluent-emojis build
 RUN bun run --cwd apps/site build
 RUN bun run --cwd apps/site src/scripts/render-security-headers.ts dist docker/security-headers.conf dist-security-headers.conf

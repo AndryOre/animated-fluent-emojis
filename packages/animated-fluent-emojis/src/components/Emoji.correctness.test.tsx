@@ -81,9 +81,9 @@ test('a held emoji rests on its poster frame with no animation', async () => {
   )
 
   const image = await waitForImage(container)
-  if (server.browser === 'chromium') {
-    await expect.poll(() => image.complete).toBe(true)
-  }
+  await expect
+    .poll(() => server.browser !== 'chromium' || image.complete)
+    .toBe(true)
   await new Promise((resolve) => {
     setTimeout(resolve, 100)
   })
