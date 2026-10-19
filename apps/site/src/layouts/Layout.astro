@@ -1,10 +1,24 @@
 ---
+import figtreeLatin from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url'
+
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
-import { hreflangAlternates, localeUrl, type Locale } from '../i18n/locales'
+import {
+  hreflangAlternates,
+  LOCALE_CONFIG,
+  localeUrl,
+  type FontPreload,
+  type Locale,
+} from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { THEME_INIT_SCRIPT } from '../scripts/theme-init'
 import { THEME_COLORS } from '../scripts/theme-keys'
+import { buildSocialMeta, SITE_OG_IMAGE_URL } from '../seo/open-graph'
+import {
+  buildStructuredData,
+  serializeJsonLd,
+  type Breadcrumb,
+} from '../seo/structured-data'
 
 import '../styles/global.css'
 
@@ -15,7 +29,9 @@ interface Props {
   path?: string
   notFound?: boolean
   image?: string
+  imageAlt?: string
   jsonLd?: object
+  trail?: readonly Breadcrumb[]
   previousHref?: string
   nextHref?: string
 }
@@ -24,15 +40,37 @@ const {
   locale,
   path = '/',
   notFound = false,
-  image,
+  image = SITE_OG_IMAGE_URL,
+  imageAlt,
   jsonLd,
+  trail,
   previousHref,
   nextHref,
 } = Astro.props
+const FONT_PRELOAD_URLS: Record<FontPreload, string> = {
+  'figtree-latin': figtreeLatin,
+}
 const { meta } = getUi(locale)
 const title = Astro.props.title ?? meta.siteName
 const description = Astro.props.description ?? meta.description
 const canonical = localeUrl(locale, path)
+const socialMeta = buildSocialMeta({
+  locale,
+  title,
+  description,
+  image,
+  imageAlt: imageAlt ?? title,
+})
+const structuredData = notFound
+  ? undefined
+  : buildStructuredData({
+      locale,
+      siteName: meta.siteName,
+      title,
+      description,
+      path,
+      trail,
+    })
 ---
 
 <!doctype html>
@@ -59,6 +97,15 @@ const canonical = localeUrl(locale, path)
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {LOCALE_CONFIG[locale].preloadFonts.map((font) => (
+      <link
+        rel="preload"
+        as="font"
+        type="font/woff2"
+        href={FONT_PRELOAD_URLS[font]}
+        crossorigin
+      />
+    ))}
     <script is:inline set:html={THEME_INIT_SCRIPT} />
     {notFound ? (
       <meta name="robots" content="noindex" />
@@ -77,20 +124,17 @@ const canonical = localeUrl(locale, path)
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {image && (
-      <>
-        <meta property="og:image" content={image} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={image} />
-      </>
-    )}
-    {jsonLd && (
+    {socialMeta.map(({ attribute, key, content }) => (
+      <meta {...{ [attribute]: key }} content={content} />
+    ))}
+    {structuredData && (
       <script
         type="application/ld+json"
-        set:html={JSON.stringify(jsonLd).replaceAll('<', String.raw`\u003c`)}
+        set:html={serializeJsonLd(structuredData)}
       />
+    )}
+    {jsonLd && (
+      <script type="application/ld+json" set:html={serializeJsonLd(jsonLd)} />
     )}
   </head>
   <body class="flex min-h-dvh flex-col font-sans">

@@ -6,6 +6,12 @@ Accepted
 
 Date: 2026-10-04
 
+Amended 2026-10-19 (AO-2157): CodeQL now runs as a workflow
+(`.github/workflows/codeql.yml`, JavaScript/TypeScript and Actions) instead of
+the GitHub default setup, matching `snug`. The default setup must be disabled in
+the repository security settings, otherwise both run. The CodeQL bullet under
+Adopted and the matching Rejected bullet are superseded by this note.
+
 ## Context
 
 `animated-fluent-emojis` is a published npm library maintained by one person.

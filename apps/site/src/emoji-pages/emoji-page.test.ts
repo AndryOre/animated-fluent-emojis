@@ -103,6 +103,7 @@ describe('emoji sitemap source', () => {
       emojis.map((emoji) => ({
         path: `/emojis/${emoji.slug}/`,
         localized: true,
+        lastmod: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/) as string,
       })),
     )
   })

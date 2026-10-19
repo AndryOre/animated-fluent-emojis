@@ -10,6 +10,8 @@ COPY packages/animated-fluent-emojis packages/animated-fluent-emojis
 COPY apps/site apps/site
 COPY docs docs
 COPY CHANGELOG.md CHANGELOG.md
+ARG LAST_MODIFIED_DATES=""
+ENV LAST_MODIFIED_DATES=${LAST_MODIFIED_DATES}
 RUN bun run --cwd packages/animated-fluent-emojis build
 RUN bun run --cwd apps/site build
 RUN bun run --cwd apps/site src/scripts/render-security-headers.ts dist docker/security-headers.conf dist-security-headers.conf

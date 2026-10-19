@@ -15,6 +15,7 @@
         "src/gallery/index.ts",
         "src/docs/install-block-client.ts",
         "src/docs/code-focus.ts",
+        "src/docs/route-metadata.ts",
         "src/scripts/emoji-transition.ts",
         "src/scripts/render-security-headers.ts",
         "playwright.visual.config.ts",

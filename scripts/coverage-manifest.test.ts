@@ -109,6 +109,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Thin endpoint that feeds contributions to buildRobotsTxt, tested in seo/robots.test.ts.',
   'apps/site/src/pages/.well-known/security.txt.ts':
     'Thin endpoint that feeds buildSecurityTxt, tested in seo/security-txt.test.ts.',
+  'apps/site/src/scripts/interaction-directive.ts':
+    'Thin Astro client directive that delegates to hydrateOnInteraction, covered by hydrate-on-interaction.test.ts.',
+  'apps/site/src/scripts/interaction-integration.ts':
+    'Astro integration that registers the directive at config time, exercised by every site build.',
   'apps/site/src/scripts/render-security-headers.ts':
     'Docker build step that reads dist and writes the header snippet; its logic lives in security-headers.ts, tested in security-headers.test.ts.',
   'apps/site/src/pages/sitemap.xml.ts':
@@ -143,6 +147,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/pages/[locale]/emojis/[slug].astro': ASTRO_PAGE_REASON,
   'apps/site/src/pages/og/[slug].png.ts':
     'Thin endpoint that feeds composeOgImage, tested in emoji-pages/og-image.test.ts and the emoji-pages build-output test.',
+  'apps/site/src/pages/og-site.png.ts':
+    'Thin endpoint that feeds composeOgImage the site name, tested in emoji-pages/og-image.test.ts and the distribution audit.',
+  'apps/site/src/docs/route-metadata.ts':
+    'Starlight route middleware that feeds buildSocialMeta and buildStructuredData, tested in seo/ and covered by the distribution audit.',
   'apps/site/src/emoji-pages/data.ts':
     'Memoized join of the public index and annotations, both tested in gallery/, and exercised by the emoji-pages build-output test.',
   'apps/site/src/components/gallery/ChipGroup.tsx': GALLERY_ISLAND_REASON,

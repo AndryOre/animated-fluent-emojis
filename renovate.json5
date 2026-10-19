@@ -4,6 +4,8 @@
     'config:best-practices',
     ':semanticCommits',
     ':semanticCommitTypeAll(chore)',
+    'helpers:pinGitHubActionDigests',
+    'group:monorepos',
   ],
 
   timezone: 'UTC',
@@ -15,6 +17,10 @@
   branchConcurrentLimit: 5,
 
   rangeStrategy: 'bump',
+  // Main requires the PR branch to be up to date before merging
+  // (strict_required_status_checks_policy in the main branch ruleset),
+  // so automerge branches must be kept current, not just conflict-free
+  rebaseWhen: 'behind-base-branch',
 
   // Wait 3 days before opening a PR — guards against supply-chain attacks on freshly published versions
   minimumReleaseAge: '3 days',
@@ -48,6 +54,25 @@
       matchStrings: ['wranglerVersion: (?<currentValue>\\d+\\.\\d+\\.\\d+)'],
       datasourceTemplate: 'npm',
       depNameTemplate: 'wrangler',
+    },
+    // Bumping ACTIONLINT_VERSION leaves ACTIONLINT_SHA256 stale: the Renovate PR
+    // fails lint-workflows until the checksum is updated by hand
+    {
+      customType: 'regex',
+      managerFilePatterns: ['/^\\.github/workflows/lint-workflows\\.yml$/'],
+      matchStrings: ['ACTIONLINT_VERSION: (?<currentValue>\\d+\\.\\d+\\.\\d+)'],
+      datasourceTemplate: 'github-releases',
+      depNameTemplate: 'rhysd/actionlint',
+      extractVersionTemplate: '^v(?<version>.+)$',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: ['/^\\.github/workflows/lint-workflows\\.yml$/'],
+      matchStrings: [
+        'zizmorcore/zizmor-action@[^\\n]+\\n\\s+with:\\n\\s+version: (?<currentValue>v\\d+\\.\\d+\\.\\d+)',
+      ],
+      datasourceTemplate: 'github-releases',
+      depNameTemplate: 'zizmorcore/zizmor',
     },
   ],
 
