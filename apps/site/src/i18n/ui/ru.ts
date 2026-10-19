@@ -232,6 +232,7 @@ export const ru: UiStrings = {
     guideGroup: 'Руководство',
     helpGroup: 'Помощь',
     howToGroup: 'Практические руководства',
+    changelogLabel: 'История изменений',
     copyMarkdown: 'Копировать страницу как Markdown',
     copiedMarkdown: 'Скопировано',
     search: {

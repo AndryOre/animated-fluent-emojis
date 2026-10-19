@@ -232,6 +232,7 @@ export const ja: UiStrings = {
     guideGroup: 'ガイド',
     helpGroup: 'ヘルプ',
     howToGroup: 'ハウツーガイド',
+    changelogLabel: '変更履歴',
     copyMarkdown: 'ページを Markdown でコピー',
     copiedMarkdown: 'コピーしました',
     search: {

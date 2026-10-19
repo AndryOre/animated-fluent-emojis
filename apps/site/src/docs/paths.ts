@@ -8,6 +8,11 @@ import path from 'node:path'
 export const DOCS_DIR = path.resolve(process.cwd(), '../../docs')
 
 /**
+ * The repository `CHANGELOG.md` the changelog page is built from.
+ */
+export const CHANGELOG_FILE = path.resolve(process.cwd(), '../../CHANGELOG.md')
+
+/**
  * The site content folder holding one subfolder per translated locale.
  */
 export const TRANSLATIONS_DIR = path.resolve(

@@ -231,6 +231,7 @@ export const it: UiStrings = {
     guideGroup: 'Guida',
     helpGroup: 'Aiuto',
     howToGroup: 'Guide pratiche',
+    changelogLabel: 'Novità',
     copyMarkdown: 'Copia la pagina come Markdown',
     copiedMarkdown: 'Copiato',
     search: {

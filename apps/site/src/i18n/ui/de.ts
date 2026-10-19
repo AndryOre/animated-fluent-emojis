@@ -231,6 +231,7 @@ export const de: UiStrings = {
     guideGroup: 'Leitfaden',
     helpGroup: 'Hilfe',
     howToGroup: 'Anleitungen',
+    changelogLabel: 'Änderungsprotokoll',
     copyMarkdown: 'Seite als Markdown kopieren',
     copiedMarkdown: 'Kopiert',
     search: {

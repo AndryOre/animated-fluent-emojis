@@ -232,6 +232,7 @@ export const pt_BR: UiStrings = {
     guideGroup: 'Guia',
     helpGroup: 'Ajuda',
     howToGroup: 'Guias práticos',
+    changelogLabel: 'Novidades',
     copyMarkdown: 'Copiar página como Markdown',
     copiedMarkdown: 'Copiado',
     search: {
