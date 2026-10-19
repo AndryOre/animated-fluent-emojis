@@ -76,6 +76,10 @@ og="$(curl -s "$base$emoji_path" | grep -Eo '/og/[A-Za-z0-9._-]+\.png' | head -n
 [ "$(status "$base/.well-known/security.txt")" = 200 ] || fail "security.txt is not 200"
 grep -q '^Contact: ' <<<"$(curl -s "$base/.well-known/security.txt")" || fail "security.txt lacks Contact"
 
+md_headers="$(curl -s -o /dev/null -D - "$base/docs/guide/assets.md" | tr -d '\r')"
+grep -qi '^content-type: text/markdown; charset=utf-8' <<<"$md_headers" || fail "markdown twin is not text/markdown"
+grep -qi '^link: <https://animated-fluent-emojis.andryore.dev/docs/guide/assets/>; rel="canonical"' <<<"$md_headers" || fail "markdown twin lacks the canonical Link"
+
 [ "$(header_of cache-control "$base/")" = no-cache ] || fail "HTML lacks no-cache"
 asset="$(curl -s "$base/" | grep -Eo '/_astro/[A-Za-z0-9._-]+' | head -n1 || true)"
 [ -n "$asset" ] || fail "no /_astro/ asset referenced from /"
