@@ -1,0 +1,21 @@
+{
+  "name": "Animated Fluent Emojis",
+  "short_name": "Fluent Emojis",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0d1715",
+  "theme_color": "#0d1715",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

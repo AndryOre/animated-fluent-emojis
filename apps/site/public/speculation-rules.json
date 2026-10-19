@@ -1,0 +1,17 @@
+{
+  "prefetch": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          {
+            "not": {
+              "href_matches": ["/og/*", "/*.png", "/*.gif", "/*.webp", "/*.md"]
+            }
+          }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
