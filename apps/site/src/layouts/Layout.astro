@@ -1,7 +1,15 @@
 ---
+import figtreeLatin from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url'
+
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
-import { hreflangAlternates, localeUrl, type Locale } from '../i18n/locales'
+import {
+  hreflangAlternates,
+  LOCALE_CONFIG,
+  localeUrl,
+  type FontPreload,
+  type Locale,
+} from '../i18n/locales'
 import { getUi } from '../i18n/ui'
 import { THEME_INIT_SCRIPT } from '../scripts/theme-init'
 import { THEME_COLORS } from '../scripts/theme-keys'
@@ -29,6 +37,9 @@ const {
   previousHref,
   nextHref,
 } = Astro.props
+const FONT_PRELOAD_URLS: Record<FontPreload, string> = {
+  'figtree-latin': figtreeLatin,
+}
 const { meta } = getUi(locale)
 const title = Astro.props.title ?? meta.siteName
 const description = Astro.props.description ?? meta.description
@@ -59,6 +70,15 @@ const canonical = localeUrl(locale, path)
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {LOCALE_CONFIG[locale].preloadFonts.map((font) => (
+      <link
+        rel="preload"
+        as="font"
+        type="font/woff2"
+        href={FONT_PRELOAD_URLS[font]}
+        crossorigin
+      />
+    ))}
     <script is:inline set:html={THEME_INIT_SCRIPT} />
     {notFound ? (
       <meta name="robots" content="noindex" />

@@ -16,6 +16,7 @@ import {
   type Locale,
 } from './src/i18n/locales'
 import { getUi } from './src/i18n/ui'
+import { interactionDirective } from './src/scripts/interaction-integration'
 import { THEME_INIT_HASH } from './src/scripts/theme-init'
 import { THEME_COLORS } from './src/scripts/theme-keys'
 import { REPOSITORY_URL } from './src/site-links'
@@ -69,6 +70,7 @@ export default defineConfig({
   },
   integrations: [
     react(),
+    interactionDirective(),
     starlight({
       title: meta.siteName,
       description: meta.description,

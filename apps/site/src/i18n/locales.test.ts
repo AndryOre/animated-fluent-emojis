@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_LOCALE,
   hreflangAlternates,
+  LOCALE_CONFIG,
   localeFromSegment,
   localePath,
   LOCALES,
@@ -58,5 +59,19 @@ describe('locales', () => {
       hreflang: 'x-default',
       href: 'https://animated-fluent-emojis.andryore.dev/',
     })
+  })
+})
+
+describe('LOCALE_CONFIG', () => {
+  it('covers every locale', () => {
+    expect(
+      Object.keys(LOCALE_CONFIG).toSorted((a, b) => a.localeCompare(b)),
+    ).toEqual([...LOCALES].toSorted((a, b) => a.localeCompare(b)))
+  })
+
+  it('preloads Figtree latin only for Latin-script locales', () => {
+    expect(LOCALE_CONFIG.en.preloadFonts).toEqual(['figtree-latin'])
+    expect(LOCALE_CONFIG.ru.preloadFonts).toEqual([])
+    expect(LOCALE_CONFIG.ja.preloadFonts).toEqual([])
   })
 })
