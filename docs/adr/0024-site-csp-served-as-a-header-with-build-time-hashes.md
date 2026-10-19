@@ -39,7 +39,10 @@ Serve the whole policy as an HTTP header whose script hashes are rendered from
 - **Trusted Types**: the header adds `require-trusted-types-for 'script'`, and
   the docs header registers a `default` policy
   (`src/docs/search-trusted-types.ts`) that lets only `<mark>` markup and the
-  same-origin Pagefind worker through.
+  same-origin Pagefind worker through. The React code blocks assign build-time
+  highlighter output to `innerHTML`, so they wrap it with their own named
+  `afe-code` policy (`src/lib/trusted-code-html.ts`) instead of widening the
+  `default` one.
 - **Per-path CORP**: `Cross-Origin-Resource-Policy` is `same-origin` except for
   `/og/`, which social crawlers and other sites embed.
 - **security.txt**: `/.well-known/security.txt` is built from the repository URL
