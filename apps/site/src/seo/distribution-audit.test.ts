@@ -23,11 +23,15 @@ function sha256Source(script: string): string {
 const ICON_LINKS =
   '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="32x32"><link rel="apple-touch-icon" href="/apple-touch-icon.png">'
 
+const SOCIAL_TAGS =
+  '<meta property="og:image" content="https://x.andryore.dev/og.png"><meta property="og:locale" content="en_US"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[]}</script>'
+
 function pageHtml(
   route: string,
   extraHead = '',
   csp = CSP,
   iconLinks = ICON_LINKS,
+  socialTags = SOCIAL_TAGS,
 ): string {
   const alternates = [...LOCALES, 'x-default']
     .map((hreflang) => {
@@ -35,7 +39,7 @@ function pageHtml(
       return `<link rel="alternate" hreflang="${hreflang}" href="${localeUrl(locale as 'en', route)}">`
     })
     .join('')
-  return `<!doctype html><html><head>${csp}${iconLinks}<link rel="canonical" href="${localeUrl('en', route)}">${alternates}${extraHead}</head><body>ok</body></html>`
+  return `<!doctype html><html><head>${csp}${iconLinks}${socialTags}<link rel="canonical" href="${localeUrl('en', route)}">${alternates}${extraHead}</head><body>ok</body></html>`
 }
 
 function sitemapXml(routes: readonly string[]): string {
@@ -111,6 +115,52 @@ describe('auditDistribution', () => {
       'emojis/fire/index.html: missing favicon link',
       'emojis/fire/index.html: missing favicon fallback link',
       'emojis/fire/index.html: missing apple touch icon link',
+    ])
+  })
+
+  it('flags a page without og:image, og:locale or JSON-LD', () => {
+    write(
+      'emojis/fire/index.html',
+      pageHtml('/emojis/fire/', '', CSP, ICON_LINKS, ''),
+    )
+    expect(auditDistribution(distribution)).toEqual([
+      'emojis/fire/index.html: missing og:image',
+      'emojis/fire/index.html: missing og:locale',
+      'emojis/fire/index.html: missing JSON-LD',
+    ])
+  })
+
+  it('flags JSON-LD that does not parse or has no context', () => {
+    for (const body of ['{not json', '{"name":"x"}']) {
+      write(
+        'emojis/fire/index.html',
+        pageHtml(
+          '/emojis/fire/',
+          '',
+          CSP,
+          ICON_LINKS,
+          SOCIAL_TAGS.replace(/\{"@context.*\}/, () => body),
+        ),
+      )
+      expect(auditDistribution(distribution)).toEqual([
+        'emojis/fire/index.html: invalid JSON-LD',
+      ])
+    }
+  })
+
+  it('flags an empty og:image', () => {
+    write(
+      'emojis/fire/index.html',
+      pageHtml(
+        '/emojis/fire/',
+        '',
+        CSP,
+        ICON_LINKS,
+        SOCIAL_TAGS.replace('https://x.andryore.dev/og.png', ''),
+      ),
+    )
+    expect(auditDistribution(distribution)).toEqual([
+      'emojis/fire/index.html: missing og:image',
     ])
   })
 
@@ -295,7 +345,7 @@ describe('auditDistribution', () => {
       'index.html',
       pageHtml(
         '/',
-        `<script>${script}</script><script type="application/ld+json">{}</script><div data-code="<script>x()</script>"></div>`,
+        `<script>${script}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Thing"}</script><div data-code="<script>x()</script>"></div>`,
         csp,
       ),
     )

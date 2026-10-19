@@ -122,6 +122,48 @@ function inlineScripts(html: string): string[] {
   return scripts
 }
 
+const JSON_LD_PATTERN =
+  /<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
+
+function hasMeta(html: string, key: string): boolean {
+  const pattern = new RegExp(
+    String.raw`<meta\b[^>]*\b(?:property|name)\s*=\s*["']${key}["'][^>]*>`,
+    'i',
+  )
+  const tag = pattern.exec(html)?.[0]
+  return tag !== undefined && (attribute(tag, 'content') ?? '').trim() !== ''
+}
+
+function isValidJsonLd(body: string): boolean {
+  try {
+    const data: unknown = JSON.parse(body)
+    return (
+      typeof data === 'object' &&
+      data !== null &&
+      '@context' in data &&
+      ('@graph' in data || '@type' in data)
+    )
+  } catch {
+    return false
+  }
+}
+
+function socialProblems(route: string, html: string): string[] {
+  const problems: string[] = []
+  if (!hasMeta(html, 'og:image')) problems.push(`${route}: missing og:image`)
+  if (!hasMeta(html, 'og:locale')) problems.push(`${route}: missing og:locale`)
+  const blocks = html
+    .matchAll(JSON_LD_PATTERN)
+    .map((match) => match[1] ?? '')
+    .toArray()
+  if (blocks.length === 0) {
+    problems.push(`${route}: missing JSON-LD`)
+  } else if (blocks.some((block) => !isValidJsonLd(block))) {
+    problems.push(`${route}: invalid JSON-LD`)
+  }
+  return problems
+}
+
 function cssUrls(css: string): string[] {
   const matches = [
     ...css.matchAll(CSS_URL_PATTERN),
@@ -213,6 +255,7 @@ function auditPage(
       )
     }
   }
+  problems.push(...socialProblems(route, html))
   const links = html
     .matchAll(LINK_TAG_PATTERN)
     .map(([tag]) => tag)
@@ -258,8 +301,8 @@ function auditPage(
 /**
  * Audits a built site folder. Every indexable page needs a content security
  * policy, a canonical link listed in the sitemap, favicon, ICO fallback and
- * apple touch icon links, and hreflang alternates for every locale plus
- * `x-default`; no page or stylesheet may request a resource
+ * apple touch icon links, hreflang alternates for every locale plus
+ * `x-default`, an `og:image`, an `og:locale` and parseable JSON-LD; no page or stylesheet may request a resource
  * from a host outside `andryore.dev`. Every `<a href>` pointing to an
  * absolute `http(s)` URL outside the site origin needs `target="_blank"` and
  * a `rel` containing both `noopener` and `noreferrer`. Every sitemap `lastmod`

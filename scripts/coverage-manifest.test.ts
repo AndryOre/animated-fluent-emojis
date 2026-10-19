@@ -143,6 +143,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   'apps/site/src/pages/[locale]/emojis/[slug].astro': ASTRO_PAGE_REASON,
   'apps/site/src/pages/og/[slug].png.ts':
     'Thin endpoint that feeds composeOgImage, tested in emoji-pages/og-image.test.ts and the emoji-pages build-output test.',
+  'apps/site/src/pages/og-site.png.ts':
+    'Thin endpoint that feeds composeOgImage the site name, tested in emoji-pages/og-image.test.ts and the distribution audit.',
+  'apps/site/src/docs/route-metadata.ts':
+    'Starlight route middleware that feeds buildSocialMeta and buildStructuredData, tested in seo/ and covered by the distribution audit.',
   'apps/site/src/emoji-pages/data.ts':
     'Memoized join of the public index and annotations, both tested in gallery/, and exercised by the emoji-pages build-output test.',
   'apps/site/src/components/gallery/ChipGroup.tsx': GALLERY_ISLAND_REASON,
