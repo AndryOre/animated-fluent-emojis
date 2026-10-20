@@ -29,7 +29,6 @@ import {
   type FileActionTarget,
 } from '@/lib/file-action'
 import type { PreferenceStore } from '@/lib/persisted-preference'
-import { cn } from '@/lib/utilities'
 
 import type { UiStrings } from '../../i18n/ui'
 
@@ -100,6 +99,7 @@ function isStill(format: FileActionFormat): boolean {
  * @returns The button group.
  */
 export function FileActionButton(props: FileActionButtonProps) {
+   
   const { target, strings, onNotice, className } = props
   const store = props.store ?? sharedStore
   const action = useSyncExternalStore(
@@ -134,7 +134,7 @@ export function FileActionButton(props: FileActionButtonProps) {
   const PrimaryIcon = verb === 'copy' ? CopyIcon : DownloadIcon
 
   return (
-    <ButtonGroup className={cn('w-full', className)}>
+    <ButtonGroup width="full" className={className}>
       <Button
         variant="outline"
         className="min-w-0 flex-1 rounded-l-lg"

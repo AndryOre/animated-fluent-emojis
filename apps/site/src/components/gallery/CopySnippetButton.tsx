@@ -16,7 +16,6 @@ import {
   SNIPPET_ADAPTERS,
   type SnippetAdapter,
 } from '@/lib/snippet-adapter'
-import { cn } from '@/lib/utilities'
 
 import type { PublicEmoji, SkinTone } from '../../gallery/public-index'
 import { generateSnippet } from '../../gallery/snippets'
@@ -69,6 +68,7 @@ export interface CopySnippetButtonProps {
  * @returns The button group.
  */
 export function CopySnippetButton(props: CopySnippetButtonProps) {
+   
   const { emoji, size, tone, strings, onNotice, className } = props
   const store = props.store ?? sharedStore
   const adapter = useSyncExternalStore(
@@ -98,7 +98,7 @@ export function CopySnippetButton(props: CopySnippetButtonProps) {
     .join(strings[ADAPTER_LABEL_KEYS[adapter]])
 
   return (
-    <ButtonGroup className={cn('w-full', className)}>
+    <ButtonGroup width="full" className={className}>
       <Button
         variant="outline"
         className="min-w-0 flex-1 rounded-l-lg"

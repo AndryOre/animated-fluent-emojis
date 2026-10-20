@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
 
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,12 +61,6 @@ interface HeaderMenusProps {
   locales: LocaleOption[]
 }
 
-const iconButtonClass = buttonVariants({
-  variant: 'ghost',
-  size: 'icon',
-  className: 'rounded-lg',
-})
-
 /**
  * Classes shared by the compact nav menu and language menu items. The popups
  * portal to `<body>`, outside the header, so `no-underline` keeps Starlight's
@@ -111,7 +105,10 @@ function ThemeMenu(props: { label: string; names: Record<Theme, string> }) {
   const ActiveIcon = THEME_ICONS[theme]
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label={label} className={iconButtonClass}>
+      <DropdownMenuTrigger
+        aria-label={label}
+        render={<Button variant="ghost" size="icon" />}
+      >
         <ActiveIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent variant="nova" className="w-36" aria-label={label}>
@@ -166,7 +163,13 @@ export default function HeaderMenus(props: HeaderMenusProps) {
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label={menuLabel}
-            className={cn(iconButtonClass, 'min-[860px]:hidden')}
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="min-[860px]:hidden"
+              />
+            }
           >
             <MenuIcon />
           </DropdownMenuTrigger>
@@ -203,7 +206,7 @@ export default function HeaderMenus(props: HeaderMenusProps) {
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label={languageLabel}
-            className={iconButtonClass}
+            render={<Button variant="ghost" size="icon" />}
           >
             <GlobeIcon />
           </DropdownMenuTrigger>
@@ -249,7 +252,8 @@ export default function HeaderMenus(props: HeaderMenusProps) {
                 href={repositoryHref}
                 aria-label={`${repositoryLabel} (${opensInNewTabLabel})`}
                 {...externalLinkAttributes()}
-                className={iconButtonClass}
+                 
+                className={buttonVariants({ variant: 'ghost', size: 'icon' })}
               />
             }
           >
