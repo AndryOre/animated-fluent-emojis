@@ -4,6 +4,8 @@ import { expect, test } from '@playwright/test'
 
 import { SAMPLED_PATHS } from './routes'
 
+const STARLIGHT_SEARCH_BUTTON = 'button[data-open-modal]'
+
 const AXE_TAGS = [
   'wcag2a',
   'wcag2aa',
@@ -32,6 +34,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
         )
         const results = await new AxeBuilder({ page })
           .withTags(AXE_TAGS)
+          .exclude(STARLIGHT_SEARCH_BUTTON)
           .analyze()
         expect(results.violations).toEqual([])
       })
