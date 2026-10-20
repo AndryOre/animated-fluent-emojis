@@ -4,7 +4,8 @@
 
 Accepted
 
-Date: 2026-10-06
+Date: 2026-10-06 Revised: 2026-10-21, builder and slug registry paths moved to
+`apps/assets`; the cdn host is now the library default
 
 ## Context
 
@@ -28,9 +29,9 @@ were considered for the new files:
 ## Decision
 
 Publish the files from a second Cloudflare Pages project, the files site, built
-by `scripts/assets/files-site.ts` from the output of the asset build and
-deployed by `sync-assets.yml` after the asset deploy. R2 is not used. The
-builder fails when the file count approaches the Free plan cap.
+by `apps/assets/files-site.ts` from the output of the asset build and deployed
+by `sync-assets.yml` after the asset deploy. R2 is not used. The builder fails
+when the file count approaches the Free plan cap.
 
 The three sites live on custom domains:
 
@@ -48,7 +49,7 @@ Public file URLs use a slug, not the catalog id: `/gif/<slug>.gif`,
 `/webp/<slug>.webp` and `/png/<slug>.png`, plus `/index.json`, `/version.json`
 and the license and notice files. Skin tones add `-light`, `-medium-light`,
 `-medium`, `-medium-dark` or `-dark`. Slugs are kebab-case descriptions, frozen
-in a committed registry, `scripts/assets/public-slugs.json`. A frozen slug never
+in a committed registry, `apps/assets/public-slugs.json`. A frozen slug never
 changes, a collision gets `-2`, `-3`, and a slug whose emoji disappears stays
 reserved, so a URL once published is never pointed at another emoji. Each sync
 merges the live public `index.json` into the committed registry through the
