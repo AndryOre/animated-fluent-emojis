@@ -50,11 +50,19 @@ non-JSDoc `/* */` comments, except lint or type directives. Detail:
 
 ## Escalating a `@shadcn/lint` finding
 
-Stub: the style-lint ticket (AO-2184) adds the `shadcn/*` rules to
-`bun run lint` and fills this section with the escalation ladder. Until it
-lands, use the website's `src/components/ui` primitives and their variants
-([ADR 0019](docs/adr/0019-shadcn-on-base-ui-for-the-website.md)), and never
-disable a lint rule file-wide or project-wide.
+When `bun run lint` reports a `shadcn/*` finding (e.g. `shadcn/no-restyle`) on a
+site component you're changing, work up this ladder — never disable the rule
+file-wide or project-wide:
+
+1. Use an existing variant in `apps/site/src/components/ui` that already covers
+   the styling you need
+   ([ADR 0019](docs/adr/0019-shadcn-on-base-ui-for-the-website.md)).
+2. Add a new variant to the component if no existing one fits.
+3. Add or change a `no-restyle` contract in `shadcnNoRestyleContracts`
+   (`eslint.config.mjs`), encoding one real, bounded design decision. Detail:
+   [`docs/development.md#adding-a-shadcnlint-contract`](docs/development.md#adding-a-shadcnlint-contract).
+4. Last resort: a single-line `eslint-disable-next-line -- <reason>` on the
+   exact offending line. Never a file-level or project-level disable.
 
 ## Quirks and gotchas
 

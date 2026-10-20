@@ -223,6 +223,32 @@ Graph image and the README cover from the logo SVGs and the export copy. Run it
 after changing either, and never edit the generated rasters by hand. See
 [`brand/README.md`](brand/README.md).
 
+### Adding a `@shadcn/lint` contract
+
+The root `eslint.config.mjs` defines `shadcnNoRestyleContracts`, a list of
+per-component exceptions to the `shadcn/no-restyle` rule on the site. Each entry
+pairs a component name `pattern` (regex) with an `allow` list of class
+categories or literal classes that component may add on top of its shadcn/ui
+defaults.
+
+To add a new contract:
+
+1. Add an entry to `shadcnNoRestyleContracts` in `eslint.config.mjs`:
+   ```js
+   {
+     pattern: '^ComponentName$',
+     allow: ['layout', 'text-sm'],
+   }
+   ```
+2. Document the entry in the TSDoc block above `shadcnNoRestyleContracts`,
+   explaining the real, bounded design decision it encodes. Never add a contract
+   just to silence the rule.
+3. Run `bun run lint` to confirm the rule now accepts the component's actual
+   usage and nothing broader.
+
+The ladder that leads here is in
+[`AGENTS.md`](../AGENTS.md#escalating-a-shadcnlint-finding).
+
 ## Git hooks
 
 Hooks live in `.husky/`:
