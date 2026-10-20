@@ -78,7 +78,7 @@ describe('emoji page island', () => {
     const html = renderPage(toned, []).toLowerCase()
 
     for (const color of ['#feba46', '#fac7b4', '#e3aa94', '#533938']) {
-      expect(html).toContain(`background-color:${color}`)
+      expect(html).toContain(`--tone-color:${color}`)
     }
   })
 
