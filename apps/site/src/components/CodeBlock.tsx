@@ -261,11 +261,12 @@ export default function CodeBlock({
       >
         {tabs.map((tab) => (
           <TabsContent key={tab.id} value={tab.id} keepMounted crossfade>
-            {/* eslint-disable jsx-a11y/no-noninteractive-tabindex, @eslint-react/dom-no-dangerously-set-innerhtml -- the scrollable code must be keyboard reachable and the markup is trusted build-time output */}
             <div
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the scrollable code must be keyboard reachable
               tabIndex={0}
               data-line-numbers={lineNumbers}
               className="afe-code overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
+              // eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml -- the markup is trusted build-time output
               dangerouslySetInnerHTML={{
                 __html: trustedCodeHtml(
                   tab.highlightLine
@@ -274,7 +275,6 @@ export default function CodeBlock({
                 ),
               }}
             />
-            {/* eslint-enable jsx-a11y/no-noninteractive-tabindex, @eslint-react/dom-no-dangerously-set-innerhtml -- end of the scrollable code */}
           </TabsContent>
         ))}
       </div>

@@ -204,20 +204,20 @@ export default defineConfig([
     files: ['apps/site/**/*.{ts,tsx,astro}'],
     rules: {
       'shadcn/no-restyle': [
-        'off',
+        'error',
         { allow: ['layout'], contracts: shadcnNoRestyleContracts },
       ],
       'shadcn/no-raw-colors': 'error',
-      'shadcn/no-arbitrary-values': 'off',
+      'shadcn/no-arbitrary-values': 'error',
       'shadcn/no-inline-styles': [
-        'off',
+        'error',
         { allow: shadcnAllowedInlineProperties },
       ],
       'shadcn/no-unknown-classes': [
         'error',
         { allow: shadcnAllowedUnknownClasses },
       ],
-      'shadcn/require-static-classes': 'off',
+      'shadcn/require-static-classes': 'error',
     },
   },
   {
