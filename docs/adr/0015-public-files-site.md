@@ -4,8 +4,10 @@
 
 Accepted
 
-Date: 2026-10-06 Revised: 2026-10-21, builder and slug registry paths moved to
-`apps/assets`; the cdn host is now the library default
+Date: 2026-10-06
+
+Revised: 2026-10-21, builder and slug registry paths moved to `apps/assets`; the
+cdn host is now the library default
 
 ## Context
 

@@ -4,8 +4,10 @@
 
 Accepted
 
-Date: 2026-10-05 Revised: 2026-10-21, cross-linked ADR 0011, which stays a
-separate record because the repo links to it
+Date: 2026-10-05
+
+Revised: 2026-10-21, cross-linked ADR 0011, which stays a separate record
+because the repo links to it
 
 ## Context
 

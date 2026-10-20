@@ -4,9 +4,10 @@
 
 Accepted
 
-Date: 2026-10-05 Revised: 2026-10-21, host is the cdn custom domain with
-`pages.dev` kept, generator lives in `apps/assets`, etag is in the sprite file
-name
+Date: 2026-10-05
+
+Revised: 2026-10-21, host is the cdn custom domain with `pages.dev` kept,
+generator lives in `apps/assets`, etag is in the sprite file name
 
 ## Context
 

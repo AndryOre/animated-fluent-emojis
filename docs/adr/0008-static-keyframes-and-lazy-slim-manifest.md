@@ -4,9 +4,10 @@
 
 Accepted
 
-Date: 2026-10-05 Revised: 2026-10-21, manifest served from `/v1/` and compacted,
-default asset site is the cdn host, reduced motion is resolved by the playback
-gate
+Date: 2026-10-05
+
+Revised: 2026-10-21, manifest served from `/v1/` and compacted, default asset
+site is the cdn host, reduced motion is resolved by the playback gate
 
 ## Context
 
