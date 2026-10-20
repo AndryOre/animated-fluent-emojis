@@ -61,14 +61,6 @@ interface HeaderMenusProps {
   locales: LocaleOption[]
 }
 
-/**
- * Classes shared by the compact nav menu and language menu items. The popups
- * portal to `<body>`, outside the header, so `no-underline` keeps Starlight's
- * link decoration off the items on every page.
- */
-export const compactItemClass =
-  'h-8 gap-2 rounded-md px-2 font-normal pointer-coarse:h-11 no-underline data-highlighted:bg-muted data-highlighted:text-foreground aria-[current=true]:bg-transparent'
-
 const THEME_ICONS = {
   system: MonitorIcon,
   light: SunIcon,
@@ -76,6 +68,15 @@ const THEME_ICONS = {
 } as const
 
 const THEME_ORDER: readonly Theme[] = ['system', 'light', 'dark']
+
+function IconLink(props: React.ComponentProps<'a'>) {
+  const { children, ...rest } = props
+  return (
+    <a className={buttonVariants({ variant: 'ghost', size: 'icon' })} {...rest}>
+      {children}
+    </a>
+  )
+}
 
 function GroupDivider() {
   return <span aria-hidden="true" className="h-4 w-px bg-border" />
@@ -184,7 +185,7 @@ export default function HeaderMenus(props: HeaderMenusProps) {
                 <DropdownMenuLinkItem
                   key={link.href}
                   href={link.href}
-                  className={compactItemClass}
+                  variant="compact"
                   {...(external ? externalLinkAttributes() : {})}
                 >
                   {link.label}
@@ -224,7 +225,7 @@ export default function HeaderMenus(props: HeaderMenusProps) {
                 aria-current={
                   option.code === currentLocale ? 'true' : undefined
                 }
-                className={compactItemClass}
+                variant="compact"
               >
                 <span className="flex-1 truncate">{option.name}</span>
                 <span className="text-xs text-muted-foreground uppercase">
@@ -248,12 +249,10 @@ export default function HeaderMenus(props: HeaderMenusProps) {
         <Tooltip>
           <TooltipTrigger
             render={
-              <a
+              <IconLink
                 href={repositoryHref}
                 aria-label={`${repositoryLabel} (${opensInNewTabLabel})`}
                 {...externalLinkAttributes()}
-                 
-                className={buttonVariants({ variant: 'ghost', size: 'icon' })}
               />
             }
           >

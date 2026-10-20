@@ -1,8 +1,8 @@
 import { mergeProps } from '@base-ui/react/merge-props'
+import { Separator as SeparatorPrimitive } from '@base-ui/react/separator'
 import { useRender } from '@base-ui/react/use-render'
 import { cva, type VariantProps } from 'class-variance-authority'
 
-import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utilities'
 
 const buttonGroupVariants = cva(
@@ -75,19 +75,19 @@ function ButtonGroupText(props: useRender.ComponentProps<'div'>) {
 
 /**
  * A divider between two controls of a {@link ButtonGroup}.
- * @param props - Props forwarded to the shared separator, which owns its
- * classes.
+ * @param props - Props forwarded to the Base UI separator, which this
+ * component styles itself.
  * @returns The separator element.
  */
 function ButtonGroupSeparator(
-  props: Omit<React.ComponentProps<typeof Separator>, 'className'>,
+  props: Omit<SeparatorPrimitive.Props, 'className'>,
 ) {
   const { orientation = 'vertical', ...rest } = props
   return (
-    <Separator
+    <SeparatorPrimitive
       data-slot="button-group-separator"
       orientation={orientation}
-      className="relative self-stretch bg-input data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto"
+      className="relative shrink-0 self-stretch bg-input data-horizontal:mx-px data-horizontal:h-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto data-vertical:w-px"
       {...rest}
     />
   )

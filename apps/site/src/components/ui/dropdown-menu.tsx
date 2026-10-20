@@ -13,33 +13,60 @@ function DropdownMenu(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root {...props} />
 }
 
+const splitTriggerStyles =
+  'inline-flex size-8 shrink-0 cursor-pointer items-center justify-center border border-border bg-card text-card-foreground transition-color-bg-border-shadow-scale duration-(--duration-press) ease-(--ease-out-strong) outline-none select-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-97'
+
+type DropdownMenuTriggerProps = MenuPrimitive.Trigger.Props & {
+  variant?: 'default' | 'split'
+}
+
 /**
- * The element that opens the menu. It renders a native button; style it with
- * `buttonVariants`.
- * @param props - Base UI menu trigger props.
+ * The element that opens the menu. It renders a native button; the default
+ * variant is unstyled so `render` can supply a `Button`, and `split` is the
+ * chevron half of a split button inside a `ButtonGroup`, keeping the press
+ * scale and the colour and shadow transition of an outline `Button`.
+ * @param props - Base UI menu trigger props plus a `variant`.
  * @returns The trigger button.
  */
-function DropdownMenuTrigger(props: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+function DropdownMenuTrigger(props: DropdownMenuTriggerProps) {
+  const { variant = 'default', className, ...rest } = props
+  return (
+    <MenuPrimitive.Trigger
+      data-slot="dropdown-menu-trigger"
+      className={cn(variant === 'split' && splitTriggerStyles, className)}
+      {...rest}
+    />
+  )
 }
 
 type DropdownMenuContentProps = MenuPrimitive.Popup.Props &
   Pick<
     MenuPrimitive.Positioner.Props,
     'align' | 'sideOffset' | 'collisionPadding'
-  > & { variant?: 'default' | 'nova' }
+  > & { variant?: 'default' | 'nova' | 'split' }
 
 const defaultContentStyles =
   'rounded-brand border border-border bg-card p-2 shadow-lg'
 
-const novaContentStyles =
-  'min-w-40 rounded-lg bg-popover p-1 ring-1 ring-foreground/10 scrollbar-subtle scrollbar-thin origin-(--transform-origin) transition-opacity-scale duration-150 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:duration-100 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0'
+const novaContentBase =
+  'bg-popover p-1 ring-1 ring-foreground/10 scrollbar-subtle scrollbar-thin origin-(--transform-origin) transition-opacity-scale duration-150 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:duration-100 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0'
+
+const novaContentStyles = `min-w-40 rounded-lg ${novaContentBase}`
+
+const splitContentStyles = `min-w-42 rounded-10 ${novaContentBase}`
+
+const contentStyles = {
+  default: defaultContentStyles,
+  nova: novaContentStyles,
+  split: splitContentStyles,
+}
 
 /**
  * The menu surface, rendered in a portal and positioned against the trigger.
  * Styled with the brand card surface, border and radius.
  * @param props - Popup props plus the positioner `align`, `sideOffset` and
- * `collisionPadding`, and a `variant` (`nova` is the compact menu anatomy).
+ * `collisionPadding`, and a `variant` (`nova` is the compact menu anatomy, `split` the same with the
+ * wider, tighter-cornered panel under a split button).
  * @returns The portaled, positioned popup.
  */
 function DropdownMenuContent(props: DropdownMenuContentProps) {
@@ -63,7 +90,7 @@ function DropdownMenuContent(props: DropdownMenuContentProps) {
           data-slot="dropdown-menu-content"
           className={cn(
             'max-h-(--available-height) origin-(--transform-origin) overflow-y-auto text-card-foreground outline-none',
-            variant === 'nova' ? novaContentStyles : defaultContentStyles,
+            contentStyles[variant],
             className,
           )}
           {...rest}
@@ -76,18 +103,29 @@ function DropdownMenuContent(props: DropdownMenuContentProps) {
 const itemStyles =
   'flex h-10 w-full cursor-pointer items-center rounded-full px-3 text-sm font-medium text-foreground outline-none select-none data-highlighted:bg-accent data-highlighted:text-primary-text aria-[current=true]:bg-accent'
 
+export const compactLinkItemStyles =
+  'flex h-8 w-full pointer-coarse:h-11 cursor-pointer items-center gap-2 rounded-md px-2 text-sm font-normal text-foreground no-underline outline-none select-none data-highlighted:bg-muted data-highlighted:text-foreground aria-[current=true]:bg-transparent'
+
 /**
  * A menu item that is a real link (`<a href>`), so it keeps working as
- * navigation and closes the menu when chosen.
- * @param props - Base UI link item props, including `href`.
+ * navigation and closes the menu when chosen. The `compact` variant is the
+ * header menus' item; it never underlines because the popups portal to
+ * `<body>`, outside the header, where Starlight's link decoration would
+ * otherwise apply.
+ * @param props - Base UI link item props, including `href`, plus a `variant`.
  * @returns The styled anchor.
  */
-function DropdownMenuLinkItem(props: MenuPrimitive.LinkItem.Props) {
-  const { className, ...rest } = props
+function DropdownMenuLinkItem(
+  props: MenuPrimitive.LinkItem.Props & { variant?: 'default' | 'compact' },
+) {
+  const { variant = 'default', className, ...rest } = props
   return (
     <MenuPrimitive.LinkItem
       data-slot="dropdown-menu-link-item"
-      className={cn(itemStyles, className)}
+      className={cn(
+        variant === 'compact' ? compactLinkItemStyles : itemStyles,
+        className,
+      )}
       {...rest}
     />
   )
