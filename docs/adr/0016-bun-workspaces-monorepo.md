@@ -6,13 +6,16 @@ Accepted
 
 Date: 2026-10-06
 
+Revised: 2026-10-21, the workspace table lists `apps/site` and the site coverage
+threshold; the landing site is no longer a future workspace.
+
 ## Context
 
 The repo was one package. Configs, scripts and CI were hardcoded to root paths,
 and a single `devDependencies` list served the library, the asset pipeline and
 the brand tools. The pipeline imported the library's types by relative path. A
-landing and docs site is coming next ([ADR 0015](0015-public-files-site.md)
-reserves the domain) and would have been a third consumer of the same root.
+landing and docs site ([ADR 0015](0015-public-files-site.md) reserves the
+domain) would have been a third consumer of the same root.
 
 ## Decision
 
@@ -23,6 +26,7 @@ shared across workspaces. The root keeps tooling only.
 | --------------------------------- | ------------------------------------------------------------------------------------------- |
 | `packages/animated-fluent-emojis` | The one published package: same name, exports, peers and version as before                  |
 | `apps/assets`                     | Private asset pipeline; depends on `animated-fluent-emojis: workspace:*` as a devDependency |
+| `apps/site`                       | Private static website (Astro, Starlight, Tailwind)                                         |
 
 The `workspace:*` edge exists so Turborepo hashes it: a library change
 invalidates the pipeline. The pipeline imports the library's manifest types only
@@ -71,12 +75,11 @@ contents.
 - `bun run --cwd` changes the working directory, so any path passed through must
   be absolute (the sync-assets lists job).
 - Root coverage thresholds are 94/95/87/94 (lines/functions/branches/statements)
-  because the root report no longer includes the pipeline. The library and
-  `apps/assets` keep 95/95/90/95.
+  because the root report no longer includes the pipeline. The library,
+  `apps/assets` and `apps/site` keep 95/95/90/95.
 - The coverage manifest is `scripts/coverage-manifest.test.ts`, with one
   exemption list keyed by repo-relative paths.
 - Agent instructions split into a tooling-only root `AGENTS.md` and one per
   workspace.
-- The landing site will be a third workspace later.
 - The browser conformance test "shows a sized, hidden placeholder, then the
   ready image" can flake under heavy host load.

@@ -6,6 +6,8 @@ Accepted
 
 Date: 2026-10-06
 
+Revised: 2026-10-21, added the `/lookup` subpath export to the table.
+
 ## Context
 
 The library only works in React, yet nothing underneath needs it: the manifest
@@ -26,6 +28,7 @@ behind its own subpath.
 | `.`        | Framework-free: `configureEmojis`, `preloadEmojis`, `createEmoji` |
 | `/react`   | React component and hooks                                         |
 | `/element` | `<fluent-emoji>` Web Component                                    |
+| `/lookup`  | Framework-free text lookup: find and search emojis by text        |
 | `/vue`     | Native Vue adapter                                                |
 | `/svelte`  | Native Svelte adapter                                             |
 | `/astro`   | Native Astro adapter                                              |
