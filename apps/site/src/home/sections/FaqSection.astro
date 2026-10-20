@@ -42,8 +42,8 @@ const faq = [
       {faq.map((entry) => (
         <span
           data-faq-mascot={entry.id}
-          class="absolute -right-9 -bottom-11 block -rotate-8"
-          style={`width: ${MASCOT_SIZE}px; height: ${MASCOT_SIZE}px`}
+          class="absolute -right-9 -bottom-11 block size-(--mascot-size) -rotate-8"
+          style={{ '--mascot-size': `${MASCOT_SIZE}px` }}
         >
           <Emoji id={entry.emojiId} size={MASCOT_SIZE} alt="" />
         </span>

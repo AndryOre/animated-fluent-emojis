@@ -107,7 +107,7 @@ const primaryButton = buttonVariants({
           {decorations.map((decoration) => (
             <span
               class={`emoji-float pointer-events-auto absolute ${decoration.size} ${decoration.tilt} ${decoration.placement}`}
-              style={`--float-delay: ${decoration.delay}`}
+              style={{ '--float-delay': decoration.delay }}
             >
               <Emoji
                 id={decoration.id}

@@ -68,7 +68,7 @@ const secondaryButton = buttonVariants({
       {decorations.map((decoration) => (
         <span
           class={`emoji-float absolute hidden split:block ${decoration.size} ${decoration.placement} ${decoration.tilt}`}
-          style={`--float-delay: ${decoration.delay}`}
+          style={{ '--float-delay': decoration.delay }}
         >
           <Emoji id={decoration.id} size="100%" alt="" />
         </span>
