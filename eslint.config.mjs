@@ -35,10 +35,32 @@ const eslintCommentsRules = {
 }
 
 /**
- * Per-component exceptions to `shadcn/no-restyle` on the site. Empty until a
- * component needs a real, bounded exception; each entry must say why.
+ * Per-component exceptions to `shadcn/no-restyle` on the site; each entry must
+ * say why.
+ *
+ * - `TooltipTrigger`: the gallery tile renders its `<button>` through
+ *   `TooltipTrigger`'s `render` prop, so the rule attributes the tile's own
+ *   chrome (radius, border, padding, hover and pressed states) to the tooltip.
+ *   The classes are the tile's, not a restyle of the tooltip.
  */
-const shadcnNoRestyleContracts = []
+const shadcnNoRestyleContracts = [
+  {
+    pattern: '^TooltipTrigger$',
+    allow: [
+      'layout',
+      'rounded-10',
+      'border',
+      'border-transparent',
+      'p-1',
+      'transition-bg-transform',
+      'duration-100',
+      'ease-(--ease-out-strong)',
+      'hover:bg-muted',
+      'active:bg-muted',
+      'aria-pressed:border-primary',
+    ],
+  },
+]
 
 /**
  * CSS properties `shadcn/no-inline-styles` lets stay inline on the site: only
