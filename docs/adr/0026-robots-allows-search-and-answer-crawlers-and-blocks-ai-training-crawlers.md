@@ -6,11 +6,14 @@ Accepted
 
 Date: 2026-10-19
 
+Revised: 2026-10-21, linked the mention of ADR 0023.
+
 ## Context
 
 `robots.txt` allowed every agent. The site wants to be found and cited by search
 engines and AI assistants, but has no reason to feed model training. Snug
-publishes the same split, and ADR 0023 makes Snug's practices the default.
+publishes the same split, and [ADR 0023](0023-practices-parity-with-snug.md)
+makes Snug's practices the default.
 
 ## Decision
 
