@@ -131,7 +131,7 @@ const adapterCells = [
     {steps.map((step) => (
       <li
         class="scroll-reveal min-w-0"
-        style={`--step-index: ${step.number - 1}`}
+        style={{ '--step-index': step.number - 1 }}
       >
         <div class="install-step flex h-full min-w-0 flex-col gap-3 rounded-2xl border border-border bg-card p-5">
           <span
@@ -160,20 +160,23 @@ const adapterCells = [
       data-shortcode-panel
       class="scroll-reveal flex flex-col gap-3 rounded-2xl border border-border bg-card p-5"
     >
-      <p class="m-0 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+      <p class="m-0 font-mono text-micro tracking-widest text-muted-foreground uppercase">
         {install.steps.shortcodes.title}
       </p>
       <div
         data-shortcode-demo
         aria-hidden="true"
-        class="sc-demo grid min-h-12 grid-cols-[minmax(0,1fr)] items-center overflow-hidden rounded-xl border border-border bg-background/60 px-4 py-2"
+        class="sc-demo grid min-h-12 grid-cols-1 items-center overflow-hidden rounded-xl border border-border bg-background/60 px-4 py-2"
       >
         {SHORTCODE_DEMO.map((shortcode, position) => (
           <span
             class="sc-item flex items-center gap-2 sm:gap-3"
-            style={`--chars: ${shortcode.code.length + 2}; --delay: ${position * 4}s`}
+            style={{
+              '--chars': shortcode.code.length + 2,
+              '--delay': `${position * 4}s`,
+            }}
           >
-            <code class="sc-text block overflow-hidden font-mono text-[13px] font-semibold whitespace-nowrap sm:text-base">
+            <code class="sc-text block overflow-hidden font-mono text-meta font-semibold whitespace-nowrap sm:text-base">
               :{shortcode.code}:
             </code>
             <span class="sc-emoji">
@@ -191,7 +194,7 @@ const adapterCells = [
       data-install-architecture
       class="scroll-reveal m-0 flex flex-col gap-3 rounded-2xl border border-border bg-card p-5"
     >
-      <figcaption class="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+      <figcaption class="font-mono text-micro tracking-widest text-muted-foreground uppercase">
         {install.architecture.title}
       </figcaption>
       <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
@@ -199,7 +202,7 @@ const adapterCells = [
           <li
             class={`flex min-w-0 flex-col gap-0.5 rounded-xl border bg-background/60 p-3 text-sm ${position === 0 ? 'border-primary' : 'border-border'}`}
           >
-            <span class="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+            <span class="font-mono text-micro tracking-widest text-muted-foreground uppercase">
               {cell.label}
             </span>
             <span class="font-extrabold">{cell.title}</span>

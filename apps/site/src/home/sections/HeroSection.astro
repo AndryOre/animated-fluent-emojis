@@ -25,41 +25,41 @@ const index = await loadPublicIndex()
 const decorations = [
   {
     id: '1f44b_wavinghand',
-    placement: 'top-[92px] left-[-34px]',
-    size: 'size-[170px]',
+    placement: 'top-23 -left-8.5',
+    size: 'size-42.5',
     tilt: '-rotate-12',
     delay: '0s',
     playOnHover: true,
   },
   {
     id: 'launch',
-    placement: 'top-[34px] left-[17%]',
-    size: 'size-[92px]',
+    placement: 'top-8.5 left-pct-17',
+    size: 'size-23',
     tilt: 'rotate-6',
     delay: '1s',
     playOnHover: false,
   },
   {
     id: 'stareyes',
-    placement: 'top-[14px] left-[44%]',
-    size: 'size-[132px]',
+    placement: 'top-3.5 left-pct-44',
+    size: 'size-33',
     tilt: 'rotate-0',
     delay: '0.4s',
     playOnHover: false,
   },
   {
     id: '1f389_partypopper',
-    placement: 'top-[38px] right-[17%]',
-    size: 'size-[96px]',
+    placement: 'top-9.5 right-pct-17',
+    size: 'size-24',
     tilt: '-rotate-6',
     delay: '1.6s',
     playOnHover: false,
   },
   {
     id: 'fire',
-    placement: 'top-[110px] right-[-36px]',
-    size: 'size-[170px]',
-    tilt: 'rotate-[10deg]',
+    placement: 'top-27.5 -right-9',
+    size: 'size-42.5',
+    tilt: 'rotate-10',
     delay: '0.8s',
     playOnHover: false,
   },
@@ -89,12 +89,9 @@ const primaryButton = buttonVariants({
 
 <section class="dock-hero relative pt-3">
   <div class={wrap}>
-    <div class="relative isolate flex flex-col items-center overflow-hidden min-[860px]:justify-end rounded-[28px] border border-border bg-card px-4 pt-12 pb-12 text-center min-[860px]:min-h-[560px] min-[860px]:pt-[170px] [background-image:radial-gradient(120%_90%_at_50%_0%,color-mix(in_oklab,var(--primary)_18%,transparent),transparent_70%)]">
-      <div class="hero-demo-enter pointer-events-none mb-6 min-[860px]:absolute min-[860px]:inset-0 min-[860px]:mb-0">
-        <div
-          data-hero-emojis
-          class="flex justify-center gap-6 min-[860px]:hidden"
-        >
+    <div class="relative isolate flex flex-col items-center overflow-hidden split:justify-end rounded-28 border border-border bg-card px-4 pt-12 pb-12 text-center split:min-h-140 split:pt-42.5 bg-glow-hero">
+      <div class="hero-demo-enter pointer-events-none mb-6 split:absolute split:inset-0 split:mb-0">
+        <div data-hero-emojis class="flex justify-center gap-6 split:hidden">
           {mobileDecorations.map((decoration) => (
             <span class={`pointer-events-auto block ${decoration.tilt}`}>
               <Emoji
@@ -106,11 +103,11 @@ const primaryButton = buttonVariants({
             </span>
           ))}
         </div>
-        <div data-hero-emojis class="absolute inset-0 hidden min-[860px]:block">
+        <div data-hero-emojis class="absolute inset-0 hidden split:block">
           {decorations.map((decoration) => (
             <span
               class={`emoji-float pointer-events-auto absolute ${decoration.size} ${decoration.tilt} ${decoration.placement}`}
-              style={`--float-delay: ${decoration.delay}`}
+              style={{ '--float-delay': decoration.delay }}
             >
               <Emoji
                 id={decoration.id}
@@ -124,12 +121,12 @@ const primaryButton = buttonVariants({
       </div>
       <div class="relative flex min-w-0 max-w-3xl flex-col items-center gap-5">
         <p
-          class="hero-enter inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase"
+          class="hero-enter inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 font-mono text-xs tracking-label text-muted-foreground uppercase"
           style="--enter-index: 0"
         >
           {home.hero.badge}
         </p>
-        <h1 class="text-[clamp(38px,7.4vw,84px)] leading-[0.98] font-extrabold tracking-[-0.04em] text-balance">
+        <h1 class="text-fluid-hero leading-display font-extrabold tracking-display text-balance">
           {home.hero.titleLead}{' '}
           <span class="block text-primary">{home.hero.titleAccent}</span>
         </h1>
@@ -175,7 +172,7 @@ const primaryButton = buttonVariants({
                 data-ready-chip={chip.id}
               >
                 {chip.label}
-                <i class="font-mono text-[10px] tracking-[0.08em] text-[color-mix(in_oklab,var(--color-primary)_55%,var(--color-foreground))] uppercase not-italic dark:text-primary">
+                <i class="font-mono text-micro tracking-label text-primary-emphasis uppercase not-italic dark:text-primary">
                   {home.hero.ready.status}
                 </i>
               </li>
