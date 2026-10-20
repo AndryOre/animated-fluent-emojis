@@ -46,7 +46,7 @@ const wakeDelay = (position: number) => {
 }
 
 const cardClass =
-  'scroll-reveal spotlight flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 transition-colors duration-250 ease-(--ease-out-strong) [@media(hover:hover)_and_(pointer:fine)]:hover:border-[color-mix(in_oklab,var(--primary)_45%,var(--border))]'
+  'scroll-reveal spotlight flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 transition-colors duration-250 ease-(--ease-out-strong) hover-fine:hover:border-primary-edge'
 const stageClass =
   'bento-stage relative flex items-center justify-center overflow-hidden rounded-xl border border-border bg-background/60'
 const cursorMarkup =
@@ -62,7 +62,7 @@ const cursorMarkup =
   </div>
   <ul
     data-pillar-spotlight
-    class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 min-[860px]:grid-cols-[1.6fr_1fr]"
+    class="pillar-stagger grid list-none grid-cols-1 gap-3 p-0 split:grid-cols-pillars"
   >
     <li class={`${cardClass} min-[860px]:row-span-2`}>
       <div class="flex flex-col gap-1">
@@ -76,10 +76,10 @@ const cursorMarkup =
         style="--stage-base: 168"
         aria-hidden="true"
       >
-        <div class="relative grid h-[248px] w-[506px] grid-cols-6 gap-2.5 max-[859px]:[zoom:0.55]">
+        <div class="relative grid h-62 w-126.5 grid-cols-6 gap-2.5 max-narrow:zoom-55">
           {wall.map((id, position) => (
             <span
-              class="bento-cell relative block size-[76px] rounded-[18px] border border-border bg-card"
+              class="bento-cell relative block size-19 rounded-18 border border-border bg-card"
               data-wake={wakeDelay(position) ? '' : undefined}
               style={
                 wakeDelay(position)
@@ -90,7 +90,7 @@ const cursorMarkup =
               <span
                 class={`absolute inset-0 grid place-items-center ${position === wallPlayingFirst ? 'fake-cursor-target' : ''}`}
               >
-                <span class="relative block size-[62px]">
+                <span class="relative block size-15.5">
                   <Emoji id={id} size={62} autoPlay={false} alt="" />
                   {position === wallPlayingFirst && (
                     <Emoji
@@ -175,10 +175,10 @@ const cursorMarkup =
               class="bento-motion-on absolute inset-0"
             />
           </span>
-          <span class="relative block h-[26px] w-11 shrink-0">
+          <span class="relative block h-6.5 w-11 shrink-0">
             <span class="bento-switch fake-cursor-target absolute inset-0 block rounded-full border border-border bg-muted">
               <span class="bento-switch-track absolute inset-0 block rounded-full bg-primary"></span>
-              <span class="bento-switch-thumb absolute top-[3px] left-[3px] block size-5 rounded-full bg-background shadow-sm"></span>
+              <span class="bento-switch-thumb absolute top-0.75 left-0.75 block size-5 rounded-full bg-background shadow-sm"></span>
             </span>
             <span
               class={cursorMarkup}
@@ -216,7 +216,7 @@ const cursorMarkup =
         </p>
       </div>
       <div
-        class={`${stageClass} grid grid-cols-[1fr_auto_1fr] gap-2 px-3`}
+        class={`${stageClass} grid grid-cols-balanced gap-2 px-3`}
         style="--stage-base: 168"
       >
         <span class="flex flex-col items-center gap-1 rounded-xl border border-border bg-card px-3 py-4 text-center">
@@ -247,7 +247,7 @@ const cursorMarkup =
           </span>
         </span>
         <span
-          class="pointer-events-none absolute right-[-8px] bottom-[-30px] block size-[86px]"
+          class="pointer-events-none absolute -right-2 -bottom-7.5 block size-21.5"
           aria-hidden="true"
         >
           <Emoji id="handshake" size={86} alt="" />
