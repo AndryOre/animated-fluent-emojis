@@ -3,17 +3,26 @@ import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { cn } from '@/lib/utilities'
 
 /**
+ * The look of an accordion: the compact `default`, or `faq`, which ruled
+ * rows with larger bold questions and muted answers.
+ */
+type AccordionVariant = 'default' | 'faq'
+
+/**
  * The shadcn accordion root on Base UI. Pass `multiple` to let several items
  * stay open and `hiddenUntilFound` to keep closed answers findable.
- * @param props - Base UI accordion props.
+ * @param props - Base UI accordion props and the optional `variant`.
  * @returns The accordion root element.
  */
-function Accordion(props: AccordionPrimitive.Root.Props) {
-  const { className, ...rest } = props
+function Accordion(
+  props: AccordionPrimitive.Root.Props & { variant?: AccordionVariant },
+) {
+  const { className, variant = 'default', ...rest } = props
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
-      className={cn('flex w-full flex-col', className)}
+      data-variant={variant}
+      className={cn('group/accordion flex w-full flex-col', className)}
       {...rest}
     />
   )
@@ -25,7 +34,17 @@ function Accordion(props: AccordionPrimitive.Root.Props) {
  * @returns The accordion item element.
  */
 function AccordionItem(props: AccordionPrimitive.Item.Props) {
-  return <AccordionPrimitive.Item data-slot="accordion-item" {...props} />
+  const { className, ...rest } = props
+  return (
+    <AccordionPrimitive.Item
+      data-slot="accordion-item"
+      className={cn(
+        'group-data-[variant=faq]/accordion:border-b group-data-[variant=faq]/accordion:border-border group-data-[variant=faq]/accordion:first:border-t',
+        className,
+      )}
+      {...rest}
+    />
+  )
 }
 
 /**
@@ -42,6 +61,7 @@ function AccordionTrigger(props: AccordionPrimitive.Trigger.Props) {
         data-slot="accordion-trigger"
         className={cn(
           'group/accordion-trigger flex flex-1 cursor-pointer items-start justify-between gap-3 rounded-lg py-2.5 text-left text-sm font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+          'group-data-[variant=faq]/accordion:py-4 group-data-[variant=faq]/accordion:text-base group-data-[variant=faq]/accordion:font-bold',
           className,
         )}
         {...rest}
@@ -81,7 +101,7 @@ function AccordionContent(props: AccordionPrimitive.Panel.Props) {
     >
       <div
         className={cn(
-          'pt-0 pb-2.5 opacity-100 transition-opacity duration-200 ease-(--ease-out-strong) group-data-ending-style/accordion-panel:opacity-0 group-data-starting-style/accordion-panel:opacity-0 motion-reduce:duration-150',
+          'pt-0 pb-2.5 opacity-100 transition-opacity duration-200 ease-(--ease-out-strong) group-data-ending-style/accordion-panel:opacity-0 group-data-starting-style/accordion-panel:opacity-0 group-data-[variant=faq]/accordion:text-base group-data-[variant=faq]/accordion:text-muted-foreground motion-reduce:duration-150',
           className,
         )}
       >

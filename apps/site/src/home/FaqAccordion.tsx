@@ -32,17 +32,13 @@ export default function FaqAccordion({ items }: { items: FaqEntry[] }) {
   return (
     <Accordion
       hiddenUntilFound
+      variant="faq"
       defaultValue={items.slice(0, 1).map((item) => item.id)}
       className="max-w-3xl"
     >
       {items.map((item) => (
-        <AccordionItem
-          key={item.id}
-          value={item.id}
-          data-faq={item.id}
-          className="border-b border-border first:border-t"
-        >
-          <AccordionTrigger className="items-center py-4 text-base font-bold">
+        <AccordionItem key={item.id} value={item.id} data-faq={item.id}>
+          <AccordionTrigger className="items-center">
             <span
               data-faq-emoji
               aria-hidden="true"
@@ -57,7 +53,7 @@ export default function FaqAccordion({ items }: { items: FaqEntry[] }) {
             </span>
             <span className="min-w-0 flex-1">{item.question}</span>
           </AccordionTrigger>
-          <AccordionContent className="text-base text-muted-foreground">
+          <AccordionContent>
             <p className="pl-10">{item.answer}</p>
           </AccordionContent>
         </AccordionItem>

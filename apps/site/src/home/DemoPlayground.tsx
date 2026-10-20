@@ -120,7 +120,7 @@ function Segmented<Value extends string | number>({
               value={String(option.value)}
               disabled={disabled}
               aria-label={option.name}
-              className="flex-1 text-xs"
+              className="flex-1"
             >
               {option.leading === undefined ? (
                 <OptionText option={option} />

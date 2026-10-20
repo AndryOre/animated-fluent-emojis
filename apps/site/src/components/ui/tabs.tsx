@@ -14,6 +14,8 @@ type TabsVariant = 'default' | 'line' | CanvasTabsVariant
 
 interface TabsStyleProps {
   variant?: TabsVariant
+  /** Wraps the set in a bordered card frame; the `cmd` variant rounds it wider. */
+  framed?: boolean
 }
 
 /**
@@ -23,12 +25,17 @@ interface TabsStyleProps {
  * @returns The tabs root element.
  */
 function Tabs(props: TabsPrimitive.Root.Props & TabsStyleProps) {
-  const { className, variant = 'default', ...rest } = props
+  const { className, variant = 'default', framed = false, ...rest } = props
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
       data-variant={variant}
-      className={cn('group/tabs flex flex-col', className)}
+      className={cn(
+        'group/tabs flex flex-col',
+        framed &&
+          'overflow-hidden rounded-xl border border-border bg-card data-[variant=cmd]:rounded-14',
+        className,
+      )}
       {...rest}
     />
   )
@@ -39,11 +46,26 @@ function Tabs(props: TabsPrimitive.Root.Props & TabsStyleProps) {
  * it overflows. With `pill` it also renders the sliding `tab-pill` indicator
  * behind the selected tab: Base UI measures the active tab into
  * `--active-tab-*` and the utility moves `transform` and `width` with them.
- * @param props - Base UI tabs list props and the optional `pill` flag.
+ * `fade` pads the end and fades it out so clipped tabs trail off, and
+ * `dense` tightens the `dock` padding to a hairline.
+ * @param props - Base UI tabs list props and the optional `pill`, `fade` and `dense` flags.
  * @returns The tab list element.
  */
-function TabsList(props: TabsPrimitive.List.Props & { pill?: boolean }) {
-  const { className, pill = false, children, ...rest } = props
+function TabsList(
+  props: TabsPrimitive.List.Props & {
+    pill?: boolean
+    fade?: boolean
+    dense?: boolean
+  },
+) {
+  const {
+    className,
+    pill = false,
+    fade = false,
+    dense = false,
+    children,
+    ...rest
+  } = props
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
@@ -53,6 +75,8 @@ function TabsList(props: TabsPrimitive.List.Props & { pill?: boolean }) {
         'group-data-[variant=dock]/tabs:w-fit group-data-[variant=dock]/tabs:gap-0.5 group-data-[variant=dock]/tabs:overflow-x-clip group-data-[variant=dock]/tabs:overflow-y-visible group-data-[variant=dock]/tabs:rounded-10 group-data-[variant=dock]/tabs:border group-data-[variant=dock]/tabs:border-border group-data-[variant=dock]/tabs:bg-muted group-data-[variant=dock]/tabs:p-0.75',
         'group-data-[variant=segmented]/tabs:w-fit group-data-[variant=segmented]/tabs:max-w-full group-data-[variant=segmented]/tabs:gap-0.5 group-data-[variant=segmented]/tabs:rounded-xl group-data-[variant=segmented]/tabs:border group-data-[variant=segmented]/tabs:border-border group-data-[variant=segmented]/tabs:bg-muted group-data-[variant=segmented]/tabs:p-0.75',
         pill && 'tab-pill-list',
+        fade && 'mask-fade-end pr-5',
+        dense && 'group-data-[variant=dock]/tabs:p-px',
         className,
       )}
       {...rest}
@@ -94,17 +118,23 @@ function TabsTrigger(props: TabsPrimitive.Tab.Props) {
 }
 
 /**
- * The `role="tabpanel"` content of one tab.
- * @param props - Base UI tab panel props, including the panel `value`.
+ * The `role="tabpanel"` content of one tab. With `crossfade` the panels of a
+ * set stack in one grid cell and the hidden ones fade and drop 4px out while
+ * the selected one fades in.
+ * @param props - Base UI tab panel props, including the panel `value`, and the optional `crossfade` flag.
  * @returns The tab panel element.
  */
-function TabsContent(props: TabsPrimitive.Panel.Props) {
-  const { className, ...rest } = props
+function TabsContent(
+  props: TabsPrimitive.Panel.Props & { crossfade?: boolean },
+) {
+  const { className, crossfade = false, ...rest } = props
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
       className={cn(
         'outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+        crossfade &&
+          'col-start-1 row-start-1 min-w-0 motion-safe:transition-opacity-translate-visibility motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1',
         className,
       )}
       {...rest}

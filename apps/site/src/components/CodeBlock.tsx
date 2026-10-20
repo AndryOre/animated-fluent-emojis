@@ -55,9 +55,6 @@ export interface CodeBlockProps {
   variant?: CanvasTabsVariant
 }
 
-const PANEL_CLASS =
-  'col-start-1 row-start-1 min-w-0 motion-safe:transition-opacity-translate-visibility motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1'
-
 const CODE_LINE_HEIGHT_REM = 1.5
 const CODE_PADDING_LINES = 1
 const SCROLLBAR_ALLOWANCE_REM = 0.5
@@ -184,7 +181,7 @@ export default function CodeBlock({
         variant="cmd"
         value={active}
         onValueChange={handleValueChange}
-        className="overflow-hidden rounded-14 border border-border bg-card"
+        framed
       >
         <div ref={tabsRef}>
           <TabsList
@@ -206,12 +203,7 @@ export default function CodeBlock({
         >
           <div className="grid min-w-0 flex-1">
             {tabs.map((tab) => (
-              <TabsContent
-                key={tab.id}
-                value={tab.id}
-                keepMounted
-                className={PANEL_CLASS}
-              >
+              <TabsContent key={tab.id} value={tab.id} keepMounted crossfade>
                 <code className="block scrollbar-none overflow-x-auto font-mono text-meta whitespace-pre text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
                   {tab.code}
                 </code>
@@ -232,7 +224,7 @@ export default function CodeBlock({
       variant={variant ?? (pill ? 'default' : 'line')}
       value={active}
       onValueChange={handleValueChange}
-      className="overflow-hidden rounded-xl border border-border bg-card"
+      framed
     >
       <div
         className={cn(
@@ -247,7 +239,8 @@ export default function CodeBlock({
               pill={pill}
               activateOnFocus
               aria-label={labels.tabsLabel}
-              className="min-w-0 scrollbar-none gap-1 mask-fade-end pr-5 [&::-webkit-scrollbar]:hidden"
+              fade
+              className="min-w-0 scrollbar-none [&::-webkit-scrollbar]:hidden"
             >
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.id} value={tab.id}>
@@ -267,12 +260,7 @@ export default function CodeBlock({
         }
       >
         {tabs.map((tab) => (
-          <TabsContent
-            key={tab.id}
-            value={tab.id}
-            keepMounted
-            className={PANEL_CLASS}
-          >
+          <TabsContent key={tab.id} value={tab.id} keepMounted crossfade>
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex, @eslint-react/dom-no-dangerously-set-innerhtml -- the scrollable code must be keyboard reachable and the markup is trusted build-time output */}
             <div
               tabIndex={0}

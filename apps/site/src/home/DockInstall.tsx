@@ -66,7 +66,8 @@ export default function DockInstall({
           pill
           activateOnFocus
           aria-label={labels.tabsLabel}
-          className="min-w-0 scrollbar-none group-data-[variant=dock]/tabs:p-px [&::-webkit-scrollbar]:hidden"
+          dense
+          className="min-w-0 scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {PACKAGE_MANAGERS.map((id) => (
             <TabsTrigger
@@ -88,7 +89,8 @@ export default function DockInstall({
       <Button
         variant="ghost"
         size="icon-sm"
-        className="size-11 shrink-0 touch-manipulation rounded-full select-none"
+        shape="pill"
+        className="size-11 shrink-0 touch-manipulation select-none"
         aria-label={copied ? labels.copied : labels.copy}
         onClick={() =>
           void copyWithFeedback(installCommand(manager), setCopied)
