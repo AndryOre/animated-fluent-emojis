@@ -33,7 +33,7 @@ const defaultContentStyles =
   'rounded-brand border border-border bg-card p-2 shadow-lg'
 
 const novaContentStyles =
-  'min-w-40 rounded-lg bg-popover p-1 ring-1 ring-foreground/10 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin] origin-(--transform-origin) transition-[opacity,scale] duration-150 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:duration-100 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0'
+  'min-w-40 rounded-lg bg-popover p-1 ring-1 ring-foreground/10 scrollbar-subtle scrollbar-thin origin-(--transform-origin) transition-opacity-scale duration-150 ease-(--ease-out-strong) data-ending-style:scale-95 data-ending-style:duration-100 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0'
 
 /**
  * The menu surface, rendered in a portal and positioned against the trigger.

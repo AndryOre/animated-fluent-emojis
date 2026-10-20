@@ -110,14 +110,14 @@ export function CopySnippetButton(props: CopySnippetButtonProps) {
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={strings.snippetMenuLabel}
-          className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center border border-border bg-card text-card-foreground transition-[color,background-color,border-color,box-shadow,scale] duration-(--duration-press) ease-(--ease-out-strong) outline-none select-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97]"
+          className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center border border-border bg-card text-card-foreground transition-color-bg-border-shadow-scale duration-(--duration-press) ease-(--ease-out-strong) outline-none select-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-97"
         >
           <ChevronDownIcon className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           variant="nova"
           align="end"
-          className="min-w-[168px] rounded-[10px]"
+          className="min-w-42 rounded-10"
         >
           {SNIPPET_ADAPTERS.map((item) => (
             <DropdownMenuItem
