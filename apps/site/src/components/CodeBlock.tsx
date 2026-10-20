@@ -1,5 +1,11 @@
 import { CheckIcon, CopyIcon } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -255,8 +261,10 @@ export default function CodeBlock({
       </div>
       <div
         ref={bodyRef}
-        className="grid"
-        style={{ minHeight: bodyMinHeight(tabs) }}
+        className="grid min-h-(--code-body-min-height)"
+        style={
+          { '--code-body-min-height': bodyMinHeight(tabs) } as CSSProperties
+        }
       >
         {tabs.map((tab) => (
           <TabsContent
