@@ -181,7 +181,7 @@ export function EmojiPageDetail(props: EmojiPageDetailProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-8 min-[860px]:grid-cols-2 min-[860px]:grid-rows-[auto_1fr]">
+    <div className="grid grid-cols-1 gap-8 min-[860px]:grid-cols-2 min-[860px]:grid-rows-auto-fr">
       <div className="flex min-w-0 flex-col gap-4 min-[860px]:col-start-1 min-[860px]:row-start-1">
         <div>
           {header}

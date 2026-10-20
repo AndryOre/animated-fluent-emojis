@@ -15,7 +15,7 @@ describe('gallery skeleton', () => {
   })
 
   it('reserves the 240px sidebar column from 860px up', () => {
-    expect(render()).toContain('min-[860px]:grid-cols-[240px_1fr]')
+    expect(render()).toContain('min-[860px]:grid-cols-sidebar')
   })
 
   it('reserves the toolbar row at the real search height', () => {

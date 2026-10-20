@@ -34,16 +34,16 @@ export function GallerySkeleton(props: GallerySkeletonProps) {
     <div
       role="status"
       aria-label={label}
-      className="grid gap-6 min-[860px]:grid-cols-[240px_1fr]"
+      className="grid gap-6 min-[860px]:grid-cols-sidebar"
     >
       <div aria-hidden="true" className="hidden min-[860px]:block" />
       <div className="flex min-w-0 flex-col gap-4">
-        <div className="shimmer h-9 rounded-[10px] bg-secondary" />
+        <div className="shimmer h-9 rounded-10 bg-secondary" />
         <div className={`grid w-full ${GRID_COLUMNS[size]} gap-2`}>
           {Array.from({ length: SKELETON_CELLS }, (_, position) => (
             <div
               key={position}
-              className="shimmer aspect-square rounded-[10px] bg-secondary"
+              className="shimmer aspect-square rounded-10 bg-secondary"
             />
           ))}
         </div>
