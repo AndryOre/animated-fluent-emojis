@@ -298,13 +298,16 @@ function rowsWithFidelity(fidelity: Fidelity) {
 }
 
 describe('theme tokens and utilities for arbitrary values', () => {
-  it('is imported by the global stylesheet', () => {
-    const globalCss = readFileSync(
-      path.resolve(stylesDirectory, 'global.css'),
-      'utf8',
-    )
-    expect(globalCss).toContain("@import './utilities.css';")
-  })
+  it.each(['global.css', 'docs.css'])(
+    'is imported by the %s entry stylesheet',
+    (entryStylesheet) => {
+      const entryCss = readFileSync(
+        path.resolve(stylesDirectory, entryStylesheet),
+        'utf8',
+      )
+      expect(entryCss).toContain("@import './utilities.css';")
+    },
+  )
 
   it.each(rowsWithFidelity('exact'))(
     '$arbitrary renders exactly like $replacement',

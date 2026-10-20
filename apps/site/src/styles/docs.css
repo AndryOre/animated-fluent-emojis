@@ -6,6 +6,7 @@
 @import '@fontsource-variable/figtree';
 @import '@fontsource-variable/geist-mono';
 @import './theme.css';
+@import './utilities.css';
 @import './docs-chrome.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
