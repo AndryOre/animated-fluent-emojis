@@ -16,7 +16,6 @@ import {
   SNIPPET_ADAPTERS,
   type SnippetAdapter,
 } from '@/lib/snippet-adapter'
-import { cn } from '@/lib/utilities'
 
 import type { PublicEmoji, SkinTone } from '../../gallery/public-index'
 import { generateSnippet } from '../../gallery/snippets'
@@ -69,7 +68,7 @@ export interface CopySnippetButtonProps {
  * @returns The button group.
  */
 export function CopySnippetButton(props: CopySnippetButtonProps) {
-  const { emoji, size, tone, strings, onNotice, className } = props
+  const { emoji, size, tone, strings, onNotice } = props
   const store = props.store ?? sharedStore
   const adapter = useSyncExternalStore(
     store.subscribe,
@@ -98,10 +97,10 @@ export function CopySnippetButton(props: CopySnippetButtonProps) {
     .join(strings[ADAPTER_LABEL_KEYS[adapter]])
 
   return (
-    <ButtonGroup className={cn('w-full', className)}>
+    <ButtonGroup width="full" className={props.className}>
       <Button
         variant="outline"
-        className="min-w-0 flex-1 rounded-l-lg"
+        className="min-w-0 flex-1"
         onClick={() => void copy(adapter)}
       >
         <CodeIcon />
@@ -110,15 +109,11 @@ export function CopySnippetButton(props: CopySnippetButtonProps) {
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={strings.snippetMenuLabel}
-          className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center border border-border bg-card text-card-foreground transition-[color,background-color,border-color,box-shadow,scale] duration-(--duration-press) ease-(--ease-out-strong) outline-none select-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97]"
+          variant="split"
         >
           <ChevronDownIcon className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          variant="nova"
-          align="end"
-          className="min-w-[168px] rounded-[10px]"
-        >
+        <DropdownMenuContent variant="split" align="end">
           {SNIPPET_ADAPTERS.map((item) => (
             <DropdownMenuItem
               key={item}

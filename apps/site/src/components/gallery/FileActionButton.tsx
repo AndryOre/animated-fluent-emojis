@@ -29,7 +29,6 @@ import {
   type FileActionTarget,
 } from '@/lib/file-action'
 import type { PreferenceStore } from '@/lib/persisted-preference'
-import { cn } from '@/lib/utilities'
 
 import type { UiStrings } from '../../i18n/ui'
 
@@ -100,7 +99,7 @@ function isStill(format: FileActionFormat): boolean {
  * @returns The button group.
  */
 export function FileActionButton(props: FileActionButtonProps) {
-  const { target, strings, onNotice, className } = props
+  const { target, strings, onNotice } = props
   const store = props.store ?? sharedStore
   const action = useSyncExternalStore(
     store.subscribe,
@@ -134,10 +133,10 @@ export function FileActionButton(props: FileActionButtonProps) {
   const PrimaryIcon = verb === 'copy' ? CopyIcon : DownloadIcon
 
   return (
-    <ButtonGroup className={cn('w-full', className)}>
+    <ButtonGroup width="full" className={props.className}>
       <Button
         variant="outline"
-        className="min-w-0 flex-1 rounded-l-lg"
+        className="min-w-0 flex-1"
         onClick={() => void run(action)}
       >
         <PrimaryIcon />
@@ -146,15 +145,11 @@ export function FileActionButton(props: FileActionButtonProps) {
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={strings.fileActionMenuLabel}
-          className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center border border-border bg-card text-card-foreground transition-[color,background-color,border-color,box-shadow,scale] duration-(--duration-press) ease-(--ease-out-strong) outline-none select-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97]"
+          variant="split"
         >
           <ChevronDownIcon className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          variant="nova"
-          align="end"
-          className="min-w-[168px] rounded-[10px]"
-        >
+        <DropdownMenuContent variant="split" align="end">
           {(['download', 'copy'] as const).map((group, index) => (
             <DropdownMenuGroup key={group}>
               {index > 0 && <DropdownMenuSeparator />}

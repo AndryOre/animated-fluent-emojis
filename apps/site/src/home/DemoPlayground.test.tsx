@@ -68,7 +68,7 @@ test('each skin tone option has a decorative color dot before its label', () => 
   )
 
   for (const color of ['#feba46', '#fac7b4', '#b3867a', '#533938']) {
-    expect(html.toLowerCase()).toContain(`background-color:${color}`)
+    expect(html.toLowerCase()).toContain(`--tone-color:${color}`)
   }
   expect(html).toMatch(/aria-hidden="true"[^>]*><\/span>Light/)
 })
@@ -78,7 +78,7 @@ test('the stage is a fixed-height card on mobile and the code block sits in the 
     <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
   )
 
-  expect(html).toContain('h-[220px]')
+  expect(html).toContain('h-55')
   expect(html).not.toContain('h-[260px]')
   expect(html).toMatch(/class="demo-code[^"]*"/)
 })

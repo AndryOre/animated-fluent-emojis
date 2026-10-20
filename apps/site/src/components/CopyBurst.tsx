@@ -24,23 +24,49 @@ export const BURST_PARTICLES = [
 ] as const
 
 /**
- * Converts a particle definition into the custom properties its keyframes read.
+ * The end offsets and rotation of one particle's flight, as the CSS values its
+ * keyframes read through custom properties.
+ */
+interface ParticleOffsets {
+  x: string
+  y: string
+  rotate: string
+}
+
+/**
+ * Converts a particle definition into the values its keyframes read.
  * @param particle - One entry of {@link BURST_PARTICLES}.
  * @param particle.angle - Direction in degrees, 0 pointing right.
  * @param particle.distance - Travel distance in pixels.
  * @param particle.spin - Rotation in degrees at the end of the flight.
- * @returns The inline style carrying the end offsets and rotation.
+ * @returns The end offsets and rotation as CSS lengths and angles.
  */
-export function particleStyle({
+function particleOffsets({
   angle,
   distance,
   spin,
-}: (typeof BURST_PARTICLES)[number]): CSSProperties {
+}: (typeof BURST_PARTICLES)[number]): ParticleOffsets {
   const radians = (angle * Math.PI) / 180
   return {
-    '--burst-x': `${(Math.cos(radians) * distance).toFixed(1)}px`,
-    '--burst-y': `${(Math.sin(radians) * distance).toFixed(1)}px`,
-    '--burst-rotate': `${String(spin)}deg`,
+    x: `${(Math.cos(radians) * distance).toFixed(1)}px`,
+    y: `${(Math.sin(radians) * distance).toFixed(1)}px`,
+    rotate: `${String(spin)}deg`,
+  }
+}
+
+/**
+ * Converts a particle definition into the custom properties its keyframes read.
+ * @param particle - One entry of {@link BURST_PARTICLES}.
+ * @returns The inline style carrying the end offsets and rotation.
+ */
+export function particleStyle(
+  particle: (typeof BURST_PARTICLES)[number],
+): CSSProperties {
+  const { x, y, rotate } = particleOffsets(particle)
+  return {
+    '--burst-x': x,
+    '--burst-y': y,
+    '--burst-rotate': rotate,
   } as CSSProperties
 }
 
@@ -67,20 +93,29 @@ export function BurstParticles() {
       data-copy-burst
       className="pointer-events-none absolute inset-0 z-10"
     >
-      {BURST_PARTICLES.map((particle) => (
-        <span
-          key={particle.angle}
-          className="copy-burst-particle absolute top-1/2 left-1/2 -mt-2.5 -ml-2.5 size-5"
-          style={particleStyle(particle)}
-        >
-          <Emoji
-            id="1f389_partypopper"
-            size={PARTICLE_SIZE}
-            alt=""
-            animationIterations={1}
-          />
-        </span>
-      ))}
+      {BURST_PARTICLES.map((particle) => {
+        const offsets = particleOffsets(particle)
+        return (
+          <span
+            key={particle.angle}
+            className="copy-burst-particle absolute top-1/2 left-1/2 -mt-2.5 -ml-2.5 size-5"
+            style={
+              {
+                '--burst-x': offsets.x,
+                '--burst-y': offsets.y,
+                '--burst-rotate': offsets.rotate,
+              } as CSSProperties
+            }
+          >
+            <Emoji
+              id="1f389_partypopper"
+              size={PARTICLE_SIZE}
+              alt=""
+              animationIterations={1}
+            />
+          </span>
+        )
+      })}
     </span>
   )
 }

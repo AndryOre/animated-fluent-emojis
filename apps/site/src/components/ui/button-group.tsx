@@ -1,14 +1,18 @@
 import { mergeProps } from '@base-ui/react/merge-props'
+import { Separator as SeparatorPrimitive } from '@base-ui/react/separator'
 import { useRender } from '@base-ui/react/use-render'
 import { cva, type VariantProps } from 'class-variance-authority'
 
-import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utilities'
 
 const buttonGroupVariants = cva(
-  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
+  "flex items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
   {
     variants: {
+      width: {
+        fit: 'w-fit',
+        full: 'w-full',
+      },
       orientation: {
         horizontal:
           '*:data-slot:rounded-r-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-r-lg! [&>[data-slot]~[data-slot]]:rounded-l-none [&>[data-slot]~[data-slot]]:border-l-0',
@@ -17,6 +21,7 @@ const buttonGroupVariants = cva(
       },
     },
     defaultVariants: {
+      width: 'fit',
       orientation: 'horizontal',
     },
   },
@@ -25,19 +30,19 @@ const buttonGroupVariants = cva(
 /**
  * Joins adjacent controls into one visual group: shared edges lose their inner
  * radius and border.
- * @param props - Div props plus the group `orientation`.
+ * @param props - Div props plus the group `orientation` and `width`.
  * @returns The grouped container.
  */
 function ButtonGroup(
   props: React.ComponentProps<'div'> & VariantProps<typeof buttonGroupVariants>,
 ) {
-  const { className, orientation = 'horizontal', ...rest } = props
+  const { className, orientation = 'horizontal', width, ...rest } = props
   return (
     <div
       role="group"
       data-slot="button-group"
       data-orientation={orientation}
-      className={cn(buttonGroupVariants({ orientation }), className)}
+      className={cn(buttonGroupVariants({ orientation, width }), className)}
       {...rest}
     />
   )
@@ -70,19 +75,19 @@ function ButtonGroupText(props: useRender.ComponentProps<'div'>) {
 
 /**
  * A divider between two controls of a {@link ButtonGroup}.
- * @param props - Props forwarded to the shared separator.
+ * @param props - Props forwarded to the Base UI separator, which this
+ * component styles itself.
  * @returns The separator element.
  */
-function ButtonGroupSeparator(props: React.ComponentProps<typeof Separator>) {
-  const { className, orientation = 'vertical', ...rest } = props
+function ButtonGroupSeparator(
+  props: Omit<SeparatorPrimitive.Props, 'className'>,
+) {
+  const { orientation = 'vertical', ...rest } = props
   return (
-    <Separator
+    <SeparatorPrimitive
       data-slot="button-group-separator"
       orientation={orientation}
-      className={cn(
-        'relative self-stretch bg-input data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto',
-        className,
-      )}
+      className="relative shrink-0 self-stretch bg-input data-horizontal:mx-px data-horizontal:h-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto data-vertical:w-px"
       {...rest}
     />
   )

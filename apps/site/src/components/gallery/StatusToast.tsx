@@ -88,7 +88,7 @@ export function StatusToast(props: StatusToastProps) {
       <div
         aria-hidden="true"
         data-visible={visible}
-        className="pointer-events-none fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] z-[60] rounded-lg border border-border bg-popover px-3 py-2 text-sm text-popover-foreground opacity-100 shadow-md transition-[opacity,translate] duration-200 ease-(--ease-out-strong) data-[visible=false]:translate-y-[calc(100%+1rem)] data-[visible=false]:opacity-0 data-[visible=false]:duration-150 motion-reduce:data-[visible=false]:translate-y-0"
+        className="pointer-events-none fixed right-4 bottom-safe-4 z-60 rounded-lg border border-border bg-popover px-3 py-2 text-sm text-popover-foreground opacity-100 shadow-md transition-opacity-translate duration-200 ease-(--ease-out-strong) data-[visible=false]:translate-y-toast-offset data-[visible=false]:opacity-0 data-[visible=false]:duration-150 motion-reduce:data-[visible=false]:translate-y-0"
       >
         {message}
       </div>

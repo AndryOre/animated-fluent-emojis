@@ -21,9 +21,7 @@ describe('status toast', () => {
 
   it('offsets from the bottom by the safe-area inset and drops the slide for reduced motion', () => {
     const html = renderToString(<StatusToast message="" visible={false} />)
-    expect(html).toContain(
-      'bottom-[calc(1rem+env(safe-area-inset-bottom,0px))]',
-    )
+    expect(html).toContain('bottom-safe-4')
     expect(html).toContain('motion-reduce:data-[visible=false]:translate-y-0')
   })
 })

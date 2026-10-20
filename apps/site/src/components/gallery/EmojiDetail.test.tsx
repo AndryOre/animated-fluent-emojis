@@ -109,9 +109,9 @@ describe('emoji detail on a page', () => {
 
   it('names the emoji wrapper, not the stage, on a page only', () => {
     const html = render(undefined)
-    expect(html).toContain(`view-transition-name:emoji-${emoji.slug}`)
-    expect(html).toContain('view-transition-class:emoji')
-    expect(html.match(/view-transition-name/g)).toHaveLength(1)
+    expect(html).toContain(`--view-transition-name:emoji-${emoji.slug}`)
+    expect(html).toContain('--view-transition-class:emoji')
+    expect(html.match(/--view-transition-name/g)).toHaveLength(1)
     const outside = renderToString(
       <EmojiDetail
         emoji={emoji}
@@ -121,6 +121,6 @@ describe('emoji detail on a page', () => {
         strings={strings}
       />,
     )
-    expect(outside).not.toContain('view-transition-name')
+    expect(outside).not.toContain('--view-transition-name')
   })
 })

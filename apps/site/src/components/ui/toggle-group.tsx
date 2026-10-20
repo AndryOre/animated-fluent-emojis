@@ -1,23 +1,37 @@
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle'
 import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 import { toggleVariants, type ToggleStyleProps } from '@/components/ui/toggle'
 import { cn } from '@/lib/utilities'
 
+const toggleGroupStyles = cva('flex w-fit flex-row items-center', {
+  variants: {
+    spacing: {
+      default: 'gap-2',
+      tight: 'gap-1',
+    },
+  },
+  defaultVariants: {
+    spacing: 'default',
+  },
+})
+
 /**
  * The shadcn toggle group on Base UI. Renders a `role="group"` container for
  * {@link ToggleGroupItem} children; label it with `aria-label`.
- * @param props - Base UI toggle group props.
+ * @param props - Base UI toggle group props plus `spacing`.
  * @returns The toggle group element.
  */
 function ToggleGroup<Value extends string>(
-  props: ToggleGroupPrimitive.Props<Value>,
+  props: ToggleGroupPrimitive.Props<Value> &
+    VariantProps<typeof toggleGroupStyles>,
 ) {
-  const { className, ...rest } = props
+  const { className, spacing, ...rest } = props
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
-      className={cn('flex w-fit flex-row items-center gap-2', className)}
+      className={cn(toggleGroupStyles({ spacing }), className)}
       {...rest}
     />
   )

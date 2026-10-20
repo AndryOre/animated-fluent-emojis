@@ -32,7 +32,7 @@ test('buttonVariants gives ghost a muted hover and a press scale', () => {
   const classes = buttonVariants({ variant: 'ghost' })
 
   expect(classes).toContain('hover:bg-muted')
-  expect(classes).toContain('active:scale-[0.97]')
+  expect(classes).toContain('active:scale-97')
 })
 
 test('buttonVariants presses every variant except link and never uses transition-all', () => {
@@ -43,7 +43,7 @@ test('buttonVariants presses every variant except link and never uses transition
     'ghost',
     'destructive',
   ] as const) {
-    expect(buttonVariants({ variant })).toContain('active:scale-[0.97]')
+    expect(buttonVariants({ variant })).toContain('active:scale-97')
   }
   expect(buttonVariants({ variant: 'link' })).not.toContain('active:scale-')
   expect(buttonVariants()).not.toContain('transition-all')

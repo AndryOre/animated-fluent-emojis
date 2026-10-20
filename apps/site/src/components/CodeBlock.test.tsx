@@ -42,7 +42,7 @@ test('CodeBlock stacks the panels in one cell so the height never jumps', () => 
 test('CodeBlock reserves the height of its tallest panel from the line counts', () => {
   const html = renderToString(<CodeBlock tabs={tabs} labels={labels} />)
 
-  expect(html).toContain('min-height:5rem')
+  expect(html).toContain('--code-body-min-height:5rem')
 })
 
 test('CodeBlock marks the highlighted line and exposes the line number flag', () => {
