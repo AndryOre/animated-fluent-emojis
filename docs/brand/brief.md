@@ -7,11 +7,11 @@ Draft v1 (2026-10-05). Status: applied; updated for 0.7. The name is decided:
 
 A component library (ESM only, TypeScript) that renders Microsoft's animated
 Fluent emoji on the web. Today it ships adapters for React, Vue, Svelte and
-Astro, plus a `<fluent-emoji>` element for everything else (see ADR 0014): one
-`<Emoji>` reads a small manifest, fetched lazily on first render, and plays
-sprite sheets served from a static asset site. It plays on load, on hover or on
-focus, shows a still poster frame under reduced motion, and ships descriptive
-`alt` text.
+Astro, plus a `<fluent-emoji>` element for everything else (see
+[ADR 0014](../adr/0014-multi-framework-support.md)): one `<Emoji>` reads a small
+manifest, fetched lazily on first render, and plays sprite sheets served from a
+static asset site. It plays on load, on hover or on focus, shows a still poster
+frame under reduced motion, and ships descriptive `alt` text.
 
 Where it is going, and what the brand has to stretch to without claiming it
 today:
@@ -91,7 +91,8 @@ lazy loading and sizes, CI, OpenSSF Scorecard.
 ## Relationship with Microsoft
 
 - The artwork is Microsoft's. The official set is MIT. Teams sprites have no
-  explicit license (ADR 0006). The code is ours, under MIT.
+  explicit license ([ADR 0006](../adr/0006-cloudflare-pages-asset-hosting.md)).
+  The code is ours, under MIT.
 - The project is not affiliated with or endorsed by Microsoft. Say it once,
   clearly, where people decide to use it.
 - No Microsoft, Teams or Fluent logos.
