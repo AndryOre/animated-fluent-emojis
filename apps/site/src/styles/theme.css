@@ -31,3 +31,53 @@
   --font-mono:
     'Geist Mono Variable', 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
 }
+
+@theme inline {
+  --breakpoint-xs: 480px;
+  --breakpoint-stats: 560px;
+  --breakpoint-sm-px: 640px;
+  --breakpoint-narrow: 859px;
+  --breakpoint-split: 860px;
+
+  --text-micro: 10px;
+  --text-caption: 11px;
+  --text-meta: 13px;
+  --text-compact: 0.8rem;
+  --text-heading-sm: 32px;
+  --text-heading-md: 40px;
+  --text-fluid-title: clamp(28px, 8vw, 40px);
+  --text-fluid-closing: clamp(28px, 5vw, 44px);
+  --text-fluid-hero: clamp(38px, 7.4vw, 84px);
+
+  --tracking-label: 0.08em;
+  --tracking-label-wide: 0.12em;
+  --tracking-display: -0.04em;
+  --tracking-heading: -0.03em;
+  --tracking-stat: -0.02em;
+
+  --leading-display: 0.98;
+  --leading-stat: 1.1;
+
+  --radius-7: 7px;
+  --radius-9: 9px;
+  --radius-10: 10px;
+  --radius-14: 14px;
+  --radius-18: 18px;
+  --radius-22: 22px;
+  --radius-28: 28px;
+  --radius-toggle: min(calc(var(--radius) * 0.375), 12px);
+
+  --blur-2xs: 2px;
+
+  --ease-spring: cubic-bezier(0.2, 1.4, 0.4, 1);
+  --ease-native: ease;
+
+  --spacing-toast-offset: calc(100% + 1rem);
+
+  --color-primary-emphasis: color-mix(
+    in oklab,
+    var(--primary) 55%,
+    var(--foreground)
+  );
+  --color-primary-edge: color-mix(in oklab, var(--primary) 45%, var(--border));
+}

@@ -7,15 +7,15 @@ import { getUi } from '../../i18n/ui'
 
 const { path, locale } = splitLocalePath(Astro.url.pathname)
 const { search } = getUi(locale).docs
-const searchStyle = [
-  `--afe-search-hint:${JSON.stringify(search.hint)}`,
-  `--afe-search-dev-title:${JSON.stringify(search.devTitle)}`,
-  `--afe-search-dev-body:${JSON.stringify(search.devBody)}`,
-].join(';')
+const searchStyle = {
+  '--afe-search-hint': JSON.stringify(search.hint),
+  '--afe-search-dev-title': JSON.stringify(search.devTitle),
+  '--afe-search-dev-body': JSON.stringify(search.devBody),
+}
 ---
 
 <Header locale={locale} path={path} skipTarget="#_top" embedded>
-  <div slot="search" style={`display:contents;${searchStyle}`}>
+  <div slot="search" class="contents" style={searchStyle}>
     <Search />
   </div>
 </Header>

@@ -1,5 +1,6 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import eslintReact from '@eslint-react/eslint-plugin'
+import { plugin as shadcn } from '@shadcn/lint'
 import vitest from '@vitest/eslint-plugin'
 import prettierConfig from 'eslint-config-prettier'
 import astro from 'eslint-plugin-astro'
@@ -32,6 +33,63 @@ const eslintCommentsRules = {
   ...eslintComments.configs.recommended.rules,
   '@eslint-community/eslint-comments/require-description': 'error',
 }
+
+/**
+ * Per-component exceptions to `shadcn/no-restyle` on the site. Empty until a
+ * component needs a real, bounded exception; each entry must say why.
+ */
+const shadcnNoRestyleContracts = []
+
+/**
+ * CSS properties `shadcn/no-inline-styles` lets stay inline on the site: only
+ * custom properties, which feed values (delays, hues, counts) into
+ * stylesheet rules and cannot be expressed as static classes.
+ */
+const shadcnAllowedInlineProperties = ['--*']
+
+/**
+ * Classes `shadcn/no-unknown-classes` accepts although Tailwind cannot
+ * generate them. Each entry needs a reason.
+ */
+const shadcnAllowedUnknownClasses = [
+  /**
+   * Starlight's own flex helper, defined by its stylesheet rather than by
+   * Tailwind.
+   */
+  'sl-flex',
+  /**
+   * Hook classes in `home.css` that are only ever used inside compound
+   * selectors (descendant, sibling, `:has()`, `:hover`, `[data-*]` and
+   * reduced-motion media queries) driving the pillars bento, teaser, FAQ
+   * mascot and install-step animations. They cannot be a self-contained
+   * `@utility` without changing the cascade.
+   */
+  'bento-*',
+  'teaser-cell',
+  'teaser-tile',
+  'faq-scope',
+  'install-step',
+  'step-emoji',
+  'sc-demo',
+  'sc-item',
+  'sc-text',
+  'sc-emoji',
+  /**
+   * Style-less marker on the demo's code sample, asserted by
+   * `DemoPlayground.test.tsx`; no CSS is declared for it.
+   */
+  'demo-code',
+  /**
+   * Hook classes in `docs-chrome.css` and `docs.css` that restyle Starlight's
+   * own markup from outside its cascade layers, so they must stay plain rules
+   * instead of `@utility` (which would land inside Tailwind's layers).
+   */
+  'pagination-nav',
+  'pagination-label',
+  'pagination-title',
+  'translation-notice',
+  'edit-link',
+]
 
 /**
  * Unicorn rules relaxed for this repo. `props`/`ref` are React's own
@@ -111,6 +169,46 @@ export default defineConfig([
         'error',
         { assertFunctionNames: ['expect', 'expectTypeOf'] },
       ],
+    },
+  },
+  {
+    /**
+     * Registered for every file so a CLI `--rule 'shadcn/...: error'`
+     * override, which applies to all files, can resolve the plugin.
+     */
+    plugins: { shadcn },
+  },
+  {
+    files: ['apps/site/**/*.{ts,tsx,astro}'],
+    rules: {
+      'shadcn/no-restyle': [
+        'off',
+        { allow: ['layout'], contracts: shadcnNoRestyleContracts },
+      ],
+      'shadcn/no-raw-colors': 'error',
+      'shadcn/no-arbitrary-values': 'off',
+      'shadcn/no-inline-styles': [
+        'off',
+        { allow: shadcnAllowedInlineProperties },
+      ],
+      'shadcn/no-unknown-classes': [
+        'error',
+        { allow: shadcnAllowedUnknownClasses },
+      ],
+      'shadcn/require-static-classes': 'off',
+    },
+  },
+  {
+    /**
+     * `apps/site/src/components/ui/**` is the shadcn/ui registry code itself,
+     * a generated layer that is re-synced rather than hand-edited, so it is
+     * exempt from these three rules.
+     */
+    files: ['apps/site/src/components/ui/**'],
+    rules: {
+      'shadcn/no-restyle': 'off',
+      'shadcn/no-arbitrary-values': 'off',
+      'shadcn/require-static-classes': 'off',
     },
   },
   {
