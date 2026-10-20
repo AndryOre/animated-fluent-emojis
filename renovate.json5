@@ -4,6 +4,7 @@
     'config:best-practices',
     ':semanticCommits',
     ':semanticCommitTypeAll(chore)',
+    ':preserveSemverRanges',
     'helpers:pinGitHubActionDigests',
     'group:monorepos',
   ],
