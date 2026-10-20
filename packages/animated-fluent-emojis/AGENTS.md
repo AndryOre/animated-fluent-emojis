@@ -21,7 +21,7 @@ dependencies are optional. See
   (`cdp()`) in tests; use a custom command from `vitest.config.ts`
   (`commands.emulateReducedMotion`) so it works on every engine. A test that
   cannot work on an engine is skipped with the reason in its title and listed in
-  the ticket for ADR 0023.
+  the ticket for [ADR 0023](../../docs/adr/0023-practices-parity-with-snug.md).
 - Component and hook tests run in a real browser, pure logic in a `node`
   project, and the `.astro` component in an `astro` project; put new tests where
   the project globs match:
