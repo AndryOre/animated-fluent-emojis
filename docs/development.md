@@ -466,8 +466,8 @@ Settings are applied by hand through the GitHub API, not by code in the repo,
 and are recorded in [ADR 0001](adr/0001-public-repo-security-posture.md):
 rulesets on `main` and `v*` tags, squash-only merges, linear history, signed
 commits, a single `CI passed` required check, private vulnerability reporting,
-immutable releases, `sha_pinning_required` and CodeQL default setup. Change the
-ADR together with any setting.
+immutable releases, `sha_pinning_required` and CodeQL (a workflow, with the
+default setup disabled). Change the ADR together with any setting.
 
 Two more settings are part of the same posture:
 
