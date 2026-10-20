@@ -3,10 +3,10 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utilities'
 
-const PRESS_CLASSES = 'active:scale-[0.97] ease-(--ease-out-strong)'
+const PRESS_CLASSES = 'active:scale-97 ease-(--ease-out-strong)'
 
 const buttonStyles = cva(
-  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center bg-clip-padding text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,filter,scale] duration-(--duration-press) select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center bg-clip-padding text-sm font-medium whitespace-nowrap transition-color-bg-border-shadow-filter-scale duration-(--duration-press) select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -19,7 +19,7 @@ const buttonStyles = cva(
       },
       size: {
         default: 'h-8 gap-1.5 px-2.5',
-        sm: 'h-8 gap-1 px-2.5 text-[0.8rem]',
+        sm: 'h-8 gap-1 px-2.5 text-compact',
         lg: 'h-9 gap-1.5 px-2.5',
         icon: 'size-8 pointer-coarse:size-10',
         'icon-sm': 'size-8 pointer-coarse:size-10',

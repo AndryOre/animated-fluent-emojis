@@ -27,8 +27,7 @@ const ZOOMS = [1, 2] as const
 const PREVIEW_SIZE = 64
 const KEYWORD_LIMIT = 8
 
-const STAGE_DOTS =
-  '[background-image:radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px]'
+const STAGE_DOTS = 'bg-dots-border bg-grid-16'
 
 export const EMOJI_SHEET_HEADING_ID = 'emoji-sheet-heading'
 
@@ -74,9 +73,9 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
   const hasError = previewState === 'error'
 
   return (
-    <div className="grid gap-4 min-[860px]:grid-cols-[200px_minmax(0,1fr)_auto] min-[860px]:gap-8">
+    <div className="grid gap-4 split:grid-cols-sheet split:gap-8">
       <div
-        className={`relative flex h-[152px] items-center justify-center overflow-hidden rounded-xl bg-muted/40 ${STAGE_DOTS}`}
+        className={`relative flex h-38 items-center justify-center overflow-hidden rounded-xl bg-muted/40 ${STAGE_DOTS}`}
       >
         <div
           role="group"
@@ -91,7 +90,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
               onClick={() => {
                 setZoom(level)
               }}
-              className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97] aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
+              className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-transform-color-bg duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-97 aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
             >
               {level}×
             </button>
@@ -107,7 +106,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
           <div
             data-testid="sheet-preview"
             data-ready={previewState === 'ready'}
-            className="relative transition-[transform,opacity] duration-200 [transition-duration:200ms,150ms] ease-(--ease-out-strong) data-[ready=false]:opacity-0"
+            className="relative transition-transform-opacity durations-200-150 ease-(--ease-out-strong) data-[ready=false]:opacity-0"
             style={{
               width: PREVIEW_SIZE,
               height: PREVIEW_SIZE,
@@ -205,7 +204,7 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
       </div>
       <fieldset
         disabled={hasError}
-        className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0 min-[860px]:w-[220px]"
+        className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0 split:w-55"
       >
         <FileActionButton
           target={{
@@ -293,7 +292,7 @@ export function EmojiSheet(props: EmojiSheetProps) {
         finalFocus={finalFocus}
         className="p-0"
       >
-        <div className="site-container pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+        <div className="site-container pt-4 pb-safe-4">
           <EmojiSheetBody
             {...body}
             closeControl={

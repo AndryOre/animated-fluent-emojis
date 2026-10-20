@@ -214,7 +214,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
           'relative flex items-center justify-center overflow-hidden rounded-xl',
           STAGE_BACKGROUND_CLASSES[background],
           page
-            ? 'aspect-square min-[860px]:aspect-auto min-[860px]:h-[440px]'
+            ? 'aspect-square split:aspect-auto split:h-110'
             : 'aspect-square max-h-72 w-full',
         )}
       >
@@ -241,7 +241,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
                 onClick={() => {
                   setZoom(level)
                 }}
-                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97] aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
+                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-transform-color-bg duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-97 aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
               >
                 {level}×
               </button>
