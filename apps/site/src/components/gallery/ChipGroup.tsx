@@ -54,8 +54,8 @@ export function ChipGroup<Value extends string | number>(
         <ToggleGroupItem
           key={chip.value}
           value={String(chip.value)}
-          variant="outline"
-          className="h-7 shrink-0 cursor-pointer rounded-full border-border bg-transparent px-3 text-xs font-semibold hover:bg-secondary aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary"
+          variant="chip"
+          size="chip"
           aria-disabled={disabled}
           title={disabled ? disabledHint : undefined}
         >

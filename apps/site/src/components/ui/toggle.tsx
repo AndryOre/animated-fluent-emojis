@@ -7,6 +7,9 @@ const toggleStyles = cva(
       variant: {
         default: 'bg-transparent',
         outline: 'border border-input bg-transparent hover:bg-muted',
+        chip: 'shrink-0 cursor-pointer rounded-full border border-border bg-transparent text-xs font-semibold hover:bg-secondary aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary',
+        segmented:
+          'shrink-0 cursor-pointer border border-border bg-transparent text-xs font-medium hover:bg-muted aria-disabled:opacity-50 aria-pressed:border-primary aria-pressed:bg-muted aria-pressed:text-foreground',
       },
       size: {
         default:
@@ -14,6 +17,9 @@ const toggleStyles = cva(
         sm: "h-7 min-w-7 rounded-toggle px-2.5 text-compact has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         compact:
           "h-7 min-w-7 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3.5",
+        chip: 'h-7 min-w-8 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
+        segmented:
+          'h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 pointer-coarse:h-10',
         lg: 'h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
       },
     },
