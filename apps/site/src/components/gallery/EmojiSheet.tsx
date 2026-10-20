@@ -4,6 +4,7 @@ import {
   useCallback,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
   type RefObject,
 } from 'react'
@@ -106,12 +107,13 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
           <div
             data-testid="sheet-preview"
             data-ready={previewState === 'ready'}
-            className="relative transition-transform-opacity durations-200-150 ease-(--ease-out-strong) data-[ready=false]:opacity-0"
-            style={{
-              width: PREVIEW_SIZE,
-              height: PREVIEW_SIZE,
-              transform: `scale(${String(zoom)})`,
-            }}
+            className="relative size-(--preview-size) transform-(--preview-transform) transition-transform-opacity durations-200-150 ease-(--ease-out-strong) data-[ready=false]:opacity-0"
+            style={
+              {
+                '--preview-size': `${String(PREVIEW_SIZE)}px`,
+                '--preview-transform': `scale(${String(zoom)})`,
+              } as CSSProperties
+            }
           >
             <Emoji
               key={previewKey}

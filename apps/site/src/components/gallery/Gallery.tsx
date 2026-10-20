@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type CSSProperties,
   type KeyboardEvent,
 } from 'react'
 
@@ -332,8 +333,12 @@ export function Gallery(props: GalleryProps) {
               />
             ) : (
               <div
-                className="flex flex-col items-center gap-4"
-                style={{ paddingBottom: sheetOpen ? sheetHeight : 0 }}
+                className="flex flex-col items-center gap-4 pb-(--sheet-clearance)"
+                style={
+                  {
+                    '--sheet-clearance': `${String(sheetOpen ? sheetHeight : 0)}px`,
+                  } as CSSProperties
+                }
               >
                 <div
                   ref={gridRef}
@@ -370,7 +375,7 @@ export function Gallery(props: GalleryProps) {
                         >
                           <span
                             data-transition-target=""
-                            style={{ viewTransitionClass: 'emoji' }}
+                            className="view-transition-class-emoji"
                           >
                             <Emoji
                               id={emoji.id}

@@ -1,6 +1,6 @@
 import { Emoji } from 'animated-fluent-emojis/react'
 import { CopyIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utilities'
@@ -249,14 +249,15 @@ export function EmojiDetail(props: EmojiDetailProps) {
           </div>
         </div>
         <div
-          className="relative transition-transform duration-200 ease-(--ease-out-strong)"
-          style={{
-            width: size,
-            height: size,
-            transform: `scale(${String(zoom)})`,
-            viewTransitionName: transitionName,
-            viewTransitionClass: transitionName ? 'emoji' : undefined,
-          }}
+          className="relative size-(--stage-size) transform-(--stage-transform) transition-transform duration-200 ease-(--ease-out-strong) view-transition-class-current view-transition-name-current"
+          style={
+            {
+              '--stage-size': `${String(size)}px`,
+              '--stage-transform': `scale(${String(zoom)})`,
+              '--view-transition-name': transitionName,
+              '--view-transition-class': transitionName ? 'emoji' : undefined,
+            } as CSSProperties
+          }
         >
           {page && !animated && (
             <img

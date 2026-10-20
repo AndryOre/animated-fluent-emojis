@@ -303,3 +303,15 @@
     var(--spacing) * --value(integer) + env(safe-area-inset-bottom, 0px)
   );
 }
+
+@utility view-transition-name-current {
+  view-transition-name: var(--view-transition-name);
+}
+
+@utility view-transition-class-current {
+  view-transition-class: var(--view-transition-class);
+}
+
+@utility view-transition-class-emoji {
+  view-transition-class: emoji;
+}
