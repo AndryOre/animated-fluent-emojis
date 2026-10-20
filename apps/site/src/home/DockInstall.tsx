@@ -14,8 +14,8 @@ import { usePackageManager } from '@/lib/use-package-manager'
 import { cn } from '@/lib/utilities'
 
 const ICON_FADE =
-  'transition-[opacity,scale,filter] duration-150 ease-(--ease-out-strong) motion-reduce:scale-100 motion-reduce:blur-none motion-reduce:duration-100'
-const ICON_HIDDEN = 'scale-80 opacity-0 blur-[4px]'
+  'transition-opacity-scale-filter duration-150 ease-(--ease-out-strong) motion-reduce:scale-100 motion-reduce:blur-none motion-reduce:duration-100'
+const ICON_HIDDEN = 'scale-80 opacity-0 blur-xs'
 
 interface DockInstallLabels {
   label: string
@@ -66,7 +66,7 @@ export default function DockInstall({
           pill
           activateOnFocus
           aria-label={labels.tabsLabel}
-          className="min-w-0 [scrollbar-width:none] group-data-[variant=dock]/tabs:p-px [&::-webkit-scrollbar]:hidden"
+          className="min-w-0 scrollbar-none group-data-[variant=dock]/tabs:p-px [&::-webkit-scrollbar]:hidden"
         >
           {PACKAGE_MANAGERS.map((id) => (
             <TabsTrigger
@@ -81,7 +81,7 @@ export default function DockInstall({
       </Tabs>
       <code
         data-dock-command
-        className="mx-1 hidden shrink-0 truncate font-mono text-[13px] text-muted-foreground min-[640px]:inline"
+        className="mx-1 hidden shrink-0 truncate font-mono text-meta text-muted-foreground min-[640px]:inline"
       >
         {installCommand(manager)}
       </code>

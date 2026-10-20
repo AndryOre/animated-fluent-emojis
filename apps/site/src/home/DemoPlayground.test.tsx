@@ -78,7 +78,7 @@ test('the stage is a fixed-height card on mobile and the code block sits in the 
     <DemoPlayground emojis={[wave]} tabs={tabs} labels={labels} />,
   )
 
-  expect(html).toContain('h-[220px]')
+  expect(html).toContain('h-55')
   expect(html).not.toContain('h-[260px]')
   expect(html).toMatch(/class="demo-code[^"]*"/)
 })

@@ -60,6 +60,6 @@ test('DockInstall tabs are compact rect pills, not forced to a 44px circle', () 
   const html = render()
 
   expect(html).not.toContain('variant=dock]/tabs:h-11')
-  expect(html).toContain('variant=dock]/tabs:rounded-[7px]')
+  expect(html).toContain('variant=dock]/tabs:rounded-7')
   expect(html).not.toMatch(/variant=dock\]\/tabs:rounded-full/)
 })

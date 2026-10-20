@@ -55,7 +55,7 @@ function AccordionTrigger(props: AccordionPrimitive.Trigger.Props) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-[rotate] duration-250 ease-(--ease-out-strong) group-aria-expanded/accordion-trigger:rotate-45"
+          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-rotate duration-250 ease-(--ease-out-strong) group-aria-expanded/accordion-trigger:rotate-45"
         >
           <path d="M8 3v10M3 8h10" />
         </svg>
@@ -76,7 +76,7 @@ function AccordionContent(props: AccordionPrimitive.Panel.Props) {
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
       keepMounted
-      className="group/accordion-panel h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-200 ease-(--ease-out-strong) data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-[opacity] motion-reduce:duration-150 motion-reduce:data-ending-style:h-(--accordion-panel-height) motion-reduce:data-ending-style:opacity-0 motion-reduce:data-starting-style:h-(--accordion-panel-height) motion-reduce:data-starting-style:opacity-0"
+      className="group/accordion-panel h-(--accordion-panel-height) overflow-hidden text-sm transition-height duration-200 ease-(--ease-out-strong) data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-opacity motion-reduce:duration-150 motion-reduce:data-ending-style:h-(--accordion-panel-height) motion-reduce:data-ending-style:opacity-0 motion-reduce:data-starting-style:h-(--accordion-panel-height) motion-reduce:data-starting-style:opacity-0"
       {...rest}
     >
       <div

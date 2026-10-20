@@ -46,7 +46,7 @@ export default function FaqAccordion({ items }: { items: FaqEntry[] }) {
             <span
               data-faq-emoji
               aria-hidden="true"
-              className="grid size-7 shrink-0 place-items-center motion-safe:transition-[scale,rotate] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(.2,1.4,.4,1)] motion-safe:group-aria-expanded/accordion-trigger:scale-[1.35] motion-safe:group-aria-expanded/accordion-trigger:-rotate-10"
+              className="grid size-7 shrink-0 place-items-center motion-safe:transition-scale-rotate motion-safe:duration-300 motion-safe:ease-spring motion-safe:group-aria-expanded/accordion-trigger:scale-135 motion-safe:group-aria-expanded/accordion-trigger:-rotate-10"
             >
               <Emoji
                 id={item.emojiId}

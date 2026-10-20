@@ -18,8 +18,8 @@ import { swapSnippetSlots } from '../highlight/snippet-swap'
 import type { SnippetSlot } from '../highlight/snippet-template'
 
 const ICON_FADE =
-  'transition-[opacity,scale,filter] duration-150 ease-(--ease-out-strong) motion-reduce:scale-100 motion-reduce:blur-none motion-reduce:duration-100'
-const ICON_HIDDEN = 'scale-80 opacity-0 blur-[4px]'
+  'transition-opacity-scale-filter duration-150 ease-(--ease-out-strong) motion-reduce:scale-100 motion-reduce:blur-none motion-reduce:duration-100'
+const ICON_HIDDEN = 'scale-80 opacity-0 blur-xs'
 
 export interface CodeBlockTab {
   id: string
@@ -50,7 +50,7 @@ export interface CodeBlockProps {
 }
 
 const PANEL_CLASS =
-  'col-start-1 row-start-1 min-w-0 motion-safe:transition-[opacity,translate,visibility] motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1'
+  'col-start-1 row-start-1 min-w-0 motion-safe:transition-opacity-translate-visibility motion-safe:duration-200 motion-safe:ease-(--ease-out-strong) [&[hidden]]:invisible [&[hidden]]:block [&[hidden]]:opacity-0 motion-safe:[&[hidden]]:translate-y-1'
 
 const CODE_LINE_HEIGHT_REM = 1.5
 const CODE_PADDING_LINES = 1
@@ -178,14 +178,14 @@ export default function CodeBlock({
         variant="cmd"
         value={active}
         onValueChange={handleValueChange}
-        className="overflow-hidden rounded-[14px] border border-border bg-card"
+        className="overflow-hidden rounded-14 border border-border bg-card"
       >
         <div ref={tabsRef}>
           <TabsList
             pill
             activateOnFocus
             aria-label={labels.tabsLabel}
-            className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="scrollbar-none [&::-webkit-scrollbar]:hidden"
           >
             {tabs.map((tab) => (
               <TabsTrigger key={tab.id} value={tab.id}>
@@ -206,7 +206,7 @@ export default function CodeBlock({
                 keepMounted
                 className={PANEL_CLASS}
               >
-                <code className="block [scrollbar-width:none] overflow-x-auto font-mono text-[13px] whitespace-pre text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
+                <code className="block scrollbar-none overflow-x-auto font-mono text-meta whitespace-pre text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
                   {tab.code}
                 </code>
               </TabsContent>
@@ -241,7 +241,7 @@ export default function CodeBlock({
               pill={pill}
               activateOnFocus
               aria-label={labels.tabsLabel}
-              className="min-w-0 [scrollbar-width:none] gap-1 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] pr-5 [&::-webkit-scrollbar]:hidden"
+              className="min-w-0 scrollbar-none gap-1 mask-fade-end pr-5 [&::-webkit-scrollbar]:hidden"
             >
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.id} value={tab.id}>

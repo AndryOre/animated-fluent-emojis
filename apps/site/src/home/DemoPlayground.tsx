@@ -95,7 +95,7 @@ function Segmented<Value extends string | number>({
     <div className={`flex min-w-0 flex-col gap-1.5 ${className}`}>
       <span
         aria-hidden="true"
-        className="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase"
+        className="font-mono text-xs tracking-label-wide text-muted-foreground uppercase"
       >
         {label}
       </span>
@@ -161,7 +161,7 @@ function StageEmoji({ emojiProps, animateIn }: StageEmojiProps) {
   }
   return (
     <span
-      className={`inline-flex transition-[opacity,transform] duration-150 ease-(--ease-out-strong) ${settled ? '' : 'scale-[0.96] opacity-0 motion-reduce:scale-100'}`}
+      className={`inline-flex transition-opacity-transform duration-150 ease-(--ease-out-strong) ${settled ? '' : 'scale-96 opacity-0 motion-reduce:scale-100'}`}
     >
       <Emoji {...emojiProps} onLoad={settle} onError={settle} />
     </span>
@@ -230,9 +230,9 @@ export default function DemoPlayground({
     ]
 
   return (
-    <div className="grid min-w-0 gap-3 min-[860px]:grid-cols-[1fr_1.2fr]">
+    <div className="grid min-w-0 gap-3 split:grid-cols-demo">
       <div
-        className="relative flex h-[220px] items-center justify-center overflow-hidden rounded-[22px] border border-border bg-card bg-[radial-gradient(circle_at_50%_45%,color-mix(in_oklab,var(--primary)_22%,transparent),transparent_70%)] min-[860px]:h-auto min-[860px]:min-h-[320px]"
+        className="relative flex h-55 items-center justify-center overflow-hidden rounded-22 border border-border bg-card bg-glow-demo min-[860px]:h-auto split:min-h-80"
         data-testid="demo-stage"
         onPointerDown={startTapPlay}
       >
@@ -260,7 +260,7 @@ export default function DemoPlayground({
         </Button>
       </div>
       <div className="flex min-w-0 flex-col gap-3">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-[22px] border border-border bg-card p-4">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-22 border border-border bg-card p-4">
           <Segmented
             className="col-span-2"
             label={labels.emojiLabel}
