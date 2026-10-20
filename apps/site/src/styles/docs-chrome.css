@@ -400,18 +400,16 @@
   }
 }
 
-@layer starlight.core {
-  .edit-link {
-    gap: 0.5rem;
-    align-items: center;
-    text-decoration: none;
-    color: var(--sl-color-gray-3);
-  }
+.edit-link {
+  gap: 0.5rem;
+  align-items: center;
+  text-decoration: none;
+  color: var(--sl-color-gray-3);
+}
 
-  @media (hover: hover) and (pointer: fine) {
-    .edit-link:hover {
-      color: var(--sl-color-white);
-    }
+@media (hover: hover) and (pointer: fine) {
+  .edit-link:hover {
+    color: var(--sl-color-white);
   }
 }
 
