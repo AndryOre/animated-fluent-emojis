@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react'
+
 import type { SkinTone } from '../gallery/public-index'
 import { SKIN_TONE_COLORS } from '../lib/skin-tone-colors'
 
@@ -16,8 +18,8 @@ export function ToneDot({ tone }: ToneDotProps) {
   return (
     <span
       aria-hidden="true"
-      className="size-2.5 shrink-0 rounded-full ring-1 ring-black/15 dark:ring-white/20"
-      style={{ backgroundColor: SKIN_TONE_COLORS[tone] }}
+      className="size-2.5 shrink-0 rounded-full bg-(--tone-color) ring-1 ring-black/15 dark:ring-white/20"
+      style={{ '--tone-color': SKIN_TONE_COLORS[tone] } as CSSProperties}
     />
   )
 }

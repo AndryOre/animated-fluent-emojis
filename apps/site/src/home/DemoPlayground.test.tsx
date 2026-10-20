@@ -68,7 +68,7 @@ test('each skin tone option has a decorative color dot before its label', () => 
   )
 
   for (const color of ['#feba46', '#fac7b4', '#b3867a', '#533938']) {
-    expect(html.toLowerCase()).toContain(`background-color:${color}`)
+    expect(html.toLowerCase()).toContain(`--tone-color:${color}`)
   }
   expect(html).toMatch(/aria-hidden="true"[^>]*><\/span>Light/)
 })

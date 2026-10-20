@@ -1,6 +1,6 @@
 import { Emoji } from 'animated-fluent-emojis/react'
 import { CopyIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utilities'
@@ -120,9 +120,9 @@ export function EmojiIdRow(props: EmojiIdRowProps) {
         {id}
       </p>
       <Button
-        variant="ghost"
+        variant="quiet"
         size="icon-sm"
-        className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
+        className="size-6 shrink-0 pointer-coarse:size-9"
         aria-label={strings.copyId}
         onClick={() => void onCopy(id)}
       >
@@ -214,7 +214,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
           'relative flex items-center justify-center overflow-hidden rounded-xl',
           STAGE_BACKGROUND_CLASSES[background],
           page
-            ? 'aspect-square min-[860px]:aspect-auto min-[860px]:h-[440px]'
+            ? 'aspect-square split:aspect-auto split:h-110'
             : 'aspect-square max-h-72 w-full',
         )}
       >
@@ -241,7 +241,7 @@ export function EmojiDetail(props: EmojiDetailProps) {
                 onClick={() => {
                   setZoom(level)
                 }}
-                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-[transform,color,background-color] duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97] aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
+                className="h-6 min-w-8 cursor-pointer rounded-md px-1.5 font-mono text-xs text-muted-foreground transition-transform-color-bg duration-150 ease-(--ease-out-strong) outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-97 aria-pressed:bg-muted aria-pressed:text-foreground pointer-coarse:size-9"
               >
                 {level}×
               </button>
@@ -249,14 +249,15 @@ export function EmojiDetail(props: EmojiDetailProps) {
           </div>
         </div>
         <div
-          className="relative transition-transform duration-200 ease-(--ease-out-strong)"
-          style={{
-            width: size,
-            height: size,
-            transform: `scale(${String(zoom)})`,
-            viewTransitionName: transitionName,
-            viewTransitionClass: transitionName ? 'emoji' : undefined,
-          }}
+          className="relative size-(--stage-size) transform-(--stage-transform) transition-transform duration-200 ease-(--ease-out-strong) view-transition-class-current view-transition-name-current"
+          style={
+            {
+              '--stage-size': `${String(size)}px`,
+              '--stage-transform': `scale(${String(zoom)})`,
+              '--view-transition-name': transitionName,
+              '--view-transition-class': transitionName ? 'emoji' : undefined,
+            } as CSSProperties
+          }
         >
           {page && !animated && (
             <img
@@ -293,9 +294,9 @@ export function EmojiDetail(props: EmojiDetailProps) {
               {name}
             </h2>
             <Button
-              variant="ghost"
+              variant="quiet"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
+              className="size-6 shrink-0 pointer-coarse:size-9"
               aria-label={strings.copyName}
               onClick={() => void copy(name)}
             >

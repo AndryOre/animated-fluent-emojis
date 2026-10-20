@@ -12,7 +12,7 @@ describe('ToneDot', () => {
     expect(html).toContain('size-2.5')
     expect(html).toContain('shrink-0')
     expect(html.toLowerCase()).toContain(
-      `background-color:${SKIN_TONE_COLORS.medium}`,
+      `--tone-color:${SKIN_TONE_COLORS.medium}`,
     )
   })
 })
