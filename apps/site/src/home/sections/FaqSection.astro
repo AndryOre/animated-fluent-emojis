@@ -23,7 +23,7 @@ const faq = [
 ---
 
 <section class={section} aria-labelledby="faq-title">
-  <div class="faq-scope scroll-reveal scroll-reveal-last grid items-stretch gap-10 min-[860px]:grid-cols-[1.25fr_1fr]">
+  <div class="faq-scope scroll-reveal scroll-reveal-last grid items-stretch gap-10 split:grid-cols-faq">
     <div class="min-w-0">
       <p class={eyebrow}>{home.faq.eyebrow}</p>
       <h2 id="faq-title" class={`${heading} mb-6`}>
@@ -34,16 +34,16 @@ const faq = [
     <div
       aria-hidden="true"
       data-faq-mascots
-      class="relative hidden min-h-[300px] min-w-0 overflow-hidden rounded-[22px] border border-border bg-card min-[860px]:block [background-image:radial-gradient(circle_at_40%_50%,color-mix(in_oklab,var(--primary)_24%,transparent),transparent_70%)]"
+      class="relative hidden min-h-75 min-w-0 overflow-hidden rounded-22 border border-border bg-card split:block bg-glow-faq"
     >
-      <span class="absolute top-4 left-4 font-mono text-[11px] leading-4 text-muted-foreground">
+      <span class="absolute top-4 left-4 font-mono text-caption leading-4 text-muted-foreground">
         {home.faq.mascotLabel}
       </span>
       {faq.map((entry) => (
         <span
           data-faq-mascot={entry.id}
-          class="absolute -right-9 -bottom-11 block -rotate-[8deg]"
-          style={`width: ${MASCOT_SIZE}px; height: ${MASCOT_SIZE}px`}
+          class="absolute -right-9 -bottom-11 block size-(--mascot-size) -rotate-8"
+          style={{ '--mascot-size': `${MASCOT_SIZE}px` }}
         >
           <Emoji id={entry.emojiId} size={MASCOT_SIZE} alt="" />
         </span>
