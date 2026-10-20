@@ -6,6 +6,9 @@ Accepted
 
 Date: 2026-10-07
 
+Revised: 2026-10-21, recorded `@shadcn/lint`, its no-restyle contracts, the
+escalation ladder and the exempt generated ui layer.
+
 ## Context
 
 The website ([ADR 0018](0018-website-on-coolify-with-astro-and-starlight.md))
@@ -39,6 +42,19 @@ Adopt [shadcn/ui](https://ui.shadcn.com) on [Base UI](https://base-ui.com)
 - **Cleanup**: the CLI output is edited to match the repo rules: `//` comments
   are stripped ([ADR 0002](0002-tsdoc-only-code-comments.md)), exports get
   TSDoc, and `cn` is the standard `clsx` plus `tailwind-merge`.
+- **Lint**: `@shadcn/lint` runs on `apps/site/**/*.{ts,tsx,astro}` through
+  `eslint.config.mjs` (`shadcn/no-restyle`, `no-raw-colors`,
+  `no-arbitrary-values`, `no-inline-styles`, `no-unknown-classes`,
+  `require-static-classes`). Per-component exceptions to `shadcn/no-restyle`
+  live in `shadcnNoRestyleContracts`, each encoding one bounded design decision.
+- **Generated layer exempt**: `apps/site/src/components/ui/**` is the registry
+  code itself, re-synced rather than hand-edited, so `no-restyle`,
+  `no-arbitrary-values` and `require-static-classes` are off there.
+- **Escalation ladder**: a `shadcn/*` finding on a site component is resolved in
+  order: an existing variant, a new variant, a `no-restyle` contract, and as a
+  last resort a single-line `eslint-disable-next-line -- <reason>`. Never a
+  file-level or project-level disable. Detail in `AGENTS.md` and
+  `docs/development.md#adding-a-shadcnlint-contract`.
 
 Rejected:
 

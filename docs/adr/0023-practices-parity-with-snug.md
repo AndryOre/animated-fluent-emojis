@@ -12,6 +12,9 @@ Revised: 2026-10-19, added the style lint (no `<style>` in `.astro`) row (#153).
 
 Revised: 2026-10-20, added the style lint (@shadcn/lint) row (#157).
 
+Revised: 2026-10-21, restricted the table to the allowed values, corrected the
+style lint row, added the five rows Snug records and the `@shadcn/lint` row.
+
 ## Context
 
 AFE and Snug are maintained by the same person and started from the same
@@ -28,25 +31,30 @@ structured data). A fix in one repo rarely reached the other.
   reasons.
 - Snug records the same table in its own ADR; the two copies are mirrors.
 
-| Practice                                  | Snug        | AFE        | Reason                                                                                                                                         |
-| ----------------------------------------- | ----------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Build-time code highlighting              | N/A         | Applies    | Snug shows no code outside Starlight                                                                                                           |
-| Dynamic OG images                         | N/A         | Applies    | Snug has a handful of pages, AFE has one per emoji                                                                                             |
-| Privacy page                              | Applies     | N/A        | AFE has no analytics                                                                                                                           |
-| Launch kit and store runbooks             | Applies     | N/A        | AFE publishes to npm, not to stores                                                                                                            |
-| Build provenance                          | Attestation | Equivalent | npm trusted publishing already gives AFE provenance ([ADR 0005](0005-npm-trusted-publishing.md))                                               |
-| BrowserStack and Percy                    | Applies     | Deferred   | BrowserStack OSS approval is per repo and AFE has none yet                                                                                     |
-| `FUNDING.yml`                             | None        | None       | Removed from AFE; neither repo asks for sponsors                                                                                               |
-| Docs testing checklist                    | Applies     | N/A        | Tied to BrowserStack, which AFE defers                                                                                                         |
-| Package gates (publint, attw, size-limit) | N/A         | Applies    | Snug ships no npm package; AFE enforces these gates on its published package                                                                   |
-| Asset pipeline and sync-assets            | N/A         | Applies    | Only AFE builds and publishes emoji assets                                                                                                     |
-| Promo video (Remotion)                    | Applies     | N/A        | Only Snug has a promo video                                                                                                                    |
-| Extension and store E2E                   | Applies     | N/A        | AFE is a library, not an extension                                                                                                             |
-| Umami analytics                           | Applies     | N/A        | AFE has no analytics, same reason as the privacy page                                                                                          |
-| Cross-browser library tests               | N/A         | Applies    | Snug is Chromium-only; AFE is a multi-browser library                                                                                          |
-| `llms.txt` generator                      | Custom      | Equivalent | AFE keeps `starlight-llms-txt` for the docs text and composes `llms.txt` and `llms-full.txt` with landing and emoji pages in `src/seo/llms.ts` |
-| Style lint (no `<style>` in `.astro`)     | Same        | Same       | Both repos ban the blocks with `local/no-astro-style-blocks`; styling lives in Tailwind classes and the site stylesheets                       |
-| Style lint (@shadcn/lint)                 | Same        | Same       | Both repos enforce the same rule set; AFE scopes it to apps/site and exempts the generated ui layer                                            |
+| Practice                                  | Snug                      | AFE        | Reason                                                                                                                                                                               |
+| ----------------------------------------- | ------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Build-time code highlighting              | N/A                       | Applies    | Snug shows no code outside Starlight                                                                                                                                                 |
+| Dynamic OG images                         | N/A                       | Applies    | Snug has a handful of pages, AFE has one per emoji                                                                                                                                   |
+| Privacy page                              | Applies                   | N/A        | AFE has no analytics                                                                                                                                                                 |
+| Launch kit and store runbooks             | Applies                   | N/A        | AFE publishes to npm, not to stores                                                                                                                                                  |
+| Build provenance                          | Attestation               | Equivalent | npm trusted publishing already gives AFE provenance ([ADR 0005](0005-npm-trusted-publishing.md))                                                                                     |
+| BrowserStack and Percy                    | Applies                   | Deferred   | BrowserStack OSS approval is per repo and AFE has none yet                                                                                                                           |
+| `FUNDING.yml`                             | N/A                       | N/A        | Removed from AFE; neither repo asks for sponsors                                                                                                                                     |
+| Docs testing checklist                    | Applies                   | N/A        | Tied to BrowserStack, which AFE defers                                                                                                                                               |
+| Package gates (publint, attw, size-limit) | N/A                       | Applies    | Snug ships no npm package; AFE enforces these gates on its published package                                                                                                         |
+| Asset pipeline and sync-assets            | N/A                       | Applies    | Only AFE builds and publishes emoji assets                                                                                                                                           |
+| Promo video (Remotion)                    | Applies                   | N/A        | Only Snug has a promo video                                                                                                                                                          |
+| Extension and store E2E                   | Applies                   | N/A        | AFE is a library, not an extension                                                                                                                                                   |
+| Umami analytics                           | Applies                   | N/A        | AFE has no analytics, same reason as the privacy page                                                                                                                                |
+| Cross-browser library tests               | N/A                       | Applies    | Snug is Chromium-only; AFE is a multi-browser library                                                                                                                                |
+| `jsx-no-literals` lint rule               | Applies                   | N/A        | Snug's UI copy is translatable; `@eslint-react` has no equivalent, so `eslint-plugin-react` stays for this one rule                                                                  |
+| Prettier import-sort plugin               | `@trivago`                | `@ianvs`   | Snug's `importOrder` is tuned to the `@trivago` plugin; switching would reformat the repo for no gain                                                                                |
+| `llms.txt` generator                      | Applies                   | Equivalent | AFE keeps `starlight-llms-txt` for the docs text and composes `llms.txt` and `llms-full.txt` with landing and emoji pages in `src/seo/llms.ts`                                       |
+| Style lint (no `<style>` in `.astro`)     | `shadcn/no-inline-styles` | Local rule | Equivalent: Snug's `@shadcn/lint` rule reports `<style>` in `.astro`; AFE bans the blocks with `local/no-astro-style-blocks`, and also runs `shadcn/no-inline-styles` on `apps/site` |
+| Style lint (@shadcn/lint)                 | Applies                   | Applies    | Both repos enforce the same rule set; AFE scopes it to `apps/site` and exempts the generated ui layer ([ADR 0019](0019-shadcn-on-base-ui-for-the-website.md))                        |
+| typescript-eslint preset                  | Deferred                  | Applies    | Snug is on `recommendedTypeChecked`; `strictTypeChecked` is a follow-up ramp                                                                                                         |
+| PR template browser line                  | Chromium                  | Library    | Snug is Chromium-only; "Tested on Chromium" covers Chrome and Edge                                                                                                                   |
+| Issue template fields                     | Extension                 | Library    | Same four templates; the fields ask for extension or library details respectively                                                                                                    |
 
 ## Alternatives considered
 

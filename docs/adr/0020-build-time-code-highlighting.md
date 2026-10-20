@@ -6,6 +6,8 @@ Accepted
 
 Date: 2026-10-08
 
+Revised: 2026-10-21, linked the CSP statement to ADR 0024.
+
 ## Context
 
 The website shows code in two places: the documentation, which Starlight renders
@@ -13,8 +15,9 @@ with Expressive Code, and its own snippets (the install command and the usage
 snippet per adapter), which change with the chosen emoji, size and skin tone.
 The snippets must look like the docs, follow the light and dark themes, and cost
 almost no JavaScript. The CSP
-([ADR 0018](0018-website-on-coolify-with-astro-and-starlight.md)) allows no
-`eval`, so the highlighting cannot depend on generated code.
+([ADR 0018](0018-website-on-coolify-with-astro-and-starlight.md),
+[ADR 0024](0024-site-csp-served-as-a-header-with-build-time-hashes.md)) allows
+no `eval`, so the highlighting cannot depend on generated code.
 
 ## Decision
 

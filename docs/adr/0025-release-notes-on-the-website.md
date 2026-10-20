@@ -6,13 +6,15 @@ Accepted
 
 Date: 2026-10-19
 
+Revised: 2026-10-21, named Snug's ADR 0019 explicitly.
+
 ## Context
 
 `CHANGELOG.md` is the single record of what changed in every release. It is
 written by hand and by `sync-assets.yml`, which adds entries under
 `[Unreleased]`. Readers of the site had no way to see it without going to
 GitHub. Snug publishes its changelog on the site, built from the file with a
-parser that fails the build when the file is malformed (its ADR 0019).
+parser that fails the build when the file is malformed (Snug's ADR 0019).
 
 ## Decision
 
