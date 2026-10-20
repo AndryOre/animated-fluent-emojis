@@ -6,6 +6,12 @@ Accepted
 
 Date: 2026-10-19
 
+Revised: 2026-10-19, added the `llms.txt` generator row (#150).
+
+Revised: 2026-10-19, added the style lint (no `<style>` in `.astro`) row (#153).
+
+Revised: 2026-10-20, added the style lint (@shadcn/lint) row (#157).
+
 ## Context
 
 AFE and Snug are maintained by the same person and started from the same

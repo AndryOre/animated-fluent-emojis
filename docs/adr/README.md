@@ -4,12 +4,12 @@ Decisions are recorded in
 [Nygard format](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions):
 `# NNNN: Title`, then `## Status` with a `Date: YYYY-MM-DD` line, `## Context`,
 `## Decision` (with the options that were rejected) and `## Consequences`.
-`adr-invariants.test.ts` enforces the header format, unique contiguous numbers,
-and that this index lists every ADR.
+`adr-invariants.test.ts` enforces the header format, unique ascending numbers,
+`Revised:` lines, and that this index lists every ADR.
 
-To add one, copy the next number, write the file, and add a row below. Never
-rewrite an accepted ADR; supersede or amend it with a new one and fill the last
-column.
+To add one, copy the next number, write the file, and add a row below. The rules
+for editing and replacing ADRs are in
+[`AGENTS.md`](../../AGENTS.md#architecture-decision-records).
 
 | Number | Title                                                                                                                                                        | Status   | Superseded or amended by |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------ |
