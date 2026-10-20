@@ -199,7 +199,6 @@
 }
 
 .dock-reveal {
-  max-width: min(46rem, calc(100% - 2 * var(--site-gutter)));
   visibility: hidden;
   opacity: 0;
 }
