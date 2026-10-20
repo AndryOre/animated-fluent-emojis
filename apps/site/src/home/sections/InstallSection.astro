@@ -131,7 +131,7 @@ const adapterCells = [
     {steps.map((step) => (
       <li
         class="scroll-reveal min-w-0"
-        style={`--step-index: ${step.number - 1}`}
+        style={{ '--step-index': step.number - 1 }}
       >
         <div class="install-step flex h-full min-w-0 flex-col gap-3 rounded-2xl border border-border bg-card p-5">
           <span
@@ -171,7 +171,10 @@ const adapterCells = [
         {SHORTCODE_DEMO.map((shortcode, position) => (
           <span
             class="sc-item flex items-center gap-2 sm:gap-3"
-            style={`--chars: ${shortcode.code.length + 2}; --delay: ${position * 4}s`}
+            style={{
+              '--chars': shortcode.code.length + 2,
+              '--delay': `${position * 4}s`,
+            }}
           >
             <code class="sc-text block overflow-hidden font-mono text-[13px] font-semibold whitespace-nowrap sm:text-base">
               :{shortcode.code}:

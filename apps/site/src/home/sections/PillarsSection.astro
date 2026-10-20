@@ -83,7 +83,7 @@ const cursorMarkup =
               data-wake={wakeDelay(position) ? '' : undefined}
               style={
                 wakeDelay(position)
-                  ? `--wake-delay: ${wakeDelay(position)}`
+                  ? { '--wake-delay': wakeDelay(position) }
                   : undefined
               }
             >

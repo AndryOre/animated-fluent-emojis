@@ -60,7 +60,7 @@ const secondaryButton = buttonVariants({
           <a
             href={galleryHref}
             class="teaser-tile relative isolate flex w-full flex-col items-center gap-2 overflow-hidden rounded-[18px] border border-border bg-card px-1.5 pt-[22px] pb-3.5 outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            style={`--glow-hue: ${tile.hue}`}
+            style={{ '--glow-hue': tile.hue }}
           >
             <Emoji id={tile.id} size={TEASER_EMOJI_SIZE} alt="" />
             <small class="max-w-full truncate font-mono text-[11px] lowercase text-muted-foreground">
