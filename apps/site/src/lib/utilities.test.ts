@@ -7,5 +7,5 @@ test('cn joins truthy class names and drops falsy ones', () => {
 })
 
 test('cn resolves conflicting Tailwind utilities in favor of the last one', () => {
-  expect(cn('px-2 rounded-lg', 'px-6 rounded-full')).toBe('px-6 rounded-full')
+  expect(cn('rounded-lg px-2', 'rounded-full px-6')).toBe('rounded-full px-6')
 })

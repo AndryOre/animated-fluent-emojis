@@ -307,7 +307,7 @@ export function Gallery(props: GalleryProps) {
             </div>
             <p
               role="status"
-              className="sr-only shrink-0 font-mono text-xs min-[480px]:not-sr-only text-muted-foreground tabular-nums"
+              className="sr-only shrink-0 font-mono text-xs text-muted-foreground tabular-nums min-[480px]:not-sr-only"
             >
               {fillTemplate(
                 strings.resultsCount,

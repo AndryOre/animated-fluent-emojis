@@ -697,7 +697,7 @@
   left: 0;
   z-index: 40;
   width: fit-content;
-  max-width: calc(100% - 2 * var(--site-gutter));
+  max-width: min(46rem, calc(100% - 2 * var(--site-gutter)));
   margin-inline: auto;
 }
 

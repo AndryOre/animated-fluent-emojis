@@ -11,25 +11,13 @@ const externalAttributes = externalLinkAttributes()
 ---
 
 {editUrl && (
-  <a href={editUrl} class="sl-flex print:hidden" {...externalAttributes}>
+  <a
+    href={editUrl}
+    class="sl-flex edit-link print:hidden"
+    {...externalAttributes}
+  >
     <Icon name="pencil" size="1.2em" />
     {Astro.locals.t('page.editLink')}
     <span class="sr-only"> ({common.opensInNewTab})</span>
   </a>
 )}
-
-<style>
-  @layer starlight.core {
-    a {
-      gap: 0.5rem;
-      align-items: center;
-      text-decoration: none;
-      color: var(--sl-color-gray-3);
-    }
-    @media (hover: hover) and (pointer: fine) {
-      a:hover {
-        color: var(--sl-color-white);
-      }
-    }
-  }
-</style>

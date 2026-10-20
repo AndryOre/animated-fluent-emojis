@@ -66,7 +66,7 @@ export default function DockInstall({
           pill
           activateOnFocus
           aria-label={labels.tabsLabel}
-          className="min-w-0 group-data-[variant=dock]/tabs:p-px [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="min-w-0 [scrollbar-width:none] group-data-[variant=dock]/tabs:p-px [&::-webkit-scrollbar]:hidden"
         >
           {PACKAGE_MANAGERS.map((id) => (
             <TabsTrigger

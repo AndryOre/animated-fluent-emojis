@@ -206,7 +206,7 @@ export default function CodeBlock({
                 keepMounted
                 className={PANEL_CLASS}
               >
-                <code className="block overflow-x-auto font-mono text-[13px] whitespace-pre text-foreground outline-none [scrollbar-width:none] focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
+                <code className="block [scrollbar-width:none] overflow-x-auto font-mono text-[13px] whitespace-pre text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-scrollbar]:hidden">
                   {tab.code}
                 </code>
               </TabsContent>
@@ -241,7 +241,7 @@ export default function CodeBlock({
               pill={pill}
               activateOnFocus
               aria-label={labels.tabsLabel}
-              className="min-w-0 gap-1 pr-5 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="min-w-0 [scrollbar-width:none] gap-1 [mask-image:linear-gradient(to_right,#000_calc(100%-20px),transparent)] pr-5 [&::-webkit-scrollbar]:hidden"
             >
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.id} value={tab.id}>

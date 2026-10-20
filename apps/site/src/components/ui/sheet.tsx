@@ -88,7 +88,7 @@ function SheetContent(props: SheetContentProps) {
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          'fixed z-50 overflow-y-auto overscroll-contain border border-border bg-card p-5 outline-none transition-[opacity,translate] duration-(--duration-sheet) ease-(--ease-drawer) data-ending-style:opacity-0 data-ending-style:duration-150 data-ending-style:ease-(--ease-out-strong) data-starting-style:opacity-0',
+          'fixed z-50 overflow-y-auto overscroll-contain border border-border bg-card p-5 transition-[opacity,translate] duration-(--duration-sheet) ease-(--ease-drawer) outline-none data-ending-style:opacity-0 data-ending-style:duration-150 data-ending-style:ease-(--ease-out-strong) data-starting-style:opacity-0',
           SIDE_CLASSES[side],
           className,
         )}
