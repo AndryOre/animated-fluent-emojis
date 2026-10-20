@@ -142,9 +142,9 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
               {name}
             </h2>
             <Button
-              variant="ghost"
+              variant="quiet"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
+              className="size-6 shrink-0 pointer-coarse:size-9"
               aria-label={strings.copyName}
               onClick={() => void copy(name)}
             >
@@ -158,9 +158,9 @@ export function EmojiSheetBody(props: EmojiSheetBodyProps) {
               {emoji.id}
             </p>
             <Button
-              variant="ghost"
+              variant="quiet"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
+              className="size-6 shrink-0 pointer-coarse:size-9"
               aria-label={strings.copyId}
               onClick={() => void copy(emoji.id)}
             >
@@ -292,7 +292,7 @@ export function EmojiSheet(props: EmojiSheetProps) {
         aria-labelledby={EMOJI_SHEET_HEADING_ID}
         initialFocus={false}
         finalFocus={finalFocus}
-        className="p-0"
+        flush
       >
         <div className="site-container pt-4 pb-safe-4">
           <EmojiSheetBody

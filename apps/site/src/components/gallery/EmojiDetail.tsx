@@ -120,9 +120,9 @@ export function EmojiIdRow(props: EmojiIdRowProps) {
         {id}
       </p>
       <Button
-        variant="ghost"
+        variant="quiet"
         size="icon-sm"
-        className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
+        className="size-6 shrink-0 pointer-coarse:size-9"
         aria-label={strings.copyId}
         onClick={() => void onCopy(id)}
       >
@@ -294,9 +294,9 @@ export function EmojiDetail(props: EmojiDetailProps) {
               {name}
             </h2>
             <Button
-              variant="ghost"
+              variant="quiet"
               size="icon-sm"
-              className="size-6 shrink-0 text-muted-foreground pointer-coarse:size-9"
+              className="size-6 shrink-0 pointer-coarse:size-9"
               aria-label={strings.copyName}
               onClick={() => void copy(name)}
             >

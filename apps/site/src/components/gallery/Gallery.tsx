@@ -85,12 +85,7 @@ function Message({ title, hint, action, onAction }: MessageProps) {
     <div className="flex flex-col items-center gap-3 py-16 text-center transition-opacity-translate duration-200 ease-(--ease-out-strong) starting:translate-y-1 starting:opacity-0">
       <p className="text-lg font-extrabold">{title}</p>
       <p className="max-w-md text-muted-foreground">{hint}</p>
-      <Button
-        size="lg"
-        shape="pill"
-        onClick={onAction}
-        className="h-10 px-5 font-semibold"
-      >
+      <Button size="cta" shape="pill" onClick={onAction}>
         {action}
       </Button>
     </div>
@@ -300,7 +295,7 @@ export function Gallery(props: GalleryProps) {
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
-                className="h-9 rounded-10 pr-14 pl-9 text-base pointer-fine:text-sm"
+                variant="search"
               />
               <kbd className="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-border px-1.5 font-mono text-caption text-muted-foreground split:block">
                 {shortcutHint}
@@ -369,6 +364,7 @@ export function Gallery(props: GalleryProps) {
                               onKeyDown={(event) => {
                                 moveFocus(event, shown.indexOf(emoji))
                               }}
+
                               className="flex aspect-square cursor-pointer items-center justify-center rounded-10 border border-transparent p-1 transition-bg-transform duration-100 ease-(--ease-out-strong) select-none touch-callout-none hover:bg-muted active:scale-96 active:bg-muted aria-pressed:border-primary"
                             />
                           }
@@ -430,8 +426,8 @@ export function Gallery(props: GalleryProps) {
             finalFocus={filtersButtonRef}
           >
             <SheetClose
-              render={<Button variant="ghost" shape="pill" />}
-              className="mb-2 ml-auto flex h-8 px-3 font-semibold"
+              render={<Button variant="ghost" size="close" shape="pill" />}
+              className="mb-2 ml-auto flex"
             >
               {strings.closeDetail}
             </SheetClose>
