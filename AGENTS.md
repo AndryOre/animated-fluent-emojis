@@ -33,6 +33,14 @@ never use another package manager (this repo uses `bun.lock`). Read
 - `bun run build` — **do not run unless explicitly asked.** It is slow; `check`
   already builds once through `lint:package`.
 
+## Architecture decision records
+
+A new ADR must add its row to [`docs/adr/README.md`](docs/adr/README.md);
+`docs/adr/adr-invariants.test.ts` fails when an ADR is missing from the index.
+ADRs are living documents: edit one in place to keep it true and add a
+`Revised: YYYY-MM-DD, what changed` line under its `Date:`. A reversed or
+replaced decision gets a new ADR.
+
 ## Branch and commit conventions
 
 Branches are `<type>/<slug>`. Commits and PR titles are
