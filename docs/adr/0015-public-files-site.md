@@ -2,12 +2,15 @@
 
 ## Status
 
-Accepted
+Accepted. Amended by
+[0018](0018-website-on-coolify-with-astro-and-starlight.md).
 
 Date: 2026-10-06
 
 Revised: 2026-10-21, builder and slug registry paths moved to `apps/assets`; the
 cdn host is now the library default
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 

@@ -2,12 +2,16 @@
 
 ## Status
 
-Accepted
+Accepted. Amends [0006](0006-cloudflare-pages-asset-hosting.md) and
+[0008](0008-static-keyframes-and-lazy-slim-manifest.md). Amended by
+[0011](0011-compact-slim-manifest-and-hd-frame-cap.md).
 
 Date: 2026-10-05
 
 Revised: 2026-10-21, cross-linked ADR 0011, which stays a separate record
 because the repo links to it
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 

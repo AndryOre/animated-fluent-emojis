@@ -2,9 +2,11 @@
 
 ## Status
 
-Accepted
+Accepted. Amends [0006](0006-cloudflare-pages-asset-hosting.md).
 
 Date: 2026-10-05
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 
