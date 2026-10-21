@@ -107,7 +107,7 @@ adapter.
   a pull request, linear history, signed commits and the `CI passed` check
   ([ADR 0001](adr/0001-public-repo-security-posture.md)).
 - **OpenSSF Scorecard** runs on a schedule and on push to `main`, published with
-  a README badge. CodeQL runs through the default setup.
+  a README badge. CodeQL runs as a workflow (`.github/workflows/codeql.yml`).
 - **Renovate** is the single source of dependency updates; Dependabot updates
   are not used ([ADR 0001](adr/0001-public-repo-security-posture.md)).
 - **No state carried between sync runs.** The Actions cache was removed for

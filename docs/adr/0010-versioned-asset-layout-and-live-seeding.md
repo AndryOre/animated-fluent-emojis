@@ -6,6 +6,9 @@ Accepted
 
 Date: 2026-10-05
 
+Revised: 2026-10-21, cross-linked ADR 0011, which stays a separate record
+because the repo links to it
+
 ## Context
 
 [ADR 0006](0006-cloudflare-pages-asset-hosting.md) publishes sprites under a
@@ -41,7 +44,9 @@ fixed path and busts the immutable cache with `?v=<etag>`. In practice:
 
 This amends ADR 0006 (cache busting and build state) and
 [ADR 0008](0008-static-keyframes-and-lazy-slim-manifest.md) (the manifest
-location).
+location). [ADR 0011](0011-compact-slim-manifest-and-hd-frame-cap.md) builds on
+this layout: it compacts the v1 manifest, caps HD frames and makes the sync
+layout-aware.
 
 ### Rejected alternatives
 
@@ -56,7 +61,9 @@ location).
 
 - The site holds up to three copies of the sprites (legacy, current, previous
   generation). The build fails above 19,000 files, under Pages' 20,000 limit.
-- A sync without upstream changes only downloads and validates.
+- A sync without upstream changes only downloads and validates, unless the
+  layout or the pipeline version changed
+  ([ADR 0011](0011-compact-slim-manifest-and-hd-frame-cap.md)).
 - The seed trusts the live site, the same root of trust as the published site
   itself; a corrupted live file is caught by validation and rebuilt from source.
 - The legacy layout adds weight until a later release drops it.

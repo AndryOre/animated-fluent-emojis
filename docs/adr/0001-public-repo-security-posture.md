@@ -9,8 +9,10 @@ Date: 2026-10-04
 Revised: 2026-10-19, CodeQL now runs as a workflow
 (`.github/workflows/codeql.yml`, JavaScript/TypeScript and Actions) instead of
 the GitHub default setup, matching `snug`; the default setup must be disabled in
-the repository security settings, otherwise both run. The CodeQL bullet under
-Adopted and the matching Rejected bullet are superseded (AO-2157).
+the repository security settings, otherwise both run (AO-2157).
+
+Revised: 2026-10-21, removed the superseded CodeQL default-setup bullet under
+Adopted and the matching Rejected bullet; Adopted now describes the workflow.
 
 ## Context
 
@@ -51,17 +53,15 @@ AO-1195) after the workflows and docs land, not by a committed script.
   reference a full commit SHA. Renovate keeps the pins current.
 - **Restrictive fork-PR workflow approval**, and read-only default
   `GITHUB_TOKEN` permissions.
-- **CodeQL default setup** for `javascript-typescript`, enabled in the
-  repository security settings rather than through a workflow file. Findings
-  surface in code scanning and are not a required check.
+- **CodeQL as a workflow** (`.github/workflows/codeql.yml`) for
+  `javascript-typescript` and `actions`. The GitHub default setup stays
+  disabled. Findings surface in code scanning and are not a required check.
 - **OpenSSF Scorecard** on a schedule and on push to `main`
   (`.github/workflows/scorecard.yml`), published with a README badge. Not a
   required check.
 
 ### Rejected
 
-- **CodeQL advanced setup (a custom workflow)**: the default setup covers this
-  codebase, and a workflow file is one more pinned action to maintain.
 - **`actions/dependency-review-action`**: GitHub's dependency graph does not
   parse `bun.lock`, so it would only see ranges from `package.json`.
 - **`step-security/harden-runner`**: a third-party root-level agent in every

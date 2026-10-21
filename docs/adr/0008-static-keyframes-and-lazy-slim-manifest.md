@@ -6,6 +6,9 @@ Accepted
 
 Date: 2026-10-05
 
+Revised: 2026-10-21, manifest served from `/v1/` and compacted, default asset
+site is the cdn host, reduced motion is resolved by the playback gate
+
 ## Context
 
 Three runtime problems shared one root: the component did too much per emoji,
@@ -33,22 +36,25 @@ reasons (real CSS animations, hover and `getComputedStyle`) still hold.
   offset) are inline styles on the image. Nothing is injected into
   `document.head`.
 - **A slim manifest, loaded lazily.** The asset site publishes
-  `manifest.slim.json` with only the fields the runtime reads. It is fetched the
-  first time an `Emoji` renders, memoized, and a failed load clears the memo so
-  the next render retries. Importing the package makes no request.
+  `manifest.slim.json` (served from `/v1/`, compacted by
+  [ADR 0011](0011-compact-slim-manifest-and-hd-frame-cap.md)) with only the
+  fields the runtime reads. It is fetched the first time an `Emoji` renders,
+  memoized, and a failed load clears the memo so the next render retries.
+  Importing the package makes no request.
 - **A sized placeholder while loading.** `Emoji` renders an empty `aria-hidden`
   span of the final size until the manifest resolves, so the layout does not
   jump. An unknown id or a failed load renders `null`.
 - **A configurable asset site.** `configureEmojis({ assetSiteUrl })` replaces
-  the default `https://animated-fluent-emojis.pages.dev`, for consumers who
-  mirror the assets.
+  the default `https://animated-fluent-emojis-cdn.andryore.dev`, for consumers
+  who mirror the assets.
 - **A generated, open `EmojiId`.** `bun run assets:lists` writes the union of
   published ids. The `id` prop is `EmojiId | (string & {})`: known ids
   autocomplete, and ids published after a consumer's installed version still
   compile.
 - **Reduced motion rests on the poster frame.** Under
-  `prefers-reduced-motion: reduce`, `autoPlay` is ignored and the animation name
-  is `none`; hover and focus still play.
+  `prefers-reduced-motion: reduce`, `autoPlay` is ignored (the playback gate in
+  `core/playback-gate.ts` decides this, not the stylesheet); hover and focus
+  still play.
 
 ### Rejected alternatives
 
