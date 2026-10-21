@@ -1,4 +1,5 @@
-const ALLOWED_STATUSES = /^(Accepted|Proposed|Deprecated|Superseded by .+)$/
+const ALLOWED_STATUSES =
+  /^(?:(?:Accepted|Proposed|Deprecated)\b|Superseded by .+)/
 const REQUIRED_SECTIONS = ['Status', 'Context', 'Decision', 'Consequences']
 const DATE_LINE_PATTERN = /^Date: \d{4}-\d{2}-\d{2}$/m
 const VALID_REVISED_LINE_PATTERN = /^Revised: \d{4}-\d{2}-\d{2}, \S/
@@ -207,7 +208,8 @@ export function findIndexColumnViolations(
 
 /**
  * Checks a set of ADRs against the enforced invariants: ascending unique
- * numbers, header, sections, status, date, `Revised:` lines and index listing.
+ * numbers, header, sections, status, date, `Revised:` lines, index listing, linked relation wording recorded on both
+ * sides and the index relation column.
  * @param adrs - The ADR files to check, sorted by file name.
  * @param indexContent - The contents of the ADR index README.
  * @returns One message per violation, empty when all invariants hold.
@@ -271,6 +273,12 @@ export function findAdrViolations(
       violations.push(`${fileName}: listed in README but missing`)
     }
   }
+
+  violations.push(
+    ...findRelationWordingViolations(adrs),
+    ...findRelationViolations(adrs),
+    ...findIndexColumnViolations(adrs, indexContent),
+  )
 
   return violations
 }

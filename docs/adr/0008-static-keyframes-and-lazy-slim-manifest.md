@@ -2,12 +2,15 @@
 
 ## Status
 
-Accepted
+Accepted. Amends [0004](0004-vitest-browser-mode.md). Amended by
+[0010](0010-versioned-asset-layout-and-live-seeding.md).
 
 Date: 2026-10-05
 
 Revised: 2026-10-21, manifest served from `/v1/` and compacted, default asset
 site is the cdn host, reduced motion is resolved by the playback gate
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 

@@ -2,9 +2,12 @@
 
 ## Status
 
-Accepted
+Accepted. Amends [0009](0009-hd-sprite-sheets-and-strict-validation.md) and
+[0010](0010-versioned-asset-layout-and-live-seeding.md).
 
 Date: 2026-10-05
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 

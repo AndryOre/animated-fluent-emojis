@@ -2,12 +2,14 @@
 
 ## Status
 
-Accepted
+Accepted. Amended by [0008](0008-static-keyframes-and-lazy-slim-manifest.md).
 
 Date: 2026-10-04
 
 Revised: 2026-10-21, browser projects run chromium, firefox and webkit; coverage
 moved to the root and each workspace with its own thresholds.
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 

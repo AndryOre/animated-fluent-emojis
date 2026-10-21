@@ -2,9 +2,11 @@
 
 ## Status
 
-Accepted
+Accepted. Extends [0015](0015-public-files-site.md).
 
 Date: 2026-10-06
+
+Revised: 2026-10-21, recorded the amendment relations in Status.
 
 ## Context
 
