@@ -88,12 +88,15 @@ test('reacts when the reduced motion preference changes', async () => {
 
 test('plays while focus is inside a wrapping button with playOnHover', async () => {
   await render(
-    <button type="button">
-      <Emoji id="cat" autoPlay={false} playOnHover alt="" />
-    </button>,
+    <>
+      <button type="button" data-testid="wrapping">
+        <Emoji id="cat" autoPlay={false} playOnHover alt="" />
+      </button>
+      <button type="button">next</button>
+    </>,
   )
 
-  const button = page.getByRole('button')
+  const button = page.getByTestId('wrapping')
   const image = button.element().querySelector('img')
   if (!image) throw new Error('image not rendered')
   expect(image.getAnimations()).toHaveLength(0)
