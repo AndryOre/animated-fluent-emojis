@@ -1,0 +1,108 @@
+{
+  "apps/site/src/components/ZvScript.astro": [
+    "astro/no-unused-define-vars-in-style",
+    "local/no-astro-style-blocks",
+    "shadcn/no-inline-styles"
+  ],
+  "apps/site/src/components/ZvShadcn.tsx": [
+    "shadcn/no-arbitrary-values",
+    "shadcn/no-inline-styles",
+    "shadcn/no-raw-colors",
+    "shadcn/no-restyle",
+    "shadcn/no-unknown-classes"
+  ],
+  "apps/site/src/components/ZvTemplate.astro": [
+    "astro/no-conflict-set-directives",
+    "jsx-a11y/alt-text",
+    "jsx-a11y/anchor-is-valid",
+    "jsx-a11y/click-events-have-key-events",
+    "jsx-a11y/no-static-element-interactions",
+    "local/no-astro-style-blocks",
+    "local/no-non-doc-comments",
+    "shadcn/no-arbitrary-values",
+    "shadcn/no-inline-styles",
+    "shadcn/no-raw-colors",
+    "shadcn/no-restyle",
+    "shadcn/no-unknown-classes"
+  ],
+  "apps/site/src/components/ui/zv-ui.tsx": ["shadcn/no-raw-colors"],
+  "packages/animated-fluent-emojis/src/ZvReact.tsx": [
+    "@eslint-react/exhaustive-deps",
+    "@eslint-react/no-array-index-key",
+    "@eslint-react/no-leaked-conditional-rendering",
+    "@eslint-react/rules-of-hooks",
+    "@eslint-react/set-state-in-effect",
+    "jsx-a11y/alt-text",
+    "jsx-a11y/anchor-is-valid",
+    "jsx-a11y/click-events-have-key-events",
+    "jsx-a11y/no-autofocus",
+    "jsx-a11y/no-static-element-interactions",
+    "react-hooks/exhaustive-deps",
+    "react-hooks/rules-of-hooks",
+    "react-hooks/set-state-in-effect",
+    "unicorn/explicit-length-check",
+    "unicorn/no-useless-undefined",
+    "unicorn/prefer-global-number-constants"
+  ],
+  "scripts/zv-eslint-comments.ts": [
+    "@eslint-community/eslint-comments/disable-enable-pair",
+    "@eslint-community/eslint-comments/no-aggregating-enable",
+    "@eslint-community/eslint-comments/no-duplicate-disable",
+    "@eslint-community/eslint-comments/no-unlimited-disable",
+    "@eslint-community/eslint-comments/no-unused-enable",
+    "@eslint-community/eslint-comments/require-description",
+    "unicorn/no-abusive-eslint-disable",
+    "unicorn/no-top-level-side-effects",
+    "unused-disable-directive"
+  ],
+  "scripts/zv-jsdoc.ts": [
+    "jsdoc/check-param-names",
+    "jsdoc/check-tag-names",
+    "jsdoc/informative-docs",
+    "jsdoc/no-types",
+    "jsdoc/require-param",
+    "jsdoc/require-returns"
+  ],
+  "scripts/zv-local.ts": ["local/no-non-doc-comments"],
+  "scripts/zv-policy.config.mjs": [],
+  "scripts/zv-typescript.ts": [
+    "@typescript-eslint/array-type",
+    "@typescript-eslint/await-thenable",
+    "@typescript-eslint/consistent-type-definitions",
+    "@typescript-eslint/consistent-type-imports",
+    "@typescript-eslint/no-base-to-string",
+    "@typescript-eslint/no-deprecated",
+    "@typescript-eslint/no-empty-function",
+    "@typescript-eslint/no-explicit-any",
+    "@typescript-eslint/no-floating-promises",
+    "@typescript-eslint/no-misused-promises",
+    "@typescript-eslint/no-non-null-assertion",
+    "@typescript-eslint/no-unnecessary-condition",
+    "@typescript-eslint/no-unnecessary-type-assertion",
+    "@typescript-eslint/prefer-nullish-coalescing",
+    "jsdoc/require-returns",
+    "unicorn/no-unnecessary-await",
+    "unicorn/prefer-default-parameters",
+    "unicorn/prefer-ternary"
+  ],
+  "scripts/zv-unicorn.ts": [
+    "@typescript-eslint/prefer-find",
+    "unicorn/name-replacements",
+    "unicorn/no-for-each",
+    "unicorn/no-top-level-side-effects",
+    "unicorn/no-typeof-undefined",
+    "unicorn/prefer-array-find",
+    "unicorn/prefer-node-protocol",
+    "unicorn/prefer-spread"
+  ],
+  "scripts/zv-vitest.test.ts": [
+    "@typescript-eslint/no-meaningless-void-operator",
+    "@typescript-eslint/no-unused-expressions",
+    "vitest/expect-expect",
+    "vitest/no-conditional-expect",
+    "vitest/no-focused-tests",
+    "vitest/no-identical-title",
+    "vitest/valid-expect"
+  ],
+  "scripts/zvCamelCase.ts": ["unicorn/filename-case"]
+}

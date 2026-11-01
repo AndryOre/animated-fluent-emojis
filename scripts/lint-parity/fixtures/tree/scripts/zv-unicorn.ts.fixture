@@ -1,0 +1,17 @@
+import { readFileSync } from 'fs'
+
+const e = new Error('x')
+const btn = 'button'
+const arr = [1, 2, 3]
+
+arr.forEach((item) => {
+  console.info(item)
+})
+
+export const copy = Array.from(arr)
+export const text = readFileSync('a.txt', 'utf8')
+export const found = arr.filter((item) => item > 1)[0]
+export const error = e
+export const button = btn
+export const isMissing = typeof text === 'undefined'
+export const nested = (): number => (arr.length > 1 ? (arr.length > 2 ? 1 : 2) : 3)

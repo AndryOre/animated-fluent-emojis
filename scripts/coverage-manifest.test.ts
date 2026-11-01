@@ -176,6 +176,14 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
   ),
   'scripts/workflow-files.ts':
     'Workflow loader used by workflows-invariants.test.ts, which exercises it against the real workflows.',
+  'scripts/lint-parity/run.ts':
+    'Lint parity harness CLI that spawns ESLint and Oxlint and clones the corpus; its pure logic lives in diff.ts, report.ts, modes.ts and corpus.ts, which have their own tests.',
+  'scripts/lint-parity/baseline-rules/index.mjs':
+    'Frozen copy of eslint-rules/index.mjs for the lint parity baseline; the live rules have their own tests.',
+  'scripts/lint-parity/baseline-rules/no-astro-style-blocks.mjs':
+    'Frozen copy of eslint-rules/no-astro-style-blocks.mjs for the lint parity baseline; the live rule has its own test.',
+  'scripts/lint-parity/baseline-rules/no-non-doc-comments.mjs':
+    'Frozen copy of eslint-rules/no-non-doc-comments.mjs for the lint parity baseline; the live rule has its own test.',
   'docs/brand/tools/export.mjs':
     'Brand raster export CLI that needs a real browser and writes the committed rasters, excluded from coverage; its pure logic lives in brand-export-spec.mjs.',
 }

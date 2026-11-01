@@ -1,0 +1,30 @@
+/**
+ * Adds numbers.
+ * @param first The first number.
+ * @param wrong A misnamed parameter.
+ * @returns The sum.
+ */
+export function add(first: number, second: number): number {
+  return first + second
+}
+
+/**
+ * Value.
+ * @param {string} value Typed in the tag.
+ */
+export function typedTag(value: string): string {
+  return value
+}
+
+/** Widget name. */
+export const widgetName = 'widget'
+
+/**
+ * Computes the thing.
+ */
+export function computeThing(input: number): number {
+  return input
+}
+
+/** @unknownTag nothing */
+export const tagged = 1

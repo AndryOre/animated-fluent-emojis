@@ -1,0 +1,21 @@
+import { Button } from './ui/button'
+import { TooltipTrigger } from './ui/tooltip'
+
+interface ZvShadcnProps {
+  active: boolean
+}
+
+export function ZvShadcn({ active }: ZvShadcnProps) {
+  return (
+    <div>
+      <Button className="rounded-full px-9">restyled</Button>
+      <p className="text-red-500">raw color</p>
+      <p className="w-[13px]">arbitrary value</p>
+      <p style={{ color: 'red' }}>inline style</p>
+      <p style={{ '--delay': '1s' } as React.CSSProperties}>allowed custom property</p>
+      <p className="not-a-tailwind-class">unknown class</p>
+      <p className={`p-2 ${active ? 'p-4' : 'p-1'}`}>dynamic class</p>
+      <TooltipTrigger className="rounded-10 border p-1">contract</TooltipTrigger>
+    </div>
+  )
+}
