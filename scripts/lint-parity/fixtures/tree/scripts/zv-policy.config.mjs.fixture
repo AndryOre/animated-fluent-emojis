@@ -1,0 +1,3 @@
+console.info('top-level side effect allowed in config files')
+
+export default {}

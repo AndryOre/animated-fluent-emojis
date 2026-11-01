@@ -1,0 +1,10 @@
+// A plain line comment the local rule rejects.
+export const withLineComment = 1
+
+/* A plain block comment the local rule rejects. */
+export const withBlockComment = 2
+
+/**
+ * A TSDoc block, which is allowed.
+ */
+export const documented = 3

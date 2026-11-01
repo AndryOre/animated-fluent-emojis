@@ -1,0 +1,8 @@
+export function ZvUi() {
+  return (
+    <div>
+      <p className="w-[13px]">arbitrary value is exempt in the registry layer</p>
+      <p className="text-red-500">raw color still applies</p>
+    </div>
+  )
+}

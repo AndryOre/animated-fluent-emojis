@@ -1,0 +1,18 @@
+---
+const items = ['a', 'b']
+---
+
+<ul>
+  {items.map((item, index) => <li key={index}>{item}</li>)}
+</ul>
+
+<style define:vars={{ unused: '1px' }}>
+  ul {
+    margin: 0;
+  }
+</style>
+
+<script>
+  const value: any = document.title
+  console.info(value)
+</script>

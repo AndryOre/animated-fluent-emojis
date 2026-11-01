@@ -1,0 +1,30 @@
+import { describe, expect, test } from 'vitest'
+
+describe('suite', () => {
+  test.only('focused', () => {
+    expect(1).toBe(1)
+  })
+
+  test('same title', () => {
+    expect(1).toBe(1)
+  })
+
+  test('same title', () => {
+    expect(2).toBe(2)
+  })
+
+  test('has no assertion', () => {
+    const value = 1
+    void value
+  })
+
+  test('conditional expect', () => {
+    if (Math.random() > 1) {
+      expect(1).toBe(1)
+    }
+  })
+
+  test('valid expect', () => {
+    expect(1).toBe
+  })
+})
