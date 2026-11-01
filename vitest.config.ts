@@ -21,6 +21,7 @@ export default defineConfig({
         'eslint-rules/**/*.test.ts',
         'docs/brand/tools/**/*.test.ts',
         'docs/brand/tools/export.mjs',
+        'scripts/lint-parity/run.ts',
       ],
       reporter: ['text', 'lcov'],
       thresholds: { lines: 94, functions: 95, branches: 87, statements: 94 },
