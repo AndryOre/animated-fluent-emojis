@@ -47,7 +47,7 @@ jobs:
           path: .eslintcache
           key:
             ${{ runner.os }}-eslintcache-${{ hashFiles('bun.lock',
-            'eslint.config.mjs', 'eslint-rules/**') }}
+            'eslint.config.mjs', 'lint-policy.mjs', 'eslint-rules/**') }}
           restore-keys: ${{ runner.os }}-eslintcache-
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -65,6 +65,10 @@ jobs:
 
       - name: Check root
         run: bunx turbo run check:root
+
+      - name: Lint with Oxlint (not gating until ESLint is cut down)
+        continue-on-error: true
+        run: bun run lint:oxlint
 
   test:
     name: Test (Vitest browser mode)

@@ -37,6 +37,18 @@ ruleTester.run('no-non-doc-comments', rule, {
       code: '/* global window */\nwindow.focus()\n',
     },
     {
+      name: 'oxlint-disable-next-line directive',
+      code: '// oxlint-disable-next-line no-console -- logs on purpose\nconsole.log(1)\n',
+    },
+    {
+      name: 'oxlint-disable and oxlint-enable block directives',
+      code: '/* oxlint-disable no-console */\nconsole.log(1)\n/* oxlint-enable no-console */\n',
+    },
+    {
+      name: 'oxlint-disable-line directive',
+      code: 'console.log(1) // oxlint-disable-line no-console\n',
+    },
+    {
       name: '@ts- directive',
       code: '// @ts-expect-error the shim below is intentionally untyped\nconst value = window.doesNotExist\n',
     },
@@ -79,6 +91,11 @@ ruleTester.run('no-non-doc-comments', rule, {
     {
       name: 'trailing line comment',
       code: 'export const value = 1 // explains the export\n',
+      errors: [{ messageId: 'noNonDocComment' }],
+    },
+    {
+      name: 'prose that merely mentions oxlint',
+      code: '// oxlint runs first\nexport const value = 1\n',
       errors: [{ messageId: 'noNonDocComment' }],
     },
     {

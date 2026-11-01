@@ -10,8 +10,16 @@ interface CustomManager {
   readonly matchStrings: readonly string[]
 }
 
+interface PackageRule {
+  readonly groupName?: string
+  readonly matchPackageNames?: readonly string[]
+  readonly rangeStrategy?: string
+  readonly automerge?: boolean
+}
+
 interface RenovateConfig {
   readonly extends: readonly string[]
+  readonly packageRules: readonly PackageRule[]
   readonly rebaseWhen?: string
   readonly lockFileMaintenance?: { automerge?: boolean }
   readonly customManagers: readonly CustomManager[]
@@ -69,6 +77,36 @@ describe('renovate.json5 presets', () => {
 
   test('automerges lockfile maintenance', () => {
     expect(config.lockFileMaintenance?.automerge).toBe(true)
+  })
+})
+
+function findGroup(groupName: string): PackageRule {
+  const rule = config.packageRules.find(
+    (candidate) => candidate.groupName === groupName,
+  )
+  if (!rule) throw new Error(`no package rule for group ${groupName}`)
+  return rule
+}
+
+describe('renovate.json5 groups', () => {
+  test('groups the oxc toolchain, exact-pinned and never automerged', () => {
+    const oxc = findGroup('oxc')
+    expect(oxc.matchPackageNames).toEqual(
+      expect.arrayContaining([
+        'oxlint',
+        'oxlint-tsgolint',
+        'oxfmt',
+        'typescript7',
+      ]),
+    )
+    expect(oxc.rangeStrategy).toBe('pin')
+    expect(oxc.automerge).toBe(false)
+  })
+
+  test('keeps the oxc packages out of the eslint group', () => {
+    expect(findGroup('eslint').matchPackageNames).not.toEqual(
+      expect.arrayContaining(['oxlint']),
+    )
   })
 })
 

@@ -106,6 +106,7 @@
       "inputs": [
         "scripts/**",
         "eslint-rules/**",
+        "oxlint-plugins/**",
         "docs/adr/**",
         "docs/brand/tools/**",
         "packages/*/src/**",
@@ -119,6 +120,7 @@
       "inputs": [
         "scripts/**",
         "eslint-rules/**",
+        "oxlint-plugins/**",
         "docs/adr/**",
         "docs/brand/tools/**",
         "packages/*/src/**",
