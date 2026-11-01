@@ -185,7 +185,6 @@ function runFixtures(options: Options): RawSection {
     process.kill(process.pid, signal)
   }
   process.once('SIGINT', removeOnSignal)
-  process.once('SIGTERM', removeOnSignal)
   try {
     const eslint = runEslint(BASELINE_CONFIG, files)
     const expected = JSON.parse(
@@ -205,11 +204,8 @@ function runFixtures(options: Options): RawSection {
       isTypeAware: options.isTypeAware,
     }
   } finally {
+    process.off('SIGINT', removeOnSignal)
     cleanup()
-    setImmediate(() => {
-      process.off('SIGINT', removeOnSignal)
-      process.off('SIGTERM', removeOnSignal)
-    })
   }
 }
 
