@@ -57,14 +57,13 @@ Modes (--mode)
   repo       This repository, linted from the root.
   corpus     External TS/React repos fetched at a pinned commit into
              .cache/lint-parity/corpus (never committed) and linted without
-             type information. The repository lint does not ignore .cache,
-             so delete the corpus directory before running bun run check.
+             type information. The repository lint ignores .cache.
   all        fixtures, repo and corpus.
 
-Type-aware (--type-aware)
-  Passes --type-aware to Oxlint (tsgolint). The baseline always runs with type
-  information. Without the flag, baseline findings from rules that require
-  type information are left out of the comparison.
+Type-aware (default)
+  Oxlint runs with --type-aware (tsgolint) and the baseline with type
+  information, so type-aware rules are gated. --no-type-aware skips them on
+  both sides for a quick run; such a run is not a valid gate.
 
 accepted.json (--accepted, default scripts/lint-parity/accepted.json)
   JSON array of explained gaps: { "file", "line"?, "rule", "reason" }. A
@@ -73,7 +72,7 @@ accepted.json (--accepted, default scripts/lint-parity/accepted.json)
 
 Options
   --mode <${MODES.join('|')}>   what to lint (default fixtures)
-  --type-aware                   run Oxlint with --type-aware
+  --no-type-aware                skip type-aware rules (not a valid gate)
   --accepted <path>              accepted gaps file
   --corpus-dir <path>            where corpus repos are cloned
   --report <path>                JSON report; a .md twin is written next to it
@@ -94,7 +93,7 @@ export function parseOptions(
     args: argv,
     options: {
       mode: { type: 'string', default: 'fixtures' },
-      'type-aware': { type: 'boolean', default: false },
+      'no-type-aware': { type: 'boolean', default: false },
       accepted: { type: 'string', default: defaults.accepted },
       'corpus-dir': { type: 'string', default: defaults.corpusDirectory },
       report: { type: 'string', default: defaults.report },
@@ -104,7 +103,7 @@ export function parseOptions(
   if (values.help) return undefined
   return {
     mode: parseMode(values.mode),
-    isTypeAware: values['type-aware'],
+    isTypeAware: !values['no-type-aware'],
     accepted: path.resolve(values.accepted),
     corpusDirectory: path.resolve(values['corpus-dir']),
     report: path.resolve(values.report),

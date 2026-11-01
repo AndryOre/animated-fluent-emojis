@@ -51,6 +51,8 @@ function runProcess(
     env: { ...process.env, ...environment },
   })
   if (result.error) throw result.error
+  if (result.signal)
+    throw new Error(`${command} was stopped by ${result.signal}`)
   return { stdout: result.stdout, status: result.status }
 }
 
@@ -130,10 +132,23 @@ function runCandidate(
   ]
 }
 
+function isCheckedOutAt(target: string, commit: string): boolean {
+  const { stdout, status } = runProcess('git', [
+    '-C',
+    target,
+    'rev-parse',
+    'HEAD',
+  ])
+  return status === 0 && stdout.trim() === commit
+}
+
 function ensureCorpus(directory: string): string[] {
   mkdirSync(directory, { recursive: true })
   return CORPUS.map((repository) => {
     const target = path.join(directory, repository.name)
+    if (existsSync(target) && !isCheckedOutAt(target, repository.commit)) {
+      rmSync(target, { recursive: true, force: true })
+    }
     if (!existsSync(target)) {
       const steps = [
         ['init', target],
@@ -165,6 +180,12 @@ function runFixtures(options: Options): RawSection {
     path.join(PARITY_DIR, 'fixtures', 'tree'),
     REPO_ROOT,
   )
+  const removeOnSignal = (signal: NodeJS.Signals) => {
+    cleanup()
+    process.kill(process.pid, signal)
+  }
+  process.once('SIGINT', removeOnSignal)
+  process.once('SIGTERM', removeOnSignal)
   try {
     const eslint = runEslint(BASELINE_CONFIG, files)
     const expected = JSON.parse(
@@ -184,6 +205,8 @@ function runFixtures(options: Options): RawSection {
       isTypeAware: options.isTypeAware,
     }
   } finally {
+    process.off('SIGINT', removeOnSignal)
+    process.off('SIGTERM', removeOnSignal)
     cleanup()
   }
 }

@@ -32,22 +32,25 @@ describe('parseOptions', () => {
   test('applies the defaults', () => {
     expect(parseOptions([], defaults)).toEqual({
       mode: 'fixtures',
-      isTypeAware: false,
+      isTypeAware: true,
       accepted: defaults.accepted,
       corpusDirectory: defaults.corpusDirectory,
       report: defaults.report,
     })
   })
 
-  test('reads mode and the type-aware flag', () => {
-    const options = parseOptions(['--mode', 'repo', '--type-aware'], defaults)
+  test('reads the mode and lets --no-type-aware opt out', () => {
+    const options = parseOptions(
+      ['--mode', 'repo', '--no-type-aware'],
+      defaults,
+    )
     expect(options?.mode).toBe('repo')
-    expect(options?.isTypeAware).toBe(true)
+    expect(options?.isTypeAware).toBe(false)
   })
 
   test('--help returns nothing so the caller prints the help text', () => {
     expect(parseOptions(['--help'], defaults)).toBeUndefined()
-    expect(HELP).toContain('--type-aware')
+    expect(HELP).toContain('--no-type-aware')
   })
 
   test('rejects an unknown mode', () => {
