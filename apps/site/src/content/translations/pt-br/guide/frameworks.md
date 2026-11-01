@@ -21,7 +21,6 @@ Importe `Emoji` do subcaminho do React:
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis/react'
-
 import 'animated-fluent-emojis/style.css'
 ```
 
@@ -160,7 +159,6 @@ no DOM.
 
 ```js
 import { createEmoji } from 'animated-fluent-emojis'
-
 import 'animated-fluent-emojis/style.css'
 
 const controller = createEmoji(document.querySelector('#slot'), {

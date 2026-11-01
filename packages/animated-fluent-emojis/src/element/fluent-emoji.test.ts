@@ -5,7 +5,6 @@ import {
   defineFluentEmoji,
   FLUENT_EMOJI_PRE_UPGRADE_CSS,
 } from './fluent-emoji.js'
-
 import './index.js'
 
 const mounted: Element[] = []
