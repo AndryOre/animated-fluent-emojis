@@ -92,7 +92,12 @@ describe('renovate.json5 groups', () => {
   test('groups the oxc toolchain, exact-pinned and never automerged', () => {
     const oxc = findGroup('oxc')
     expect(oxc.matchPackageNames).toEqual(
-      expect.arrayContaining(['oxlint', 'oxlint-tsgolint', 'oxfmt']),
+      expect.arrayContaining([
+        'oxlint',
+        'oxlint-tsgolint',
+        'oxfmt',
+        'typescript7',
+      ]),
     )
     expect(oxc.rangeStrategy).toBe('pin')
     expect(oxc.automerge).toBe(false)
