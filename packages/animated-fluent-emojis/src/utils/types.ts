@@ -122,4 +122,9 @@ export interface EmojiManifest extends SlimEmoticon {
  * Skin tones an emoji can be rendered with.
  */
 export type SkinTone =
-  'default' | 'light' | 'medium-light' | 'medium' | 'medium-dark' | 'dark'
+  | 'default'
+  | 'light'
+  | 'medium-light'
+  | 'medium'
+  | 'medium-dark'
+  | 'dark'

@@ -17,7 +17,6 @@ Import `Emoji` from the React subpath:
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis/react'
-
 import 'animated-fluent-emojis/style.css'
 ```
 
@@ -146,7 +145,6 @@ framework-free core of every adapter. Importing it touches no DOM.
 
 ```js
 import { createEmoji } from 'animated-fluent-emojis'
-
 import 'animated-fluent-emojis/style.css'
 
 const controller = createEmoji(document.querySelector('#slot'), {

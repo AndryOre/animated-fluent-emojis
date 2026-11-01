@@ -1,0 +1,21 @@
+// eslint-disable-next-line no-console
+console.info('no description')
+
+// eslint-disable-next-line no-console -- never triggers a rule here
+export const unusedDirective = 2
+
+/* eslint-disable no-console -- outer region */
+/* eslint-disable no-console -- inner region repeats the outer one */
+console.info('duplicate')
+
+/* eslint-enable no-alert -- nothing was disabled */
+
+/* eslint-disable no-alert -- paired below */
+/* eslint-disable no-debugger -- paired below */
+/* eslint-enable no-alert, no-debugger -- aggregates two disables */
+
+/* eslint-disable no-eval -- a block with no matching enable */
+export const unpaired = 3
+
+/* eslint-disable */
+export const unlimited = 1

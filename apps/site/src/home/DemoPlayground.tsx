@@ -8,7 +8,6 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react'
-
 import 'animated-fluent-emojis/style.css'
 
 import CodeBlock, { type CodeBlockLabels } from '@/components/CodeBlock'

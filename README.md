@@ -115,7 +115,6 @@ sprite sheets.
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis/react'
-
 import 'animated-fluent-emojis/style.css'
 
 ;<Emoji id="1f44b_wavinghand" size={64} playOnHover skinTone="medium" />

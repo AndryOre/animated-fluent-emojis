@@ -19,7 +19,6 @@ React、Vue 和 Svelte 适配器以及 `createEmoji` 从
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis/react'
-
 import 'animated-fluent-emojis/style.css'
 ```
 
@@ -148,7 +147,6 @@ props 与下面列出的相同，但不含回调，并带有 `class` 和字符�
 
 ```js
 import { createEmoji } from 'animated-fluent-emojis'
-
 import 'animated-fluent-emojis/style.css'
 
 const controller = createEmoji(document.querySelector('#slot'), {

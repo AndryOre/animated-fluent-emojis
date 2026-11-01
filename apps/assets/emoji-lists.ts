@@ -1,4 +1,6 @@
-import { format, resolveConfig } from 'prettier'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { format, type FormatConfig, type Oxfmtrc } from 'oxfmt'
 
 import type { Manifest } from '../../packages/animated-fluent-emojis/src/utils/types.js'
 import { listRegistryKeys, type SlugRegistry } from './public-slugs.js'
@@ -123,16 +125,66 @@ export function renderEmojiIdModule(manifest: Manifest): string {
   ].join('\n')
 }
 
+const REPOSITORY_DIRECTORY = path.resolve(import.meta.dirname, '../..')
+
+const CLI_ONLY_CONFIG_KEYS = new Set([
+  '$schema',
+  'ignorePatterns',
+  'associations',
+  'overrides',
+])
+
 /**
- * Formats source with the repository's Prettier configuration.
+ * Anchors a relative Tailwind stylesheet to the repository root, so the
+ * options work whatever the current directory is.
+ * @param sortTailwindcss The `sortTailwindcss` value from the config.
+ * @returns The same value with an absolute stylesheet path.
+ */
+function anchorTailwindStylesheet(
+  sortTailwindcss: Oxfmtrc['sortTailwindcss'],
+): Oxfmtrc['sortTailwindcss'] {
+  if (typeof sortTailwindcss !== 'object' || !sortTailwindcss.stylesheet) {
+    return sortTailwindcss
+  }
+  return {
+    ...sortTailwindcss,
+    stylesheet: path.resolve(REPOSITORY_DIRECTORY, sortTailwindcss.stylesheet),
+  }
+}
+
+/**
+ * Reads the repository's `.oxfmtrc.json` as programmatic format options,
+ * dropping the keys only the CLI understands.
+ * @returns The options to pass to Oxfmt's `format`.
+ */
+async function loadFormatConfig(): Promise<FormatConfig> {
+  const config = JSON.parse(
+    await readFile(path.join(REPOSITORY_DIRECTORY, '.oxfmtrc.json'), 'utf8'),
+  ) as Oxfmtrc
+  const formatConfig = Object.fromEntries(
+    Object.entries(config).filter(([key]) => !CLI_ONLY_CONFIG_KEYS.has(key)),
+  ) as FormatConfig
+  return {
+    ...formatConfig,
+    sortTailwindcss: anchorTailwindStylesheet(config.sortTailwindcss),
+  }
+}
+
+/**
+ * Formats source with the repository's Oxfmt configuration.
  * @param source The source text.
- * @param filePath A path used to resolve the Prettier config.
+ * @param filePath The target path; its extension picks the language.
  * @returns The formatted source.
+ * @throws {Error} When Oxfmt reports a parse or format error.
  */
 export async function formatSource(
   source: string,
   filePath: string,
 ): Promise<string> {
-  const options = await resolveConfig(filePath)
-  return format(source, { ...options, filepath: filePath })
+  const result = await format(filePath, source, await loadFormatConfig())
+  if (result.errors.length > 0) {
+    const messages = result.errors.map((error) => error.message).join('\n')
+    throw new Error(`Oxfmt failed to format ${filePath}:\n${messages}`)
+  }
+  return result.code
 }

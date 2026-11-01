@@ -1,0 +1,54 @@
+import { useEffect, useState } from 'react'
+
+interface ZvReactProps {
+  count: number
+  items: string[]
+  label: string
+  ok: boolean
+}
+
+export function ZvLeaks({ count, items, label, ok }: ZvReactProps) {
+  return (
+    <div>
+      {count && <span />}
+      {items.length && <span />}
+      {label && <span />}
+      {ok && <span />}
+      {count > 0 && <span />}
+      {Number.NaN && <span />}
+    </div>
+  )
+}
+
+export function ZvHooks({ ok }: Pick<ZvReactProps, 'ok'>) {
+  const [value, setValue] = useState(0)
+  if (ok) {
+    useEffect(() => {
+      setValue(value + 1)
+    }, [])
+  }
+  useEffect(() => {
+    setValue(value + 1)
+  }, [])
+  return <p>{value}</p>
+}
+
+export function ZvKeys({ items }: Pick<ZvReactProps, 'items'>) {
+  return (
+    <ul>
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </ul>
+  )
+}
+
+export function ZvAccessibility() {
+  return (
+    <div onClick={() => undefined}>
+      <img src="/a.png" />
+      <a href="#">link</a>
+      <button autoFocus>go</button>
+    </div>
+  )
+}

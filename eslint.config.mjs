@@ -269,5 +269,6 @@ export default defineConfig([
     '**/dist/**',
     '**/coverage/**',
     '.claude/worktrees/**',
+    '**/.cache/**',
   ]),
 ])

@@ -1,0 +1,28 @@
+---
+// A frontmatter line comment the local rule rejects.
+import { Button } from './ui/button'
+
+const html = '<b>raw</b>'
+const color = 'red'
+---
+
+<main>
+  <img src="/a.png" />
+  <a href="#">link</a>
+  <div onclick="void 0">clickable</div>
+  <p class="text-red-500">raw color</p>
+  <p class="w-[13px]">arbitrary value</p>
+  <p class="not-a-tailwind-class">unknown class</p>
+  <p style="color: red">inline style</p>
+  <p set:html={html}>child conflicts with set:html</p>
+  <p class:list={[color]} class={color}>both class forms</p>
+  <p class={`p-2 ${color}`}>dynamic class</p>
+  <button autofocus>go</button>
+  <Button class="rounded-full px-9">restyled</Button>
+</main>
+
+<style>
+  main {
+    color: red;
+  }
+</style>

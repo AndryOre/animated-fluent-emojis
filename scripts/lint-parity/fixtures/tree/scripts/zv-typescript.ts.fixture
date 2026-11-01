@@ -1,0 +1,42 @@
+import { Stats } from 'node:fs'
+
+type Shape = { name: string }
+
+/** @deprecated use something else */
+function legacy(): number {
+  return 1
+}
+
+async function load(): Promise<void> {}
+
+export const anything: any = 1
+
+export const list: Array<string> = []
+
+export function nonNull(value: string | undefined): number {
+  return value!.length
+}
+
+export function unnecessary(value: string): boolean {
+  if (value === undefined) return false
+  return (value as string).length > 0
+}
+
+export const fallback = (value: string | undefined): string => value || 'x'
+
+export function floating(): void {
+  load()
+}
+
+export async function awaited(): Promise<void> {
+  await 1
+}
+
+export function misused(): void {
+  if (load()) {
+    legacy()
+  }
+}
+
+export const describeStats = (stats: Stats, shape: Shape): string =>
+  stats.toString() + shape.name
