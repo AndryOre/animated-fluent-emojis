@@ -2,6 +2,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
 import eslintReact from '@eslint-react/eslint-plugin'
+import reactHooks from 'eslint-plugin-react-hooks'
 import tseslint from 'typescript-eslint'
 
 import type { AcceptedEntry, Finding } from './diff'
@@ -111,7 +112,44 @@ export function parseOptions(
 }
 
 interface RuleMetadata {
-  meta?: { docs?: { requiresTypeChecking?: boolean } }
+  meta?: {
+    docs?: {
+      requiresTypeChecking?: boolean
+      extendsBaseRule?: boolean | string
+    }
+  }
+}
+
+/**
+ * Builds the function that maps a rule id to the one both sides are compared
+ * under, for rules that are the same rule under two names:
+ *
+ * - a typescript-eslint extension rule (`@typescript-eslint/no-empty-function`)
+ *   and the core rule of the same name, which Oxlint's native port runs on
+ *   TypeScript too: both become the core name. Extensions renamed from their
+ *   base (`only-throw-error`) keep their own id.
+ * - an `eslint-plugin-react-hooks` rule, which Oxlint ports into its `react`
+ *   plugin (`react/set-state-in-effect`): both become `react-hooks/...`.
+ * @returns The canonicalizing function; other ids pass through unchanged.
+ */
+export function canonicalRuleIdFunction(): (rule: string) => string {
+  const typescriptRules = (
+    tseslint.plugin as unknown as { rules: Record<string, RuleMetadata> }
+  ).rules
+  const extensionRules = new Set(
+    Object.entries(typescriptRules)
+      .filter(([, rule]) => rule.meta?.docs?.extendsBaseRule === true)
+      .map(([name]) => name),
+  )
+  const hookRules = new Set(Object.keys(reactHooks.rules))
+  return (rule) => {
+    const [, plugin, name = ''] =
+      /^(@typescript-eslint|react)\/(.+)$/.exec(rule) ?? []
+    if (plugin === '@typescript-eslint' && extensionRules.has(name)) return name
+    return plugin === 'react' && hookRules.has(name)
+      ? `react-hooks/${name}`
+      : rule
+  }
 }
 
 /**
@@ -258,24 +296,31 @@ export interface RawSection {
 /**
  * Gates one section. Unless the run is type-aware, baseline findings from
  * rules that need type information are left out, since the candidate does
- * not run them.
+ * not run them. Both sides are then compared under canonical rule ids.
  * @param raw The section output.
  * @param accepted Explained gaps from `accepted.json`.
  * @param typedRules Rule ids that need type information.
+ * @param canonicalRuleId Maps a rule id to the id both sides compare under.
  * @returns The classified section report.
  */
 export function toSectionReport(
   raw: RawSection,
   accepted: readonly AcceptedEntry[],
   typedRules: ReadonlySet<string>,
+  canonicalRuleId: (rule: string) => string = (rule) => rule,
 ): SectionReport {
+  const canonical = (findings: readonly Finding[]): Finding[] =>
+    findings.map((finding) => ({
+      ...finding,
+      rule: canonicalRuleId(finding.rule),
+    }))
   const eslint = raw.isTypeAware
     ? raw.eslint
     : raw.eslint.filter((finding) => !typedRules.has(finding.rule))
   return buildSectionReport({
     name: raw.name,
-    eslint,
-    candidate: raw.candidate,
+    eslint: canonical(eslint),
+    candidate: raw.candidate && canonical(raw.candidate),
     accepted,
     problems: raw.problems,
   })

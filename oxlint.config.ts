@@ -7,6 +7,12 @@ import {
 } from './lint-policy.mjs'
 
 /**
+ * Set by the parity harness when it lints the external corpus, which it
+ * clones under `.cache`; the baseline ESLint config lifts the same ignore.
+ */
+const isCorpusRun = process.env.PARITY_CORPUS === '1'
+
+/**
  * Oxlint port of `eslint.config.mjs`: every rule ESLint enforces on
  * `ts`/`tsx`/`mjs` files, with the same severity and options, run natively,
  * through tsgolint (`--type-aware`) or as the original ESLint rule through a
@@ -36,7 +42,7 @@ export default defineConfig({
     { name: 'typed-react', specifier: './oxlint-plugins/typed-react.mjs' },
     {
       name: '@eslint-community/eslint-comments',
-      specifier: '@eslint-community/eslint-plugin-eslint-comments',
+      specifier: './oxlint-plugins/eslint-comments.mjs',
     },
     { name: 'shadcn', specifier: '@shadcn/lint' },
     { name: 'typescript-js', specifier: './oxlint-plugins/typescript-js.mjs' },
@@ -57,7 +63,7 @@ export default defineConfig({
     '**/dist/**',
     '**/coverage/**',
     '.claude/worktrees/**',
-    '**/.cache/**',
+    ...(isCorpusRun ? [] : ['**/.cache/**']),
     '**/*.astro',
     '**/*.{mts,cts}',
     '**/*.{svelte,vue}',
@@ -234,7 +240,7 @@ export default defineConfig({
     ],
     'unicorn/explicit-length-check': ['error', { 'non-zero': 'greater-than' }],
     'unicorn/explicit-timer-delay': ['error', 'always'],
-    'unicorn/filename-case': [
+    'unicorn-js/filename-case': [
       'error',
       { cases: { kebabCase: true, pascalCase: true } },
     ],
@@ -281,7 +287,7 @@ export default defineConfig({
     'unicorn-js/no-array-splice': 'error',
     'unicorn-js/no-async-iterator-callback': 'error',
     'unicorn-js/no-async-promise-finally': 'error',
-    'unicorn/no-await-expression-member': 'error',
+    'unicorn-js/no-await-expression-member': 'error',
     'unicorn/no-await-in-promise-methods': 'error',
     'unicorn-js/no-blob-to-file': 'error',
     'unicorn-js/no-boolean-sort-comparator': 'error',
@@ -497,7 +503,7 @@ export default defineConfig({
       { maximumStatements: 1, checkShortBodies: false },
     ],
     'unicorn/prefer-date-now': 'error',
-    'unicorn/prefer-default-parameters': 'error',
+    'unicorn-js/prefer-default-parameters': 'error',
     'unicorn-js/prefer-direct-iteration': 'error',
     'unicorn/prefer-dom-node-append': 'error',
     'unicorn-js/prefer-dom-node-html-methods': [
@@ -611,7 +617,7 @@ export default defineConfig({
       { minimumCases: 3, emptyDefaultCase: 'no-default-comment' },
     ],
     'unicorn-js/prefer-temporal-conversion': 'error',
-    'unicorn/prefer-ternary': ['error', 'always'],
+    'unicorn-js/prefer-ternary': ['error', 'always'],
     'unicorn-js/prefer-then-catch': 'error',
     'unicorn-js/prefer-toggle-attribute': 'error',
     'unicorn/prefer-top-level-await': 'error',
@@ -719,7 +725,7 @@ export default defineConfig({
         'typescript/ban-tslint-comment': 'error',
         'typescript/class-literal-property-style': 'error',
         'typescript/consistent-generic-constructors': 'error',
-        'typescript/consistent-indexed-object-style': 'error',
+        'typescript-js/consistent-indexed-object-style': 'error',
         'typescript/consistent-type-assertions': 'error',
         'typescript/consistent-type-definitions': 'error',
         'typescript/consistent-type-imports': 'error',
@@ -743,7 +749,7 @@ export default defineConfig({
         'typescript/no-duplicate-type-constituents': 'error',
         'typescript/no-dynamic-delete': 'error',
         'no-empty-function': ['error', { allow: [] }],
-        'typescript/no-empty-object-type': 'error',
+        'typescript-js/no-empty-object-type': 'error',
         'typescript/no-explicit-any': 'error',
         'typescript/no-extra-non-null-assertion': 'error',
         'typescript/no-extraneous-class': 'error',
@@ -753,7 +759,7 @@ export default defineConfig({
         'typescript/no-implied-eval': 'error',
         'typescript/no-inferrable-types': 'error',
         'typescript/no-invalid-void-type': 'error',
-        'typescript/no-meaningless-void-operator': 'error',
+        'typescript-js/no-meaningless-void-operator': 'error',
         'typescript/no-misused-new': 'error',
         'typescript/no-misused-promises': [
           'error',
@@ -794,7 +800,7 @@ export default defineConfig({
             allowTernary: false,
           },
         ],
-        'no-unused-vars': 'error',
+        'typescript-js/no-unused-vars': 'error',
         'no-useless-constructor': 'error',
         'typescript/no-useless-default-assignment': 'error',
         'typescript/no-wrapper-object-types': 'error',
@@ -851,7 +857,7 @@ export default defineConfig({
         'prefer-spread': 'error',
         'react-hooks-js/config': 'error',
         'react/error-boundaries': 'error',
-        'react/exhaustive-deps': 'warn',
+        'react-hooks-js/exhaustive-deps': 'warn',
         'react-hooks-js/gating': 'error',
         'react/globals': 'error',
         'react/immutability': 'error',
@@ -977,13 +983,13 @@ export default defineConfig({
         'jsdoc-js/reject-any-type': 'error',
         'jsdoc-js/reject-function-type': 'error',
         'jsdoc-js/require-next-type': 'error',
-        'jsdoc/require-param': 'error',
+        'jsdoc-js/require-param': 'error',
         'jsdoc/require-param-description': 'error',
         'jsdoc/require-param-name': 'error',
         'jsdoc/require-property': 'error',
         'jsdoc/require-property-description': 'error',
         'jsdoc/require-property-name': 'error',
-        'jsdoc/require-returns': 'error',
+        'jsdoc-js/require-returns': 'error',
         'jsdoc-js/require-returns-check': 'error',
         'jsdoc/require-returns-description': 'error',
         'jsdoc/require-throws-type': 'error',
