@@ -75,7 +75,25 @@ test('escapes pipes and collapses whitespace in cells', () => {
   expect(smilies).toContain(String.raw`a \| b c`)
 })
 
-test('formatSource aligns the table with the repository Prettier config', async () => {
+test('formatSource applies the repository Oxfmt config to TypeScript', async () => {
+  const formatted = await formatSource(
+    'export type EmojiId =\n  | "b";\n',
+    path.resolve(
+      import.meta.dirname,
+      '../../packages/animated-fluent-emojis/src/emoji-id.ts',
+    ),
+  )
+
+  expect(formatted).toBe("export type EmojiId = 'b'\n")
+})
+
+test('formatSource rejects source Oxfmt cannot parse', async () => {
+  await expect(
+    formatSource('export type =', path.resolve('emoji-id.ts')),
+  ).rejects.toThrow(/Oxfmt failed to format/)
+})
+
+test('formatSource aligns the table with the repository Oxfmt config', async () => {
   const source = '| A | B |\n| - | - |\n| longer cell | x |\n'
 
   const formatted = await formatSource(
