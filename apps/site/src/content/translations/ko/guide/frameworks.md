@@ -20,7 +20,6 @@ React 하위 경로에서 `Emoji`를 import하세요.
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis/react'
-
 import 'animated-fluent-emojis/style.css'
 ```
 
@@ -154,7 +153,6 @@ adapter의 프레임워크 독립 코어입니다. import해도 DOM을 건드리
 
 ```js
 import { createEmoji } from 'animated-fluent-emojis'
-
 import 'animated-fluent-emojis/style.css'
 
 const controller = createEmoji(document.querySelector('#slot'), {

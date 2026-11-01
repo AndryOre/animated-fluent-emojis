@@ -20,7 +20,8 @@ import { buildMitMediaUrl } from './mit.js'
 import type { ConvertedSprite } from './sprites.js'
 
 type HdOutcome =
-  { task: SpriteTask; framesCount: number } | { task: SpriteTask; error: Error }
+  | { task: SpriteTask; framesCount: number }
+  | { task: SpriteTask; error: Error }
 
 /**
  * Computes the etag of an HD sheet from its source blob.

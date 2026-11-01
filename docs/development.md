@@ -56,8 +56,8 @@ any path passed through must be absolute.
 | `bun run build`              | Runs `turbo run build`: type-checks (`tsc -b`) and builds the library with Vite. Slow; run only if asked.                                                                 |
 | `bun run check`              | Aggregate gate: `turbo run check check:root` (workspace typecheck and lint:package; repo-wide format:check, lint, typecheck and knip).                                    |
 | `bun run fix`                | Aggregate autofix: format:write, lint:fix, typecheck.                                                                                                                     |
-| `bun run format:check`       | Checks formatting with Prettier (no writes).                                                                                                                              |
-| `bun run format:write`       | Formats the repository with Prettier.                                                                                                                                     |
+| `bun run format:check`       | Checks formatting with Oxfmt (no writes).                                                                                                                                 |
+| `bun run format:write`       | Formats the repository with Oxfmt.                                                                                                                                        |
 | `bun run lint`               | Runs ESLint with `--max-warnings=0` (cached).                                                                                                                             |
 | `bun run lint:fix`           | Runs ESLint with `--fix`.                                                                                                                                                 |
 | `bun run typecheck`          | Runs `turbo run typecheck`, then the root `tsc --noEmit`.                                                                                                                 |
@@ -253,8 +253,8 @@ The ladder that leads here is in
 
 Hooks live in `.husky/`:
 
-- **`pre-commit`** runs `lint-staged`: Prettier and ESLint on staged code files,
-  Prettier alone on staged `json`, `md`, `css` and `yml` files
+- **`pre-commit`** runs `lint-staged`: Oxfmt and ESLint on staged code files,
+  Oxfmt alone on staged `json`, `md`, `css` and `yml` files
   (`lint-staged.config.mjs`).
 - **`commit-msg`** runs `commitlint` with `@commitlint/config-conventional`. It
   enforces the Conventional Commits shape and type list, not the emoji.

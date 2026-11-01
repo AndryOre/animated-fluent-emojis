@@ -49,7 +49,8 @@ type FileActionStrings = Pick<
 >
 
 export type FileActionNotice =
-  { kind: 'copied'; message: string } | { kind: 'failed' }
+  | { kind: 'copied'; message: string }
+  | { kind: 'failed' }
 
 const FORMAT_NAMES: Record<FileActionFormat, string> = {
   webp: 'WebP',

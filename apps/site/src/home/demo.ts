@@ -15,7 +15,12 @@ export type DemoPlayId = 'hover' | 'load' | 'loop'
 export type DemoToneId = 'default' | 'light' | 'medium' | 'dark'
 
 export type DemoEmojiName =
-  'wave' | 'fire' | 'party' | 'heart' | 'rocket' | 'grin'
+  | 'wave'
+  | 'fire'
+  | 'party'
+  | 'heart'
+  | 'rocket'
+  | 'grin'
 
 /**
  * Pre-highlighted code block tabs, keyed by play and then by whether the

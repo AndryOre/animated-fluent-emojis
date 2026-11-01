@@ -21,7 +21,8 @@ export interface SitemapRoute {
  * `SITEMAP_SOURCES` in `seo/sources.ts`.
  */
 export type SitemapSource = () =>
-  readonly SitemapRoute[] | Promise<readonly SitemapRoute[]>
+  | readonly SitemapRoute[]
+  | Promise<readonly SitemapRoute[]>
 
 /**
  * Source files that change what the home page shows, relative to `apps/site`.

@@ -21,7 +21,6 @@ React のサブパスから `Emoji` をインポートします。
 
 ```jsx
 import { Emoji } from 'animated-fluent-emojis/react'
-
 import 'animated-fluent-emojis/style.css'
 ```
 
@@ -149,7 +148,6 @@ props は以下のものからコールバックを除いたもので、`class` 
 
 ```js
 import { createEmoji } from 'animated-fluent-emojis'
-
 import 'animated-fluent-emojis/style.css'
 
 const controller = createEmoji(document.querySelector('#slot'), {

@@ -1,8 +1,9 @@
-import type { SkinTone } from '../utils/types.js'
 /* eslint-disable unicorn/require-module-specifiers, @typescript-eslint/no-namespace -- bare type imports load the modules the augmentations below extend, and JSX typings are namespaces */
-import type {} from 'vue'
-import type {} from 'solid-js'
 import type {} from 'preact'
+import type {} from 'solid-js'
+import type {} from 'vue'
+
+import type { SkinTone } from '../utils/types.js'
 
 /**
  * The properties of `<fluent-emoji>`. Each one has a matching kebab-case
