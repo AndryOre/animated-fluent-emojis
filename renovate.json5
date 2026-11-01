@@ -117,6 +117,14 @@
       ],
     },
     {
+      // Oxc tools are pre-1.0 or move fast, and a bump can change lint or
+      // format output repo-wide, so they stay exact and are reviewed by hand
+      groupName: 'oxc',
+      matchPackageNames: ['oxlint', 'oxlint-tsgolint', 'oxfmt'],
+      rangeStrategy: 'pin',
+      automerge: false,
+    },
+    {
       groupName: 'vitest',
       matchPackageNames: ['vitest', '@vitest/**'],
     },
