@@ -1,11 +1,13 @@
 /**
  * Prefixes that mark a comment as a machine-readable directive — for
- * ESLint (`eslint`, `eslint-disable*`, `eslint-enable`, `global`), the
- * TypeScript compiler (`@ts-*`), Prettier (`prettier-ignore`), or Vitest
- * (`@vitest-environment`) — rather than prose this rule should police.
+ * ESLint (`eslint`, `eslint-disable*`, `eslint-enable`, `global`), Oxlint
+ * (`oxlint-disable*`, `oxlint-enable`), the TypeScript compiler (`@ts-*`),
+ * Prettier (`prettier-ignore`), or Vitest (`@vitest-environment`) — rather
+ * than prose this rule should police.
  */
 const ALLOWED_DIRECTIVE_PREFIXES = [
   'eslint',
+  'oxlint-',
   'global',
   '@ts-',
   'prettier-ignore',
@@ -35,10 +37,10 @@ function startsWithAllowedDirective(commentText) {
  * ESLint rule banning every `//` line comment and every `/* *\/` block
  * comment that isn't JSDoc, so the codebase documents non-obvious exports
  * with TSDoc instead of scattering prose comments. Directive comments
- * (`eslint-disable`, `@ts-expect-error`, `prettier-ignore`,
- * `@vitest-environment`, triple-slash references, ...) are exempt, since
- * they're read by tooling rather than humans. Registered as
- * `local/no-non-doc-comments` in `eslint.config.mjs`.
+ * (`eslint-disable`, `oxlint-disable*`, `@ts-expect-error`,
+ * `prettier-ignore`, `@vitest-environment`, triple-slash references, ...) are
+ * exempt, since they're read by tooling rather than humans. Registered as
+ * `local/no-non-doc-comments` in `eslint.config.mjs` and `oxlint.config.ts`.
  */
 const rule = {
   meta: {
