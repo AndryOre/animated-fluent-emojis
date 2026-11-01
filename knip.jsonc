@@ -3,7 +3,8 @@
   "ignoreBinaries": ["ffmpeg", "ffprobe"],
   "workspaces": {
     ".": {
-      "entry": ["scripts/**/*.ts", "eslint-rules/index.mjs"],
+      "entry": ["scripts/**/*.ts"],
+      "ignore": ["lint-policy.d.mts"],
     },
     "apps/assets": {
       "entry": ["*.test.ts"],
