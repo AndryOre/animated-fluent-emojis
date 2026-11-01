@@ -149,12 +149,20 @@ const OXLINT_PLUGIN_PREFIX: Record<string, string> = {
   'typescript-eslint': '@typescript-eslint/',
   nextjs: '@next/next/',
   next: '@next/next/',
+  'unicorn-js': 'unicorn/',
+  'jsdoc-js': 'jsdoc/',
+  'react-hooks-js': 'react-hooks/',
+  'vitest-js': 'vitest/',
+  'typed-react': '@eslint-react/',
+  'typescript-js': '@typescript-eslint/',
 }
 
 /**
  * Maps an Oxlint diagnostic `code` (`plugin(rule)`) to the ESLint rule id the
- * same rule has under the current config, including the `eslint-js` jsPlugin
- * alias used for `no-restricted-syntax`. Unknown plugins map to
+ * same rule has under the current config, including the jsPlugin aliases
+ * that run an original ESLint rule (`eslint-js`, `unicorn-js`, `jsdoc-js`,
+ * `react-hooks-js`, `vitest-js`, `typescript-js`, and `typed-react` for
+ * `@eslint-react`). Unknown plugins map to
  * `plugin/rule`, which is how every other plugin names its rules.
  * @param code The Oxlint diagnostic code, such as `eslint(no-console)`.
  * @returns The ESLint rule id.
@@ -173,7 +181,8 @@ export function normalizeOxlintRule(code: string): string {
  */
 export const UNUSED_DIRECTIVE_RULE = 'unused-disable-directive'
 
-const UNUSED_DIRECTIVE_MESSAGE = /^Unused (?:eslint|oxlint)-disable directive/
+const UNUSED_DIRECTIVE_MESSAGE =
+  /^Unused (?:eslint|oxlint)-(?:disable|enable) directive/
 
 interface EslintResult {
   filePath: string
@@ -224,7 +233,7 @@ export function parseEslintJson(text: string, root: string): Finding[] {
 
 interface OxlintOutput {
   diagnostics: {
-    code: string
+    code: string | null
     message?: string
     filename: string
     labels?: { span: { line: number } }[]
@@ -240,15 +249,17 @@ interface OxlintOutput {
  */
 export function parseOxlintJson(text: string, root: string): Finding[] {
   const output = JSON.parse(text) as OxlintOutput
-  return output.diagnostics.map((diagnostic) => ({
-    file: path.isAbsolute(diagnostic.filename)
-      ? path.relative(root, diagnostic.filename)
-      : diagnostic.filename,
-    line: diagnostic.labels?.[0]?.span.line ?? 0,
-    rule:
-      diagnostic.code === '' &&
-      UNUSED_DIRECTIVE_MESSAGE.test(diagnostic.message ?? '')
-        ? UNUSED_DIRECTIVE_RULE
-        : normalizeOxlintRule(diagnostic.code),
-  }))
+  return output.diagnostics.map((diagnostic) => {
+    const code = diagnostic.code ?? ''
+    return {
+      file: path.isAbsolute(diagnostic.filename)
+        ? path.relative(root, diagnostic.filename)
+        : diagnostic.filename,
+      line: diagnostic.labels?.[0]?.span.line ?? 0,
+      rule:
+        code === '' && UNUSED_DIRECTIVE_MESSAGE.test(diagnostic.message ?? '')
+          ? UNUSED_DIRECTIVE_RULE
+          : normalizeOxlintRule(code),
+    }
+  })
 }

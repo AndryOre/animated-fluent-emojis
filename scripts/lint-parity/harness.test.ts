@@ -5,6 +5,7 @@ import { afterEach, describe, expect, test } from 'vitest'
 
 import type { Finding } from './diff'
 import {
+  canonicalRuleIdFunction,
   checkExpectedFixtures,
   HELP,
   listFiles,
@@ -66,6 +67,31 @@ describe('ruleIdsRequiringTypes', () => {
       true,
     )
     expect(rules.has('@typescript-eslint/no-explicit-any')).toBe(false)
+  })
+})
+
+describe('canonicalRuleIdFunction', () => {
+  const canonicalRuleId = canonicalRuleIdFunction()
+
+  test.each([
+    ['@typescript-eslint/no-empty-function', 'no-empty-function'],
+    ['@typescript-eslint/no-unused-expressions', 'no-unused-expressions'],
+    ['no-empty-function', 'no-empty-function'],
+    [
+      '@typescript-eslint/only-throw-error',
+      '@typescript-eslint/only-throw-error',
+    ],
+    [
+      '@typescript-eslint/no-explicit-any',
+      '@typescript-eslint/no-explicit-any',
+    ],
+    ['react/set-state-in-effect', 'react-hooks/set-state-in-effect'],
+    ['react/exhaustive-deps', 'react-hooks/exhaustive-deps'],
+    ['react-hooks/rules-of-hooks', 'react-hooks/rules-of-hooks'],
+    ['react/no-unknown-rule', 'react/no-unknown-rule'],
+    ['unicorn/no-null', 'unicorn/no-null'],
+  ])('%s -> %s', (rule, expected) => {
+    expect(canonicalRuleId(rule)).toBe(expected)
   })
 })
 
@@ -182,6 +208,20 @@ describe('toSectionReport and summarizeSection', () => {
     expect(lines).toContain('both: 1')
     expect(lines).toContain('UNEXPLAINED ESLint-only: a.ts:1 typed')
     expect(lines).toContain('stale accepted entry: gone.ts x')
+  })
+
+  test('compares both sides under canonical rule ids', () => {
+    const section = toSectionReport(
+      {
+        ...raw,
+        eslint: [finding(3, '@x/rule')],
+        candidate: [finding(3, 'rule')],
+      },
+      [],
+      typedRules,
+      (rule) => rule.replace('@x/', ''),
+    )
+    expect(section.exitCode).toBe(0)
   })
 
   test('says so when the candidate is absent', () => {
