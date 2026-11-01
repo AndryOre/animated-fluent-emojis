@@ -10,6 +10,7 @@ const SOURCE_ROOTS = [
   'apps/site/src',
   'scripts',
   'eslint-rules',
+  'oxlint-plugins',
   'docs/brand/tools',
 ] as const
 
@@ -184,6 +185,10 @@ const EXEMPTIONS: Readonly<Record<string, string>> = {
     'Frozen copy of eslint-rules/no-astro-style-blocks.mjs for the lint parity baseline; the live rule has its own test.',
   'scripts/lint-parity/baseline-rules/no-non-doc-comments.mjs':
     'Frozen copy of eslint-rules/no-non-doc-comments.mjs for the lint parity baseline; the live rule has its own test.',
+  'oxlint-plugins/unicorn-js.mjs':
+    'Wires eslint-plugin-unicorn through withTypes; its typed and untyped paths are exercised by with-types.test.ts.',
+  'oxlint-plugins/typescript-js.mjs':
+    'Wires the typescript-eslint plugin through withTypes; exercised by with-types.test.ts.',
   'docs/brand/tools/export.mjs':
     'Brand raster export CLI that needs a real browser and writes the committed rasters, excluded from coverage; its pure logic lives in brand-export-spec.mjs.',
 }

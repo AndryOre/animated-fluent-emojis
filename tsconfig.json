@@ -12,6 +12,8 @@
   "include": [
     "vitest.config.ts",
     "eslint-rules",
+    "oxlint.config.ts",
+    "oxlint-plugins",
     "docs/adr",
     "docs/brand/tools",
     "scripts"

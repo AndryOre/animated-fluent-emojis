@@ -6,6 +6,7 @@ export default defineConfig({
     include: [
       'scripts/**/*.test.ts',
       'eslint-rules/**/*.test.ts',
+      'oxlint-plugins/**/*.test.ts',
       'docs/adr/**/*.test.ts',
       'docs/brand/tools/**/*.test.ts',
     ],
@@ -14,11 +15,13 @@ export default defineConfig({
       include: [
         'scripts/**/*.ts',
         'eslint-rules/**/*.mjs',
+        'oxlint-plugins/**/*.mjs',
         'docs/brand/tools/**/*.mjs',
       ],
       exclude: [
         'scripts/**/*.test.ts',
         'eslint-rules/**/*.test.ts',
+        'oxlint-plugins/**/*.test.ts',
         'docs/brand/tools/**/*.test.ts',
         'docs/brand/tools/export.mjs',
         'scripts/lint-parity/run.ts',
