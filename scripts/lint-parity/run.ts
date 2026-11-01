@@ -205,9 +205,11 @@ function runFixtures(options: Options): RawSection {
       isTypeAware: options.isTypeAware,
     }
   } finally {
-    process.off('SIGINT', removeOnSignal)
-    process.off('SIGTERM', removeOnSignal)
     cleanup()
+    setImmediate(() => {
+      process.off('SIGINT', removeOnSignal)
+      process.off('SIGTERM', removeOnSignal)
+    })
   }
 }
 
