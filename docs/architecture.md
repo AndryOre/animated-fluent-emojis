@@ -18,7 +18,9 @@ apps/assets/             private asset pipeline: builds the manifests and sprite
                          published to Pages
 apps/site/               private website: landing, gallery, emoji pages and
                          docs (Astro, Starlight, Tailwind), ten locales
-eslint-rules/            local ESLint rules
+eslint-rules/            local lint rules shared by Oxlint and ESLint
+oxlint-plugins/          Oxlint-only plugins: the typed-react shim and jsPlugin
+                         wrappers
 scripts/                 lint-docs, lint-commits, workflow-files and the
                          workflow and coverage-manifest guards
 packages/animated-fluent-emojis/
@@ -57,9 +59,9 @@ packages/animated-fluent-emojis/
 ## Workspaces
 
 - **Root** (`animated-fluent-emojis-monorepo`, private) hosts the tooling only:
-  `eslint-rules/`, `scripts/`, `docs/` (guides, ADRs, the brand kit),
-  `turbo.json`, `bunfig.toml` and the root `vitest.config.ts`. It publishes
-  nothing.
+  `eslint-rules/`, `oxlint-plugins/`, `scripts/`, `docs/` (guides, ADRs, the
+  brand kit), `turbo.json`, `bunfig.toml` and the root `vitest.config.ts`. It
+  publishes nothing.
 - **`packages/animated-fluent-emojis`** is the one published package: `src/`,
   the playground, the Vite, Vitest and tsconfig build configs, `size-limit` and
   `attw`. Its public API is unchanged by the monorepo.
