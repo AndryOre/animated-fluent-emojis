@@ -38,7 +38,10 @@ templates without losing or loosening a single rule the repository enforces.
 - **A minimal ESLint stays for `**/*.astro` only**, because Oxlint cannot see
   `.astro` templates (oxc#23207). It runs `eslint-plugin-astro`, jsx-a11y,
   unicorn, `@shadcn/lint` on `apps/site/**`, `local/no-non-doc-comments`,
-  `local/no-astro-style-blocks` and eslint-comments. Nothing else runs in it.
+  `local/no-astro-style-blocks` and eslint-comments. On the `<script>` blocks of
+  `.astro` files, which Oxlint never sees, it also keeps the TypeScript, React,
+  hooks and jsdoc rule sets the old config ran there, so no rule is loosened.
+  Nothing else runs in it.
 - **TypeScript 7.1 runs `tsc`** through the exact alias `typescript7`
   (`npm:typescript@7.1.0-beta`). `typescript` stays on 6.x because
   `vite-plugin-dts`, `@astrojs/check`, typescript-eslint, `astro-eslint-parser`
