@@ -141,7 +141,7 @@
     "astro": "catalog:",
     "axe-core": "^4.14.0",
     "msw": "^3.0.3",
-    "playwright": "^1.64.1",
+    "playwright": "1.63.0",
     "preact": "^11.1.1",
     "publint": "^0.3.25",
     "react": "catalog:",
