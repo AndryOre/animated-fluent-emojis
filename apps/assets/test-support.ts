@@ -38,9 +38,11 @@ export function createFakeFetch(
       return Promise.resolve(new Response('not found', { status: 404 }))
     const { body = '', status = 200, headers = {} } = route
     const payload =
-      typeof body === 'string' || body instanceof Uint8Array
+      typeof body === 'string'
         ? body
-        : JSON.stringify(body)
+        : body instanceof Uint8Array
+          ? new Uint8Array(body)
+          : JSON.stringify(body)
     return Promise.resolve(
       new Response(new Blob([payload]), { status, headers }),
     )

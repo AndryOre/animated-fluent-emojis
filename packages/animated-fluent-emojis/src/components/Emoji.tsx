@@ -134,13 +134,7 @@ const EmojiComponent = (
     </span>
   )
 
-  if (status === 'error') {
-    return fallback === undefined || fallback === null
-      ? null
-      : renderFallback(fallback)
-  }
-
-  if (!emoji) {
+  if (status === 'error' || !emoji) {
     return fallback === undefined || fallback === null
       ? null
       : renderFallback(fallback)

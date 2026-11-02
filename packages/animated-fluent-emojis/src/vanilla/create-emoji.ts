@@ -81,8 +81,6 @@ export interface EmojiController {
   destroy: () => void
 }
 
-type ContentKind = 'placeholder' | 'image' | 'fallback'
-
 const DEFAULT_SIZE = 100
 
 const warnedMissingIds = new Set<string>()
@@ -129,6 +127,8 @@ export const createEmoji = (
   host: ParentNode,
   options: EmojiOptions,
 ): EmojiController => {
+  type ContentKind = 'placeholder' | 'image' | 'fallback'
+
   let current: EmojiOptions = options
   let isDestroyed = false
   let root: HTMLSpanElement | null = null

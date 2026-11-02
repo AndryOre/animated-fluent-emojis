@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { attachPillarSpotlight } from './pillar-spotlight'
 
-type Listener = (event: { clientX: number; clientY: number }) => void
-
 function createCard() {
+  type Listener = (event: { clientX: number; clientY: number }) => void
+
   const listeners = new Map<string, Listener>()
   const properties = new Map<string, string>()
   const spies = {

@@ -12,25 +12,24 @@ RuleTester.describe = describe
 RuleTester.it = it
 
 /**
- * Two guards with the same non-literal exit: unicorn's
- * `prefer-combined-guards` keeps them apart when parser services exist (as
- * under ESLint on `.ts`) and asks to combine them when they do not (`.mjs`).
+ * Two guards whose shared exit narrows to a different type in each body:
+ * unicorn's `prefer-combined-guards` keeps them apart when parser services
+ * exist (as under ESLint on `.ts`) and asks to combine them when they do not
+ * (`.mjs`).
  */
 const GUARDS = [
-  'const a = Math.random() > 0.5',
-  'const b = Math.random() > 0.5',
-  'const done = () => {}',
+  "const value = Math.random() > 0.5 ? 'a' : 1",
   'export function run() {',
-  '  if (a) return done',
-  '  if (b) return done',
+  "  if (typeof value === 'string') return value",
+  "  if (typeof value === 'number') return value",
   '  return undefined',
   '}',
   '',
 ].join('\n')
 
 const COMBINED_GUARDS = GUARDS.replace(
-  '  if (a) return done\n  if (b) return done',
-  '  if (a || b) return done',
+  "  if (typeof value === 'string') return value\n  if (typeof value === 'number') return value",
+  "  if ((typeof value === 'string') || (typeof value === 'number')) return value",
 )
 
 /**
