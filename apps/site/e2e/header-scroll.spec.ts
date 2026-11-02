@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/isolated-functions -- the evaluated callback runs in the browser */
+/* eslint-disable unicorn-js/isolated-functions -- the evaluated callback runs in the browser */
 import { expect, test, type Page } from '@playwright/test'
 
 const HEADER = 'header.site-header'
@@ -72,4 +72,4 @@ test.describe('with motion allowed', () => {
   })
 })
 
-/* eslint-enable unicorn/isolated-functions -- end of browser-evaluated code */
+/* eslint-enable unicorn-js/isolated-functions -- end of browser-evaluated code */

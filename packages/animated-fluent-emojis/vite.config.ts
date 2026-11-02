@@ -36,7 +36,7 @@ const copyAstroComponent = (): Plugin => ({
   name: 'copy-astro-component',
   generateBundle() {
     for (const fileName of ASTRO_RAW_FILES) {
-      // eslint-disable-next-line unicorn/no-this-outside-of-class -- the bundler passes its plugin context as `this`
+      // eslint-disable-next-line unicorn-js/no-this-outside-of-class -- the bundler passes its plugin context as `this`
       this.emitFile({
         type: 'asset',
         fileName: `astro/${fileName}`,

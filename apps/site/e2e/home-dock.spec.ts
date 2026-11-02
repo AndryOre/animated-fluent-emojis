@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/isolated-functions -- the evaluated callbacks run in the browser */
+/* eslint-disable unicorn-js/isolated-functions -- the evaluated callbacks run in the browser */
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const DOCK = '[data-dock]'
@@ -206,4 +206,4 @@ test.describe('faq mascot', () => {
     await expect(link).toHaveAttribute('href', /github\.com\/AndryOre/)
   })
 })
-/* eslint-enable unicorn/isolated-functions -- end of the browser callbacks */
+/* eslint-enable unicorn-js/isolated-functions -- end of the browser callbacks */

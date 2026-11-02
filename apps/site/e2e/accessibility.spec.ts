@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/isolated-functions -- the evaluated callback runs in the browser */
+/* eslint-disable unicorn-js/isolated-functions -- the evaluated callback runs in the browser */
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
@@ -82,4 +82,4 @@ test('the language menu opens by role and navigates to the Japanese site', async
   await expect(page).toHaveURL(/\/ja\/$/)
 })
 
-/* eslint-enable unicorn/isolated-functions -- end of browser-evaluated code */
+/* eslint-enable unicorn-js/isolated-functions -- end of browser-evaluated code */
