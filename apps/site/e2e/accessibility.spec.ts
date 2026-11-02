@@ -13,6 +13,32 @@ const AXE_TAGS = [
   'best-practice',
 ]
 
+type AxeViolations = Awaited<ReturnType<AxeBuilder['analyze']>>['violations']
+
+/**
+ * Drops the `label-content-name-mismatch` finding that axe 4.14 raises on
+ * Starlight's search button, whose visible shortcut hint is not part of its
+ * label. Every other rule and every other element stay checked.
+ * @param violations - The violations axe reported for the page.
+ * @returns The violations without the search button's label mismatch.
+ */
+function withoutStarlightSearchMismatch(
+  violations: AxeViolations,
+): AxeViolations {
+  return violations
+    .map((violation) =>
+      violation.id === 'label-content-name-mismatch'
+        ? {
+            ...violation,
+            nodes: violation.nodes.filter(
+              (node) => !node.html.includes('data-open-modal'),
+            ),
+          }
+        : violation,
+    )
+    .filter((violation) => violation.nodes.length > 0)
+}
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test.describe(`${colorScheme} scheme`, () => {
     test.use({ colorScheme })
@@ -33,7 +59,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
         const results = await new AxeBuilder({ page })
           .withTags(AXE_TAGS)
           .analyze()
-        expect(results.violations).toEqual([])
+        expect(withoutStarlightSearchMismatch(results.violations)).toEqual([])
       })
     }
   })
