@@ -31,7 +31,7 @@ export function GalleryTileEmoji(props: GalleryTileEmojiProps) {
   const { emoji, tone, size, armed } = props
   return (
     <span
-      className="relative grid size-(--tile-size)"
+      className="relative inline-grid size-(--tile-size)"
       style={{ '--tile-size': `${String(size)}px` } as CSSProperties}
     >
       <img
@@ -44,16 +44,15 @@ export function GalleryTileEmoji(props: GalleryTileEmojiProps) {
         className="col-start-1 row-start-1"
       />
       {armed && (
-        <span className="col-start-1 row-start-1">
-          <Emoji
-            id={emoji.id}
-            size={size}
-            skinTone={effectiveTone(emoji, tone)}
-            autoPlay={false}
-            playOnHover
-            alt=""
-          />
-        </span>
+        <Emoji
+          id={emoji.id}
+          size={size}
+          skinTone={effectiveTone(emoji, tone)}
+          autoPlay={false}
+          playOnHover
+          alt=""
+          className="col-start-1 row-start-1"
+        />
       )}
     </span>
   )
