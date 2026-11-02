@@ -7,7 +7,7 @@ bun install
 bunx playwright install chromium firefox webkit
 ```
 
-Bun `1.4.2` is required (see `packageManager` in `package.json`). Husky installs
+Bun `1.4.4` is required (see `packageManager` in `package.json`). Husky installs
 the git hooks on `bun install` through the `prepare` script.
 
 ## Workspaces

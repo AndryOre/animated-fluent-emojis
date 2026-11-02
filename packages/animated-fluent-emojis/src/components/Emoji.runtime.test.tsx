@@ -88,9 +88,12 @@ test('reacts when the reduced motion preference changes', async () => {
 
 test('plays while focus is inside a wrapping button with playOnHover', async () => {
   await render(
-    <button type="button">
-      <Emoji id="cat" autoPlay={false} playOnHover alt="" />
-    </button>,
+    <>
+      <button type="button">
+        <Emoji id="cat" autoPlay={false} playOnHover alt="" />
+      </button>
+      <input aria-label="next field" />
+    </>,
   )
 
   const button = page.getByRole('button')
@@ -103,6 +106,7 @@ test('plays while focus is inside a wrapping button with playOnHover', async () 
   await expect.poll(() => image.getAnimations().length).toBe(1)
 
   await userEvent.tab()
+  expect(document.activeElement).toBe(page.getByRole('textbox').element())
   await expect.poll(() => image.getAnimations().length).toBe(0)
 })
 
