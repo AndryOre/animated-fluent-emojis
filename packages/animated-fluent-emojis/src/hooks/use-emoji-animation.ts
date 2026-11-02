@@ -111,7 +111,6 @@ export const useEmojiAnimation = (
 
     const apply = (update: (state: PlaybackGateState) => PlaybackGateState) => {
       latestRef.current.state = update(latestRef.current.state)
-      // eslint-disable-next-line @eslint-react/set-state-in-effect -- also runs when re-arming the end report on re-attach
       setGateState(update)
     }
     apply(gateRearmed)
