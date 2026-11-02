@@ -144,3 +144,20 @@ test.describe('view transitions', () => {
     expect(box?.width).toBeCloseTo(box?.height ?? -1, 0)
   })
 })
+
+test('tiles show posters and fetch a sprite sheet only after hover', async ({
+  page,
+}) => {
+  const spriteRequests: string[] = []
+  page.on('request', (request) => {
+    if (request.url().includes('/v1/sprites/')) {
+      spriteRequests.push(request.url())
+    }
+  })
+  await page.goto('/emojis/')
+  const tile = page.locator('[data-slug]').first()
+  await expect(tile.locator('img')).toBeVisible()
+  expect(spriteRequests).toHaveLength(0)
+  await tile.hover()
+  await expect.poll(() => spriteRequests.length).toBeGreaterThan(0)
+})

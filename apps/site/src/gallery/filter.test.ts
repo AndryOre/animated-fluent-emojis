@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { parseCldrAnnotations } from './annotations'
-import { effectiveTone, filterEmojis, listCategories } from './filter'
+import {
+  effectiveTone,
+  filterEmojis,
+  listCategories,
+  urlsForTone,
+} from './filter'
 import cldrEs from './fixtures/cldr-es.json'
 import publicIndexFixture from './fixtures/public-index.json'
 import { parsePublicIndex } from './public-index'
@@ -45,5 +50,14 @@ describe('gallery filter', () => {
     const diverse = emojis.find((emoji) => emoji.tones.length > 0)
     const first = diverse?.tones[0]?.tone
     expect(diverse && effectiveTone(diverse, first)).toBe(first)
+  })
+
+  it('picks the files of the applied tone and falls back to the base ones', () => {
+    const diverse = emojis.find((emoji) => emoji.tones.length > 0)
+    const variant = diverse?.tones[0]
+    expect(diverse && urlsForTone(diverse, variant?.tone)).toBe(variant?.urls)
+    expect(diverse && urlsForTone(diverse, undefined)).toBe(diverse?.urls)
+    const plain = emojis.find((emoji) => emoji.tones.length === 0)
+    expect(plain && urlsForTone(plain, 'dark')).toBe(plain?.urls)
   })
 })

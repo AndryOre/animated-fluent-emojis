@@ -1,4 +1,3 @@
-import { Emoji } from 'animated-fluent-emojis/react'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import {
   useEffect,
@@ -8,6 +7,7 @@ import {
   useSyncExternalStore,
   type CSSProperties,
   type KeyboardEvent,
+  type SyntheticEvent,
 } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -20,11 +20,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-import {
-  effectiveTone,
-  filterEmojis,
-  listCategories,
-} from '../../gallery/filter'
+import { filterEmojis, listCategories } from '../../gallery/filter'
 import { fillTemplate } from '../../gallery/template'
 import { parseGalleryUrl, serializeGalleryUrl } from '../../gallery/url-state'
 import type { Locale } from '../../i18n/locales'
@@ -32,6 +28,7 @@ import type { UiStrings } from '../../i18n/ui'
 import { EmojiSheet } from './EmojiSheet'
 import { GallerySidebar } from './GallerySidebar'
 import { GallerySkeleton, GRID_COLUMNS } from './GallerySkeleton'
+import { GalleryTileEmoji } from './GalleryTileEmoji'
 import { useGalleryData } from './use-gallery-data'
 
 import 'animated-fluent-emojis/style.css'
@@ -106,6 +103,9 @@ export function Gallery(props: GalleryProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [focusedSlug, setFocusedSlug] = useState<string | undefined>()
+  const [armedSlugs, setArmedSlugs] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  )
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [sheetHeight, setSheetHeight] = useState(0)
   const searchRef = useRef<HTMLInputElement>(null)
@@ -177,6 +177,15 @@ export function Gallery(props: GalleryProps) {
     setFilters((current) => ({ ...current, ...change }))
     if ('query' in change || 'category' in change) setSheetOpen(false)
     if (!('size' in change)) setVisibleCount(PAGE_SIZE)
+  }
+
+  function armTile(event: SyntheticEvent) {
+    if (!(event.target instanceof Element)) return
+    const slug = event.target.closest<HTMLElement>('[data-slug]')?.dataset.slug
+    if (slug === undefined) return
+    setArmedSlugs((armed) =>
+      armed.has(slug) ? armed : new Set(armed).add(slug),
+    )
   }
 
   function select(slug: string, trigger: HTMLElement) {
@@ -340,6 +349,8 @@ export function Gallery(props: GalleryProps) {
                   role="group"
                   aria-label={strings.resultsLabel}
                   className={`grid w-full ${GRID_COLUMNS[size]} gap-2`}
+                  onPointerOver={armTile}
+                  onFocus={armTile}
                 >
                   {shown.map((emoji) => {
                     const name = names.get(emoji.slug) ?? emoji.description
@@ -373,13 +384,11 @@ export function Gallery(props: GalleryProps) {
                             data-transition-target=""
                             className="view-transition-class-emoji"
                           >
-                            <Emoji
-                              id={emoji.id}
+                            <GalleryTileEmoji
+                              emoji={emoji}
+                              tone={tone}
                               size={size}
-                              skinTone={effectiveTone(emoji, tone)}
-                              autoPlay={false}
-                              playOnHover
-                              alt=""
+                              armed={armedSlugs.has(emoji.slug)}
                             />
                           </span>
                         </TooltipTrigger>
