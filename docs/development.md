@@ -448,9 +448,10 @@ library workspace's `package.json`, and the changelog stays at the root
 ## Dependency updates
 
 Renovate (`renovate.json5`) opens the update pull requests, on Mondays before
-12:00 UTC, and tracks them in the Dependency Dashboard issue. `@types/node` is
-held below 25 to match the Node 24 runtime. A custom manager also pins the `npm`
-version that the workflows install with `npm install -g npm@<version>`.
+12:00 UTC, and tracks them in the Dependency Dashboard issue. `@types/node`
+follows its latest major like any other dependency, so its typings can run ahead
+of the Node runtime. A custom manager also pins the `npm` version that the
+workflows install with `npm install -g npm@<version>`.
 
 ## Playground
 

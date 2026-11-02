@@ -32,8 +32,6 @@ const STAGE_DOTS = 'bg-dots-border bg-grid-16'
 
 export const EMOJI_SHEET_HEADING_ID = 'emoji-sheet-heading'
 
-type PreviewStatus = 'loading' | 'ready' | 'error'
-
 /**
  * Properties of {@link EmojiSheetBody}.
  */
@@ -57,6 +55,8 @@ export interface EmojiSheetBodyProps {
  * @returns The sheet content.
  */
 export function EmojiSheetBody(props: EmojiSheetBodyProps) {
+  type PreviewStatus = 'loading' | 'ready' | 'error'
+
   const { emoji, name, tone, size, locale, strings, closeControl } = props
   const [zoom, setZoom] = useState<(typeof ZOOMS)[number]>(1)
   const [preview, setPreview] = useState<{ key: string; state: PreviewStatus }>(

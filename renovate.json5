@@ -79,10 +79,6 @@
 
   packageRules: [
     {
-      matchPackageNames: ['@types/node'],
-      allowedVersions: '<25',
-    },
-    {
       matchDepTypes: ['devDependencies'],
       semanticCommitScope: 'deps-dev',
     },

@@ -15,8 +15,11 @@ const detachNothing = () => {
 export function attachPillarSpotlight(
   cards: Iterable<HTMLElement>,
 ): () => void {
-  if (!matchMedia(FINE_HOVER_QUERY).matches) return detachNothing
-  if (matchMedia(REDUCED_MOTION_QUERY).matches) return detachNothing
+  if (
+    !matchMedia(FINE_HOVER_QUERY).matches ||
+    matchMedia(REDUCED_MOTION_QUERY).matches
+  )
+    return detachNothing
 
   const detachers = [...cards].map((card) => {
     let frame: number | undefined
