@@ -20,7 +20,7 @@ the source of truth, and this file maps it to every surface. Status is as of
 | `docs/development.md`                              | "Brand assets" note under scripts                                                                                                               |
 | [ADR 0012](../adr/0012-brand-kit-in-docs-brand.md) | `docs/adr/0012-brand-kit-in-docs-brand.md`, with its index row                                                                                  |
 
-No change is needed in `knip.jsonc`, ESLint or Prettier: `bun run lint`,
+No change is needed in `knip.jsonc`, ESLint or Oxfmt: `bun run lint`,
 `bun run knip` and `bun run format:check` already pass with the tool in place,
 and the generated rasters and the HTML brand book are outside the formatted
 globs.
