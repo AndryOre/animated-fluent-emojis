@@ -66,10 +66,6 @@ jobs:
       - name: Check root
         run: bunx turbo run check:root
 
-      - name: Lint with Oxlint (not gating until ESLint is cut down)
-        continue-on-error: true
-        run: bun run lint:oxlint
-
   test:
     name: Test (Vitest browser mode)
     runs-on: ubuntu-latest

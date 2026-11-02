@@ -109,10 +109,8 @@
       groupName: 'eslint',
       matchPackageNames: [
         'eslint',
-        '@eslint/**',
         'typescript-eslint',
         'eslint-plugin-*',
-        'eslint-config-*',
         '@vitest/eslint-plugin',
       ],
     },
