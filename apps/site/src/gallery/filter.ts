@@ -1,4 +1,4 @@
-import type { PublicEmoji, SkinTone } from './public-index'
+import type { FileUrls, PublicEmoji, SkinTone } from './public-index'
 import { searchEmojis, type SearchEntry } from './search'
 
 /**
@@ -51,4 +51,21 @@ export function effectiveTone(
     emoji.tones.some((variant) => variant.tone === tone)
     ? tone
     : undefined
+}
+
+/**
+ * Picks the public file URLs that match the tone applied to an emoji.
+ * @param emoji - The emoji whose files are needed.
+ * @param tone - The global tone, if any.
+ * @returns The URLs of the tone variant, or of the base emoji when it has none.
+ */
+export function urlsForTone(
+  emoji: PublicEmoji,
+  tone: SkinTone | undefined,
+): FileUrls {
+  const appliedTone = effectiveTone(emoji, tone)
+  return (
+    emoji.tones.find((variant) => variant.tone === appliedTone)?.urls ??
+    emoji.urls
+  )
 }
