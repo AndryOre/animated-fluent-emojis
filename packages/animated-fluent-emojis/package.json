@@ -85,8 +85,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "typecheck": "tsc -b",
+    "build": "../../node_modules/typescript7/bin/tsc -b && vite build",
+    "typecheck": "../../node_modules/typescript7/bin/tsc -b",
     "prepack": "cp ../../README.md ../../LICENSE .",
     "lint:package": "bun run build && publint --strict && attw --pack . --profile esm-only",
     "check": "bun run typecheck && bun run lint:package",

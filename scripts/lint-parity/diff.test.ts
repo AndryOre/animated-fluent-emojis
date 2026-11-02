@@ -140,6 +140,18 @@ describe('normalizeOxlintRule', () => {
     ['jsx-a11y(alt-text)', 'jsx-a11y/alt-text'],
     ['eslint-js(no-restricted-syntax)', 'no-restricted-syntax'],
     ['shadcn(no-restyle)', 'shadcn/no-restyle'],
+    ['unicorn-js(no-for-each)', 'unicorn/no-for-each'],
+    ['jsdoc-js(no-types)', 'jsdoc/no-types'],
+    ['react-hooks-js(exhaustive-deps)', 'react-hooks/exhaustive-deps'],
+    ['vitest-js(no-focused-tests)', 'vitest/no-focused-tests'],
+    [
+      'typed-react(no-leaked-conditional-rendering)',
+      '@eslint-react/no-leaked-conditional-rendering',
+    ],
+    [
+      'typescript-js(prefer-optional-chain)',
+      '@typescript-eslint/prefer-optional-chain',
+    ],
     ['no-bare-code', 'no-bare-code'],
   ])('%s -> %s', (code, expected) => {
     expect(normalizeOxlintRule(code)).toBe(expected)
@@ -206,6 +218,40 @@ describe('linter output parsers', () => {
     })
     expect(parseOxlintJson(output, '/repo')).toEqual([
       finding('a.ts', 2, UNUSED_DIRECTIVE_RULE),
+    ])
+  })
+
+  test('parseOxlintJson treats a null code like an empty one', () => {
+    const output = JSON.stringify({
+      diagnostics: [
+        {
+          code: null,
+          message:
+            'Unused eslint-disable directive (no problems were reported).',
+          filename: 'a.ts',
+          labels: [{ span: { line: 3 } }],
+        },
+      ],
+    })
+    expect(parseOxlintJson(output, '/repo')).toEqual([
+      finding('a.ts', 3, UNUSED_DIRECTIVE_RULE),
+    ])
+  })
+
+  test('parseOxlintJson maps unused enable directives to the pseudo rule', () => {
+    const output = JSON.stringify({
+      diagnostics: [
+        {
+          code: null,
+          message:
+            'Unused eslint-enable directive (no matching eslint-disable directives were found for no-alert).',
+          filename: 'a.ts',
+          labels: [{ span: { line: 11 } }],
+        },
+      ],
+    })
+    expect(parseOxlintJson(output, '/repo')).toEqual([
+      finding('a.ts', 11, UNUSED_DIRECTIVE_RULE),
     ])
   })
 

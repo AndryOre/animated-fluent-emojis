@@ -4,7 +4,7 @@ WORKDIR /repo
 COPY package.json bun.lock bunfig.toml tsconfig.base.json ./
 COPY apps/site/package.json apps/site/package.json
 COPY packages/animated-fluent-emojis/package.json packages/animated-fluent-emojis/package.json
-RUN bun install --frozen-lockfile --filter @animated-fluent-emojis/site --ignore-scripts
+RUN bun install --frozen-lockfile --filter . --filter @animated-fluent-emojis/site --ignore-scripts
 
 COPY packages/animated-fluent-emojis packages/animated-fluent-emojis
 COPY apps/site apps/site

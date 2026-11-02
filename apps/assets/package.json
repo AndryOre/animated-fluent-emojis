@@ -9,7 +9,7 @@
     "sync:verify-live": "bun sync.ts verify-live",
     "sync:lists": "bun sync.ts lists",
     "sync:files": "bun sync.ts files",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "../../node_modules/typescript7/bin/tsc --noEmit",
     "check": "bun run typecheck",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"

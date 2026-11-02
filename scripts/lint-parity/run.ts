@@ -16,6 +16,7 @@ import {
   type Finding,
 } from './diff'
 import {
+  canonicalRuleIdFunction,
   checkExpectedFixtures,
   HELP,
   materializeFixtures,
@@ -69,6 +70,7 @@ function runEslint(
       config,
       '--no-cache',
       '--no-warn-ignored',
+      '--no-error-on-unmatched-pattern',
       '--format',
       'json',
       ...targets,
@@ -93,20 +95,28 @@ function isCandidateAvailable(): boolean {
 
 function runOxlint(
   targets: string[],
-  options: { isTypeAware: boolean; isIgnoreFileHonored: boolean },
+  options: {
+    isTypeAware: boolean
+    isIgnoreFileHonored: boolean
+    environment?: Record<string, string>
+  },
 ): Finding[] {
   const config = firstExisting(OXLINT_CONFIGS)
   if (config === undefined) throw new Error('No Oxlint config found')
-  const { stdout, status } = runProcess('bunx', [
-    'oxlint',
-    '--config',
-    config,
-    '--format',
-    'json',
-    ...(options.isTypeAware ? ['--type-aware'] : []),
-    ...(options.isIgnoreFileHonored ? [] : ['--no-ignore']),
-    ...targets,
-  ])
+  const { stdout, status } = runProcess(
+    'bunx',
+    [
+      'oxlint',
+      '--config',
+      config,
+      '--format',
+      'json',
+      ...(options.isTypeAware ? ['--type-aware'] : []),
+      ...(options.isIgnoreFileHonored ? [] : ['--no-ignore']),
+      ...targets,
+    ],
+    options.environment,
+  )
   if (status !== 0 && status !== 1) {
     throw new Error(`oxlint exited with status ${String(status)}`)
   }
@@ -258,6 +268,7 @@ function main(): number {
     ? parseAccepted(readFileSync(options.accepted, 'utf8'))
     : []
   const typedRules = ruleIdsRequiringTypes()
+  const canonicalRuleId = canonicalRuleIdFunction()
   const runners = {
     fixtures: runFixtures,
     repo: runRepository,
@@ -266,7 +277,12 @@ function main(): number {
   const selected: (keyof typeof runners)[] =
     options.mode === 'all' ? ['fixtures', 'repo', 'corpus'] : [options.mode]
   const sections = selected.map((name) =>
-    toSectionReport(runners[name](options), accepted, typedRules),
+    toSectionReport(
+      runners[name](options),
+      accepted,
+      typedRules,
+      canonicalRuleId,
+    ),
   )
   for (const section of sections) {
     console.info(`\n${summarizeSection(section).join('\n')}`)
