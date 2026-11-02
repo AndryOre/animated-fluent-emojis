@@ -2,9 +2,13 @@
 
 ## Status
 
-Accepted
+Accepted. Partly superseded by
+[0027](0027-oxc-toolchain-replaces-prettier-and-most-of-eslint.md).
 
 Date: 2026-10-04
+
+Revised: 2026-11-02, the jsdoc rule and the local rule now run under Oxlint (and
+ESLint on `.astro`), and directive comments include `oxlint-*`.
 
 ## Context
 
@@ -17,14 +21,16 @@ specific comment content or require documentation on top of free-form comments.
 
 - **TSDoc only.** Every code comment is a `/**` TSDoc block. Plain `//` line
   comments and non-JSDoc `/* */` blocks are disallowed, except for directive
-  comments a tool requires (such as `eslint-disable`, which must carry a
-  description).
+  comments a tool requires (such as `eslint-disable` or `oxlint-disable`, which
+  must carry a description).
 - **TSDoc is added where it earns its place**: non-obvious exports, never
   restating a signature.
-- **`eslint-plugin-jsdoc`'s `informative-docs` rule is enforced**, so a block
-  that only repeats its symbol name fails lint.
-- **Enforced by a local ESLint rule**, `eslint-rules/no-non-doc-comments.mjs`,
-  with its own tests.
+- **`eslint-plugin-jsdoc`'s `informative-docs` rule is enforced** (through the
+  `jsdoc-js` Oxlint jsPlugin), so a block that only repeats its symbol name
+  fails lint.
+- **Enforced by a local lint rule**, `eslint-rules/no-non-doc-comments.mjs`,
+  with its own tests. Oxlint loads it as a jsPlugin and ESLint runs it on
+  `.astro`.
 
 ### Rejected alternatives
 

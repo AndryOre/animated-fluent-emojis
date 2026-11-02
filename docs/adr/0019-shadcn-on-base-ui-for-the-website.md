@@ -2,12 +2,16 @@
 
 ## Status
 
-Accepted
+Accepted. Partly superseded by
+[0027](0027-oxc-toolchain-replaces-prettier-and-most-of-eslint.md).
 
 Date: 2026-10-07
 
 Revised: 2026-10-21, recorded `@shadcn/lint`, its no-restyle contracts, the
 escalation ladder and the exempt generated ui layer.
+
+Revised: 2026-11-02, `@shadcn/lint` runs under Oxlint for `ts` and `tsx` and
+under ESLint for `.astro`; its contracts moved to `lint-policy.mjs`.
 
 ## Context
 
@@ -43,10 +47,12 @@ Adopt [shadcn/ui](https://ui.shadcn.com) on [Base UI](https://base-ui.com)
   are stripped ([ADR 0002](0002-tsdoc-only-code-comments.md)), exports get
   TSDoc, and `cn` is the standard `clsx` plus `tailwind-merge`.
 - **Lint**: `@shadcn/lint` runs on `apps/site/**/*.{ts,tsx,astro}` through
-  `eslint.config.mjs` (`shadcn/no-restyle`, `no-raw-colors`,
-  `no-arbitrary-values`, `no-inline-styles`, `no-unknown-classes`,
-  `require-static-classes`). Per-component exceptions to `shadcn/no-restyle`
-  live in `shadcnNoRestyleContracts`, each encoding one bounded design decision.
+  `oxlint.config.ts` and, for `.astro`, `eslint.config.mjs`
+  (`shadcn/no-restyle`, `no-raw-colors`, `no-arbitrary-values`,
+  `no-inline-styles`, `no-unknown-classes`, `require-static-classes`).
+  Per-component exceptions to `shadcn/no-restyle` live in
+  `shadcnNoRestyleContracts` (`lint-policy.mjs`), each encoding one bounded
+  design decision.
 - **Generated layer exempt**: `apps/site/src/components/ui/**` is the registry
   code itself, re-synced rather than hand-edited, so `no-restyle`,
   `no-arbitrary-values` and `require-static-classes` are off there.

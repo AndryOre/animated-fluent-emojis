@@ -18,7 +18,7 @@ only) on top.
 
 | Workspace                         | Package                           | What lives there                                                                                                                                |
 | --------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.` (root)                        | `animated-fluent-emojis-monorepo` | Private host, tooling only: `eslint-rules/`, `scripts/`, `docs/`, the brand kit, `turbo.json`, `bunfig.toml`.                                   |
+| `.` (root)                        | `animated-fluent-emojis-monorepo` | Private host, tooling only: `eslint-rules/`, `oxlint-plugins/`, `scripts/`, `docs/`, the brand kit, `turbo.json`, `bunfig.toml`.                |
 | `packages/animated-fluent-emojis` | `animated-fluent-emojis`          | The one published package: `src/`, the playground, Vite, Vitest and tsconfig build configs, `size-limit` and `attw`.                            |
 | `apps/assets`                     | `@animated-fluent-emojis/assets`  | Private asset pipeline: `sync.ts`, its modules and tests, `public-slugs.json`. Outputs `dist-assets/`, `dist-files/`, `.cache/assets` under it. |
 | `apps/site`                       | `@animated-fluent-emojis/site`    | Private website: Astro, Starlight, Tailwind, ten locales, a container deployed through Coolify.                                                 |
@@ -58,8 +58,8 @@ any path passed through must be absolute.
 | `bun run fix`                | Aggregate autofix: format:write, lint:fix, typecheck.                                                                                                                     |
 | `bun run format:check`       | Checks formatting with Oxfmt (no writes).                                                                                                                                 |
 | `bun run format:write`       | Formats the repository with Oxfmt.                                                                                                                                        |
-| `bun run lint`               | Runs ESLint with `--max-warnings=0` (cached).                                                                                                                             |
-| `bun run lint:fix`           | Runs ESLint with `--fix`.                                                                                                                                                 |
+| `bun run lint`               | Runs Oxlint (`--type-aware --deny-warnings`), then ESLint on `**/*.astro` with `--max-warnings=0` (cached).                                                               |
+| `bun run lint:fix`           | Runs the same two linters with `--fix`.                                                                                                                                   |
 | `bun run typecheck`          | Runs `turbo run typecheck`, then the root `tsc --noEmit`.                                                                                                                 |
 | `bun run knip`               | Finds unused files, exports and dependencies.                                                                                                                             |
 | `bun run lint:package`       | Builds the library, then runs `publint --strict` and `attw --profile esm-only`.                                                                                           |
@@ -225,15 +225,16 @@ after changing either, and never edit the generated rasters by hand. See
 
 ### Adding a `@shadcn/lint` contract
 
-The root `eslint.config.mjs` defines `shadcnNoRestyleContracts`, a list of
-per-component exceptions to the `shadcn/no-restyle` rule on the site. Each entry
-pairs a component name `pattern` (regex) with an `allow` list of class
-categories or literal classes that component may add on top of its shadcn/ui
-defaults.
+The root `lint-policy.mjs` defines `shadcnNoRestyleContracts`, a list of
+per-component exceptions to the `shadcn/no-restyle` rule on the site. Both
+`oxlint.config.ts` (`ts` and `tsx`) and `eslint.config.mjs` (`.astro`) import
+it. Each entry pairs a component name `pattern` (regex) with an `allow` list of
+class categories or literal classes that component may add on top of its
+shadcn/ui defaults.
 
 To add a new contract:
 
-1. Add an entry to `shadcnNoRestyleContracts` in `eslint.config.mjs`:
+1. Add an entry to `shadcnNoRestyleContracts` in `lint-policy.mjs`:
    ```js
    {
      pattern: '^ComponentName$',
@@ -253,9 +254,9 @@ The ladder that leads here is in
 
 Hooks live in `.husky/`:
 
-- **`pre-commit`** runs `lint-staged`: Oxfmt and ESLint on staged code files,
-  Oxfmt alone on staged `json`, `md`, `css` and `yml` files
-  (`lint-staged.config.mjs`).
+- **`pre-commit`** runs `lint-staged`: Oxfmt, Oxlint and ESLint (for `.astro`)
+  on staged code files, Oxfmt alone on staged `json`, `md`, `css` and `yml`
+  files (`lint-staged.config.mjs`).
 - **`commit-msg`** runs `commitlint` with `@commitlint/config-conventional`. It
   enforces the Conventional Commits shape and type list, not the emoji.
 - **`pre-push`** rejects a push whose branch name does not match `<type>/<slug>`
@@ -326,8 +327,9 @@ the same format. The hook does not enforce the emoji; it is a convention.
 
 ## Accessibility
 
-- **Linting**: `eslint-plugin-jsx-a11y`'s `recommended` config runs as part of
-  `bun run lint`, so an a11y violation fails like any other lint error.
+- **Linting**: `jsx-a11y`'s `recommended` rules run as part of `bun run lint`
+  (Oxlint for `tsx`, ESLint for `.astro`), so an a11y violation fails like any
+  other lint error.
 - **Library**: `Emoji.a11y.test.tsx` runs axe against the rendered component.
   Every emoji ships descriptive `alt` text, and reduced motion shows a still
   poster frame.
@@ -343,9 +345,10 @@ the same format. The hook does not enforce the emoji; it is a convention.
 
 ## Code documentation
 
-Comments are TSDoc blocks only, on non-obvious exports. A local ESLint rule
-(`eslint-rules/no-non-doc-comments.mjs`) rejects `//` and plain `/* */`
-comments. Rationale: [ADR 0002](adr/0002-tsdoc-only-code-comments.md).
+Comments are TSDoc blocks only, on non-obvious exports. A local lint rule
+(`eslint-rules/no-non-doc-comments.mjs`, run by Oxlint and by ESLint on
+`.astro`) rejects `//` and plain `/* */` comments. Rationale:
+[ADR 0002](adr/0002-tsdoc-only-code-comments.md).
 
 ## Testing
 
@@ -367,9 +370,9 @@ that workspace):
   through Astro's container API.
 
 `apps/assets` has one `node` project (`apps/assets/vitest.config.ts`). The root
-`vitest.config.ts` is a `node` project over `eslint-rules`, `docs/adr`,
-`docs/brand/tools` and `scripts`, which includes the workflow invariants and the
-coverage manifest tests.
+`vitest.config.ts` is a `node` project over `eslint-rules`, `oxlint-plugins`,
+`docs/adr`, `docs/brand/tools` and `scripts`, which includes the workflow
+invariants and the coverage manifest tests.
 
 The browser conformance test "shows a sized, hidden placeholder, then the ready
 image" can flake under heavy host load; rerun it before suspecting a regression.
@@ -407,11 +410,11 @@ contract lives in `src/test/conformance/driver.ts`.
 `bun run test:coverage` measures each workspace and enforces these thresholds
 (lines, functions, branches, statements):
 
-| Workspace                         | Measured                                                   | Thresholds  |
-| --------------------------------- | ---------------------------------------------------------- | ----------- |
-| `packages/animated-fluent-emojis` | `src/**` (including `.svelte`)                             | 95/95/90/95 |
-| `apps/assets`                     | `*.ts` (not tests, `test-support.ts` or the Vitest config) | 95/95/90/95 |
-| root                              | `scripts/**`, `eslint-rules/**` and `docs/brand/tools/**`  | 94/95/87/94 |
+| Workspace                         | Measured                                                                       | Thresholds  |
+| --------------------------------- | ------------------------------------------------------------------------------ | ----------- |
+| `packages/animated-fluent-emojis` | `src/**` (including `.svelte`)                                                 | 95/95/90/95 |
+| `apps/assets`                     | `*.ts` (not tests, `test-support.ts` or the Vitest config)                     | 95/95/90/95 |
+| root                              | `scripts/**`, `eslint-rules/**`, `oxlint-plugins/**` and `docs/brand/tools/**` | 94/95/87/94 |
 
 `.astro` files are not reported by v8 (the container render test covers them)
 and `docs/brand/tools/export.mjs` needs a real browser, so neither is measured.

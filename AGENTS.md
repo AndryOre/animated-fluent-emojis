@@ -25,8 +25,9 @@ Always use `bun run <script>` — never call the underlying tool directly, and
 never use another package manager (this repo uses `bun.lock`). Read
 `package.json`'s `scripts` before inventing a command.
 
-- `bun run check` — format, lint, typecheck, knip and package lint. Run this
-  after any change.
+- `bun run check` — Oxfmt check, lint (Oxlint, plus ESLint on `.astro` only),
+  typecheck (TypeScript 7.1 through `typescript7`), knip and package lint. Run
+  this after any change.
 - `bun run test` — the Vitest suite. Run this after any change.
 - `bun run brand:export` — regenerates the brand rasters. Run it after changing
   a logo SVG or the export copy; never edit the generated rasters by hand.
@@ -59,18 +60,20 @@ non-JSDoc `/* */` comments, except lint or type directives. Detail:
 ## Escalating a `@shadcn/lint` finding
 
 When `bun run lint` reports a `shadcn/*` finding (e.g. `shadcn/no-restyle`) on a
-site component you're changing, work up this ladder — never disable the rule
-file-wide or project-wide:
+site component you're changing (Oxlint for `ts` and `tsx`, ESLint for `.astro`),
+work up this ladder — never disable the rule file-wide or project-wide:
 
 1. Use an existing variant in `apps/site/src/components/ui` that already covers
    the styling you need
    ([ADR 0019](docs/adr/0019-shadcn-on-base-ui-for-the-website.md)).
 2. Add a new variant to the component if no existing one fits.
 3. Add or change a `no-restyle` contract in `shadcnNoRestyleContracts`
-   (`eslint.config.mjs`), encoding one real, bounded design decision. Detail:
+   (`lint-policy.mjs`, shared by `oxlint.config.ts` and `eslint.config.mjs`),
+   encoding one real, bounded design decision. Detail:
    [`docs/development.md#adding-a-shadcnlint-contract`](docs/development.md#adding-a-shadcnlint-contract).
-4. Last resort: a single-line `eslint-disable-next-line -- <reason>` on the
-   exact offending line. Never a file-level or project-level disable.
+4. Last resort: a single-line `oxlint-disable-next-line -- <reason>` (or
+   `eslint-disable-next-line` in `.astro`) on the exact offending line. Never a
+   file-level or project-level disable.
 
 ## Quirks and gotchas
 
