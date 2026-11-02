@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/isolated-functions -- the evaluated callbacks run in the browser */
+/* eslint-disable unicorn-js/isolated-functions -- the evaluated callbacks run in the browser */
 import { expect, test, type Page } from '@playwright/test'
 
 const INSTALL = '[aria-labelledby="install-title"]'
@@ -222,4 +222,4 @@ test.describe('reduced motion', () => {
     await expect(section.locator('[data-copy-burst]')).toHaveCount(0)
   })
 })
-/* eslint-enable unicorn/isolated-functions -- end of browser-evaluated code */
+/* eslint-enable unicorn-js/isolated-functions -- end of browser-evaluated code */

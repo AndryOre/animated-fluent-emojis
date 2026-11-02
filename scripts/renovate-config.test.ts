@@ -108,6 +108,15 @@ describe('renovate.json5 groups', () => {
       expect.arrayContaining(['oxlint']),
     )
   })
+
+  test('trims the eslint group to the packages the .astro pass and jsPlugins use', () => {
+    expect(findGroup('eslint').matchPackageNames).toEqual([
+      'eslint',
+      'typescript-eslint',
+      'eslint-plugin-*',
+      '@vitest/eslint-plugin',
+    ])
+  })
 })
 
 describe('workflow tool version managers', () => {

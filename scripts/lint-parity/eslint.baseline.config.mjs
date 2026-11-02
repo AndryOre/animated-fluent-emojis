@@ -3,7 +3,6 @@ import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import eslintReact from '@eslint-react/eslint-plugin'
 import { plugin as shadcn } from '@shadcn/lint'
 import vitest from '@vitest/eslint-plugin'
-import prettierConfig from 'eslint-config-prettier'
 import astro from 'eslint-plugin-astro'
 import jsdoc from 'eslint-plugin-jsdoc'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
@@ -12,13 +11,16 @@ import unicorn from 'eslint-plugin-unicorn'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
+import directiveAliasesPlugin from './baseline-rules/directive-aliases.mjs'
 import localPlugin from './baseline-rules/index.mjs'
+import prettierConfig from './baseline-rules/prettier-config.mjs'
 
 /**
  * Frozen snapshot of the repository `eslint.config.mjs` taken before the Oxc
  * migration, so the differential harness keeps a fixed baseline after the
- * live config shrinks. Only the local plugin import, the root directory and
- * the corpus switch differ from the original.
+ * live config shrinks. Only the local plugin import, the frozen
+ * `eslint-config-prettier` copy, the directive alias processor, the root
+ * directory and the corpus switch differ from the original.
  */
 const repositoryRoot = path.resolve(import.meta.dirname, '../..')
 
@@ -287,6 +289,16 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   prettierConfig,
+  {
+    /**
+     * Not in the original config: reads the live code's `unicorn-js/...`
+     * style directive names as the ESLint rule ids they alias.
+     */
+    files: ['**/*.{ts,tsx,mjs}'],
+    ignores: ['**/*.astro/**'],
+    plugins: { 'parity-directives': directiveAliasesPlugin },
+    processor: 'parity-directives/aliases',
+  },
   globalIgnores([
     '**/.astro/**',
     '**/dist/**',

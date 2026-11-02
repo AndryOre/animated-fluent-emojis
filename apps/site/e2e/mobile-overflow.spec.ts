@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/isolated-functions -- the evaluated callback runs in the browser */
+/* eslint-disable unicorn-js/isolated-functions -- the evaluated callback runs in the browser */
 import { expect, test } from '@playwright/test'
 
 import { docRoute } from '../src/docs/published'
@@ -137,4 +137,4 @@ for (const width of VIEWPORT_WIDTHS) {
   })
 }
 
-/* eslint-enable unicorn/isolated-functions -- end of browser-evaluated code */
+/* eslint-enable unicorn-js/isolated-functions -- end of browser-evaluated code */
