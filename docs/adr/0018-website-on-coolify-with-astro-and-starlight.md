@@ -63,5 +63,5 @@ Rejected:
   too slow, fall back to English-only emoji pages.
 - Translations of the docs go stale when English changes; a status script lists
   them and the site degrades to English meanwhile.
-- `CONTEXT.md` defines website, gallery, emoji page, snippet, locale, stale
+- `GLOSSARY.md` defines website, gallery, emoji page, snippet, locale, stale
   translation and localized name.

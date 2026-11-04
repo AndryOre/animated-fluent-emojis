@@ -4,7 +4,7 @@ This document is the assurance case for `animated-fluent-emojis`: what the
 library fetches at runtime, who it trusts, what that means for your Content
 Security Policy, and where its defenses fall short today. It is written for
 consumers and security reviewers. Terms such as asset site, slim manifest and
-sprite sheet follow [`CONTEXT.md`](../CONTEXT.md).
+sprite sheet follow [`GLOSSARY.md`](../GLOSSARY.md).
 
 To report a vulnerability, see [`SECURITY.md`](../.github/SECURITY.md). This
 document covers the design, not the reporting process.

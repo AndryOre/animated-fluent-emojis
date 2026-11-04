@@ -190,7 +190,7 @@ attribute are also accepted. Every prop, with edge cases, is in the
   length string.
 
 Terms such as fallback glyph and asset layout version are defined in
-[`CONTEXT.md`](CONTEXT.md).
+[`GLOSSARY.md`](GLOSSARY.md).
 
 ## Emoji Categories
 

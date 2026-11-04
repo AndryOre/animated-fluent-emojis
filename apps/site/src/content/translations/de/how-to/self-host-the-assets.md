@@ -7,7 +7,7 @@ Liefere das Manifest und die Sprite Sheets von einem Origin aus, den du
 kontrollierst, und richte `Emoji` darauf aus. Nutze das, wenn du in deiner
 Content Security Policy keinen Drittanbieter-Origin erlauben kannst oder nicht
 von der Standard-Asset-Site abhängen möchtest. Die Begriffe folgen
-[`CONTEXT.md`](../../CONTEXT.md).
+[`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Die Site bauen
 

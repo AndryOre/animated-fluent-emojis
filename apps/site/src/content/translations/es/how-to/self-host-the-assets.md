@@ -6,7 +6,7 @@ sourceHash: 1fa3d7fdc9a470b6
 Sirve el manifest y los sprite sheets desde un origen que controles, y apunta
 `Emoji` hacia él. Úsalo cuando no puedas permitir un origen de terceros en tu
 Content Security Policy, o cuando no quieras depender del asset site por
-defecto. Los términos siguen [`CONTEXT.md`](../../CONTEXT.md).
+defecto. Los términos siguen [`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Compila el sitio
 

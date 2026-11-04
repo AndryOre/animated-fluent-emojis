@@ -79,4 +79,4 @@ never describes the files as "free to use" and follows `docs/brand/voice.md`.
   changelog.
 - If the catalog outgrows 20,000 files, the builder fails loudly and the
   fallback is R2 or a paid plan, which would supersede this ADR.
-- `CONTEXT.md` defines public file, files site, slug and public index.
+- `GLOSSARY.md` defines public file, files site, slug and public index.

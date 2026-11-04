@@ -6,7 +6,7 @@ sourceHash: 1fa3d7fdc9a470b6
 Раздавайте manifest и sprite sheets с origin, который вы контролируете, и
 направьте `Emoji` на него. Это нужно, когда вы не можете разрешить сторонний
 origin в своей Content Security Policy или не хотите зависеть от asset site по
-умолчанию. Термины соответствуют [`CONTEXT.md`](../../CONTEXT.md).
+умолчанию. Термины соответствуют [`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Соберите сайт
 

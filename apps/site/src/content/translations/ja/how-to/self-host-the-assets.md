@@ -6,7 +6,7 @@ sourceHash: 1fa3d7fdc9a470b6
 マニフェストとスプライトシートを自分で管理するオリジンから配信し、`Emoji`
 をそこに向けます。Content Security
 Policy でサードパーティのオリジンを許可できない場合や、デフォルトのアセットサイトに依存したくない場合に使います。用語は
-[`CONTEXT.md`](../../CONTEXT.md) に従います。
+[`GLOSSARY.md`](../../GLOSSARY.md) に従います。
 
 ## サイトをビルドする
 
