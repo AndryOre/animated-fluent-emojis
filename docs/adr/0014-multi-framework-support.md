@@ -71,5 +71,5 @@ ships a single package.
 - 0.7 is a breaking release gated on 0.6 being cut by a human.
 - New adapters cost a subpath, an optional peer and a run of the conformance
   suite, not a new package.
-- The brand brief no longer rules out other frameworks, and `CONTEXT.md` defines
-  core, adapter and element.
+- The brand brief no longer rules out other frameworks, and `GLOSSARY.md`
+  defines core, adapter and element.

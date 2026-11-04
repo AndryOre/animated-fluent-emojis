@@ -3,7 +3,7 @@
 Serve the manifest and sprite sheets from an origin you control, and point
 `Emoji` at it. Use this when you cannot allow a third-party origin in your
 Content Security Policy, or when you do not want to depend on the default asset
-site. Terms follow [`CONTEXT.md`](../../CONTEXT.md).
+site. Terms follow [`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Build the site
 

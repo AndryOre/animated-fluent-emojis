@@ -6,7 +6,7 @@ sourceHash: 1fa3d7fdc9a470b6
 직접 관리하는 origin에서 manifest와 sprite sheet를 제공하고, `Emoji`가 그곳을
 가리키도록 설정하세요. Content Security Policy에서 서드파티 origin을 허용할 수
 없거나 기본 asset site에 의존하고 싶지 않을 때 사용합니다. 용어는
-[`CONTEXT.md`](../../CONTEXT.md)를 따릅니다.
+[`GLOSSARY.md`](../../GLOSSARY.md)를 따릅니다.
 
 ## site 빌드하기
 

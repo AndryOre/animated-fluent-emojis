@@ -6,7 +6,7 @@ sourceHash: 1fa3d7fdc9a470b6
 Servi il manifest e gli sprite sheet da un'origin che controlli, e punta `Emoji`
 verso di essa. Usalo quando non puoi autorizzare un'origin di terze parti nella
 tua Content Security Policy, o quando non vuoi dipendere dall'asset site
-predefinito. I termini seguono [`CONTEXT.md`](../../CONTEXT.md).
+predefinito. I termini seguono [`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Compila il sito
 

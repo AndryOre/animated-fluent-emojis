@@ -5,7 +5,7 @@ core, a set of adapters (React, Vue, Svelte, Astro and the `<fluent-emoji>`
 element), the `configureEmojis` and `preloadEmojis` functions, a few types and a
 stylesheet. See [Core and adapters](#core-and-adapters). Terms such as fallback
 glyph, asset layout version and sprite generation are defined in
-[`CONTEXT.md`](../CONTEXT.md).
+[`GLOSSARY.md`](../GLOSSARY.md).
 
 The repository is a Bun workspaces monorepo
 ([ADR 0016](adr/0016-bun-workspaces-monorepo.md)). Paths such as `src/core` in

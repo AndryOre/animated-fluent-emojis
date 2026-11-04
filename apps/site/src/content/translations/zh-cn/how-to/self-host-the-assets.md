@@ -5,7 +5,7 @@ sourceHash: 1fa3d7fdc9a470b6
 
 从你自己控制的源提供 manifest 和 sprite sheet，并让 `Emoji`
 指向它。当你无法在内容安全策略中放行第三方源，或不想依赖默认的 asset
-site 时，请使用这种方式。术语遵循 [`CONTEXT.md`](../../CONTEXT.md)。
+site 时，请使用这种方式。术语遵循 [`GLOSSARY.md`](../../GLOSSARY.md)。
 
 ## 构建站点
 

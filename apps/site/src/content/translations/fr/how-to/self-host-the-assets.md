@@ -7,7 +7,7 @@ Servez le manifest et les sprite sheets depuis une origine que vous contrôlez,
 et pointez `Emoji` vers elle. Utilisez ceci lorsque vous ne pouvez pas autoriser
 une origine tierce dans votre Content Security Policy, ou lorsque vous ne voulez
 pas dépendre de l'asset site par défaut. Les termes suivent
-[`CONTEXT.md`](../../CONTEXT.md).
+[`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Construire le site
 
