@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import {
+  type BuiltPage,
   collectMetaScriptHashes,
   findInlineScriptHashes,
   prepareSecurityHeaders,
@@ -81,23 +82,33 @@ describe('renderSecurityHeaders', () => {
 
 describe('prepareSecurityHeaders', () => {
   it('renders the declared hashes and strips the meta from each page', () => {
-    const { snippet, pages } = prepareSecurityHeaders(
-      [{ file: 'index.html', html: page('a()', [hashOf('a()')]) }],
+    const written: BuiltPage[] = []
+    const snippet = prepareSecurityHeaders(
+      () => [{ file: 'index.html', html: page('a()', [hashOf('a()')]) }],
       TEMPLATE,
+      (builtPage) => {
+        written.push(builtPage)
+      },
     )
     expect(snippet).toContain(hashOf('a()'))
-    expect(pages[0]?.html).not.toContain('content-security-policy')
+    expect(written).toHaveLength(1)
+    expect(written[0]?.html).not.toContain('content-security-policy')
   })
 
-  it('fails the build when an inline script is left unhashed', () => {
+  it('fails the build and writes nothing when an inline script is left unhashed', () => {
+    const written: BuiltPage[] = []
     expect(() =>
       prepareSecurityHeaders(
-        [
+        () => [
           { file: 'index.html', html: page('a()', [hashOf('a()')]) },
           { file: 'docs/index.html', html: page('evil()', [hashOf('a()')]) },
         ],
         TEMPLATE,
+        (builtPage) => {
+          written.push(builtPage)
+        },
       ),
     ).toThrow(/Inline scripts missing from the CSP:\ndocs\/index\.html/)
+    expect(written).toEqual([])
   })
 })

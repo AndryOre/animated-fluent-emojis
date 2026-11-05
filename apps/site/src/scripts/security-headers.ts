@@ -85,35 +85,38 @@ export function renderSecurityHeaders(
 }
 
 /**
- * Checks every inline script against the hashes Astro declared and renders
- * the header snippet.
- * @param pages - The built HTML pages.
+ * Checks every inline script against the hashes Astro declared, renders the
+ * header snippet and rewrites each page without its CSP meta tag. Pages are
+ * read lazily and never retained, so memory stays at one page, not the site.
+ * @param readPages - Yields the built HTML pages; called once per pass.
  * @param template - The nginx header snippet containing the placeholder.
- * @returns The rendered snippet and the pages without their CSP meta tag.
- * @throws {Error} When an inline script has no declared hash.
+ * @param writePage - Persists a page without its CSP meta tag.
+ * @returns The rendered snippet.
+ * @throws {Error} When an inline script has no declared hash; no page is written then.
  */
 export function prepareSecurityHeaders(
-  pages: readonly BuiltPage[],
+  readPages: () => Iterable<BuiltPage>,
   template: string,
-): { snippet: string; pages: BuiltPage[] } {
-  const allowed = new Set(
-    pages.flatMap(({ html }) => collectMetaScriptHashes(html)),
-  )
-  const unhashed = pages.flatMap(({ file, html }) =>
-    findInlineScriptHashes(html)
-      .filter((hash) => !allowed.has(hash))
-      .map((hash) => `${file} ${hash}`),
-  )
+  writePage: (page: BuiltPage) => void,
+): string {
+  const allowed = new Set<string>()
+  for (const { html } of readPages()) {
+    for (const hash of collectMetaScriptHashes(html)) allowed.add(hash)
+  }
+  const unhashed: string[] = []
+  for (const { file, html } of readPages()) {
+    for (const hash of findInlineScriptHashes(html)) {
+      if (!allowed.has(hash)) unhashed.push(`${file} ${hash}`)
+    }
+  }
   if (unhashed.length > 0) {
     throw new Error(
       `Inline scripts missing from the CSP:\n${unhashed.join('\n')}`,
     )
   }
-  return {
-    snippet: renderSecurityHeaders(template, [...allowed]),
-    pages: pages.map(({ file, html }) => ({
-      file,
-      html: stripMetaCsp(html),
-    })),
+  const snippet = renderSecurityHeaders(template, [...allowed])
+  for (const { file, html } of readPages()) {
+    writePage({ file, html: stripMetaCsp(html) })
   }
+  return snippet
 }
