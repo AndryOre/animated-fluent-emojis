@@ -495,4 +495,4 @@ The skills installed today all come from `emilkowalski/skills` and cover design
 and motion work on the website: `animate`, `animation-vocabulary`, `break-ui`,
 `emil-design-eng`, `find-animation-opportunities`, `improve-animations`,
 `mobile-native`, `pick-ui-library` and `review-animations`. The `/forge`
-workflow is configured in [`agents/forge.md`](agents/forge.md).
+workflow is configured in [`agents/emet.md`](agents/emet.md).

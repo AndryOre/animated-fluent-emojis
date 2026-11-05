@@ -3,7 +3,7 @@
 Repo-specific config the global `/forge` command reads before running any of its
 9 phases. Machine-checkable values (trunk/remote, ticket id shape, concurrency,
 preflight's required files, handoff/usage thresholds) live in
-[`forge.config.json`](../../forge.config.json) at the repo root, matching
+[`emet.config.json`](../../emet.config.json) at the repo root, matching
 `~/.claude/forge/schema/forge.config.schema.json`. This file holds the "why"
 prose and everything a JSON value can't express.
 
@@ -19,7 +19,7 @@ calls `/forge` makes to create, read, and transition tickets here, and
 - Worker branch: `ao-<n>-<slug>` — each worker checks this out itself at
   worktree step 0. Local-only, never pushed.
 - Commit: add a trailer line referencing the ticket at the end of the commit
-  body (see `commit.trailer`/`commit.trailerPosition` in `forge.config.json` if
+  body (see `commit.trailer`/`commit.trailerPosition` in `emet.config.json` if
   this repo wants something other than the built-in default).
 
 ## Worktree setup
@@ -30,7 +30,7 @@ into `/forge` itself, identical in every repo, and nothing below needs to
 restate it.
 
 A fresh worktree only needs `bun install --frozen-lockfile --silent`
-(`worktree.bootstrap` in `forge.config.json`). The isolated linker installs a
+(`worktree.bootstrap` in `emet.config.json`). The isolated linker installs a
 `node_modules` per workspace, so every worktree gets its own. No codegen and no
 env files to copy from the main checkout — this is a framework component library
 with no runtime secrets.
@@ -38,7 +38,7 @@ with no runtime secrets.
 ## Self-check
 
 Commands a worker runs before considering its own change done: see
-`commands.selfCheck` in `forge.config.json`.
+`commands.selfCheck` in `emet.config.json`.
 
 `bun run check` and `bun run test` — the self-check; both fan out through
 Turborepo to the workspaces and the root. `build` (`tsc -b && vite build`) is
@@ -63,7 +63,7 @@ memory-headroom brake also denies new slot acquisitions when `MemAvailable` is
 too low, regardless of how many slots are technically free — see `forge doctor`
 for this host's resolved numbers, and pin an explicit integer here instead of
 `"auto"` only when there's a specific reason to cap this repo lower than the
-host otherwise would. Both settings live in `forge.config.json`.
+host otherwise would. Both settings live in `emet.config.json`.
 `FORGE_MAX_LIVE_WORKERS` (accepting `"auto"` too) and
 `FORGE_RUN_IDLE_THRESHOLD_MS` still override their config counterparts when set,
 same as before this repo had a config file at all.

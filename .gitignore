@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 # Forge
-.forge
+.emet
 .claude/worktrees
 .eslintcache
 
