@@ -17,15 +17,47 @@ permissions:
   contents: read
 
 jobs:
-  site-quality:
-    name: Smoke, accessibility and Lighthouse budget
+  build:
+    name: Build the site image
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
+
+      - name: Compute last-modified dates
+        id: dates
+        run:
+          echo "map=$(bash apps/site/docker/last-modified.sh)" >>
+          "$GITHUB_OUTPUT"
+
+      - name: Build and save the image
+        env:
+          LAST_MODIFIED_DATES: ${{ steps.dates.outputs.map }}
+        run: |
+          docker build -f apps/site/Dockerfile \
+            --build-arg LAST_MODIFIED_DATES="${LAST_MODIFIED_DATES}" \
+            -t animated-fluent-emojis-site:ci .
+          docker save animated-fluent-emojis-site:ci -o "${RUNNER_TEMP}/site-image.tar"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-image
+          path: ${{ runner.temp }}/site-image.tar
+          if-no-files-found: error
+          retention-days: 1
+
+  smoke:
+    name: Smoke and build output audit
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
@@ -39,19 +71,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
 
-      - name: Compute last-modified dates
-        id: dates
-        run:
-          echo "map=$(bash apps/site/docker/last-modified.sh)" >>
-          "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-image
+          path: ${{ runner.temp }}/site-image
 
-      - name: Build and start the container
-        env:
-          LAST_MODIFIED_DATES: ${{ steps.dates.outputs.map }}
+      - name: Load and start the container
         run: |
-          docker build -f apps/site/Dockerfile \
-            --build-arg LAST_MODIFIED_DATES="${LAST_MODIFIED_DATES}" \
-            -t animated-fluent-emojis-site:ci .
+          docker load -i "${RUNNER_TEMP}/site-image/site-image.tar"
           docker run -d --name site-ci -p 127.0.0.1:8080:80 animated-fluent-emojis-site:ci
           for _ in $(seq 1 30); do
             curl -fs -o /dev/null http://127.0.0.1:8080/ && exit 0
@@ -70,6 +97,54 @@ jobs:
           docker cp site-ci:/etc/nginx/snippets/security-headers.conf apps/site/dist-security-headers.conf
           SITE_DIST_HEADERS=dist-security-headers.conf bun run --cwd apps/site test:dist
 
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: site-smoke-report
+          path: |
+            apps/site/playwright-report/
+            apps/site/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  e2e:
+    name: Accessibility and interaction specs
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-image
+          path: ${{ runner.temp }}/site-image
+
+      - name: Load and start the container
+        run: |
+          docker load -i "${RUNNER_TEMP}/site-image/site-image.tar"
+          docker run -d --name site-ci -p 127.0.0.1:8080:80 animated-fluent-emojis-site:ci
+          for _ in $(seq 1 30); do
+            curl -fs -o /dev/null http://127.0.0.1:8080/ && exit 0
+            sleep 1
+          done
+          docker logs site-ci
+          exit 1
+
       - name: Install Playwright browser
         working-directory: apps/site
         run: bunx playwright install --with-deps chromium
@@ -78,8 +153,105 @@ jobs:
         working-directory: apps/site
         run: bun run test:e2e
 
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: site-e2e-report
+          path: |
+            apps/site/playwright-report/
+            apps/site/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  visual:
+    name: Visual regression snapshots
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-image
+          path: ${{ runner.temp }}/site-image
+
+      - name: Load and start the container
+        run: |
+          docker load -i "${RUNNER_TEMP}/site-image/site-image.tar"
+          docker run -d --name site-ci -p 127.0.0.1:8080:80 animated-fluent-emojis-site:ci
+          for _ in $(seq 1 30); do
+            curl -fs -o /dev/null http://127.0.0.1:8080/ && exit 0
+            sleep 1
+          done
+          docker logs site-ci
+          exit 1
+
       - name: Run the visual regression snapshots
+        env:
+          VISUAL_SITE_IMAGE: animated-fluent-emojis-site:ci
         run: bash apps/site/scripts/visual.sh
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: site-visual-report
+          path: |
+            apps/site/playwright-report/
+            apps/site/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse budget
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-image
+          path: ${{ runner.temp }}/site-image
+
+      - name: Load and start the container
+        run: |
+          docker load -i "${RUNNER_TEMP}/site-image/site-image.tar"
+          docker run -d --name site-ci -p 127.0.0.1:8080:80 animated-fluent-emojis-site:ci
+          for _ in $(seq 1 30); do
+            curl -fs -o /dev/null http://127.0.0.1:8080/ && exit 0
+            sleep 1
+          done
+          docker logs site-ci
+          exit 1
+
+      - name: Install Playwright browser
+        working-directory: apps/site
+        run: bunx playwright install --with-deps chromium
 
       - name: Enforce the Lighthouse budget
         working-directory: apps/site
@@ -91,9 +263,28 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
-          name: site-playwright-report
+          name: site-lighthouse-report
           path: |
             apps/site/playwright-report/
             apps/site/test-results/
           if-no-files-found: ignore
           retention-days: 7
+
+  site-quality:
+    name: Smoke, accessibility and Lighthouse budget
+    needs: [build, smoke, e2e, visual, lighthouse]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every Site Quality job to succeed
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          unsuccessful="$(jq -r 'to_entries[] | select(.value.result != "success") | "\(.key): \(.value.result)"' <<<"${NEEDS}")"
+          if [[ -n "${unsuccessful}" ]]; then
+            echo "These Site Quality jobs did not succeed:"
+            echo "${unsuccessful}"
+            exit 1
+          fi
+          echo "Every Site Quality job succeeded."
