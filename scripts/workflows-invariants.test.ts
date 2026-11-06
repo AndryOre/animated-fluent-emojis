@@ -689,6 +689,32 @@ describe('runner routing (standard v1 R9)', () => {
   )
 })
 
+describe('site-quality.yml aggregate job', () => {
+  const jobs = readWorkflow('site-quality.yml').jobs ?? {}
+  const aggregate = jobs['site-quality']
+
+  test('keeps the required check name', () => {
+    expect(aggregate?.name).toBe('Smoke, accessibility and Lighthouse budget')
+  })
+
+  test('runs even when a job it needs failed or was skipped', () => {
+    expect(aggregate?.if).toBe('always()')
+  })
+
+  test('needs every other job in the file', () => {
+    const otherJobs = Object.keys(jobs).filter(
+      (name) => name !== 'site-quality',
+    )
+    const needed = (aggregate?.needs as string[]).toSorted((first, second) =>
+      first.localeCompare(second),
+    )
+    const expected = otherJobs.toSorted((first, second) =>
+      first.localeCompare(second),
+    )
+    expect(needed).toEqual(expected)
+  })
+})
+
 describe('renovate.json5 custom managers', () => {
   const config = readFileSync(
     new URL('../renovate.json5', import.meta.url),
