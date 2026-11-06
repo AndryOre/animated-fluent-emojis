@@ -608,6 +608,113 @@ describe('ci.yml turbo wiring', () => {
   })
 })
 
+const ROUTED_RUNNER_EXPRESSION =
+  "${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || vars.BLACKSMITH_RUNNER || 'ubuntu-latest' }}"
+
+const ROUTED_JOBS: ReadonlySet<string> = new Set([
+  'ci.yml:quality',
+  'ci.yml:commitlint',
+  'ci.yml:ci-passed',
+  'lint-pr.yml:validate-title',
+  'lint-docs.yml:check-links',
+  'lint-workflows.yml:lint',
+  'labels.yml:sync',
+])
+
+const MATRIX_OS_PATTERN = /^\$\{\{\s*matrix\.os\s*\}\}$/
+const FORBIDDEN_RUNNER_PATTERN = /\bvps-|self-hosted/
+
+interface JobRunner {
+  readonly key: string
+  readonly runsOn: unknown
+  readonly source: string
+}
+
+function normalizeWhitespace(value: string): string {
+  return value.replaceAll(/\s+/g, ' ').trim()
+}
+
+function describeRunner(runsOn: unknown): string {
+  if (typeof runsOn === 'string') return normalizeWhitespace(runsOn)
+  return runsOn === undefined ? 'nothing' : JSON.stringify(runsOn)
+}
+
+function collectJobRunners(): JobRunner[] {
+  return listWorkflowFiles().flatMap((fileName) =>
+    Object.entries(readWorkflow(fileName).jobs ?? {}).map(([jobName, job]) => ({
+      key: `${fileName}:${jobName}`,
+      runsOn: (job as { readonly 'runs-on'?: unknown })['runs-on'],
+      source: JSON.stringify(job),
+    })),
+  )
+}
+
+function findRunnerViolation({
+  key,
+  runsOn,
+  source,
+}: JobRunner): string | undefined {
+  const runner = describeRunner(runsOn)
+  if (FORBIDDEN_RUNNER_PATTERN.test(runner)) {
+    return `job "${key}" uses a forbidden runner label: ${runner}`
+  }
+  if (ROUTED_JOBS.has(key)) {
+    return runner === ROUTED_RUNNER_EXPRESSION
+      ? undefined
+      : `routed job "${key}" must use the standard runner expression, got ${runner}`
+  }
+  if (source.includes('BLACKSMITH_RUNNER')) {
+    return `job "${key}" is not routed and must not read vars.BLACKSMITH_RUNNER`
+  }
+  return runsOn === 'ubuntu-latest' || MATRIX_OS_PATTERN.test(runner)
+    ? undefined
+    : `job "${key}" must run on a literal ubuntu-latest or matrix.os, got ${runner}`
+}
+
+describe('runner routing (standard v1 R9)', () => {
+  const runners = collectJobRunners()
+
+  test('every routed job exists', () => {
+    const keys = runners.map((runner) => runner.key)
+    for (const routedJob of ROUTED_JOBS) {
+      expect(keys, routedJob).toContain(routedJob)
+    }
+  })
+
+  test.each(runners.map((runner) => [runner.key, runner] as const))(
+    '%s runs on its expected runner',
+    (_key, runner) => {
+      expect(findRunnerViolation(runner)).toBeUndefined()
+    },
+  )
+})
+
+describe('site-quality.yml aggregate job', () => {
+  const jobs = readWorkflow('site-quality.yml').jobs ?? {}
+  const aggregate = jobs['site-quality']
+
+  test('keeps the required check name', () => {
+    expect(aggregate?.name).toBe('Smoke, accessibility and Lighthouse budget')
+  })
+
+  test('runs even when a job it needs failed or was skipped', () => {
+    expect(aggregate?.if).toBe('always()')
+  })
+
+  test('needs every other job in the file', () => {
+    const otherJobs = Object.keys(jobs).filter(
+      (name) => name !== 'site-quality',
+    )
+    const needed = (aggregate?.needs as string[]).toSorted((first, second) =>
+      first.localeCompare(second),
+    )
+    const expected = otherJobs.toSorted((first, second) =>
+      first.localeCompare(second),
+    )
+    expect(needed).toEqual(expected)
+  })
+})
+
 describe('renovate.json5 custom managers', () => {
   const config = readFileSync(
     new URL('../renovate.json5', import.meta.url),
