@@ -7,10 +7,13 @@ Accepted.
 Date: 2026-11-06
 
 Revised: 2026-11-06, the CI `package` job builds only the library, Site Quality
-also runs on root build-config changes, its e2e specs run fully parallel, the
-Lighthouse job runs as 2 shards (still 5 runs per page), and the CI `test` job
-caches Playwright browsers. Expected times: CI about 2.5 minutes, Site Quality
-about 10-12 minutes without queueing.
+also runs on root build-config changes, the Astro site build runs with
+`build.concurrency` 4 (its output matches a serial build, apart from a
+build-time `Expires` timestamp and the key order of the Pagefind entry file,
+which varies between builds of the same input), its e2e specs run fully
+parallel, the Lighthouse job runs as 2 shards (still 5 runs per page), and the
+CI `test` job caches Playwright browsers. Expected times: CI about 2.5 minutes,
+Site Quality about 10-12 minutes without queueing.
 
 ## Context
 
