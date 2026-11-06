@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import {
   mkdtempSync,
   readFileSync,
@@ -100,4 +100,58 @@ describe('turbo --affected selection', () => {
     },
     60_000,
   )
+})
+
+describe('pre-push hook', () => {
+  const hookPath = path.join(repositoryRoot, '.husky', 'pre-push')
+  const zero = '0'.repeat(40)
+  const someSha = 'a'.repeat(40)
+  let repository = ''
+
+  beforeAll(() => {
+    repository = mkdtempSync(path.join(tmpdir(), 'pre-push-hook-'))
+    git(repository, 'init', '--quiet')
+  })
+
+  afterAll(() => {
+    rmSync(repository, { recursive: true, force: true })
+  })
+
+  function runHook(refLine: string) {
+    return spawnSync('sh', [hookPath], {
+      cwd: repository,
+      encoding: 'utf8',
+      input: `${refLine}\n`,
+    })
+  }
+
+  test('rejects an invalid branch name', () => {
+    const result = runHook(
+      `refs/heads/wip ${someSha} refs/heads/not-a-valid-branch ${zero}`,
+    )
+    expect(result.status).toBe(1)
+    expect(result.stdout).toContain('Invalid branch name')
+  })
+
+  test('skips the affected checks when origin/main is missing', () => {
+    const result = runHook(
+      `refs/heads/ci/valid-name ${someSha} refs/heads/ci/valid-name ${zero}`,
+    )
+    expect(result.status).toBe(0)
+    expect(result.stdout).toContain('origin/main not found')
+  })
+
+  test('skips the affected checks for a branch deletion', () => {
+    const result = runHook(
+      `(delete) ${zero} refs/heads/ci/valid-name ${someSha}`,
+    )
+    expect(result.status).toBe(0)
+    expect(result.stdout).toContain('no branch update in this push')
+  })
+
+  test('skips the affected checks for a tag push', () => {
+    const result = runHook(`refs/tags/v1 ${someSha} refs/tags/v1 ${zero}`)
+    expect(result.status).toBe(0)
+    expect(result.stdout).toContain('no branch update in this push')
+  })
 })
