@@ -15,3 +15,18 @@ while read -r _local_ref local_sha remote_ref _remote_sha; do
     exit 1
   fi
 done
+
+if ! git rev-parse --verify --quiet origin/main > /dev/null; then
+  echo "pre-push: origin/main not found, skipping affected checks (run: git fetch origin main)"
+  exit 0
+fi
+
+echo "pre-push: typecheck of workspaces affected relative to origin/main"
+TURBO_SCM_BASE=origin/main bun run turbo run typecheck --affected || exit 1
+
+changed=$(git diff --name-only --diff-filter=d origin/main...HEAD -- '*.ts' '*.tsx' '*.mts' '*.js' '*.mjs')
+if [ -n "$changed" ]; then
+  echo "pre-push: lint of files changed relative to origin/main"
+  # shellcheck disable=SC2086
+  bun run oxlint --type-aware --deny-warnings $changed || exit 1
+fi
