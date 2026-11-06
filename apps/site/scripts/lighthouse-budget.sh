@@ -3,6 +3,10 @@
 # page, and fails when a category's median score drops below its budget. A run
 # that errors (for example the intermittent NO_NAVSTART trace error) is retried
 # up to LIGHTHOUSE_ATTEMPTS times before the script gives up.
+#
+# LIGHTHOUSE_SHARD=<i>/<n> audits only shard i of n: page k (0-based) belongs to
+# shard (k mod n) + 1, so the n shards are disjoint and together cover every
+# page. LIGHTHOUSE_LIST=1 prints the selected pages and exits without auditing.
 set -euo pipefail
 
 base="${SITE_URL:-http://127.0.0.1:8080}"
@@ -46,7 +50,43 @@ paths=(
   /changelog/
 )
 
-for path in "${paths[@]}"; do
+select_shard() {
+  local shard="$1" index total k
+  if [[ ! "$shard" =~ ^([1-9][0-9]*)/([1-9][0-9]*)$ ]]; then
+    echo "LIGHTHOUSE_SHARD must look like <index>/<total>, got '$shard'" >&2
+    return 1
+  fi
+  index="${BASH_REMATCH[1]}"
+  total="${BASH_REMATCH[2]}"
+  if ((index > total)); then
+    echo "LIGHTHOUSE_SHARD index $index is greater than its total $total" >&2
+    return 1
+  fi
+  selected=()
+  for k in "${!paths[@]}"; do
+    if ((k % total == index - 1)); then
+      selected+=("${paths[$k]}")
+    fi
+  done
+  if ((${#selected[@]} == 0)); then
+    echo "LIGHTHOUSE_SHARD $shard selects no page out of ${#paths[@]}" >&2
+    return 1
+  fi
+}
+
+selected=("${paths[@]}")
+if [[ -n "${LIGHTHOUSE_SHARD:-}" ]]; then
+  select_shard "$LIGHTHOUSE_SHARD"
+fi
+
+if [[ "${LIGHTHOUSE_LIST:-}" == "1" ]]; then
+  printf '%s\n' "${selected[@]}"
+  exit 0
+fi
+
+echo "Auditing ${#selected[@]} of ${#paths[@]} pages${LIGHTHOUSE_SHARD:+ (shard $LIGHTHOUSE_SHARD)}: ${selected[*]}"
+
+for path in "${selected[@]}"; do
   reports=()
   for run in $(seq 1 "$runs"); do
     report="$out/report-$run.json"
