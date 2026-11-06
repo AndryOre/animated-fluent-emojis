@@ -9,7 +9,7 @@ if [ -z "$playwright_version" ]; then
   exit 1
 fi
 image="mcr.microsoft.com/playwright:v${playwright_version}-noble"
-site_image="animated-fluent-emojis-site:visual"
+site_image="${VISUAL_SITE_IMAGE:-animated-fluent-emojis-site:visual}"
 site_container="animated-fluent-emojis-site-visual"
 site_port="${VISUAL_PORT:-8081}"
 
@@ -18,7 +18,9 @@ cleanup() {
 }
 trap cleanup EXIT
 
-docker build -f "${repo_root}/apps/site/Dockerfile" -t "$site_image" "$repo_root"
+if [ -z "${VISUAL_SITE_IMAGE:-}" ]; then
+  docker build -f "${repo_root}/apps/site/Dockerfile" -t "$site_image" "$repo_root"
+fi
 docker rm -f "$site_container" >/dev/null 2>&1 || true
 docker run -d --name "$site_container" -p "127.0.0.1:${site_port}:80" "$site_image" >/dev/null
 

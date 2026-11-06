@@ -279,6 +279,24 @@ unchanged:
 - **CI passed**: aggregates the jobs above; it is the single required status
   check.
 
+**CI runners.** The light jobs (`ci.yml` `quality`, `commitlint` and
+`ci-passed`; `lint-pr.yml` `validate-title`; `lint-docs.yml` `check-links`;
+`lint-workflows.yml` `lint`; `labels.yml` `sync`) use
+`runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || vars.BLACKSMITH_RUNNER || 'ubuntu-latest' }}`.
+Pull requests from forks always fall back to GitHub's `ubuntu-latest`. The
+`BLACKSMITH_RUNNER` repository variable is unset by default, so every job runs
+on `ubuntu-latest`; every other job keeps a literal `ubuntu-latest`. Why it
+stays unset on this public repository, and how to turn it on or roll it back:
+[ADR 0028](adr/0028-ci-runner-standard-and-a-parallel-site-quality-workflow.md).
+
+**Site Quality.** `site-quality.yml` runs on pull requests that touch the site,
+the docs, the library or `bun.lock`. A `build` job builds the site image once
+and uploads it as an artifact; `smoke`, `e2e`, `visual` and `lighthouse` then
+load it and run in parallel, each uploading a `site-<job>-report` artifact when
+it fails. The aggregate `Smoke, accessibility and Lighthouse budget` check fails
+unless all five jobs succeed. `apps/site/scripts/visual.sh` runs a prebuilt
+image when `VISUAL_SITE_IMAGE` is set and builds its own otherwise.
+
 `sync-assets.yml` runs weekly (and on demand) outside the PR pipeline: it
 detects new emoji versions, rebuilds and deploys the asset site to Cloudflare
 Pages, smoke tests the published manifest and a sprite, builds the files site
