@@ -51,6 +51,7 @@ const howToItems = PUBLISHED_DOCS.filter((docPath) =>
 export default defineConfig({
   site: SITE_ORIGIN,
   trailingSlash: 'always',
+  build: { concurrency: 4 },
   security: {
     csp: {
       scriptDirective: {
