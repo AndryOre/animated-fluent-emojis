@@ -13,6 +13,8 @@ const LAYOUT_SPECS = /layout-matrix\.spec\.ts$/
  */
 export default defineConfig({
   testDir: './e2e',
+  fullyParallel: true,
+  workers: process.env.CI ? '100%' : undefined,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['html', { open: 'never' }]] : 'list',
