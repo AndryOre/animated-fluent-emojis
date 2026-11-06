@@ -40,3 +40,4 @@ for editing and replacing ADRs are in
 | 0025   | [Release notes on the website](0025-release-notes-on-the-website.md)                                                                                         | Accepted | -                        |
 | 0026   | [Robots allows search and answer crawlers and blocks AI-training crawlers](0026-robots-allows-search-and-answer-crawlers-and-blocks-ai-training-crawlers.md) | Accepted | -                        |
 | 0027   | [Oxc toolchain replaces Prettier and most of ESLint](0027-oxc-toolchain-replaces-prettier-and-most-of-eslint.md)                                             | Accepted | -                        |
+| 0028   | [CI runner standard and a parallel Site Quality workflow](0028-ci-runner-standard-and-a-parallel-site-quality-workflow.md)                                   | Accepted | -                        |
