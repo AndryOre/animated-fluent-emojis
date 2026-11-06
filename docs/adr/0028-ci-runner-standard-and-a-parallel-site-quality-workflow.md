@@ -6,6 +6,15 @@ Accepted.
 
 Date: 2026-11-06
 
+Revised: 2026-11-06, the CI `package` job builds only the library, Site Quality
+also runs on root build-config changes, the Astro site build runs with
+`build.concurrency` 4 (its output matches a serial build, apart from a
+build-time `Expires` timestamp and the key order of the Pagefind entry file,
+which varies between builds of the same input), its e2e specs run fully
+parallel, the Lighthouse job runs as 2 shards (still 5 runs per page), and the
+CI `test` job caches Playwright browsers. Expected times: CI about 2.5 minutes,
+Site Quality about 10-12 minutes without queueing.
+
 ## Context
 
 The five andryorelabs repositories (andryore-web, animated-fluent-emojis, snug,
@@ -84,8 +93,36 @@ slowest check on every site or docs pull request.
   `site-quality` keeps the check name
   `Smoke, accessibility and Lighthouse budget`, runs `if: always()` and fails
   unless every job it needs succeeded, so a failed `build` (which skips the test
-  jobs) also fails it. Expected wall time is about 15 minutes: the build plus
+  jobs) also fails it. Expected wall time is about 10-12 minutes: the build plus
   the slowest test job.
+
+- **The Lighthouse job is a 2-shard matrix.** `lighthouse` runs with
+  `matrix.shard: [1, 2]` and `fail-fast: false`, and passes
+  `LIGHTHOUSE_SHARD=<shard>/<total>` to `lighthouse-budget.sh`, which audits
+  page `k` of its list only in shard `(k mod total) + 1`. Each page is audited
+  in exactly one shard, still with 5 runs and the same retries and budgets: the
+  median of 5 is what keeps the score signal precise, so the runs are split
+  across runners instead of being cut. A matrix job's result is `failure` when
+  any shard fails, so the aggregate's `needs` keeps the job id `lighthouse` and
+  still fails. Each shard uploads its own `site-lighthouse-report-<shard>`
+  artifact on failure. `scripts/workflows-invariants.test.ts` checks that the
+  shards cover every page once.
+
+- **The e2e specs run fully parallel.** The Playwright e2e config sets
+  `fullyParallel: true` and uses every core under CI.
+
+- **CI `package` builds only the library.** It runs
+  `turbo run build lint:package size --filter=animated-fluent-emojis`, still
+  `--affected` on pull requests (turbo intersects the two). The 4.5-minute Astro
+  build of every site page is no longer on the CI critical path; Site Quality's
+  `build` job still builds the site in Docker, and its `paths` filter adds
+  `tsconfig.base.json`, `bunfig.toml`, `turbo.json` and `package.json`, so a
+  change to the shared build config still builds the site somewhere.
+
+- **CI `test` caches Playwright browsers.** `~/.cache/ms-playwright` is cached
+  under a key holding the resolved `playwright --version`. A warm cache skips
+  the browser download; `playwright install --with-deps` still runs, so the
+  system packages are installed on every run.
 
 Rejected options:
 
@@ -101,8 +138,12 @@ Rejected options:
 
 ## Consequences
 
-- Site Quality drops from 30-40 minutes to about 15, and a failure names the job
-  that failed.
+- Site Quality drops from 30-40 minutes to about 10-12, and a failure names the
+  job (and Lighthouse shard) that failed.
+- CI drops from about 5.5 minutes to about 2.5: `package` no longer builds the
+  site.
+- Adding a Lighthouse page needs no workflow change: the script spreads its list
+  over the shards.
 - Each test job spends a minute or so on checkout, install and `docker load`;
   the four jobs use more total runner minutes than one job did, which is free on
   this public repository.

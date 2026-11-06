@@ -1,4 +1,6 @@
+import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
 
 import {
@@ -712,6 +714,145 @@ describe('site-quality.yml aggregate job', () => {
       first.localeCompare(second),
     )
     expect(needed).toEqual(expected)
+  })
+})
+
+const LIGHTHOUSE_SCRIPT = fileURLToPath(
+  new URL('../apps/site/scripts/lighthouse-budget.sh', import.meta.url),
+)
+
+function runLighthouseScript(
+  environment: Record<string, string>,
+): ReturnType<typeof spawnSync> {
+  return spawnSync('bash', [LIGHTHOUSE_SCRIPT], {
+    encoding: 'utf8',
+    env: { ...process.env, ...environment, LIGHTHOUSE_LIST: '1' },
+  })
+}
+
+function listLighthousePages(shard?: string): string[] {
+  const result = runLighthouseScript(
+    shard === undefined ? {} : { LIGHTHOUSE_SHARD: shard },
+  )
+  expect(result.status, String(result.stderr)).toBe(0)
+  return String(result.stdout).split('\n').filter(Boolean)
+}
+
+interface ShardedJob {
+  readonly strategy?: {
+    readonly 'fail-fast'?: boolean
+    readonly matrix?: { readonly shard?: readonly number[] }
+  }
+  readonly steps?: readonly WorkflowStep[]
+}
+
+function sortAlphabetically(values: readonly string[]): string[] {
+  return values.toSorted((first, second) => first.localeCompare(second))
+}
+
+describe('site-quality.yml lighthouse shards', () => {
+  const job: ShardedJob | undefined =
+    readWorkflow('site-quality.yml').jobs?.lighthouse
+  const shards = job?.strategy?.matrix?.shard ?? []
+  const auditStep = job?.steps?.find((step) =>
+    step.run?.includes('lighthouse-budget.sh'),
+  )
+
+  test('runs as a matrix of at least two shards that do not cancel each other', () => {
+    expect(shards.length).toBeGreaterThanOrEqual(2)
+    expect(shards).toEqual(shards.map((_, index) => index + 1))
+    expect(job?.strategy?.['fail-fast']).toBe(false)
+  })
+
+  test('passes the shard selector and keeps five runs per page', () => {
+    expect(auditStep?.env?.LIGHTHOUSE_SHARD).toBe(
+      '${{ matrix.shard }}/${{ strategy.job-total }}',
+    )
+    expect(auditStep?.env?.LIGHTHOUSE_RUNS ?? '5').toBe('5')
+    expect(auditStep?.run).not.toContain('${{')
+  })
+
+  test('uploads one failure report per shard', () => {
+    const upload = job?.steps?.find((step) =>
+      step.uses?.startsWith('actions/upload-artifact@'),
+    )
+    expect(String(upload?.with?.name)).toContain('${{ matrix.shard }}')
+  })
+
+  test('audits every page in exactly one shard', () => {
+    const allPages = listLighthousePages()
+    const shardedPages = shards.flatMap((shard) => {
+      const selector = `${String(shard)}/${String(shards.length)}`
+      const pages = listLighthousePages(selector)
+      expect(pages.length, selector).toBeGreaterThan(0)
+      return pages
+    })
+    expect(allPages.length).toBeGreaterThan(0)
+    expect(sortAlphabetically(shardedPages)).toEqual(
+      sortAlphabetically(allPages),
+    )
+  })
+
+  test.each(['0/2', '3/2', '1/0', 'one/two', '1'])(
+    'rejects the malformed shard selector %s',
+    (shard) => {
+      expect(runLighthouseScript({ LIGHTHOUSE_SHARD: shard }).status).not.toBe(
+        0,
+      )
+    },
+  )
+})
+
+describe('ci.yml package job', () => {
+  const steps = readWorkflow('ci.yml').jobs?.package?.steps ?? []
+  const build = steps.find((step) => step.run?.includes('lint:package'))
+
+  test('builds only the library, not the site', () => {
+    expect(build?.run).toContain('--filter=animated-fluent-emojis')
+  })
+})
+
+describe('ci.yml Playwright browser cache', () => {
+  const steps = readWorkflow('ci.yml').jobs?.test?.steps ?? []
+  const names = steps.map((step) => step.name)
+  const versionIndex = steps.findIndex(
+    (step) => step.id === 'playwright-version',
+  )
+  const cacheIndex = steps.findIndex(
+    (step) => step.with?.path === '~/.cache/ms-playwright',
+  )
+  const installIndex = names.indexOf('Install Playwright browsers')
+
+  test('keys the cache on the resolved Playwright version', () => {
+    expect(steps[versionIndex]?.run).toContain('playwright --version')
+    expect(steps[cacheIndex]?.uses).toMatch(/^actions\/cache@[0-9a-f]{40}$/)
+    expect(String(steps[cacheIndex]?.with?.key)).toContain(
+      '${{ steps.playwright-version.outputs.version }}',
+    )
+    expect(steps[cacheIndex]?.with?.['restore-keys']).toBeUndefined()
+  })
+
+  test('restores the cache before installing, and always installs system deps', () => {
+    expect(versionIndex).toBeGreaterThan(-1)
+    expect(cacheIndex).toBeGreaterThan(versionIndex)
+    expect(installIndex).toBeGreaterThan(cacheIndex)
+    expect(steps[installIndex]?.run).toContain('--with-deps')
+    expect(steps[installIndex]?.if).toBeUndefined()
+  })
+})
+
+describe('site-quality.yml paths filter', () => {
+  const trigger = readWorkflow('site-quality.yml').on as {
+    readonly pull_request?: { readonly paths?: readonly string[] }
+  }
+
+  test.each([
+    'tsconfig.base.json',
+    'bunfig.toml',
+    'turbo.json',
+    'package.json',
+  ])('runs when only %s changes', (file) => {
+    expect(trigger.pull_request?.paths).toContain(file)
   })
 })
 
