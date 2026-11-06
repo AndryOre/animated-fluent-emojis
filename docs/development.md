@@ -260,7 +260,13 @@ Hooks live in `.husky/`:
 - **`commit-msg`** runs `commitlint` with `@commitlint/config-conventional`. It
   enforces the Conventional Commits shape and type list, not the emoji.
 - **`pre-push`** rejects a push whose branch name does not match `<type>/<slug>`
-  (or `main`, `renovate/*`).
+  (or `main`, `renovate/*`). It then runs `turbo run typecheck --affected` and
+  Oxlint (type-aware, `--deny-warnings`) on the code files changed relative to
+  `origin/main`, so failures surface before CI. When `origin/main` is not
+  fetched, it skips those checks with a message instead of blocking the push.
+  `scripts/affected-guard.test.ts` guards the `--affected` selection the hook
+  and CI share: it fails when a change inside a workspace does not select that
+  workspace's `test` task.
 
 ## CI
 
